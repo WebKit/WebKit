@@ -47,8 +47,8 @@ class VisibilityBufferOffsetsMtl
 
   private:
     BufferRef mResultBuffer;
-    size_t mFirstOffset {0};
-    size_t mSize {0};
+    size_t mFirstOffset{0};
+    size_t mSize{0};
 };
 
 class OcclusionQueryPool
@@ -59,6 +59,8 @@ class OcclusionQueryPool
 
     void destroy(ContextMtl *contextMtl);
 
+    // Returns false if the render pass visibility offset limit of the device has been reached,
+    // in which case the render pass must be split before beginning or continuing a query.
     bool canAllocateQueryOffset(ContextMtl *contextMtl) const;
 
     // Begin a new occlusion query in the current render pass.
@@ -85,6 +87,7 @@ class OcclusionQueryPool
 
   private:
     angle::Result ensurePoolCapacity(ContextMtl *contextMtl, size_t requiredEnd);
+    size_t nextQueryOffset() const;
 
     // Buffer to hold the visibility results for current render pass
     BufferRef mRenderPassResultsPool;

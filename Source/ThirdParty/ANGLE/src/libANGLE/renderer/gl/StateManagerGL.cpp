@@ -2655,9 +2655,17 @@ void StateManagerGL::updateProgramImageBindings(const gl::Context *context)
         const TextureGL *textureGL     = SafeGetImplAs<TextureGL>(imageUnit.texture.get());
         if (textureGL)
         {
-            // Do not set layer parameters for non-layered texture types to avoid driver bugs.
-            const bool layered = IsLayeredTextureType(textureGL->getType());
-            bindImageTexture(imageUnitIndex, textureGL->getTextureID(), imageUnit.level,
+            gl::TextureTarget target =
+                textureGL->getType() == gl::TextureType::CubeMap
+                    ? gl::CubeFaceIndexToTextureTarget(imageUnit.layered ? 0 : imageUnit.layer)
+                    : gl::NonCubeTextureTypeToTarget(textureGL->getType());
+            TextureGL::NativeLevelTarget nativeTarget =
+                textureGL->getNativeLevelTarget(target, imageUnit.level);
+            // Do not set layer parameters for non-layered texture types (including an unmerged
+            // cube map face stored in a 2D companion texture when virtualizeBaseLevelAndMipchain
+            // is enabled) to avoid driver bugs.
+            const bool layered = IsLayeredTextureType(gl::TextureTargetToType(nativeTarget.target));
+            bindImageTexture(imageUnitIndex, nativeTarget.textureID, nativeTarget.level,
                              layered && imageUnit.layered, layered ? imageUnit.layer : 0,
                              imageUnit.access, imageUnit.format);
         }

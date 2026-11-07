@@ -3463,8 +3463,6 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
     ASSERT(sourceArea.width >= 0);
     ASSERT(sourceArea.height >= 0);
 
-    const bool invertTexture = UsePresentPathFast(this, &srcAttachment);
-
     RenderTarget11 *rt11 = nullptr;
     ANGLE_TRY(srcAttachment.getRenderTarget(context, 0, &rt11));
     ASSERT(rt11->getTexture().valid());
@@ -3472,37 +3470,17 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
     const TextureHelper11 &textureHelper = rt11->getTexture();
     unsigned int sourceSubResource       = rt11->getSubresourceIndex();
 
-    const gl::Extents &texSize = textureHelper.getExtents();
-
-    gl::Rectangle actualArea = sourceArea;
-    bool reverseRowOrder     = pack.reverseRowOrder;
-    if (invertTexture)
-    {
-        actualArea.y    = texSize.height - actualArea.y - actualArea.height;
-        reverseRowOrder = !reverseRowOrder;
-    }
-
-    // Clamp read region to the defined texture boundaries, preventing out of bounds reads
-    // and reads of uninitialized data.
-    gl::Rectangle safeArea;
-    safeArea.x = gl::clamp(actualArea.x, 0, texSize.width);
-    safeArea.y = gl::clamp(actualArea.y, 0, texSize.height);
-    safeArea.width =
-        gl::clamp(actualArea.width + std::min(actualArea.x, 0), 0, texSize.width - safeArea.x);
-    safeArea.height =
-        gl::clamp(actualArea.height + std::min(actualArea.y, 0), 0, texSize.height - safeArea.y);
-
-    ASSERT(safeArea.x >= 0 && safeArea.y >= 0);
-    ASSERT(safeArea.x + safeArea.width <= texSize.width);
-    ASSERT(safeArea.y + safeArea.height <= texSize.height);
-
-    if (safeArea.width == 0 || safeArea.height == 0)
+    gl::Rectangle clippedReadArea;
+    bool reverseRowOrder     = false;
+    const bool invertTexture = UsePresentPathFast(this, &srcAttachment);
+    if (!ClipRenderTargetReadArea(*rt11, sourceArea, invertTexture, pack.reverseRowOrder,
+                                  &clippedReadArea, &reverseRowOrder))
     {
         // no work to do
         return angle::Result::Continue;
     }
 
-    gl::Extents safeSize(safeArea.width, safeArea.height, 1);
+    const gl::Extents stagingTextureSize(clippedReadArea.width, clippedReadArea.height, 1);
 
     // Intermediate texture used for copy for multiplanar formats or resolving multisampled
     // textures.
@@ -3518,8 +3496,8 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
         if (d3d11::IsSupportedMultiplanarFormat(textureHelper.getFormat()))
         {
             D3D11_TEXTURE2D_DESC planeDesc;
-            planeDesc.Width              = static_cast<UINT>(safeSize.width);
-            planeDesc.Height             = static_cast<UINT>(safeSize.height);
+            planeDesc.Width              = static_cast<UINT>(stagingTextureSize.width);
+            planeDesc.Height             = static_cast<UINT>(stagingTextureSize.height);
             planeDesc.MipLevels          = 1;
             planeDesc.ArraySize          = 1;
             planeDesc.Format             = textureHelper.getFormatSet().srvFormat;
@@ -3557,19 +3535,21 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
             ANGLE_TRY(allocateResource(context11, srvDesc, textureHelper.get(), &srv));
             srv.setInternalName("readFromAttachment.SRV");
 
-            gl::Box srcGlBox(safeArea.x, safeArea.y, 0, safeArea.width, safeArea.height, 1);
-            gl::Box destGlBox(0, 0, 0, safeSize.width, safeSize.height, 1);
+            gl::Box srcGlBox(clippedReadArea.x, clippedReadArea.y, 0, clippedReadArea.width,
+                             clippedReadArea.height, 1);
+            gl::Box destGlBox(0, 0, 0, stagingTextureSize.width, stagingTextureSize.height, 1);
 
             // Perform a copy to planeTexture as we cannot read directly from NV12 d3d11 textures.
-            ANGLE_TRY(mBlit->copyTexture(
-                context, srv, srcGlBox, safeSize, internalFormat, rtv, destGlBox, safeSize, nullptr,
-                gl::GetUnsizedFormat(internalFormat), GL_NONE, GL_NEAREST, false, false, false));
+            ANGLE_TRY(mBlit->copyTexture(context, srv, srcGlBox, stagingTextureSize, internalFormat,
+                                         rtv, destGlBox, stagingTextureSize, nullptr,
+                                         gl::GetUnsizedFormat(internalFormat), GL_NONE, GL_NEAREST,
+                                         false, false, false));
 
-            // Update safeArea based on the destination.
-            safeArea.x      = destGlBox.x;
-            safeArea.y      = destGlBox.y;
-            safeArea.width  = destGlBox.width;
-            safeArea.height = destGlBox.height;
+            // Update clippedReadArea based on the destination.
+            clippedReadArea.x      = destGlBox.x;
+            clippedReadArea.y      = destGlBox.y;
+            clippedReadArea.width  = destGlBox.width;
+            clippedReadArea.height = destGlBox.height;
 
             sourceSubResource = 0;
             srcTexture        = &intermediateTextureHelper;
@@ -3579,8 +3559,8 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
             if (textureHelper.getSampleCount() > 1)
             {
                 D3D11_TEXTURE2D_DESC resolveDesc;
-                resolveDesc.Width              = static_cast<UINT>(texSize.width);
-                resolveDesc.Height             = static_cast<UINT>(texSize.height);
+                resolveDesc.Width              = static_cast<UINT>(rt11->getWidth());
+                resolveDesc.Height             = static_cast<UINT>(rt11->getHeight());
                 resolveDesc.MipLevels          = 1;
                 resolveDesc.ArraySize          = 1;
                 resolveDesc.Format             = textureHelper.getFormat();
@@ -3608,10 +3588,10 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
     }
 
     D3D11_BOX srcBox;
-    srcBox.left   = static_cast<UINT>(safeArea.x);
-    srcBox.right  = static_cast<UINT>(safeArea.x + safeArea.width);
-    srcBox.top    = static_cast<UINT>(safeArea.y);
-    srcBox.bottom = static_cast<UINT>(safeArea.y + safeArea.height);
+    srcBox.left   = static_cast<UINT>(clippedReadArea.x);
+    srcBox.right  = static_cast<UINT>(clippedReadArea.x + clippedReadArea.width);
+    srcBox.top    = static_cast<UINT>(clippedReadArea.y);
+    srcBox.bottom = static_cast<UINT>(clippedReadArea.y + clippedReadArea.height);
 
     // Select the correct layer from a 3D attachment
     srcBox.front = 0;
@@ -3623,8 +3603,8 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
 
     TextureHelper11 stagingHelper;
     ANGLE_TRY(createStagingTexture(context, textureHelper.getTextureType(),
-                                   srcTexture->getFormatSet(), safeSize, StagingAccess::READ,
-                                   &stagingHelper));
+                                   srcTexture->getFormatSet(), stagingTextureSize,
+                                   StagingAccess::READ, &stagingHelper));
     stagingHelper.setInternalName("readFromAttachment::stagingHelper");
 
     mDeviceContext->CopySubresourceRegion(stagingHelper.get(), 0, 0, 0, 0, srcTexture->get(),
@@ -3633,7 +3613,8 @@ angle::Result Renderer11::readFromAttachment(const gl::Context *context,
     const angle::Format &angleFormat = GetFormatFromFormatType(format, type);
     gl::Buffer *packBuffer = context->getState().getTargetBuffer(gl::BufferBinding::PixelPack);
 
-    PackPixelsParams packParams(safeArea, angleFormat, outputPitch, reverseRowOrder, packBuffer, 0);
+    PackPixelsParams packParams(clippedReadArea, angleFormat, outputPitch, reverseRowOrder,
+                                packBuffer, 0);
     return packPixels(context, stagingHelper, packParams, pixelsOut);
 }
 

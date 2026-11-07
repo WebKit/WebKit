@@ -569,6 +569,16 @@ static size_t getTotalSystemMemory(JavaVM *vm, jobject context)
 
 // Platform
 
+Platform::Platform(void)
+    : m_activity(nullptr)
+    , m_vm(nullptr)
+    , m_context(nullptr)
+    , m_ownsContext(false)
+    , m_totalSystemMemory(getTotalSystemMemory(nullptr, nullptr))
+{
+    initialize(nullptr);
+}
+
 Platform::Platform(NativeActivity &activity, ANativeWindow *window)
     : m_activity(&activity)
     , m_vm(activity.getNativeActivity() ? activity.getNativeActivity()->vm : nullptr)
@@ -715,3 +725,8 @@ void Platform::rotateScreen(int rotation) const
 
 } // namespace Android
 } // namespace tcu
+
+tcu::Platform *createPlatform(void)
+{
+    return new tcu::Android::Platform();
+}

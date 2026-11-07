@@ -1,0 +1,22 @@
+Name: Zstandard
+Short Name: zstd
+URL: https://github.com/facebook/zstd
+Version: 1.6.0
+Revision: 10da6ba6de05e29169261fa4b68eb99239f770dd
+Update Mechanism: Manual
+License: BSD-3-Clause
+License File: src/LICENSE
+CPEPrefix: cpe:/a:facebook:zstandard:1.6.0
+Security Critical: yes
+Shipped: yes
+
+Description:
+Zstandard is a fast lossless compression algorithm, targeting real-time
+compression scenarios at zlib-level and better compression ratios.
+
+Zstandard is dual-licensed under BSD-3-Clause OR GPLv2. The BSD-3-Clause
+license is used here as it is more permissive.
+
+Local Modifications:
+- BUILD.gn: Copied unmodified from Chromium's third_party/zstd/BUILD.gn.  Only standalone
+  builds use it; in Chromium, //third_party/zstd is Chromium's own copy.

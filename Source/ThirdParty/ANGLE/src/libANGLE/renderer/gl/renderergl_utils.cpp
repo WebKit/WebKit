@@ -181,6 +181,12 @@ bool IsMaliG31OrOlder(const FunctionsGL *functions)
     return number != 0 && number <= 31;
 }
 
+bool IsMaliG52OrG72OrOlder(const FunctionsGL *functions)
+{
+    int number = getMaliGNumber(functions);
+    return number == 31 || number == 51 || number == 71 || number == 52 || number == 72;
+}
+
 bool IsMaliG72OrG76OrG51(const FunctionsGL *functions)
 {
     int number = getMaliGNumber(functions);
@@ -1711,85 +1717,89 @@ void GenerateCaps(const FunctionsGL *functions,
                                         functions->hasGLExtension("GL_ARB_stencil_texturing") ||
                                         functions->isAtLeastGLES(gl::Version(3, 1));
 
-    if (features.supportsShaderFramebufferFetchEXT.enabled && extensions->drawBuffersIndexedAny())
+    if (!features.disablePixelLocalStorage.enabled)
     {
-        // We can support PLS natively, probably in tiled memory.
-        extensions->shaderPixelLocalStorageANGLE         = true;
-        extensions->shaderPixelLocalStorageCoherentANGLE = true;
-        plsOptions->type             = ShPixelLocalStorageType::FramebufferFetch;
-        plsOptions->fragmentSyncType = ShFragmentSynchronizationType::Automatic;
-        plsOptions->supportsNoncoherent =
-            features.supportsShaderFramebufferFetchNonCoherentEXT.enabled;
-    }
-    else
-    {
-        bool hasFragmentShaderImageLoadStore = false;
-        if (functions->isAtLeastGL(gl::Version(4, 2)) ||
-            functions->hasGLExtension("GL_ARB_shader_image_load_store"))
+        if (features.supportsShaderFramebufferFetchEXT.enabled &&
+            extensions->drawBuffersIndexedAny())
         {
-            // [ANGLE_shader_pixel_local_storage] "New Implementation Dependent State":
-            // MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE must be at least 4.
-            //
-            // MAX_FRAGMENT_IMAGE_UNIFORMS is at least 8 on Desktop Core and ARB.
-            hasFragmentShaderImageLoadStore = true;
-        }
-        else if (functions->isAtLeastGLES(gl::Version(3, 1)))
-        {
-            // [ANGLE_shader_pixel_local_storage] "New Implementation Dependent State":
-            // MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE must be at least 4.
-            //
-            // ES 3.1, Table 20.44: MAX_FRAGMENT_IMAGE_UNIFORMS can be 0.
-            hasFragmentShaderImageLoadStore =
-                caps->maxShaderImageUniforms[gl::ShaderType::Fragment] >= 4;
-        }
-        if (hasFragmentShaderImageLoadStore &&
-            (features.supportsFragmentShaderInterlockNV.enabled ||
-             features.supportsFragmentShaderOrderingINTEL.enabled ||
-             features.supportsFragmentShaderInterlockARB.enabled))
-        {
-            // If shader image load/store can be coherent, prefer it over
-            // EXT_shader_framebuffer_fetch_non_coherent.
+            // We can support PLS natively, probably in tiled memory.
             extensions->shaderPixelLocalStorageANGLE         = true;
             extensions->shaderPixelLocalStorageCoherentANGLE = true;
-            plsOptions->type = ShPixelLocalStorageType::ImageLoadStore;
-            // Prefer vendor-specific extensions first. The PixelLocalStorageTest.Coherency test
-            // doesn't always pass on Intel when we use the ARB extension.
-            if (features.supportsFragmentShaderInterlockNV.enabled)
-            {
-                plsOptions->fragmentSyncType =
-                    ShFragmentSynchronizationType::FragmentShaderInterlock_NV_GL;
-            }
-            else if (features.supportsFragmentShaderOrderingINTEL.enabled)
-            {
-                plsOptions->fragmentSyncType =
-                    ShFragmentSynchronizationType::FragmentShaderOrdering_INTEL_GL;
-            }
-            else
-            {
-                ASSERT(features.supportsFragmentShaderInterlockARB.enabled);
-                plsOptions->fragmentSyncType =
-                    ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
-            }
-            // OpenGL ES only allows read/write access to "r32*" images.
-            plsOptions->supportsNativeRGBA8ImageFormats =
-                functions->standard != StandardGL::STANDARD_GL_ES;
+            plsOptions->type             = ShPixelLocalStorageType::FramebufferFetch;
+            plsOptions->fragmentSyncType = ShFragmentSynchronizationType::Automatic;
+            plsOptions->supportsNoncoherent =
+                features.supportsShaderFramebufferFetchNonCoherentEXT.enabled;
         }
-        else if (features.supportsShaderFramebufferFetchNonCoherentEXT.enabled)
+        else
         {
-            ASSERT(plsOptions->fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
-            extensions->shaderPixelLocalStorageANGLE = true;
-            plsOptions->type                         = ShPixelLocalStorageType::FramebufferFetch;
+            bool hasFragmentShaderImageLoadStore = false;
+            if (functions->isAtLeastGL(gl::Version(4, 2)) ||
+                functions->hasGLExtension("GL_ARB_shader_image_load_store"))
+            {
+                // [ANGLE_shader_pixel_local_storage] "New Implementation Dependent State":
+                // MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE must be at least 4.
+                //
+                // MAX_FRAGMENT_IMAGE_UNIFORMS is at least 8 on Desktop Core and ARB.
+                hasFragmentShaderImageLoadStore = true;
+            }
+            else if (functions->isAtLeastGLES(gl::Version(3, 1)))
+            {
+                // [ANGLE_shader_pixel_local_storage] "New Implementation Dependent State":
+                // MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE must be at least 4.
+                //
+                // ES 3.1, Table 20.44: MAX_FRAGMENT_IMAGE_UNIFORMS can be 0.
+                hasFragmentShaderImageLoadStore =
+                    caps->maxShaderImageUniforms[gl::ShaderType::Fragment] >= 4;
+            }
+            if (hasFragmentShaderImageLoadStore &&
+                (features.supportsFragmentShaderInterlockNV.enabled ||
+                 features.supportsFragmentShaderOrderingINTEL.enabled ||
+                 features.supportsFragmentShaderInterlockARB.enabled))
+            {
+                // If shader image load/store can be coherent, prefer it over
+                // EXT_shader_framebuffer_fetch_non_coherent.
+                extensions->shaderPixelLocalStorageANGLE         = true;
+                extensions->shaderPixelLocalStorageCoherentANGLE = true;
+                plsOptions->type = ShPixelLocalStorageType::ImageLoadStore;
+                // Prefer vendor-specific extensions first. The PixelLocalStorageTest.Coherency test
+                // doesn't always pass on Intel when we use the ARB extension.
+                if (features.supportsFragmentShaderInterlockNV.enabled)
+                {
+                    plsOptions->fragmentSyncType =
+                        ShFragmentSynchronizationType::FragmentShaderInterlock_NV_GL;
+                }
+                else if (features.supportsFragmentShaderOrderingINTEL.enabled)
+                {
+                    plsOptions->fragmentSyncType =
+                        ShFragmentSynchronizationType::FragmentShaderOrdering_INTEL_GL;
+                }
+                else
+                {
+                    ASSERT(features.supportsFragmentShaderInterlockARB.enabled);
+                    plsOptions->fragmentSyncType =
+                        ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
+                }
+                // OpenGL ES only allows read/write access to "r32*" images.
+                plsOptions->supportsNativeRGBA8ImageFormats =
+                    functions->standard != StandardGL::STANDARD_GL_ES;
+            }
+            else if (features.supportsShaderFramebufferFetchNonCoherentEXT.enabled)
+            {
+                ASSERT(plsOptions->fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
+                extensions->shaderPixelLocalStorageANGLE = true;
+                plsOptions->type = ShPixelLocalStorageType::FramebufferFetch;
+            }
+            else if (hasFragmentShaderImageLoadStore)
+            {
+                ASSERT(plsOptions->fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
+                extensions->shaderPixelLocalStorageANGLE = true;
+                plsOptions->type                         = ShPixelLocalStorageType::ImageLoadStore;
+                // OpenGL ES only allows read/write access to "r32*" images.
+                plsOptions->supportsNativeRGBA8ImageFormats =
+                    functions->standard != StandardGL::STANDARD_GL_ES;
+            }
+            plsOptions->supportsNoncoherent = true;
         }
-        else if (hasFragmentShaderImageLoadStore)
-        {
-            ASSERT(plsOptions->fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
-            extensions->shaderPixelLocalStorageANGLE = true;
-            plsOptions->type                         = ShPixelLocalStorageType::ImageLoadStore;
-            // OpenGL ES only allows read/write access to "r32*" images.
-            plsOptions->supportsNativeRGBA8ImageFormats =
-                functions->standard != StandardGL::STANDARD_GL_ES;
-        }
-        plsOptions->supportsNoncoherent = true;
     }
 
     // EXT_shader_framebuffer_fetch.
@@ -2336,10 +2346,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, splitLevel0PboFullSubImage2D,
                             isPowerVRDriver && powerVRVersion < (std::array<int, 2>{26, 2}));
 
-    // TODO(crbug.com/548127218): conditionalize this workaround on PowerVR
-    // driver version.
-    ANGLE_FEATURE_CONDITION(features, uploadOversizedMipLevelsViaUnpackBuffer, isPowerVRDriver);
-
     ANGLE_FEATURE_CONDITION(features, initializeCurrentVertexAttributes, isNvidia);
 
     ANGLE_FEATURE_CONDITION(features, unpackLastRowSeparatelyForPaddingInclusion,
@@ -2415,14 +2421,16 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, resetTexImage2DBaseLevel,
                             IsApple() && isIntel && GetMacOSVersion() >= OSVersion(10, 12, 4));
 
-    ANGLE_FEATURE_CONDITION(features, resetBaseLevelForASTCImage, isPowerVR);
-    ANGLE_FEATURE_CONDITION(features, recreateImmutableTextureOnBaseLevelIncrease, isPowerVR);
-    ANGLE_FEATURE_CONDITION(features, resetTexStorage2DBaseLevel, isPowerVR);
+    ANGLE_FEATURE_CONDITION(features, virtualizeBaseLevelAndMipchain, isPowerVR);
+
+    // Related to virtualizeBaseLevelAndMipchain workaround
+    ANGLE_FEATURE_CONDITION(features, copyImageSubData3DFailsOnTailMipLevels, isPowerVR);
+
+    // Related to virtualizeBaseLevelAndMipchain workaround
+    ANGLE_FEATURE_CONDITION(features, readback3DDepthStencilPbosDuringUpload, isPowerVR);
+
     ANGLE_FEATURE_CONDITION(features, recreateTextureOnTexImage3dDepthIncrease,
                             isQualcomm && IsAndroid());
-
-    ANGLE_FEATURE_CONDITION(features, useTempForNonZeroBaseLevelGenMipmapUsingCopyImageSubData,
-                            isPowerVR);
 
     ANGLE_FEATURE_CONDITION(features, adjustSrcDstRegionForBlitFramebuffer,
                             IsLinux() || (IsAndroid() && (isNvidia || isMali)) ||
@@ -2640,6 +2648,10 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // https://anglebug.com/42266740
     ANGLE_FEATURE_CONDITION(features, explicitFragmentLocations, isQualcomm);
 
+    // https://crbug.com/576783756
+    ANGLE_FEATURE_CONDITION(features, disablePixelLocalStorage,
+                            IsMaliT8xxOrOlder(functions) || IsMaliG52OrG72OrOlder(functions));
+
     // Desktop GLSL-only fragment synchronization extensions. These are injected internally by the
     // compiler to make pixel local storage coherent.
     // https://anglebug.com/40096838
@@ -2802,6 +2814,11 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // Mac Intel drivers are unable to allocate buffers larger than ~1gb
     ANGLE_FEATURE_CONDITION(features, limitMaxBufferSizeTo1gb, isApple && isIntel);
 
+    // Force a finish before copying from a framebuffer that has the destination texture attached.
+    // Avoids an IMG driver bug if the source still has pending rendering.
+    // https://crbug.com/552672183
+    ANGLE_FEATURE_CONDITION(features, finishBeforeSameTextureCopy, IsPowerVR(vendor));
+
     // Default to state validation disabled. It is extremely costly and should only be enabled
     // explicitly when debugging.
     ANGLE_FEATURE_CONDITION(features, validateState, false);
@@ -2845,9 +2862,6 @@ void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFea
     ANGLE_FEATURE_CONDITION(features, noperspectiveInterpolationBrokenWithPassthroughShaders,
                             isQualcomm);
     ANGLE_FEATURE_CONDITION(features, setNeedInitOnInvalidation, true);
-
-    // PowerVR compiler may crash when encountering an infinite loop
-    ANGLE_FEATURE_CONDITION(features, ensureLoopForwardProgress, isPowerVR);
 }
 
 void ReInitializeFeaturesAtGPUSwitch(const FunctionsGL *functions, angle::FeaturesGL *features)

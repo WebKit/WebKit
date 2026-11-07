@@ -198,6 +198,17 @@ using DefaultUniformBaseLocationMap =
 using ResourceSet   = std::set<GLuint>;
 using ResourceCalls = std::map<GLuint, std::vector<CallCapture>>;
 
+// For texture parameters, we should track the series of calls to reset the parameters for each
+// texture and which parameters are dirty per texture.
+struct TextureParamReset
+{
+    CallCapture call;
+    bool isDirty;
+};
+
+using TextureParamResetPerParamMap   = std::map<GLenum, TextureParamReset>;
+using TextureParamResetPerTextureMap = std::map<GLuint, TextureParamResetPerParamMap>;
+
 class TrackedResource final : angle::NonCopyable
 {
   public:
@@ -317,6 +328,11 @@ class ResourceTracker final : angle::NonCopyable
         return mDefaultUniformBaseLocations[{programID, location}];
     }
 
+    TextureParamResetPerTextureMap &getTextureParameterResetCalls()
+    {
+        return mTextureParameterResetCalls;
+    }
+
     TrackedResource &getTrackedResource(gl::ContextID contextID, ResourceIDType type);
 
     void getContextIDs(std::set<gl::ContextID> &idsOut);
@@ -372,6 +388,7 @@ class ResourceTracker final : angle::NonCopyable
         mDefaultUniformsToReset.clear();
         mDefaultUniformResetCalls.clear();
         mDefaultUniformBaseLocations.clear();
+        mTextureParameterResetCalls.clear();
         mImageDataMap.clear();
         mExternalImageBindingsToRestore.clear();
     }
@@ -405,6 +422,9 @@ class ResourceTracker final : angle::NonCopyable
     DefaultUniformCallsPerProgramMap mDefaultUniformResetCalls;
     // Base location of arrayed uniforms
     DefaultUniformBaseLocationMap mDefaultUniformBaseLocations;
+
+    // Texture parameter reset calls to be emitted in ResetReplay
+    TextureParamResetPerTextureMap mTextureParameterResetCalls;
 
     // These data structures must be preserved across all captures
 
@@ -864,6 +884,7 @@ class FrameCaptureShared final : angle::NonCopyable
                             bool persistent);
 
     void trackTextureUpdate(const gl::Context *context, const CallCapture &call);
+    void trackTextureStateUpdate(const gl::Context *context, const CallCapture &call);
     void trackFramebufferAttachmentUpdate(const gl::Context *context, const CallCapture &call);
     void trackImageUpdate(const gl::Context *context, const CallCapture &call);
     void trackDefaultUniformUpdate(const gl::Context *context, const CallCapture &call);

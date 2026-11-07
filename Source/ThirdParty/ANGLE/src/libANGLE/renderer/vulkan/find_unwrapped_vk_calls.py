@@ -21,7 +21,7 @@ from typing import List, Set
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 
 # Path to volk.h file containing PFN_vk* function definitions
-VOLK_H_PATH = os.path.join(ROOT_DIR, "src", "third_party", "volk", "volk.h")
+VOLK_H_PATH = os.path.join(ROOT_DIR, "src", "third_party", "volk", "src", "volk.h")
 
 # Default directory to search for source files
 DEFAULT_SEARCH_DIR = os.path.join(ROOT_DIR, "src", "libANGLE", "renderer", "vulkan")

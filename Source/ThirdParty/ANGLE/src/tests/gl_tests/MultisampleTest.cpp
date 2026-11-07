@@ -294,12 +294,11 @@ TEST_P(MultisampleTest, AlphaToSampleCoverage)
     // http://anglebug.com/42264264
     ANGLE_SKIP_TEST_IF(IsOzone());
 
-    constexpr char kFS[] =
-        "precision highp float;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);\n"
-        "}\n";
+    constexpr char kFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);
+})";
     ANGLE_GL_PROGRAM(transparentRedProgram, essl1_shaders::vs::Simple(), kFS);
     glUseProgram(transparentRedProgram);
     glEnable(GL_DEPTH_TEST);

@@ -56,7 +56,6 @@
 /third_party/flatbuffers/src
 /third_party/fuchsia-sdk
 /third_party/gles1_conform
-/third_party/glmark2/src
 /third_party/glslang/src
 /third_party/googletest/src
 /third_party/ijar
@@ -66,7 +65,6 @@
 /third_party/libdrm/src
 /third_party/libc++/src
 /third_party/libc++abi/src
-/third_party/libjpeg_turbo
 /third_party/libpng/src
 /third_party/libunwind/src
 /third_party/llvm-build
@@ -75,7 +73,6 @@
 /third_party/lunarg-vulkantools/src
 /third_party/markupsafe
 /third_party/meson
-/third_party/nasm
 /third_party/ninja
 /third_party/OpenCL-CTS/src
 /third_party/OpenCL-Docs/src
@@ -140,6 +137,7 @@
 /third_party/wayland/src
 /third_party/wayland-protocols/src
 /third_party/zlib
+/third_party/zstd/src
 /tools/android
 /tools/clang
 /tools/flex-bison/linux/bison

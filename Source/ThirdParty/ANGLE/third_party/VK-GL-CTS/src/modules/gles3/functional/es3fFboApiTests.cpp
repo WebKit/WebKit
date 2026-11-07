@@ -33,6 +33,7 @@
 #include "gluDefs.hpp"
 #include "gluStrUtil.hpp"
 #include "tcuRenderTarget.hpp"
+#include "tcuFloat.hpp"
 #include "deString.h"
 #include "glwFunctions.hpp"
 #include "glwEnums.hpp"
@@ -548,6 +549,87 @@ static void deleteRboAttachedToNotBoundFboTest(tcu::TestContext &testCtx, sglr::
     checkFboAttachmentParam(testCtx, ctx, GL_STENCIL_ATTACHMENT, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, rbo);
 }
 
+static void texImage2DToTexStorage2DUnboundTest(tcu::TestContext &testCtx, sglr::Context &ctx)
+{
+    const int width            = 15;
+    const int numSprayTextures = 1024;
+    const int numIterations    = 50;
+
+    std::vector<uint32_t> prep(0x400 / sizeof(uint32_t), 0);
+
+    for (int i = 0; i < 60; ++i)
+    {
+        prep[i] = tcu::Float32(tcu::Float16(static_cast<uint16_t>(0x4343)).asFloat()).bits();
+    }
+
+    uint32_t unpackBuffer = 0;
+    ctx.genBuffers(1, &unpackBuffer);
+    ctx.bindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
+    ctx.bufferData(GL_PIXEL_UNPACK_BUFFER, (intptr_t)(prep.size() * sizeof(uint32_t)), prep.data(), GL_DYNAMIC_DRAW);
+
+    std::vector<uint32_t> sprayTextures(numSprayTextures, 0);
+    ctx.genTextures(numSprayTextures, sprayTextures.data());
+    for (int i = 0; i < numSprayTextures; i++)
+    {
+        ctx.bindTexture(GL_TEXTURE_2D, sprayTextures[i]);
+        ctx.texImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, 1, 0, GL_RGBA, GL_FLOAT, nullptr);
+    }
+    ctx.bindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+    std::vector<uint32_t> initbuf(128 * 128, 0);
+
+    for (int iter = 0; iter < numIterations; ++iter)
+    {
+        uint32_t depthTexture = 0;
+        ctx.genTextures(1, &depthTexture);
+        ctx.bindTexture(GL_TEXTURE_2D, depthTexture);
+        ctx.texImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 64, 64, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+
+        uint32_t fbo = 0;
+        ctx.genFramebuffers(1, &fbo);
+        ctx.bindFramebuffer(GL_FRAMEBUFFER, fbo);
+        ctx.framebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+
+        ctx.bindFramebuffer(GL_FRAMEBUFFER, 0);
+        ctx.bindTexture(GL_TEXTURE_2D, depthTexture);
+
+        ctx.texStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, 128, 128);
+
+        ctx.texSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 128, 128, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, initbuf.data());
+
+        ctx.bindBuffer(GL_PIXEL_UNPACK_BUFFER, unpackBuffer);
+        for (int i = 0; i < numSprayTextures; i++)
+        {
+            ctx.bindTexture(GL_TEXTURE_2D, sprayTextures[i]);
+            ctx.texImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, 1, 0, GL_RGBA, GL_FLOAT, nullptr);
+        }
+        ctx.bindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+        ctx.bindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+        if (ctx.checkFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        {
+            ctx.deleteFramebuffers(1, &fbo);
+            ctx.deleteTextures(1, &depthTexture);
+            ctx.deleteTextures(numSprayTextures, sprayTextures.data());
+            ctx.deleteBuffers(1, &unpackBuffer);
+
+            testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Framebuffer is incomplete");
+            return;
+        }
+        ctx.clear(GL_DEPTH_BUFFER_BIT);
+
+        ctx.bindFramebuffer(GL_FRAMEBUFFER, 0);
+        ctx.deleteFramebuffers(1, &fbo);
+        ctx.deleteTextures(1, &depthTexture);
+    }
+
+    ctx.deleteTextures(numSprayTextures, sprayTextures.data());
+    ctx.deleteBuffers(1, &unpackBuffer);
+
+    testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+}
+
 class FboApiCase : public TestCase
 {
 public:
@@ -655,6 +737,11 @@ void FboApiTests::init(void)
                             deleteTexCubeAttachedToNotBoundFboTest));
     addChild(new FboApiCase(m_context, "delete_rbo_attached_to_not_bound_fbo", "Delete renderbuffer attached to FBO",
                             deleteRboAttachedToNotBoundFboTest));
+
+    // Reallocation tests
+    addChild(new FboApiCase(m_context, "teximage2d_to_texstorage2d_unbound",
+                            "Redefine depth texture allocated via glTexImage2D via glTexStorage2D while FBO is unbound",
+                            texImage2DToTexStorage2DUnboundTest));
 }
 
 } // namespace Functional

@@ -4487,6 +4487,61 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test copying from a float16 texture (GL_RGBA16F) to a packed 16-bit texture (GL_RGBA4),
+// verifying that incompatible non-8-bit formats do not take the direct transfer path.
+TEST_P(CopyTextureTestES3, Float16ToRGBA4)
+{
+    ANGLE_SKIP_TEST_IF(!checkExtensions());
+
+    const GLColor32F kSrcColor(0.25f, 0.5f, 0.75f, 1.0f);
+    const std::array<GLColor32F, 4> kSrcData = {kSrcColor, kSrcColor, kSrcColor, kSrcColor};
+
+    GLTexture srcTex;
+    glBindTexture(GL_TEXTURE_2D, srcTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, 2, 2, 0, GL_RGBA, GL_FLOAT, kSrcData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture dstSubTex;
+    glBindTexture(GL_TEXTURE_2D, dstSubTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 2, 2, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glCopySubTextureCHROMIUM(srcTex, 0, GL_TEXTURE_2D, dstSubTex, 0, 0, 0, 0, 0, 2, 2, GL_FALSE,
+                             GL_FALSE, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture dstTex;
+    glBindTexture(GL_TEXTURE_2D, dstTex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glCopyTextureCHROMIUM(srcTex, 0, GL_TEXTURE_2D, dstTex, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4,
+                          GL_FALSE, GL_FALSE, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(program);
+    GLint textureLoc = glGetUniformLocation(program, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, textureLoc);
+    glUniform1i(textureLoc, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glActiveTexture(GL_TEXTURE0);
+
+    glBindTexture(GL_TEXTURE_2D, dstSubTex);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(64, 128, 191, 255), 17.0);
+
+    glBindTexture(GL_TEXTURE_2D, dstTex);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(64, 128, 191, 255), 17.0);
+}
+
 // Tests copying from NV12 IOSurface pbuffers created with EGL_IOSURFACE_ORIENTATION_ANGLE.  The
 // source is a non-square BT.601 video range surface with differently colored quadrants, so that
 // every orientation produces a distinct result.

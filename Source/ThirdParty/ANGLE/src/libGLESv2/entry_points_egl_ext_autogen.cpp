@@ -2006,9 +2006,9 @@ EGLBoolean EGLAPIENTRY EGL_DestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync)
         EGL_EVENT(DestroySyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)sync);
 
-        egl::SyncID syncPacked           = PackParam<egl::SyncID>(sync);
-        egl::ScopedSyncRef syncPackedRef = GetSyncIfValid(validDisplay, syncPacked);
-        egl::Sync *syncPackedObject      = syncPackedRef.get();
+        egl::SyncID syncPacked               = PackParam<egl::SyncID>(sync);
+        egl::ScopedSyncDestroy syncPackedRef = RemoveSyncIfValid(validDisplay, syncPacked);
+        egl::Sync *syncPackedObject          = syncPackedRef.get();
 
         {
             ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroySyncKHR, thread);
@@ -2021,12 +2021,12 @@ EGLBoolean EGLAPIENTRY EGL_DestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync)
             {
             }
 
-            returnValue = DestroySyncKHR(thread, validDisplay, syncPackedObject);
+            returnValue = DestroySyncKHR(thread, validDisplay, syncPackedRef.release());
         }
 
         ANGLE_CAPTURE_EGL(DestroySyncKHR, true, thread, dpyPacked, syncPacked, returnValue);
     }
-    egl::Display::GetCurrentThreadUnlockedTailCall()->run(&returnValue);
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 

@@ -1,7 +1,6 @@
 Name: xxHash
 URL: https://github.com/Cyan4973/xxHash
-Revision: e626a72bc2321cd320e953a0ccf1584cad60f363
-Version: 0.8.3
+Version: v0.8.4
 Update Mechanism: Manual
 License: BSD-2-Clause
 License File: src/LICENSE
@@ -10,3 +9,8 @@ Shipped: yes
 
 Description:
 Extremely fast non-cryptographic hash algorithm
+
+Update instructions:
+Update commit hashes in crowbar.txtpb, then run from
+this directory:
+crowbar build --no-dry-run ./

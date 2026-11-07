@@ -3129,97 +3129,92 @@ TEST_P(ProgramPipelineTest32, CreateProgramWithTransformFeedbackVarying)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
 
-    const char *kVS =
-        "#version 320 es\n"
-        "\n"
-        "#extension GL_EXT_shader_io_blocks : require\n"
-        "\n"
-        "precision highp float;\n"
+    const char *kVS = R"(#version 320 es
 
-        "out BLOCK_INOUT { vec4 value; } user_out;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position    = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "    user_out.value = vec4(4.0, 5.0, 6.0, 7.0);\n"
-        "}\n";
+#extension GL_EXT_shader_io_blocks : require
+
+precision highp float;
+
+out BLOCK_INOUT { vec4 value; } user_out;
+
+void main()
+{
+    gl_Position    = vec4(1.0, 0.0, 0.0, 1.0);
+    user_out.value = vec4(4.0, 5.0, 6.0, 7.0);
+})";
 
     // Fragment shader body
-    const char *kFS =
-        "#version 320 es\n"
-        "\n"
-        "#extension GL_EXT_shader_io_blocks : require\n"
-        "\n"
-        "precision highp float;\n"
-        "in BLOCK_INOUT { vec4 value; } user_in;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "}\n";
+    const char *kFS = R"(#version 320 es
+
+#extension GL_EXT_shader_io_blocks : require
+
+precision highp float;
+in BLOCK_INOUT { vec4 value; } user_in;
+
+void main()
+{
+})";
 
     // Geometry shader body
-    const char *kGS =
-        "#version 320 es\n"
-        "\n"
-        "#extension GL_EXT_geometry_shader : require\n"
-        "\n"
-        "layout(points)                   in;\n"
-        "layout(points, max_vertices = 1) out;\n"
-        "\n"
-        "precision highp float;\n"
-        "//${IN_PER_VERTEX_DECL_ARRAY}\n"
-        "//${OUT_PER_VERTEX_DECL}\n"
-        "in  BLOCK_INOUT { vec4 value; } user_in[];\n"
-        "out BLOCK_INOUT { vec4 value; } user_out;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "    user_out.value = vec4(1.0, 2.0, 3.0, 4.0);\n"
-        "    gl_Position    = vec4(0.0, 0.0, 0.0, 1.0);\n"
-        "\n"
-        "    EmitVertex();\n"
-        "}\n";
+    const char *kGS = R"(#version 320 es
+
+#extension GL_EXT_geometry_shader : require
+
+layout(points)                   in;
+layout(points, max_vertices = 1) out;
+
+precision highp float;
+//${IN_PER_VERTEX_DECL_ARRAY}
+//${OUT_PER_VERTEX_DECL}
+in  BLOCK_INOUT { vec4 value; } user_in[];
+out BLOCK_INOUT { vec4 value; } user_out;
+
+void main()
+{
+    user_out.value = vec4(1.0, 2.0, 3.0, 4.0);
+    gl_Position    = vec4(0.0, 0.0, 0.0, 1.0);
+
+    EmitVertex();
+})";
 
     // tessellation control shader body
-    const char *kTCS =
-        "#version 320 es\n"
-        "\n"
-        "#extension GL_EXT_tessellation_shader : require\n"
-        "#extension GL_EXT_shader_io_blocks : require\n"
-        "\n"
-        "layout (vertices=4) out;\n"
-        "\n"
-        "precision highp float;\n"
-        "in  BLOCK_INOUT { vec4 value; } user_in[];\n"
-        "out BLOCK_INOUT { vec4 value; } user_out[];\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "    gl_out   [gl_InvocationID].gl_Position = vec4(0.0, 0.0, 0.0, 1.0);\n"
-        "    user_out [gl_InvocationID].value       = vec4(2.0, 3.0, 4.0, 5.0);\n"
-        "\n"
-        "    gl_TessLevelOuter[0] = 1.0;\n"
-        "    gl_TessLevelOuter[1] = 1.0;\n"
-        "}\n";
+    const char *kTCS = R"(#version 320 es
+
+#extension GL_EXT_tessellation_shader : require
+#extension GL_EXT_shader_io_blocks : require
+
+layout (vertices=4) out;
+
+precision highp float;
+in  BLOCK_INOUT { vec4 value; } user_in[];
+out BLOCK_INOUT { vec4 value; } user_out[];
+
+void main()
+{
+    gl_out   [gl_InvocationID].gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    user_out [gl_InvocationID].value       = vec4(2.0, 3.0, 4.0, 5.0);
+
+    gl_TessLevelOuter[0] = 1.0;
+    gl_TessLevelOuter[1] = 1.0;
+})";
 
     // Tessellation evaluation shader
-    const char *kTES =
-        "#version 320 es\n"
-        "\n"
-        "#extension GL_EXT_tessellation_shader : require\n"
-        "#extension GL_EXT_shader_io_blocks : require\n"
-        "\n"
-        "layout (isolines, point_mode) in;\n"
-        "\n"
-        "precision highp float;\n"
-        "in  BLOCK_INOUT { vec4 value; } user_in[];\n"
-        "out BLOCK_INOUT { vec4 value; } user_out;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position     = gl_in[0].gl_Position;\n"
-        "    user_out.value = vec4(3.0, 4.0, 5.0, 6.0);\n"
-        "}\n";
+    const char *kTES           = R"(#version 320 es
+
+#extension GL_EXT_tessellation_shader : require
+#extension GL_EXT_shader_io_blocks : require
+
+layout (isolines, point_mode) in;
+
+precision highp float;
+in  BLOCK_INOUT { vec4 value; } user_in[];
+out BLOCK_INOUT { vec4 value; } user_out;
+
+void main()
+{
+    gl_Position     = gl_in[0].gl_Position;
+    user_out.value = vec4(3.0, 4.0, 5.0, 6.0);
+})";
     const GLchar *kVaryingName = "BLOCK_INOUT.value";
 
     GLuint fsProgram = createShaderProgram(GL_FRAGMENT_SHADER, kFS);

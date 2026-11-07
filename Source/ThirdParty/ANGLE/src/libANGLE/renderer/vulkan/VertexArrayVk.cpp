@@ -1771,6 +1771,9 @@ angle::Result VertexArrayVk::updateDefaultAttribs(ContextVk *contextVk,
 
         setDefaultPackedInput(contextVk, attribIndex, &mDefaultAttribFormatIDs[attribIndex]);
         setVertexInputAttribDescFormat(renderer, attribIndex, mDefaultAttribFormatIDs[attribIndex]);
+
+        // Ensure the offset is set to 0 for default attributes
+        mVertexInputAttribDescs[attribIndex].offset = 0;
     }
     mCurrentDefaultAttribsMask |= dirtyDefaultAttribsMask;
     mCurrentEmptyBufferMask &= ~dirtyDefaultAttribsMask;

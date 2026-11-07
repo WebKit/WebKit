@@ -97,10 +97,18 @@ enum class CommandID : uint16_t
     ResetEvent,
     ResetQueryPool,
     ResolveImage,
+    SetAlphaToCoverageEnable,
+    SetAlphaToOneEnable,
     SetBlendConstants,
+    SetColorBlendAdvanced,
+    SetColorBlendEnable,
+    SetColorBlendEquation,
+    SetColorWriteMask,
     SetCullMode,
     SetDepthBias,
     SetDepthBiasEnable,
+    SetDepthClampEnable,
+    SetDepthClipNegativeOneToOne,
     SetDepthCompareOp,
     SetDepthTestEnable,
     SetDepthWriteEnable,
@@ -109,9 +117,14 @@ enum class CommandID : uint16_t
     SetFrontFace,
     SetLineWidth,
     SetLogicOp,
+    SetLogicOpEnable,
+    SetPatchControlPoints,
+    SetPolygonMode,
     SetPrimitiveRestartEnable,
     SetPrimitiveTopology,
     SetRasterizerDiscardEnable,
+    SetRasterizationSamples,
+    SetSampleMask,
     SetScissor,
     SetStencilCompareMask,
     SetStencilOp,
@@ -614,6 +627,22 @@ struct ResolveImageParams
 };
 VERIFY_8_BYTE_ALIGNMENT(ResolveImageParams)
 
+struct SetAlphaToCoverageEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 alphaToCoverageEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetAlphaToCoverageEnableParams)
+
+struct SetAlphaToOneEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 alphaToOneEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetAlphaToOneEnableParams)
+
 struct SetBlendConstantsParams
 {
     CommandHeader header;
@@ -622,6 +651,41 @@ struct SetBlendConstantsParams
     std::array<float, 4> blendConstants;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetBlendConstantsParams)
+
+struct SetColorBlendAdvancedParams
+{
+    CommandHeader header;
+
+    VkBlendOp advancedBlendOp;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetColorBlendAdvancedParams)
+
+struct SetColorBlendEnableParams
+{
+    CommandHeader header;
+
+    uint32_t firstAttachment : 16;
+    uint32_t attachmentCount : 16;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetColorBlendEnableParams)
+
+struct SetColorBlendEquationParams
+{
+    CommandHeader header;
+
+    uint32_t firstAttachment : 16;
+    uint32_t attachmentCount : 16;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetColorBlendEquationParams)
+
+struct SetColorWriteMaskParams
+{
+    CommandHeader header;
+
+    uint32_t firstAttachment : 16;
+    uint32_t attachmentCount : 16;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetColorWriteMaskParams)
 
 struct SetCullModeParams
 {
@@ -648,6 +712,22 @@ struct SetDepthBiasEnableParams
     VkBool32 depthBiasEnable;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetDepthBiasEnableParams)
+
+struct SetDepthClampEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 depthClampEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetDepthClampEnableParams)
+
+struct SetDepthClipNegativeOneToOneParams
+{
+    CommandHeader header;
+
+    VkBool32 negativeOneToOne;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetDepthClipNegativeOneToOneParams)
 
 struct SetDepthCompareOpParams
 {
@@ -717,6 +797,30 @@ struct SetLogicOpParams
 };
 VERIFY_8_BYTE_ALIGNMENT(SetLogicOpParams)
 
+struct SetLogicOpEnableParams
+{
+    CommandHeader header;
+
+    VkBool32 logicOpEnable;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetLogicOpEnableParams)
+
+struct SetPatchControlPointsParams
+{
+    CommandHeader header;
+
+    uint32_t patchControlPoints;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetPatchControlPointsParams)
+
+struct SetPolygonModeParams
+{
+    CommandHeader header;
+
+    VkPolygonMode polygonMode;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetPolygonModeParams)
+
 struct SetPrimitiveRestartEnableParams
 {
     CommandHeader header;
@@ -740,6 +844,22 @@ struct SetRasterizerDiscardEnableParams
     VkBool32 rasterizerDiscardEnable;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetRasterizerDiscardEnableParams)
+
+struct SetRasterizationSamplesParams
+{
+    CommandHeader header;
+
+    VkSampleCountFlagBits rasterizationSamples;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetRasterizationSamplesParams)
+
+struct SetSampleMaskParams
+{
+    CommandHeader header;
+
+    VkSampleMask sampleMask;
+};
+VERIFY_8_BYTE_ALIGNMENT(SetSampleMaskParams)
 
 struct SetScissorParams
 {
@@ -1109,12 +1229,28 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                       uint32_t regionCount,
                       const VkImageResolve *regions);
 
+    void setAlphaToCoverageEnable(VkBool32 alphaToCoverageEnable);
+    void setAlphaToOneEnable(VkBool32 alphaToOneEnable);
     void setBlendConstants(const gl::ColorF &blendConstants);
+    void setColorBlendAdvanced(uint32_t firstAttachment,
+                               uint32_t attachmentCount,
+                               const VkColorBlendAdvancedEXT *colorBlendAdvanced);
+    void setColorBlendEnable(uint32_t firstAttachment,
+                             uint32_t attachmentCount,
+                             const VkBool32 *colorBlendEnables);
+    void setColorBlendEquation(uint32_t firstAttachment,
+                               uint32_t attachmentCount,
+                               const VkColorBlendEquationEXT *colorBlendEquations);
+    void setColorWriteMask(uint32_t firstAttachment,
+                           uint32_t attachmentCount,
+                           const VkColorComponentFlags *colorWriteMasks);
     void setCullMode(VkCullModeFlags cullMode);
     void setDepthBias(float depthBiasConstantFactor,
                       float depthBiasClamp,
                       float depthBiasSlopeFactor);
     void setDepthBiasEnable(VkBool32 depthBiasEnable);
+    void setDepthClampEnable(VkBool32 depthClampEnable);
+    void setDepthClipNegativeOneToOne(VkBool32 negativeOneToOne);
     void setDepthCompareOp(VkCompareOp depthCompareOp);
     void setDepthTestEnable(VkBool32 depthTestEnable);
     void setDepthWriteEnable(VkBool32 depthWriteEnable);
@@ -1124,9 +1260,14 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     void setFrontFace(VkFrontFace frontFace);
     void setLineWidth(float lineWidth);
     void setLogicOp(VkLogicOp logicOp);
+    void setLogicOpEnable(VkBool32 logicOpEnable);
+    void setPatchControlPoints(uint32_t patchControlPoints);
+    void setPolygonMode(VkPolygonMode polygonMode);
     void setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable);
     void setPrimitiveTopology(VkPrimitiveTopology primitiveTopology);
     void setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable);
+    void setRasterizationSamples(VkSampleCountFlagBits rasterizationSamples);
+    void setSampleMask(VkSampleCountFlagBits samples, const VkSampleMask *sampleMask);
     void setScissor(uint32_t firstScissor, uint32_t scissorCount, const VkRect2D *scissors);
     void setStencilCompareMask(uint32_t compareFrontMask, uint32_t compareBackMask);
     void setStencilOp(VkStencilFaceFlags faceMask,
@@ -2151,12 +2292,97 @@ ANGLE_INLINE void SecondaryCommandBuffer::resolveImage(const Image &srcImage,
     paramStruct->dstImageLayout     = dstImageLayout;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::setAlphaToCoverageEnable(VkBool32 alphaToCoverageEnable)
+{
+    SetAlphaToCoverageEnableParams *paramStruct =
+        initCommand<SetAlphaToCoverageEnableParams>(CommandID::SetAlphaToCoverageEnable);
+    paramStruct->alphaToCoverageEnable = alphaToCoverageEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setAlphaToOneEnable(VkBool32 alphaToOneEnable)
+{
+    SetAlphaToOneEnableParams *paramStruct =
+        initCommand<SetAlphaToOneEnableParams>(CommandID::SetAlphaToOneEnable);
+    paramStruct->alphaToOneEnable = alphaToOneEnable;
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::setBlendConstants(const gl::ColorF &blendConstants)
 {
     SetBlendConstantsParams *paramStruct =
         initCommand<SetBlendConstantsParams>(CommandID::SetBlendConstants);
     paramStruct->blendConstants = {blendConstants.red, blendConstants.green, blendConstants.blue,
                                    blendConstants.alpha};
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setColorBlendAdvanced(
+    uint32_t firstAttachment,
+    uint32_t attachmentCount,
+    const VkColorBlendAdvancedEXT *colorBlendAdvanced)
+{
+    // GL allows advanced blend only on 1 attachment, and that is attachment 0.
+    ASSERT(firstAttachment == 0);
+    ASSERT(attachmentCount == 1);
+    // The following are the default (unconfigurable) values in GL.  When state is static, ANGLE
+    // never includes VkPipelineColorBlendAdvancedStateCreateInfoEXT, and the spec says:
+    //
+    // > If this structure is not present, srcPremultiplied and dstPremultiplied are both considered
+    // > to be VK_TRUE, and blendOverlap is considered to be VK_BLEND_OVERLAP_UNCORRELATED_EXT.
+    //
+    // Also corresponding to static, clamp is not enabled.  The spec says in the Blend Operations
+    // section:
+    //
+    // > If the color attachment is floating-point, no clamping occurs.
+    ASSERT(colorBlendAdvanced[0].srcPremultiplied == VK_TRUE);
+    ASSERT(colorBlendAdvanced[0].dstPremultiplied == VK_TRUE);
+    ASSERT(colorBlendAdvanced[0].blendOverlap == VK_BLEND_OVERLAP_UNCORRELATED_EXT);
+    ASSERT(colorBlendAdvanced[0].clampResults == VK_FALSE);
+
+    SetColorBlendAdvancedParams *paramStruct =
+        initCommand<SetColorBlendAdvancedParams>(CommandID::SetColorBlendAdvanced);
+    paramStruct->advancedBlendOp = colorBlendAdvanced[0].advancedBlendOp;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setColorBlendEnable(uint32_t firstAttachment,
+                                                              uint32_t attachmentCount,
+                                                              const VkBool32 *colorBlendEnables)
+{
+    uint8_t *writePtr;
+    const ArrayParamSize blendEnableSize   = calculateArrayParameterSize<VkBool32>(attachmentCount);
+    SetColorBlendEnableParams *paramStruct = initCommand<SetColorBlendEnableParams>(
+        CommandID::SetColorBlendEnable, blendEnableSize.allocateBytes, &writePtr);
+    SetBitField(paramStruct->firstAttachment, firstAttachment);
+    SetBitField(paramStruct->attachmentCount, attachmentCount);
+    storeArrayParameter(writePtr, colorBlendEnables, blendEnableSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setColorBlendEquation(
+    uint32_t firstAttachment,
+    uint32_t attachmentCount,
+    const VkColorBlendEquationEXT *colorBlendEquation)
+{
+    uint8_t *writePtr;
+    const ArrayParamSize blendEquationSize =
+        calculateArrayParameterSize<VkColorBlendEquationEXT>(attachmentCount);
+    SetColorBlendEquationParams *paramStruct = initCommand<SetColorBlendEquationParams>(
+        CommandID::SetColorBlendEquation, blendEquationSize.allocateBytes, &writePtr);
+    SetBitField(paramStruct->firstAttachment, firstAttachment);
+    SetBitField(paramStruct->attachmentCount, attachmentCount);
+    storeArrayParameter(writePtr, colorBlendEquation, blendEquationSize);
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setColorWriteMask(
+    uint32_t firstAttachment,
+    uint32_t attachmentCount,
+    const VkColorComponentFlags *colorWriteMask)
+{
+    uint8_t *writePtr;
+    const ArrayParamSize writeMaskSize =
+        calculateArrayParameterSize<VkColorComponentFlags>(attachmentCount);
+    SetColorWriteMaskParams *paramStruct = initCommand<SetColorWriteMaskParams>(
+        CommandID::SetColorWriteMask, writeMaskSize.allocateBytes, &writePtr);
+    SetBitField(paramStruct->firstAttachment, firstAttachment);
+    SetBitField(paramStruct->attachmentCount, attachmentCount);
+    storeArrayParameter(writePtr, colorWriteMask, writeMaskSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setCullMode(VkCullModeFlags cullMode)
@@ -2180,6 +2406,20 @@ ANGLE_INLINE void SecondaryCommandBuffer::setDepthBiasEnable(VkBool32 depthBiasE
     SetDepthBiasEnableParams *paramStruct =
         initCommand<SetDepthBiasEnableParams>(CommandID::SetDepthBiasEnable);
     paramStruct->depthBiasEnable = depthBiasEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setDepthClampEnable(VkBool32 depthClampEnable)
+{
+    SetDepthClampEnableParams *paramStruct =
+        initCommand<SetDepthClampEnableParams>(CommandID::SetDepthClampEnable);
+    paramStruct->depthClampEnable = depthClampEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setDepthClipNegativeOneToOne(VkBool32 negativeOneToOne)
+{
+    SetDepthClipNegativeOneToOneParams *paramStruct =
+        initCommand<SetDepthClipNegativeOneToOneParams>(CommandID::SetDepthClipNegativeOneToOne);
+    paramStruct->negativeOneToOne = negativeOneToOne;
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setDepthCompareOp(VkCompareOp depthCompareOp)
@@ -2247,6 +2487,27 @@ ANGLE_INLINE void SecondaryCommandBuffer::setLogicOp(VkLogicOp logicOp)
     paramStruct->logicOp          = logicOp;
 }
 
+ANGLE_INLINE void SecondaryCommandBuffer::setLogicOpEnable(VkBool32 logicOpEnable)
+{
+    SetLogicOpEnableParams *paramStruct =
+        initCommand<SetLogicOpEnableParams>(CommandID::SetLogicOpEnable);
+    paramStruct->logicOpEnable = logicOpEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setPatchControlPoints(uint32_t patchControlPoints)
+{
+    SetPatchControlPointsParams *paramStruct =
+        initCommand<SetPatchControlPointsParams>(CommandID::SetPatchControlPoints);
+    paramStruct->patchControlPoints = patchControlPoints;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setPolygonMode(VkPolygonMode polygonMode)
+{
+    SetPolygonModeParams *paramStruct =
+        initCommand<SetPolygonModeParams>(CommandID::SetPolygonMode);
+    paramStruct->polygonMode = polygonMode;
+}
+
 ANGLE_INLINE void SecondaryCommandBuffer::setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable)
 {
     SetPrimitiveRestartEnableParams *paramStruct =
@@ -2268,6 +2529,30 @@ ANGLE_INLINE void SecondaryCommandBuffer::setRasterizerDiscardEnable(
     SetRasterizerDiscardEnableParams *paramStruct =
         initCommand<SetRasterizerDiscardEnableParams>(CommandID::SetRasterizerDiscardEnable);
     paramStruct->rasterizerDiscardEnable = rasterizerDiscardEnable;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setRasterizationSamples(
+    VkSampleCountFlagBits rasterizationSamples)
+{
+    SetRasterizationSamplesParams *paramStruct =
+        initCommand<SetRasterizationSamplesParams>(CommandID::SetRasterizationSamples);
+    paramStruct->rasterizationSamples = rasterizationSamples;
+}
+
+ANGLE_INLINE void SecondaryCommandBuffer::setSampleMask(VkSampleCountFlagBits samples,
+                                                        const VkSampleMask *sampleMask)
+{
+    // The maximum sample count that ANGLE exposes is 16.  The validation language around
+    // VK_DYNAMIC_STATE_SAMPLE_MASK_EXT state that:
+    //
+    // > ... the samples parameter in the last call to vkCmdSetSampleMaskEXT must be greater than or
+    // > equal to the rasterizationSamples ...
+    //
+    // So we can always use VK_SAMPLE_COUNT_16_BIT in the call to the driver.
+    ASSERT(samples == VK_SAMPLE_COUNT_16_BIT);
+
+    SetSampleMaskParams *paramStruct = initCommand<SetSampleMaskParams>(CommandID::SetSampleMask);
+    paramStruct->sampleMask          = sampleMask[0];
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setScissor(uint32_t firstScissor,

@@ -8,3 +8,9 @@
 
 // Flat shading (still failing March 16, 2022):
 42262093 VULKAN NVIDIA : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL
+
+// Too many iterations to finish inside the per-test limit on SwiftShader, where the case runs
+// on the CPU: 60.4s against the 60s limit on rotate90, versus about 10s on NVIDIA Vulkan. The
+// same two tests are already skipped in deqp_gles3_test_expectations.txt.
+575489396 SWIFTSHADER : dEQP-GLES3.functional.pbo.upload.split_upload_last_line = SKIP
+575489396 SWIFTSHADER : dEQP-GLES3.functional.pbo.upload.split_upload_last_pixel = SKIP

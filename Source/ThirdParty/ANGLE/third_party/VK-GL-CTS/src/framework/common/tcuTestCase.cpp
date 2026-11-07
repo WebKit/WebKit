@@ -24,9 +24,8 @@
 #include "tcuTestCase.hpp"
 #include "tcuCommandLine.hpp"
 
-#include "deString.h"
-
 #include <algorithm>
+#include <cstring>
 
 #if defined(DEQP_LOG_NODE_SOURCE)
 #include <stacktrace>
@@ -53,6 +52,7 @@ TestNode::TestNode(TestContext &testCtx, TestNodeType nodeType, const char *name
     : m_testCtx(testCtx)
     , m_name(name)
     , m_nodeType(nodeType)
+    , m_parent(nullptr)
     , m_children()
     , m_duplicateCheck(testCtx.getCommandLine().checkDuplicateCaseNames())
 {
@@ -63,6 +63,7 @@ TestNode::TestNode(TestContext &testCtx, TestNodeType nodeType, const char *name
     : m_testCtx(testCtx)
     , m_name(name)
     , m_nodeType(nodeType)
+    , m_parent(nullptr)
     , m_children()
     , m_duplicateCheck(testCtx.getCommandLine().checkDuplicateCaseNames())
 {
@@ -106,10 +107,10 @@ void TestNode::addChild(TestNode *node)
     // every consumer of the tree (case-list export, hierarchy iterator,
     // mustpass) see children in deterministic alphabetical order regardless
     // of the order test code calls addChild().
-    auto cmp = [](const TestNode *a, const TestNode *b) { return strcmp(a->getName(), b->getName()) < 0; };
+    auto cmp = [](const TestNode *a, const TestNode *b) { return std::strcmp(a->getName(), b->getName()) < 0; };
     auto pos = std::lower_bound(m_children.begin(), m_children.end(), node, cmp);
 
-    if (m_duplicateCheck && pos != m_children.end() && strcmp((*pos)->getName(), node->getName()) == 0)
+    if (m_duplicateCheck && pos != m_children.end() && std::strcmp((*pos)->getName(), node->getName()) == 0)
         throw tcu::InternalError(std::string("Test case with non-unique name '") + node->getName() +
                                  "' added to group '" + getName() + "'.");
 
@@ -145,6 +146,7 @@ void TestNode::addChild(TestNode *node)
     }
 #endif
     m_children.insert(pos, node);
+    node->m_parent = this;
 }
 
 void TestNode::init(void)
@@ -188,6 +190,12 @@ TestCaseGroup::~TestCaseGroup(void)
 {
 }
 
+void TestCaseGroup::deinit(void)
+{
+    TestNode::deinit();
+    m_sharedResource.reset();
+}
+
 TestCase::IterateResult TestCaseGroup::iterate(void)
 {
     DE_ASSERT(false); // should never be here!
@@ -216,10 +224,6 @@ TestCase::TestCase(TestContext &testCtx, TestNodeType nodeType, const char *name
     : TestCase(testCtx, nodeType, name)
 {
     DE_UNREF(description);
-}
-
-TestCase::~TestCase(void)
-{
 }
 
 } // namespace tcu

@@ -9,6 +9,10 @@
 // these functionalities
 42260109 : dEQP-GLES3.functional.flush_finish.* = SKIP
 
+// The following tests take too many iterations and frequently time out
+575489396 : dEQP-GLES3.functional.pbo.upload.split_upload_last_line = SKIP
+575489396 : dEQP-GLES3.functional.pbo.upload.split_upload_last_pixel = SKIP
+
 // TODO(jmadill): Figure out why these fail on the bots, but not locally.
 42260115 WIN D3D11 : dEQP-GLES3.functional.shaders.struct.local.dynamic_loop_struct_array_fragment = FAIL
 42260100 WIN D3D11 : dEQP-GLES3.functional.shaders.invariance.highp.loop_2 = FAIL
@@ -627,6 +631,7 @@
 523128541 PIXEL10 GLES : dEQP-GLES3.functional.ubo.random.all_shared_buffer.21 = FAIL
 523128541 PIXEL10 GLES : dEQP-GLES3.functional.ubo.random.all_shared_buffer.40 = FAIL
 523128541 PIXEL10 GLES : dEQP-GLES3.functional.ubo.random.nested_structs_arrays.9 = FAIL
+575549255 PIXEL10 GLES : dEQP-GLES3.functional.shaders.struct.local.complex_constructor_array_member_* = FAIL
 
 // Memory corruption
 565311403 PIXEL10 GLES : dEQP-GLES3.functional.texture.specification.texstorage2d.base_level.rgba8_*_level_3 = SKIP

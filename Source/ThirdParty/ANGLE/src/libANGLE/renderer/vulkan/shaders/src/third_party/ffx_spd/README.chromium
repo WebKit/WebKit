@@ -4,9 +4,9 @@ URL: https://github.com/GPUOpen-Effects/FidelityFX-SPD
 Version: 1.0
 Date: 2019-05-31
 Revision: 0e82a6f4f491aa18adde62edc3f5c4ed20d92627
-Update Mechanism: Manual
+Update Mechanism: Static.HardFork (https://crbug.com/576058959)
 License: MIT
-License File: LICENSE
+License File: src/LICENSE
 Security Critical: No
 Shipped: yes
 
@@ -15,3 +15,13 @@ A single-pass downsampler used to generate texture mipmaps.
 
 Local Modifications:
 None
+
+Update instructions:
+1. Change the commits in crowbar.txtpb and Version and Revision above,
+   then run from this directory:
+   crowbar build --no-dry-run ./
+2. The Vulkan internal shaders include src/ffx_a.h and src/ffx_spd.h.
+   Regenerate them from the ANGLE root:
+   scripts/run_code_generation.py
+   If the SPD callback API changed, adapt ../../GenerateMipmap.comp
+   first.

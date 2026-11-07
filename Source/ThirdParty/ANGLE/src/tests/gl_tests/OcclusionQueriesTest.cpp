@@ -1279,107 +1279,6 @@ TEST_P(OcclusionQueriesTestES3, OcclusionQueryDeleteAfterFailedBeginNoUAF)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::green);
 }
 
-// Test deleting a occlusion query while it is active.
-TEST_P(OcclusionQueriesTestES3, DeleteActiveOcclusionQueryLeavesValidState)
-{
-    GLuint queryId = 0;
-    glGenQueries(1, &queryId);
-    glBeginQuery(GL_ANY_SAMPLES_PASSED, queryId);
-    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
-    glEndQuery(GL_ANY_SAMPLES_PASSED);
-    ASSERT_GL_NO_ERROR();
-
-    GLuint queryResult = 0;
-    glGetQueryObjectuiv(queryId, GL_QUERY_RESULT, &queryResult);
-    ASSERT_GL_NO_ERROR();
-    EXPECT_EQ(queryResult, static_cast<GLuint>(GL_TRUE));
-
-    glBeginQuery(GL_ANY_SAMPLES_PASSED, queryId);
-    EXPECT_GL_NO_ERROR();
-
-    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
-    ASSERT_GL_NO_ERROR();
-
-    GLint activeQueryId = 0;
-    glGetQueryiv(GL_ANY_SAMPLES_PASSED, GL_CURRENT_QUERY, &activeQueryId);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(static_cast<GLuint>(activeQueryId), queryId);
-
-    glDeleteQueries(1, &queryId);
-    EXPECT_GL_NO_ERROR();
-
-    EXPECT_GL_FALSE(glIsQuery(queryId));
-
-    // NOTE: This is unspecified and confusing: what should the return value be
-    // if the query has been deleted? If 0, then it's confusing because EndQuery
-    // doesn't fail. If non-zero, how can it return deleted value?
-    // If EndQuery should fail and return should be 0?
-    GLint activeQueryAfterDelete = 0;
-    glGetQueryiv(GL_ANY_SAMPLES_PASSED, GL_CURRENT_QUERY, &activeQueryAfterDelete);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(static_cast<GLuint>(activeQueryAfterDelete), queryId);
-
-    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.8f);
-    EXPECT_GL_NO_ERROR();
-
-    glEndQuery(GL_ANY_SAMPLES_PASSED);
-    EXPECT_GL_NO_ERROR();  // NOTE: This is unspecified and confusing.
-    glEndQuery(GL_ANY_SAMPLES_PASSED);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-    EXPECT_GL_NO_ERROR();
-}
-
-// Test that a query spanning two render passes (broken by glClear) accumulates results correctly.
-// First draw fails depth test (no samples pass), then glClear breaks the render pass, then
-// second draw passes. Query result must be TRUE.
-TEST_P(OcclusionQueriesTestES3, QuerySpansRenderPassBreak)
-{
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::SimpleForPoints(), essl1_shaders::fs::Green());
-    glUseProgram(program);
-    glViewport(0, 0, getWindowWidth(), getWindowHeight());
-
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    // Draw with GL_NEVER does not pass samples.
-    glDepthFunc(GL_NEVER);
-
-    GLQuery query;
-    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
-    glDrawArrays(GL_POINTS, 0, 1);
-    glEndQuery(GL_ANY_SAMPLES_PASSED);
-    GLuint result = GL_FALSE;
-    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
-    EXPECT_GL_NO_ERROR();
-
-    // Test setup validation: draw with GL_NEVER does not pass samples.
-    EXPECT_GL_FALSE(result);
-    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::black);
-
-    // Test the sample accumulation across render passes:
-    // Draw with GL_NEVER -> no samples pass yet.
-    // Break render pass
-    // Draw with GL_ALWAYS -> samples pass.
-    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
-    glDrawArrays(GL_POINTS, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDepthFunc(GL_ALWAYS);
-    glDrawArrays(GL_POINTS, 0, 1);
-    glEndQuery(GL_ANY_SAMPLES_PASSED);
-    EXPECT_GL_NO_ERROR();
-
-    // Query should report TRUE because the second draw passed samples.
-    result = GL_FALSE;
-    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
-    EXPECT_GL_NO_ERROR();
-    EXPECT_GL_TRUE(result);
-
-    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::green);
-}
-
 // Test that deleting an FBO while a query result on that FBO is pending does not crash the driver
 // when calling glGetQueryObjectuiv.
 TEST_P(OcclusionQueriesTestES3, DeleteFBOWithPendingQuery)
@@ -1574,6 +1473,104 @@ TEST_P(OcclusionQueriesTest, ExcessiveNumberOfQueries)
             EXPECT_GL_FALSE(result) << " at query index " << i;
         }
     }
+}
+
+// Test deleting a occlusion query while it is active.
+TEST_P(OcclusionQueriesTestES3, DeleteActiveOcclusionQueryLeavesValidState)
+{
+    GLQuery query;
+    const GLuint queryId = query;
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, queryId);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint queryResult = 0;
+    glGetQueryObjectuiv(queryId, GL_QUERY_RESULT, &queryResult);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_EQ(queryResult, static_cast<GLuint>(GL_TRUE));
+
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, queryId);
+    EXPECT_GL_NO_ERROR();
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    GLint activeQueryId = 0;
+    glGetQueryiv(GL_ANY_SAMPLES_PASSED, GL_CURRENT_QUERY, &activeQueryId);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(static_cast<GLuint>(activeQueryId), queryId);
+
+    // Calls glDeleteQueries().
+    query.reset();
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_GL_FALSE(glIsQuery(queryId));
+
+    GLint activeQueryAfterDelete = 0;
+    glGetQueryiv(GL_ANY_SAMPLES_PASSED, GL_CURRENT_QUERY, &activeQueryAfterDelete);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(static_cast<GLuint>(activeQueryAfterDelete), queryId);
+
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.8f);
+    EXPECT_GL_NO_ERROR();
+
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    EXPECT_GL_NO_ERROR();
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that a query spanning two render passes (broken by glClear) accumulates results correctly.
+// First draw fails depth test (no samples pass), then glClear breaks the render pass, then
+// second draw passes. Query result must be TRUE.
+TEST_P(OcclusionQueriesTestES3, QuerySpansRenderPassBreak)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::SimpleForPoints10(), essl1_shaders::fs::Green());
+    glUseProgram(program);
+    glViewport(0, 0, getWindowWidth(), getWindowHeight());
+
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw with GL_NEVER does not pass samples.
+    glDepthFunc(GL_NEVER);
+
+    GLQuery query;
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    GLuint result = GL_FALSE;
+    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
+    EXPECT_GL_NO_ERROR();
+
+    // Test setup validation: draw with GL_NEVER does not pass samples.
+    EXPECT_GL_FALSE(result);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::black);
+
+    // Test the sample accumulation across render passes:
+    // Draw with GL_NEVER -> no samples pass yet.
+    // Mid-render-pass clear
+    // Draw with GL_ALWAYS -> samples pass.
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDepthFunc(GL_ALWAYS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    EXPECT_GL_NO_ERROR();
+
+    // Query should report TRUE because the second draw passed samples.
+    result = GL_FALSE;
+    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GL_TRUE(result);
+
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::green);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(OcclusionQueriesTest);

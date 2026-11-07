@@ -734,16 +734,6 @@ if (build_angle_perftests) {
     if (angle_build_mesa) {
       data_deps += [ "$angle_root/third_party/mesa" ]
     }
-
-    if (is_win || is_linux || is_chromeos) {
-      data_deps += [ "${angle_root}/third_party/glmark2:glmark2_angle" ]
-    }
-    if (is_win && target_cpu != "arm64") {
-      data_deps += [ "${angle_root}/third_party/glmark2:glmark2_wgl" ]
-    }
-    if ((is_linux || is_chromeos) && angle_use_x11) {
-      data_deps += [ "${angle_root}/third_party/glmark2:glmark2_glx" ]
-    }
   }
 }
 

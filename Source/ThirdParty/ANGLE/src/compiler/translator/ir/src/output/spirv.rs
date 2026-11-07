@@ -18,6 +18,14 @@ pub fn generate(ir: &mut IR, options: &compile::Options) {
         transform::run!(monomorphize_unsupported_functions, ir, &transform_options);
     }
 
+    if options.ensure_loop_forward_progress {
+        let transform_options = transform::ensure_loop_forward_progress::Options {
+            // SPIR-V does not support BuiltInOpCode::LoopForwardProgress
+            supports_loop_forward_progress_built_in: false,
+        };
+        transform::run!(ensure_loop_forward_progress, ir, &transform_options);
+    }
+
     transform::run!(rewrite_struct_samplers, ir);
     transform::run!(rewrite_array_of_array_of_opaque_uniforms, ir);
 

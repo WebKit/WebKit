@@ -967,6 +967,34 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
     {
         mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_LOGIC_OP);
     }
+    if (mRenderer->getFeatures().supportsPatchControlPointsDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_PATCH_CONTROL_POINTS);
+    }
+    if (mRenderer->getFeatures().supportsAlphaToCoverageEnableDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_ALPHA_TO_COVERAGE_ENABLE);
+    }
+    if (mRenderer->getFeatures().supportsAlphaToOneEnableDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_ALPHA_TO_ONE_ENABLE);
+    }
+    if (mRenderer->getFeatures().supportsDepthClampEnableDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_DEPTH_CLAMP_ENABLE);
+    }
+    if (mRenderer->getFeatures().supportsDepthClipNegativeOneToOneDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_DEPTH_CLIP_NEGATIVE_ONE_TO_ONE);
+    }
+    if (mRenderer->getFeatures().supportsLogicOpEnableDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_LOGIC_OP_ENABLE);
+    }
+    if (mRenderer->getFeatures().supportsPolygonModeDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_POLYGON_MODE);
+    }
     if (getFeatures().supportsFragmentShadingRate.enabled)
     {
         mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
@@ -1066,8 +1094,22 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
         &ContextVk::handleDirtyGraphicsDynamicDepthBiasEnable;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_LOGIC_OP] =
         &ContextVk::handleDirtyGraphicsDynamicLogicOp;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_PATCH_CONTROL_POINTS] =
+        &ContextVk::handleDirtyGraphicsDynamicPatchControlPoints;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_PRIMITIVE_RESTART_ENABLE] =
         &ContextVk::handleDirtyGraphicsDynamicPrimitiveRestartEnable;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_ALPHA_TO_COVERAGE_ENABLE] =
+        &ContextVk::handleDirtyGraphicsDynamicAlphaToCoverageEnable;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_ALPHA_TO_ONE_ENABLE] =
+        &ContextVk::handleDirtyGraphicsDynamicAlphaToOneEnable;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_DEPTH_CLAMP_ENABLE] =
+        &ContextVk::handleDirtyGraphicsDynamicDepthClampEnable;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_DEPTH_CLIP_NEGATIVE_ONE_TO_ONE] =
+        &ContextVk::handleDirtyGraphicsDynamicDepthClipNegativeOneToOne;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_LOGIC_OP_ENABLE] =
+        &ContextVk::handleDirtyGraphicsDynamicLogicOpEnable;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_POLYGON_MODE] =
+        &ContextVk::handleDirtyGraphicsDynamicPolygonMode;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE] =
         &ContextVk::handleDirtyGraphicsDynamicFragmentShadingRate;
 
@@ -1194,6 +1236,16 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
     {
         mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_POLYGON_OFFSET_FILL_ENABLED);
     }
+    // Dynamic state in VK_EXT_extended_dynamic_state3:
+    if (mRenderer->getFeatures().supportsAlphaToCoverageEnableDynamicState.enabled)
+    {
+        mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED);
+    }
+    if (mRenderer->getFeatures().supportsAlphaToOneEnableDynamicState.enabled)
+    {
+        mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_ONE);
+    }
+    // Dynamic state in VK_EXT_vertex_input_dynamic_state
     if (getFeatures().supportsVertexInputDynamicState.enabled)
     {
         mPipelineDirtyBitsMask.reset(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
@@ -3482,11 +3534,70 @@ angle::Result ContextVk::handleDirtyGraphicsDynamicLogicOp(DirtyBits::Iterator *
     return angle::Result::Continue;
 }
 
+angle::Result ContextVk::handleDirtyGraphicsDynamicPatchControlPoints(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    mRenderPassCommandBuffer->setPatchControlPoints(mState.getPatchVertices());
+    return angle::Result::Continue;
+}
+
 angle::Result ContextVk::handleDirtyGraphicsDynamicPrimitiveRestartEnable(
     DirtyBits::Iterator *dirtyBitsIterator,
     DirtyBits dirtyBitMask)
 {
     mRenderPassCommandBuffer->setPrimitiveRestartEnable(mState.isPrimitiveRestartEnabled());
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDynamicAlphaToCoverageEnable(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    const uint32_t rasterizationSamples = getDrawFramebuffer()->getSamples();
+    mRenderPassCommandBuffer->setAlphaToCoverageEnable(mState.isSampleAlphaToCoverageEnabled() &&
+                                                       rasterizationSamples > 1);
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDynamicAlphaToOneEnable(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    mRenderPassCommandBuffer->setAlphaToOneEnable(mState.isMultisamplingEnabled() &&
+                                                  mState.isSampleAlphaToOneEnabled());
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDynamicDepthClampEnable(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    mRenderPassCommandBuffer->setDepthClampEnable(mState.isDepthClampEnabled());
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDynamicDepthClipNegativeOneToOne(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    mRenderPassCommandBuffer->setDepthClipNegativeOneToOne(!mState.isClipDepthModeZeroToOne());
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDynamicLogicOpEnable(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    mRenderPassCommandBuffer->setLogicOpEnable(mState.isLogicOpEnabled());
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDynamicPolygonMode(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    mRenderPassCommandBuffer->setPolygonMode(gl_vk::GetPolygonMode(mState.getPolygonMode()));
     return angle::Result::Continue;
 }
 
@@ -4814,12 +4925,19 @@ void ContextVk::updateSampleMaskWithRasterizationSamples(const uint32_t rasteriz
 
 void ContextVk::updateAlphaToCoverageWithRasterizationSamples(const uint32_t rasterizationSamples)
 {
-    // The following assumes that supported sample counts for multisampled
-    // rendering does not include 1. This is true in the Vulkan backend,
-    // where 1x multisampling is disallowed.
-    mGraphicsPipelineDesc->updateAlphaToCoverageEnable(
-        &mGraphicsPipelineTransition,
-        mState.isSampleAlphaToCoverageEnabled() && rasterizationSamples > 1);
+    if (mRenderer->getFeatures().supportsAlphaToCoverageEnableDynamicState.enabled)
+    {
+        mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_ALPHA_TO_COVERAGE_ENABLE);
+    }
+    else
+    {
+        // The following assumes that supported sample counts for multisampled
+        // rendering does not include 1. This is true in the Vulkan backend,
+        // where 1x multisampling is disallowed.
+        mGraphicsPipelineDesc->updateAlphaToCoverageEnable(
+            &mGraphicsPipelineTransition,
+            mState.isSampleAlphaToCoverageEnabled() && rasterizationSamples > 1);
+    }
 }
 
 void ContextVk::updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples)
@@ -5458,11 +5576,6 @@ angle::Result ContextVk::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED:
                 updateAlphaToCoverageWithRasterizationSamples(drawFramebufferVk->getSamples());
                 updateStencilWriteWorkaround();
-
-                static_assert(gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE >
-                                  gl::state::DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED,
-                              "Dirty bit order");
-                iter.setLaterBit(gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE);
                 break;
             case gl::state::DIRTY_BIT_SAMPLE_COVERAGE_ENABLED:
                 updateSampleMaskWithRasterizationSamples(drawFramebufferVk->getSamples());
@@ -5902,9 +6015,16 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 // This is part of EXT_multisample_compatibility, and requires the alphaToOne Vulkan
                 // feature.
                 // http://anglebug.com/42266123
-                mGraphicsPipelineDesc->updateAlphaToOneEnable(
-                    &mGraphicsPipelineTransition,
-                    glState.isMultisamplingEnabled() && glState.isSampleAlphaToOneEnabled());
+                if (mRenderer->getFeatures().supportsAlphaToOneEnableDynamicState.enabled)
+                {
+                    mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_ALPHA_TO_ONE_ENABLE);
+                }
+                else
+                {
+                    mGraphicsPipelineDesc->updateAlphaToOneEnable(
+                        &mGraphicsPipelineTransition,
+                        glState.isMultisamplingEnabled() && glState.isSampleAlphaToOneEnabled());
+                }
                 break;
             case gl::state::DIRTY_BIT_SAMPLE_SHADING:
                 updateSampleShadingWithRasterizationSamples(drawFramebufferVk->getSamples());
@@ -5927,12 +6047,20 @@ angle::Result ContextVk::syncState(const gl::Context *context,
 
                 // If VK_EXT_depth_clip_control is not enabled, there's nothing needed
                 // for depth correction for EXT_clip_control.
-                // glState will be used to toggle control path of depth correction code
-                // in SPIR-V transform options.
+                // glState will be used to control depth correction code in SPIR-V via driver
+                // uniforms.
                 if (getFeatures().supportsDepthClipControl.enabled)
                 {
-                    mGraphicsPipelineDesc->updateDepthClipControl(
-                        &mGraphicsPipelineTransition, !glState.isClipDepthModeZeroToOne());
+                    if (mRenderer->getFeatures()
+                            .supportsDepthClipNegativeOneToOneDynamicState.enabled)
+                    {
+                        mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_DEPTH_CLIP_NEGATIVE_ONE_TO_ONE);
+                    }
+                    else
+                    {
+                        mGraphicsPipelineDesc->updateDepthClipControl(
+                            &mGraphicsPipelineTransition, !glState.isClipDepthModeZeroToOne());
+                    }
                 }
                 else
                 {
@@ -5956,16 +6084,29 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                             mGraphicsDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED:
-                            // TODO(https://anglebug.com/42266182): Use EDS3
-                            mGraphicsPipelineDesc->updateDepthClampEnabled(
-                                &mGraphicsPipelineTransition, glState.isDepthClampEnabled());
+                            if (mRenderer->getFeatures()
+                                    .supportsDepthClampEnableDynamicState.enabled)
+                            {
+                                mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_DEPTH_CLAMP_ENABLE);
+                            }
+                            else
+                            {
+                                mGraphicsPipelineDesc->updateDepthClampEnabled(
+                                    &mGraphicsPipelineTransition, glState.isDepthClampEnabled());
+                            }
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_MIPMAP_GENERATION_HINT:
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_POLYGON_MODE:
-                            // TODO(https://anglebug.com/42266182): Use EDS3
-                            mGraphicsPipelineDesc->updatePolygonMode(&mGraphicsPipelineTransition,
-                                                                     glState.getPolygonMode());
+                            if (mRenderer->getFeatures().supportsPolygonModeDynamicState.enabled)
+                            {
+                                mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_POLYGON_MODE);
+                            }
+                            else
+                            {
+                                mGraphicsPipelineDesc->updatePolygonMode(
+                                    &mGraphicsPipelineTransition, glState.getPolygonMode());
+                            }
                             // When polygon mode is changed, depth bias might need to be toggled.
                             static_assert(
                                 gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED >
@@ -5989,8 +6130,15 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                         case gl::state::EXTENDED_DIRTY_BIT_SHADER_DERIVATIVE_HINT:
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED:
-                            mGraphicsPipelineDesc->updateLogicOpEnabled(
-                                &mGraphicsPipelineTransition, glState.isLogicOpEnabled());
+                            if (mRenderer->getFeatures().supportsLogicOpEnableDynamicState.enabled)
+                            {
+                                mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_LOGIC_OP_ENABLE);
+                            }
+                            else
+                            {
+                                mGraphicsPipelineDesc->updateLogicOpEnabled(
+                                    &mGraphicsPipelineTransition, glState.isLogicOpEnabled());
+                            }
                             break;
                         case gl::state::EXTENDED_DIRTY_BIT_LOGIC_OP:
                             if (mRenderer->getFeatures().supportsLogicOpDynamicState.enabled)
@@ -6025,8 +6173,15 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 break;
             }
             case gl::state::DIRTY_BIT_PATCH_VERTICES:
-                mGraphicsPipelineDesc->updatePatchVertices(&mGraphicsPipelineTransition,
-                                                           glState.getPatchVertices());
+                if (mRenderer->getFeatures().supportsPatchControlPointsDynamicState.enabled)
+                {
+                    mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_PATCH_CONTROL_POINTS);
+                }
+                else
+                {
+                    mGraphicsPipelineDesc->updatePatchVertices(&mGraphicsPipelineTransition,
+                                                               glState.getPatchVertices());
+                }
                 break;
             default:
                 UNREACHABLE();
@@ -6443,7 +6598,7 @@ angle::Result ContextVk::onFramebufferChange(FramebufferVk *framebufferVk, gl::C
 {
     // This is called from FramebufferVk::syncState.  Skip these updates if the framebuffer being
     // synced is the read framebuffer (which is not equal the draw framebuffer).
-    if (framebufferVk != vk::GetImpl(mState.getDrawFramebuffer()))
+    if (framebufferVk != getDrawFramebuffer())
     {
         return angle::Result::Continue;
     }
@@ -8290,7 +8445,22 @@ angle::Result ContextVk::flushAndSubmitOutsideRenderPassCommands(QueueSubmitReas
     }
     ASSERT(QueueSerialsHaveDifferentIndexOrSmaller(mLastSubmittedQueueSerial,
                                                    mLastFlushedQueueSerial));
-    return submitCommands(nullptr, nullptr, reason);
+
+    vk::ImageHelper *imageWithTileMemory = mImageWithTileMemory;
+
+    ANGLE_TRY(submitCommands(nullptr, nullptr, reason));
+
+    // Continue to use the image whose allocation is in the tile memory.  The submission of the
+    // outside render pass commands has no bearing on the render pass's use of this image.  Tile
+    // memory binding is per command buffer, so rebind it for the still open render pass.
+    if (imageWithTileMemory != nullptr && mRenderPassCommands->started() &&
+        mRenderPassCommands->usesImage(*imageWithTileMemory))
+    {
+        ASSERT(!imageWithTileMemory->isVkImageContentDefined());
+        addImageWithTileMemory(imageWithTileMemory);
+    }
+
+    return angle::Result::Continue;
 }
 
 angle::Result ContextVk::flushOutsideRenderPassCommands()

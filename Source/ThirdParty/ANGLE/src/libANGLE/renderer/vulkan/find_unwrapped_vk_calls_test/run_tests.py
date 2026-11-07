@@ -58,7 +58,7 @@ class EndToEndTest(unittest.TestCase):
         Compares complete stdout, stderr, and returncode against expected values.
         """
 
-        volk_h_path = os.path.join("src", "third_party", "volk", "volk.h")
+        volk_h_path = os.path.join("src", "third_party", "volk", "src", "volk.h")
         test_files_dir_plus_sep = os.path.join(TEST_FILES_DIR, "")
 
         expected_stdout = f"""\

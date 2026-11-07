@@ -283,8 +283,9 @@ TEST_P(StateChangeTestES3, FramebufferIncompleteDepthStencilAttachment)
     ASSERT_GL_NO_ERROR();
 }
 
-// Test that enabling GL_SAMPLE_ALPHA_TO_COVERAGE doesn't generate errors.
-TEST_P(StateChangeTest, AlphaToCoverageEnable)
+// Test that enabling GL_SAMPLE_ALPHA_TO_COVERAGE doesn't generate errors when the framebuffer is
+// single-sampled.
+TEST_P(StateChangeTest, AlphaToCoverageEnableSingleSample)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
 
@@ -10615,6 +10616,774 @@ void main()
 
     EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::green);
     ASSERT_GL_NO_ERROR();
+}
+
+// Tests state change for GL_COLOR_LOGIC_OP enable.
+TEST_P(StateChangeTestES3, LogicOpEnable)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_logic_op"));
+
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+void main()
+{
+    // gl_VertexID    x    y
+    //      0        -1   -1
+    //      1         1   -1
+    //      2        -1    1
+    //      3         1    1
+    int bit0 = gl_VertexID & 1;
+    int bit1 = gl_VertexID >> 1;
+    gl_Position = vec4(bit0 * 2 - 1, bit1 * 2 - 1, gl_VertexID % 2 == 0 ? -1 : 1, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 colorOut;
+uniform vec4 color;
+void main()
+{
+    colorOut = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, "color");
+    ASSERT_NE(-1, colorLoc);
+
+    glClearColor(0, 0, 0, 1);
+    glClearDepthf(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    auto unorm8 = [](uint8_t value) { return (value + 0.1f) / 255.0f; };
+
+    constexpr uint8_t kInitRed   = 0xA4;
+    constexpr uint8_t kInitGreen = 0x1E;
+    constexpr uint8_t kInitBlue  = 0x97;
+    constexpr uint8_t kInitAlpha = 0x65;
+
+    // Initialize with logic op disabled, but with logic op set to XOR.
+    glDisable(GL_COLOR_LOGIC_OP_ANGLE);
+    glLogicOpANGLE(GL_LOGIC_OP_XOR_ANGLE);
+
+    glUniform4f(colorLoc, unorm8(kInitRed), unorm8(kInitGreen), unorm8(kInitBlue),
+                unorm8(kInitAlpha));
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    // Enable logic op
+    glEnable(GL_COLOR_LOGIC_OP_ANGLE);
+
+    constexpr uint8_t kXorRed   = 0x4C;
+    constexpr uint8_t kXorGreen = 0x7D;
+    constexpr uint8_t kXorBlue  = 0xB3;
+    constexpr uint8_t kXorAlpha = 0x0F;
+
+    glUniform4f(colorLoc, unorm8(kXorRed), unorm8(kXorGreen), unorm8(kXorBlue), unorm8(kXorAlpha));
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    // Disable logic op and draw again, logic op should be ignored.  To be able to verify the
+    // previous operations, mask out a few channels.
+    glDisable(GL_COLOR_LOGIC_OP_ANGLE);
+    glColorMask(GL_TRUE, GL_TRUE, GL_FALSE, GL_FALSE);
+
+    constexpr uint8_t kOverwriteRed   = 0x17;
+    constexpr uint8_t kOverwriteGreen = 0xCC;
+    constexpr uint8_t kIgnoredBlue    = 0x38;
+    constexpr uint8_t kIgnoredAlpha   = 0x9A;
+
+    glUniform4f(colorLoc, unorm8(kOverwriteRed), unorm8(kOverwriteGreen), unorm8(kIgnoredBlue),
+                unorm8(kIgnoredAlpha));
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Verify results
+    const GLColor kExpect(
+        static_cast<uint8_t>(kOverwriteRed), static_cast<uint8_t>(kOverwriteGreen),
+        static_cast<uint8_t>(kInitBlue ^ kXorBlue), static_cast<uint8_t>(kInitAlpha ^ kXorAlpha));
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, kExpect);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Tests state change for glPolygonMode.
+TEST_P(StateChangeTestES3, PolygonMode)
+{
+    const bool hasNV    = EnsureGLExtensionEnabled("GL_NV_polygon_mode");
+    const bool hasANGLE = EnsureGLExtensionEnabled("GL_ANGLE_polygon_mode");
+    ANGLE_SKIP_TEST_IF(!hasNV && !hasANGLE);
+
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-0.99, -0.99); break;
+        case 1: pos = vec2(3.0, -0.99); break;
+        case 2: pos = vec2(-0.99, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+    gl_PointSize = 1.0;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 colorOut;
+uniform vec4 color;
+void main()
+{
+    colorOut = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint colorLoc = glGetUniformLocation(program, "color");
+    ASSERT_NE(-1, colorLoc);
+
+    // Draw three times with blending on:
+    //
+    // * Red with polygon mode line
+    // * Green with polygon mode fill
+    // * Blue with polygon mode point
+    //
+    // The bottom-left corner would have all three colors.  The bottom and left edges have only the
+    // line and fill colors. The rest of the framebuffer contains only the fill color.
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Red edges
+    if (hasNV)
+    {
+        glPolygonModeNV(GL_FRONT_AND_BACK, GL_FILL_NV);
+    }
+    else
+    {
+        glPolygonModeANGLE(GL_FRONT_AND_BACK, GL_FILL_ANGLE);
+    }
+    glUniform4f(colorLoc, 0, 1, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Green fill
+    if (hasNV)
+    {
+        glPolygonModeNV(GL_FRONT_AND_BACK, GL_LINE_NV);
+    }
+    else
+    {
+        glPolygonModeANGLE(GL_FRONT_AND_BACK, GL_LINE_ANGLE);
+    }
+    glUniform4f(colorLoc, 1, 0, 0, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Blue vertices.  This is not supported by the ANGLE extension.
+    if (hasNV)
+    {
+        glPolygonModeNV(GL_FRONT_AND_BACK, GL_POINT_NV);
+        glUniform4f(colorLoc, 0, 0, 1, 1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Verify results
+    // Bottom-left corner, blend of all three draws
+    EXPECT_PIXEL_COLOR_EQ(0, 0, hasNV ? GLColor::white : GLColor::yellow);
+    // Bottom and left edges, blend of line and fill modes
+    EXPECT_PIXEL_RECT_EQ(1, 0, w - 1, 1, GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(0, 1, 1, h - 1, GLColor::yellow);
+    // Otherwise, shaded by fill only
+    EXPECT_PIXEL_RECT_EQ(1, 1, w - 1, h - 1, GLColor::green);
+}
+
+// Tests state change for GL_PATCH_VERTICES and glPatchParameteri.
+TEST_P(StateChangeTestES31, PatchVertices)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+
+    // With each tessellated draw call, draw a whole quad.  The first draw call draws one patch of
+    // size 4, while the second draw call draws one patch of size 3.  Given the corners of the
+    // quad:
+    //
+    //     1        3
+    //      +------+
+    //      |      |
+    //      |      |
+    //      |      |
+    //      +------+
+    //     0        2
+    //
+    // The vertex shader produces vertices in the following order: 0, 1, 2, 3.  With a patch size of
+    // 4, the 4 vertices form the quad.  With a patch size of 3, only half of the quad is generated
+    // as a triangle.  The tessellation control shader always outputs 4 vertices, but uses
+    // gl_PatchVerticesIn to know when it should emulate vertex 3.
+    //
+    // Each draw will emit a different color based on gl_PatchVerticesIn.  The output of the draw
+    // calls are blended and validated in the end.
+    const char *kVS = R"(#version 310 es
+precision highp float;
+void main()
+{
+    // gl_VertexID    x    y
+    //      0        -1   -1
+    //      1         1   -1
+    //      2        -1    1
+    //      3         1    1
+    int bit0 = gl_VertexID & 1;
+    int bit1 = gl_VertexID >> 1;
+    gl_Position = vec4(bit0 * 2 - 1, bit1 * 2 - 1, 0, 1);
+})";
+
+    const char *kTCS = R"(#version 310 es
+
+#extension GL_EXT_tessellation_shader : require
+
+layout(vertices = 4) out;
+
+precision highp float;
+out vec4 color[];
+
+void main()
+{
+    bool is3VertexPatch = gl_PatchVerticesIn == 3;
+    bool is4VertexPatch = gl_PatchVerticesIn == 4;
+    if (gl_InvocationID < 3 || is4VertexPatch)
+    {
+        gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    }
+    else
+    {
+        // Derive the vertex 3 from vertex 0 if this is a 3-vertex patch
+        gl_out[gl_InvocationID].gl_Position = vec4(-gl_in[0].gl_Position.xy, gl_in[0].gl_Position.zw);
+    }
+    color[gl_InvocationID] = vec4(is3VertexPatch, is4VertexPatch, !is3VertexPatch && !is4VertexPatch, 1);
+
+    if (gl_InvocationID == 0)
+    {
+        gl_TessLevelOuter[0] = 4.0;
+        gl_TessLevelOuter[1] = 4.0;
+        gl_TessLevelOuter[2] = 4.0;
+        gl_TessLevelOuter[3] = 4.0;
+
+        gl_TessLevelInner[0] = 4.0;
+        gl_TessLevelInner[1] = 4.0;
+    }
+})";
+
+    const char *kTES = R"(#version 310 es
+
+#extension GL_EXT_tessellation_shader : require
+
+layout(quads, equal_spacing, ccw) in;
+
+precision highp float;
+in vec4 color[];
+out vec4 colorFS;
+
+void main()
+{
+    vec4 bottom = mix(gl_in[0].gl_Position, gl_in[1].gl_Position, gl_TessCoord.x);
+    vec4 top = mix(gl_in[2].gl_Position, gl_in[3].gl_Position, gl_TessCoord.x);
+
+    gl_Position = mix(bottom, top, gl_TessCoord.y);
+    colorFS = color[0];
+})";
+
+    const char *kFS = R"(#version 310 es
+
+precision highp float;
+in vec4 colorFS;
+out vec4 color;
+
+void main()
+{
+    color = colorFS;
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, kTCS, kTES, kFS);
+    glUseProgram(program);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Draw with a 4-vertex patch, which should result in fullscreen green
+    glPatchParameteri(GL_PATCH_VERTICES, 4);
+    glDrawArrays(GL_PATCHES, 0, 4);
+
+    // Draw again with 3-vertex patch, which should result in fullscreen red
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+    glDrawArrays(GL_PATCHES, 0, 3);
+
+    // Verify results
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Tests state change for GL_SAMPLE_ALPHA_TO_COVERAGE.
+TEST_P(StateChangeTestES31, AlphaToCoverageEnable)
+{
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform vec4 colorIn;
+out vec4 colorOut;
+void main()
+{
+    colorOut = colorIn;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint colorLoc = glGetUniformLocation(program, "colorIn");
+    ASSERT_NE(-1, colorLoc);
+
+    // Setup a multisampled framebuffer.  Draw four times with additive blending:
+    //
+    // * Transparent red with alpha to coverage disabled: Adds red
+    // * Transparent green with alpha to coverage enabled: No op, because alpha is zero
+    // * Transparent blue with alpha to coverage disabled: Adds blue
+    // * Black with alpha to coverage enabled: Adds alpha, because alpha is one
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    constexpr uint32_t kWidth  = 89;
+    constexpr uint32_t kHeight = 91;
+
+    GLTexture msaaTexture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTexture);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           msaaTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Transparent red
+    glUniform4f(colorLoc, 1.0, 0.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent green
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+    glUniform4f(colorLoc, 0.0, 1.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Transparent blue
+    glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+    glUniform4f(colorLoc, 0.0, 0.0, 1.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Black
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+    glUniform4f(colorLoc, 0.0, 0.0, 0.0, 1.0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Resolve and verify the results.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::magenta);
+}
+
+// Tests state change for GL_SAMPLE_ALPHA_TO_ONE_EXT.
+TEST_P(StateChangeTestES31, AlphaToOneEnable)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_multisample_compatibility"));
+
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform vec4 colorIn;
+out vec4 colorOut;
+void main()
+{
+    colorOut = colorIn;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint colorLoc = glGetUniformLocation(program, "colorIn");
+    ASSERT_NE(-1, colorLoc);
+
+    // Setup a multisampled framebuffer.  Draw three times with alpha blend, where dst uses GL_ONE
+    // (i.e. the existing framebuffer color is added) and src uses GL_SRC_ALPHA (i.e. the draw color
+    // is multiplied by alpha):
+    //
+    // * Half-transparent red with alpha to one disabled: Adds half-red
+    // * Half-transparent green with alpha to one enabled: Adds green
+    // * Half-transparent blue with alpha to one disabled: Adds half-blue
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    constexpr uint32_t kWidth  = 89;
+    constexpr uint32_t kHeight = 91;
+
+    GLTexture msaaTexture;
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msaaTexture);
+    glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kWidth, kHeight, false);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
+                           msaaTexture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    // Half-transparent red
+    glUniform4f(colorLoc, 1.0, 0.0, 0.0, 0.5);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Half-transparent green
+    glEnable(GL_SAMPLE_ALPHA_TO_ONE_EXT);
+    glUniform4f(colorLoc, 0.0, 1.0, 0.0, 0.5);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Half-transparent blue
+    glDisable(GL_SAMPLE_ALPHA_TO_ONE_EXT);
+    glUniform4f(colorLoc, 0.0, 0.0, 1.0, 0.5);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Resolve and verify the results.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 255, 127, 255), 1);
+    EXPECT_PIXEL_COLOR_NEAR(kWidth - 1, kHeight - 1, GLColor(127, 255, 127, 255), 1);
+}
+
+// Tests state change for GL_DEPTH_CLAMP_EXT.
+TEST_P(StateChangeTestES3, DepthClamp)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_depth_clamp"));
+
+    constexpr char kVS[] = R"(#version 300 es
+precision mediump float;
+uniform vec2 corner;
+uniform float depth;
+void main()
+{
+    vec2 pos = vec2(0.0);
+    // Draw to a corner as such with a given depth:
+    //
+    //            +
+    //            | \
+    //            |   \
+    //      +-----+-----+
+    //      |     |     | \
+    //      |     |     |   \
+    //      |     +-----+-----+
+    //      |           |
+    //      |           |
+    //      +-----------+
+    //
+    switch (gl_VertexID) {
+        case 0: pos = vec2(0.0, 0.0); break;
+        case 1: pos = vec2(corner.x * 2.0, 0.0); break;
+        case 2: pos = vec2(0.0, corner.y * 2.0); break;
+    };
+    gl_Position = vec4(pos, 2.0 * depth - 1.0, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    color = vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint cornerLoc = glGetUniformLocation(program, "corner");
+    const GLint depthLoc  = glGetUniformLocation(program, "depth");
+    ASSERT_NE(-1, cornerLoc);
+    ASSERT_NE(-1, depthLoc);
+
+    // Set up the near and far planes to 0.25 and 0.75.  Draw four times:
+    //
+    // * Top right corner closer-than-near, depth clamp disabled: no depth write
+    // * Top left corner closer-than-near, depth clamp enabled: depth clamped to near
+    // * Bottom right corner farther-than-far, depth clamp disabled: no depth write
+    // * Bottom left corner farther-than-far, depth clamp enabled: depth clamped to far
+    //
+
+    const float kNear  = 0.25;
+    const float kClear = 0.6;
+    const float kFar   = 0.75;
+    glDepthRangef(kNear, kFar);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_ALWAYS);
+
+    glClearColor(0, 1, 0, 1);
+    glClearDepthf(kClear);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Top right, closer than near
+    glUniform2f(cornerLoc, 1.0, 1.0);
+    glUniform1f(depthLoc, -0.1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Top left, closer than near
+    glEnable(GL_DEPTH_CLAMP_EXT);
+    glUniform2f(cornerLoc, -1.0, 1.0);
+    glUniform1f(depthLoc, -0.1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Bottom right, farther than far
+    glDisable(GL_DEPTH_CLAMP_EXT);
+    glUniform2f(cornerLoc, 1.0, -1.0);
+    glUniform1f(depthLoc, 1.1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Bottom left, farther than far
+    glEnable(GL_DEPTH_CLAMP_EXT);
+    glUniform2f(cornerLoc, -1.0, -1.0);
+    glUniform1f(depthLoc, 1.1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // The right half is clipped, the left half is clamped.
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w - w / 2 - 1, h, GLColor::green);
+
+    // Verify depth:
+    //
+    // * Right half is not written to and retains the clear value
+    // * Top left is clamped to the near value
+    // * Bottom left is clamped to the far value
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_GREATER);
+    glDepthRangef(0, 1);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    // Depth slightly above near should only draw to the top left.
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 2 * kNear - 1 + 0.01f);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 2 * kNear - 1 - 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h / 2 - 1, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2 + 1, w / 2 - 1, h - h / 2 - 1, GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w - w / 2 - 1, h, GLColor::transparentBlack);
+
+    // Depth slightly above clear value should draw to the right side.
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 2 * kClear - 1 + 0.01f);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 2 * kClear - 1 - 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h / 2 - 1, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w - w / 2 - 1, h, GLColor::blue);
+
+    // Depth slightly above far value should draw to the bottom left.
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 2 * kFar - 1 + 0.01f);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 2 * kFar - 1 - 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h / 2 - 1, GLColor::blue);
+}
+
+// Tests state change for glClipControlEXT.
+TEST_P(StateChangeTestES3, ClipControl)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clip_control"));
+
+    constexpr char kVS[] = R"(#version 300 es
+precision mediump float;
+uniform vec2 corner;
+uniform float depth;
+void main()
+{
+    vec2 pos = vec2(0.0);
+    // Draw to a corner as such with a given depth:
+    //
+    //            +
+    //            | \
+    //            |   \
+    //      +-----+-----+
+    //      |     |     | \
+    //      |     |     |   \
+    //      |     +-----+-----+
+    //      |           |
+    //      |           |
+    //      +-----------+
+    //
+    switch (gl_VertexID) {
+        case 0: pos = vec2(0.0, 0.0); break;
+        case 1: pos = vec2(corner.x * 2.0, 0.0); break;
+        case 2: pos = vec2(0.0, corner.y * 2.0); break;
+    };
+    gl_Position = vec4(pos, depth, 1.0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    color = vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    const GLint cornerLoc = glGetUniformLocation(program, "corner");
+    const GLint depthLoc  = glGetUniformLocation(program, "depth");
+    ASSERT_NE(-1, cornerLoc);
+    ASSERT_NE(-1, depthLoc);
+
+    // Draw four times:
+    //
+    // * Top right corner, lower-left origin, [-1, 1] depth: Top right, depth output (D - 1)/2
+    // * Top left corner, lower-left origin, [0, 1] depth: Top left, depth output D
+    // * Top right corner, top-left origin, [-1, 1] depth: Bottom right, depth output (D - 1)/2
+    // * Top left corner, top-left origin, [0, 1] depth: Bottom left, depth output D
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_ALWAYS);
+
+    const float kD1 = -0.8;  // Writes to depth as 0.1
+    const float kD2 = 0.3;   // Writes to depth as 0.3
+    const float kD3 = 0.2;   // Writes to depth as 0.6
+    const float kD4 = 0.85;  // Writes to depth as 0.85
+
+    glClearColor(0, 1, 0, 1);
+    glClearDepthf(0.5);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Top right corner, lower-left origin, [-1, 1] depth
+    glUniform2f(cornerLoc, 1.0, 1.0);
+    glUniform1f(depthLoc, kD1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Top left corner, lower-left origin, [0, 1] depth
+    glClipControlEXT(GL_LOWER_LEFT_EXT, GL_ZERO_TO_ONE_EXT);
+    glUniform2f(cornerLoc, -1.0, 1.0);
+    glUniform1f(depthLoc, kD2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Top right corner, top-left origin, [-1, 1] depth
+    glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+    glUniform2f(cornerLoc, 1.0, 1.0);
+    glUniform1f(depthLoc, kD3);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Top left corner, top-left origin, [0, 1] depth
+    glClipControlEXT(GL_UPPER_LEFT_EXT, GL_ZERO_TO_ONE_EXT);
+    glUniform2f(cornerLoc, -1.0, 1.0);
+    glUniform1f(depthLoc, kD4);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::red);
+
+    // Verify depth for each corner
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_GREATER);
+    glDepthRangef(0, 1);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    // Depth slightly above D1 should only draw to the top right.
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), kD1 + 0.01f);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), kD1 - 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h / 2 - 1, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2 + 1, w / 2 - 1, h - h / 2 - 1, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w - w / 2 - 1, h / 2 - 1, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, h / 2 + 1, w - w / 2 - 1, h - h / 2 - 1, GLColor::blue);
+
+    // Depth slightly above D2 should only draw to the top left.
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 2 * kD2 - 1 + 0.01f);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 2 * kD2 - 1 - 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h / 2 - 1, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2 + 1, w / 2 - 1, h - h / 2 - 1, GLColor::blue);
+
+    // Depth slightly above D3 should only draw to the bottom right.
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), kD3 + 0.01f);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), kD3 - 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h / 2 - 1, GLColor::transparentBlack);
+    EXPECT_PIXEL_RECT_EQ(w / 2 + 1, 0, w - w / 2 - 1, h / 2 - 1, GLColor::blue);
+
+    // Depth slightly above D4 should only draw to the bottom left.
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 2 * kD4 - 1 + 0.01f);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 2 * kD4 - 1 - 0.01f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w / 2 - 1, h / 2 - 1, GLColor::blue);
 }
 
 // Test for a bug with the VK_EXT_graphics_pipeline_library implementation in a scenario such as

@@ -2267,11 +2267,18 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             internal_name = param_name + "Packed"
             internal_type = packed_enums[param_name]
             if api == apis.EGL and param_name == sync_raw_param_name:
-                packed_gl_enum_conversions += [
-                    f"\n        egl::SyncID {internal_name} = PackParam<egl::SyncID>({param_name});\n"
-                    f"        egl::ScopedSyncRef {internal_name}Ref = GetSyncIfValid(validDisplay, {internal_name});\n"
-                    f"        egl::Sync *{internal_name}Object = {internal_name}Ref.get();"
-                ]
+                if cmd_name in ["eglDestroySync", "eglDestroySyncKHR"]:
+                    packed_gl_enum_conversions += [
+                        f"\n        egl::SyncID {internal_name} = PackParam<egl::SyncID>({param_name});\n"
+                        f"        egl::ScopedSyncDestroy {internal_name}Ref = RemoveSyncIfValid(validDisplay, {internal_name});\n"
+                        f"        egl::Sync *{internal_name}Object = {internal_name}Ref.get();"
+                    ]
+                else:
+                    packed_gl_enum_conversions += [
+                        f"\n        egl::SyncID {internal_name} = PackParam<egl::SyncID>({param_name});\n"
+                        f"        egl::ScopedSyncRef {internal_name}Ref = GetSyncIfValid(validDisplay, {internal_name});\n"
+                        f"        egl::Sync *{internal_name}Object = {internal_name}Ref.get();"
+                    ]
             elif api == apis.EGL and param_name in surface_raw_param_names:
                 if cmd_name in ["eglDestroySurface", "eglAcquireExternalContextANGLE"]:
                     packed_gl_enum_conversions += [
@@ -2437,9 +2444,15 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                 "validDisplay" if p == dpy_param else p for p in internal_stub_params
             ]
         if sync_param:
-            internal_stub_params = [
-                f"{sync_param}Object" if p == sync_param else p for p in internal_stub_params
-            ]
+            if cmd_name in ["eglDestroySync", "eglDestroySyncKHR"]:
+                internal_stub_params = [
+                    f"{sync_param}Ref.release()" if p == sync_param else p
+                    for p in internal_stub_params
+                ]
+            else:
+                internal_stub_params = [
+                    f"{sync_param}Object" if p == sync_param else p for p in internal_stub_params
+                ]
         if surface_params:
             internal_stub_params = [
                 f"{p}Object" if p in surface_params else p for p in internal_stub_params
@@ -3849,8 +3862,6 @@ def get_preamble(api, cmd_name, params):
 def get_unlocked_tail_call(api, cmd_name):
     # Only the following can generate tail calls:
     #
-    # - eglReleaseThread -> May destroy
-    #   VkSurfaceKHR in tail call
     # - eglCreateWindowSurface and eglCreatePlatformWindowSurface[EXT] -> May
     #   destroy VkSurfaceKHR in tail call if surface initialization fails
     #
@@ -3870,7 +3881,7 @@ def get_unlocked_tail_call(api, cmd_name):
     # - glCompileShader, glShaderBinary, glLinkProgram -> May perform the compilation /
     #   link in tail call
     #
-    # - eglCreateSync, eglCreateImage, eglDestroySync, eglDestroyImage,
+    # - eglCreateSync, eglCreateImage,
     #   eglGetCompositorTimingANDROID, eglGetFrameTimestampsANDROID -> Calls
     #   native EGL function in tail call
     #
@@ -3878,7 +3889,7 @@ def get_unlocked_tail_call(api, cmd_name):
     #   the current Window Surface is in the single buffer mode.
     #
     if (cmd_name in [
-            'eglReleaseThread', 'eglCreateWindowSurface', 'eglCreatePlatformWindowSurface',
+            'eglCreateWindowSurface', 'eglCreatePlatformWindowSurface',
             'eglCreatePlatformWindowSurfaceEXT', 'eglPrepareSwapBuffersANGLE', 'glFinishFenceNV',
             'glCompileShader', 'glLinkProgram', 'glShaderBinary', 'glFlush', 'glFinish'
     ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
@@ -3896,8 +3907,6 @@ def get_unlocked_tail_call(api, cmd_name):
             'eglCreateImage',
             'eglCreateSyncKHR',
             'eglCreateSync',
-            'eglDestroySyncKHR',
-            'eglDestroySync',
             'eglGetCompositorTimingANDROID',
             'eglGetFrameTimestampsANDROID',
             'eglSwapBuffers',

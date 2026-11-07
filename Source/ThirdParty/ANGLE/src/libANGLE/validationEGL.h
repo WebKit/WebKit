@@ -37,6 +37,7 @@ class Image;
 class Stream;
 class Surface;
 class Sync;
+class ScopedSyncDestroy;
 class Thread;
 class LabeledObject;
 
@@ -83,6 +84,7 @@ const gl::Context *GetContextIfValid(const ThreadSafeDisplay *display, gl::Conte
 gl::Context *GetContextIfValid(ThreadSafeDisplay *display, gl::ContextID contextID);
 const Device *GetDeviceIfValid(const Device *device);
 ScopedSyncRef GetSyncIfValid(const ThreadSafeDisplay *display, SyncID sync);
+ScopedSyncDestroy RemoveSyncIfValid(ThreadSafeDisplay *display, SyncID sync);
 const LabeledObject *GetLabeledObjectIfValid(Thread *thread,
                                              const Display *display,
                                              ObjectType objectType,

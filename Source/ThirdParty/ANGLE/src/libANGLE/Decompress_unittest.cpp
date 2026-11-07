@@ -14,7 +14,51 @@ namespace angle
 {
 namespace
 {
-class DecompressTest : public ::testing::Test
+enum class Format
+{
+    Zlib,
+    Zstd,
+};
+
+bool Compress(Format format, const std::vector<uint8_t> &data, MemoryBuffer *compressedOut)
+{
+    switch (format)
+    {
+        case Format::Zlib:
+            return CompressBlob(data.size(), data.data(), compressedOut);
+#if defined(ANGLE_HAS_ZSTD)
+        case Format::Zstd:
+            return CompressBlobZstd(data.size(), data.data(), compressedOut);
+#endif
+        default:
+            UNREACHABLE();
+            return false;
+    }
+}
+
+bool Decompress(Format format,
+                const MemoryBuffer &compressed,
+                size_t compressedSize,
+                size_t maxUncompressedDataSize,
+                MemoryBuffer *uncompressedOut)
+{
+    switch (format)
+    {
+        case Format::Zlib:
+            return DecompressBlob(compressed.data(), compressedSize, maxUncompressedDataSize,
+                                  uncompressedOut);
+#if defined(ANGLE_HAS_ZSTD)
+        case Format::Zstd:
+            return DecompressBlobZstd(compressed.data(), compressedSize, maxUncompressedDataSize,
+                                      uncompressedOut);
+#endif
+        default:
+            UNREACHABLE();
+            return false;
+    }
+}
+
+class DecompressTest : public ::testing::TestWithParam<Format>
 {
   protected:
     void SetUp() override
@@ -27,7 +71,7 @@ class DecompressTest : public ::testing::Test
             mTestData[i] = static_cast<uint8_t>(i);
         }
 
-        ASSERT_TRUE(CompressBlob(mTestData.size(), mTestData.data(), &mCompressedData));
+        ASSERT_TRUE(Compress(GetParam(), mTestData, &mCompressedData));
     }
 
     void setCompressedDataLastDWord(uint32_t value)
@@ -40,8 +84,8 @@ class DecompressTest : public ::testing::Test
 
     bool decompress(size_t compressedSize, size_t maxUncompressedDataSize)
     {
-        return DecompressBlob(mCompressedData.data(), compressedSize, maxUncompressedDataSize,
-                              &mUncompressedData);
+        return Decompress(GetParam(), mCompressedData, compressedSize, maxUncompressedDataSize,
+                          &mUncompressedData);
     }
 
     bool checkUncompressedData()
@@ -57,20 +101,20 @@ class DecompressTest : public ::testing::Test
 };
 
 // Tests that decompressing full data has no errors.
-TEST_F(DecompressTest, FullData)
+TEST_P(DecompressTest, FullData)
 {
     EXPECT_TRUE(decompress(mCompressedData.size(), mTestData.size()));
     EXPECT_TRUE(checkUncompressedData());
 }
 
 // Tests expected failure if |maxUncompressedDataSize| is less than actual uncompressed size.
-TEST_F(DecompressTest, InsufficientMaxUncompressedDataSize)
+TEST_P(DecompressTest, InsufficientMaxUncompressedDataSize)
 {
     EXPECT_FALSE(decompress(mCompressedData.size(), mTestData.size() - 1));
 }
 
 // Tests expected failure if try to decompress partial compressed data.
-TEST_F(DecompressTest, UnexpectedPartialData)
+TEST_P(DecompressTest, UnexpectedPartialData)
 {
     // Use this to avoid |maxUncompressedDataSize| affecting the test.
     constexpr size_t kMaxUncompressedDataSize = std::numeric_limits<size_t>::max();
@@ -79,7 +123,7 @@ TEST_F(DecompressTest, UnexpectedPartialData)
 }
 
 // Tests expected failure if try to decompress corrupted data.
-TEST_F(DecompressTest, CorruptedData)
+TEST_P(DecompressTest, CorruptedData)
 {
     // Corrupt the compressed data.
     const size_t corruptIndex = mCompressedData.size() / 2;
@@ -89,8 +133,14 @@ TEST_F(DecompressTest, CorruptedData)
 }
 
 // Tests expected failures if try to decompress data with the corrupted last dword.
-TEST_F(DecompressTest, CorruptedLastDWord)
+TEST_P(DecompressTest, CorruptedLastDWord)
 {
+    // This is zlib's trailer.  zstd ends with its checksum, which CorruptedData covers.
+    if (GetParam() != Format::Zlib)
+    {
+        GTEST_SKIP();
+    }
+
     // Last dword stores decompressed data size and not the actual compressed data. This dword must
     // match the decompressed size. Decompress should fail if it is not the case.
 
@@ -114,6 +164,28 @@ TEST_F(DecompressTest, CorruptedLastDWord)
     EXPECT_TRUE(decompress(mCompressedData.size(), kMaxUncompressedDataSize));
     EXPECT_TRUE(checkUncompressedData());
 }
+
+std::string FormatName(const ::testing::TestParamInfo<Format> &info)
+{
+    switch (info.param)
+    {
+        case Format::Zlib:
+            return "Zlib";
+        case Format::Zstd:
+            return "Zstd";
+        default:
+            UNREACHABLE();
+            return "";
+    }
+}
+
+#if defined(ANGLE_HAS_ZSTD)
+const auto kFormats = ::testing::Values(Format::Zlib, Format::Zstd);
+#else
+const auto kFormats = ::testing::Values(Format::Zlib);
+#endif
+
+INSTANTIATE_TEST_SUITE_P(Formats, DecompressTest, kFormats, FormatName);
 
 }  // anonymous namespace
 }  // namespace angle

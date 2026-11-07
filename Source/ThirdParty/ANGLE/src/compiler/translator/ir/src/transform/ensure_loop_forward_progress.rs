@@ -172,14 +172,30 @@ fn matches_finite_loop_condition(ir_meta: &IRMeta, block: &Block) -> Option<Vari
             return None;
         }
 
-        // If the type is uint and the condition is >=, it might be |>= 0| which is always true;
-        // don't consider that a finite loop.  Only |>= 0| and |>= variable_that_could_be_zero| may
+        // If the type is uint and the condition is >=, it might be `>= 0` which is always true;
+        // don't consider that a finite loop.  Only `>= 0` and `>= variable_that_could_be_zero` may
         // lead to infinite loop, but all uint with >= is considered infinite loop for simplicity.
-        if matches!(type_info, Type::Scalar(BasicType::Uint))
-            && matches!(
-                ir_meta.get_instruction(op_result).op,
-                OpCode::Binary(BinaryOpCode::GreaterThanEqual, ..)
-            )
+        //
+        // While signed int overflow is undefined behavior, `>= INT_MIN` would also be
+        // unconditionally true even if the compiler makes signed int overflow well-defined.
+        // Using >= in loops is uncommon, so any >= use is considered a potential infinite loop
+        // for simplicity.
+        if matches!(
+            ir_meta.get_instruction(op_result).op,
+            OpCode::Binary(BinaryOpCode::GreaterThanEqual, ..)
+        ) {
+            return None;
+        }
+
+        // If the condition is <=, it might be `<= UINT_MAX` or `<= INT_MAX` for signed ints.
+        // However, `for` loops with <= are likely common, so we try to avoid considering them as
+        // infinite loop unnecessarily.  For simplicity, if a variable is used or any
+        // unrealistically large constant, consider it a potential infinite loop.
+        if matches!(
+            ir_meta.get_instruction(op_result).op,
+            OpCode::Binary(BinaryOpCode::LessThanEqual, ..)
+        ) && let Id::Constant(comparator_constant) = comparator
+            && ir_meta.get_constant(comparator_constant).value.get_index() > 1_000_000
         {
             return None;
         }

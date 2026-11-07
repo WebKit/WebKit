@@ -40,6 +40,7 @@ namespace Android
 class Platform : public tcu::Platform, private eglu::Platform, private glu::Platform, private vk::Platform
 {
 public:
+    Platform(void);
     Platform(NativeActivity &activity, ANativeWindow *window = nullptr);
     Platform(JavaVM *vm, jobject context = nullptr, ANativeWindow *window = nullptr);
     virtual ~Platform(void);
@@ -91,5 +92,7 @@ private:
 
 } // namespace Android
 } // namespace tcu
+
+tcu::Platform *createPlatform(void);
 
 #endif // _TCUANDROIDPLATFORM_HPP

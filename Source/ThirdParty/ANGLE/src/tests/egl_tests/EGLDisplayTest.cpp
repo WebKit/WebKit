@@ -46,13 +46,16 @@ class EGLDisplayTest : public ANGLETest<>
         return context;
     }
 
-    EGLSurface createSurface(EGLDisplay display, EGLConfig config)
+    EGLSurface createPBufferSurface(EGLDisplay display, EGLConfig config)
     {
-        const EGLint attribs[] = {EGL_WIDTH, 64, EGL_HEIGHT, 64, EGL_NONE};
+        const EGLint attribs[] = {EGL_WIDTH, kDefaultPBufferSize, EGL_HEIGHT, kDefaultPBufferSize,
+                                  EGL_NONE};
         EGLSurface surface     = eglCreatePbufferSurface(display, config, attribs);
         EXPECT_NE(surface, EGL_NO_SURFACE);
         return surface;
     }
+
+    static constexpr EGLint kDefaultPBufferSize = 64;
 };
 
 class EGLDisplayTestES3 : public EGLDisplayTest
@@ -100,6 +103,10 @@ TEST_P(EGLDisplayTest, InitializeMultipleTimesInDifferentThreads)
     {
         thread.join();
     }
+
+    // Properly clean up so it won't affect next test
+    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    EXPECT_EGL_TRUE(eglTerminate(display) != EGL_FALSE);
 }
 
 // Test that calling eglTerminate() in parallel in multiple threads works
@@ -127,6 +134,9 @@ TEST_P(EGLDisplayTest, InitializeTerminateInitialize)
     EXPECT_EGL_TRUE(eglInitialize(display, nullptr, nullptr) != EGL_FALSE);
     EXPECT_EGL_TRUE(eglTerminate(display) != EGL_FALSE);
     EXPECT_EGL_TRUE(eglInitialize(display, nullptr, nullptr) != EGL_FALSE);
+
+    // Properly clean up so it won't affect next test
+    EXPECT_EGL_TRUE(eglTerminate(display) != EGL_FALSE);
 }
 
 // Tests that an EGLDisplay can be re-initialized after it was used to draw into a window surface.
@@ -182,7 +192,7 @@ TEST_P(EGLDisplayTest, ContextLeakAfterTerminate)
 
     EGLConfig config   = chooseConfig(display);
     EGLContext context = createContext(display, config);
-    EGLSurface surface = createSurface(display, config);
+    EGLSurface surface = createPBufferSurface(display, config);
 
     // Make "context" current.
     EXPECT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context));
@@ -200,6 +210,90 @@ TEST_P(EGLDisplayTest, ContextLeakAfterTerminate)
     EGLint val;
     EXPECT_EGL_FALSE(eglQueryContext(display, context, EGL_CONTEXT_CLIENT_TYPE, &val));
     EXPECT_EQ(eglGetError(), EGL_NOT_INITIALIZED);
+}
+
+// Tests that releasing the current context with eglMakeCurrent(dpy, EGL_NO_SURFACE,
+// EGL_NO_SURFACE, EGL_NO_CONTEXT) concurrently with eglTerminate(dpy) on another thread does not
+// race with display termination or leave the display unterminated.
+TEST_P(EGLDisplayTest, ReleaseCurrentContextConcurrentWithTerminate)
+{
+    EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+                             GetParam().getRenderer(),
+                             EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,
+                             GetParam().getDeviceType(),
+                             EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+                             static_cast<EGLAttrib>(GetPbufferOnlyDefaultPlatformType()),
+                             EGL_NONE};
+
+    constexpr int kIterations = 20;
+
+    for (int i = 0; i < kIterations; ++i)
+    {
+        EGLDisplay display = eglGetPlatformDisplay(
+            GetEglPlatform(), reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+        ASSERT_NE(display, EGL_NO_DISPLAY);
+
+        EGLContext context = EGL_NO_CONTEXT;
+        EGLSurface surface = EGL_NO_SURFACE;
+        std::atomic<bool> contextReady{false};
+
+        std::thread contextThread([&]() {
+            ASSERT_EGL_TRUE(eglInitialize(display, nullptr, nullptr));
+
+            EGLConfig config      = chooseConfig(display);
+            GLint maxPBufferWidth = 0;
+            EXPECT_EGL_TRUE(
+                eglGetConfigAttrib(display, config, EGL_MAX_PBUFFER_WIDTH, &maxPBufferWidth));
+            if (maxPBufferWidth < kDefaultPBufferSize)
+            {
+                contextReady.store(true, std::memory_order_release);
+                return;
+            }
+
+            context = createContext(display, config);
+            surface = createPBufferSurface(display, config);
+
+            EXPECT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context));
+            if (i % 2 == 1)
+            {
+                EXPECT_EGL_TRUE(eglDestroyContext(display, context));
+            }
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            // Whether context is destroyed or not, it should not produce a GL error.
+            EXPECT_GL_NO_ERROR();
+
+            contextReady.store(true, std::memory_order_release);
+
+            // Poll eglQuerySurface until eglTerminate sets kTerminatingBit on the display and waits
+            // in waitUntilUnreferenced(1).
+            EGLint width = 0;
+            while (eglQuerySurface(display, surface, EGL_WIDTH, &width) == EGL_TRUE)
+            {
+            }
+
+            EXPECT_EGL_TRUE(
+                eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        });
+
+        std::thread terminateThread([&]() {
+            while (!contextReady.load(std::memory_order_acquire))
+            {
+                std::this_thread::yield();
+            }
+            EXPECT_EGL_TRUE(eglTerminate(display));
+        });
+
+        contextThread.join();
+        terminateThread.join();
+
+        // Both eglTerminate and eglMakeCurrent(EGL_NO_CONTEXT) have completed, so the display
+        // must be fully terminated.
+        EGLint val = 0;
+        EXPECT_EGL_FALSE(eglQueryContext(display, context, EGL_CONTEXT_CLIENT_TYPE, &val));
+        EXPECT_EQ(eglGetError(), EGL_NOT_INITIALIZED);
+    }
 }
 
 // Tests that eglMakeCurrent with bad display pointer fails but doesn't crash.

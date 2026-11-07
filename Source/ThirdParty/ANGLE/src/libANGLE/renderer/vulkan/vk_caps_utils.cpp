@@ -575,9 +575,7 @@ void Renderer::ensureCapsInitialized() const
     // glDisable(GL_MULTISAMPLE) don't fail.  This is not actually implemented in Vulkan.  However,
     // no CTS tests actually test this extension.  GL_SAMPLE_ALPHA_TO_ONE requires the Vulkan
     // alphaToOne feature.
-    mNativeExtensions.multisampleCompatibilityEXT =
-        mPhysicalDeviceFeatures.alphaToOne ||
-        mFeatures.exposeNonConformantExtensionsAndVersions.enabled;
+    mNativeExtensions.multisampleCompatibilityEXT = mPhysicalDeviceFeatures.alphaToOne == VK_TRUE;
 
     // GL_KHR_blend_equation_advanced.  According to the spec, only color attachment zero can be
     // used with advanced blend:

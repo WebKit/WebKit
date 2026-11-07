@@ -273,3 +273,11 @@
 328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
 328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.*cube_array* = SKIP
 328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.gather.basic.cube* = SKIP
+
+// Adreno 702 (not on the ANGLE CI): RelaxedPrecision uint OpAtomicOr operand is sign-extended
+573853134 QUALCOMM VULKAN ANDROID : dEQP-GLES31.functional.compute.shared_var.atomic.or.mediump_uint = FAIL
+573853134 QUALCOMM VULKAN ANDROID : dEQP-GLES31.functional.ssbo.atomic.or.mediump_uint = FAIL
+
+// Adreno 702 (not on the ANGLE CI): advanced blend applied twice to shared-edge samples with MSAA
+573852917 QUALCOMM VULKAN ANDROID : dEQP-GLES31.functional.blend_equation_advanced.basic.colorburn = FAIL
+573852917 QUALCOMM VULKAN ANDROID : dEQP-GLES31.functional.blend_equation_advanced.msaa.colorburn = FAIL

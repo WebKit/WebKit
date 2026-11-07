@@ -88,6 +88,11 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
     {
         return nullptr;
     }
+    // Loop index must be compared with a constant or uniform or similar read-only variable.
+    if (!IsReadOnlyExpr(*binCond->getRight()))
+    {
+        return nullptr;
+    }
     switch (binCond->getOp())
     {
         case EOpEqual:
@@ -96,30 +101,27 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
         case EOpGreaterThan:
             break;
         case EOpLessThanEqual:
-        case EOpGreaterThanEqual:
         {
-            // `variable <= numeric_limits<..>::max()` and `variable >= numeric_limits<...>::min()`
-            // are never satisfied. These loops are infinite.
-            const TConstantUnion *bound = binCond->getRight()->getConstantValue();
-            if (bound == nullptr)
+            // If the condition is <=, it might be |<= UINT_MAX| or |<= INT_MAX| for signed ints.
+            // However, |for| loops with <= are likely common, so we try to avoid considering them
+            // as infinite loop unnecessarily.  For simplicity, if a variable is used or any
+            // unrealistically large constant, consider it a potential infinite loop.
+            constexpr int32_t kLoopLimit     = 1'000'000;
+            const TConstantUnion *comparator = binCond->getRight()->getConstantValue();
+            if (comparator == nullptr)
             {
-                // We cannot prove a non-const variable is min/max. However, the MSL compiler
-                // might be able to prove it, and thus analyze the loop as infinite.
                 return nullptr;
             }
-            const bool checkMax = binCond->getOp() == EOpLessThanEqual;
-            switch (bound->getType())
+            switch (comparator->getType())
             {
                 case EbtInt:
-                    if (bound->getIConst() == (checkMax ? std::numeric_limits<int>::max()
-                                                        : std::numeric_limits<int>::min()))
+                    if (comparator->getIConst() < 0 || comparator->getIConst() >= kLoopLimit)
                     {
                         return nullptr;
                     }
                     break;
                 case EbtUInt:
-                    if (bound->getUConst() ==
-                        (checkMax ? std::numeric_limits<unsigned int>::max() : 0u))
+                    if (comparator->getUConst() >= kLoopLimit)
                     {
                         return nullptr;
                     }
@@ -129,13 +131,19 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
             }
             break;
         }
+        case EOpGreaterThanEqual:
+            // If the type is uint and the condition is >=, it might be |>= 0| which is always true;
+            // don't consider that a finite loop.  Only |>= 0| and |>= variable_that_could_be_zero|
+            // may lead to infinite loop, but all uint with >= is considered infinite loop for
+            // simplicity.
+            //
+            // While signed int overflow is undefined behavior, |>= INT_MIN| would also be
+            // unconditionally true even if the compiler makes signed int overflow well-defined.
+            // Using >= in loops is uncommon, so any >= use is considered a potential infinite loop
+            // for simplicity.
+            return nullptr;
         default:
             return nullptr;
-    }
-    // Loop index must be compared with a constant or uniform or similar read-only variable.
-    if (!IsReadOnlyExpr(*binCond->getRight()))
-    {
-        return nullptr;
     }
     if (TIntermUnary *unary = expr->getAsUnaryNode())
     {

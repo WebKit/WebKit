@@ -460,6 +460,9 @@ constexpr const char *kSkippedMessagesWithDynamicRendering[] = {
     "VUID-vkCmdDrawIndexed-multisampledRenderToSingleSampled-07285",
     "VUID-vkCmdDrawIndexed-multisampledRenderToSingleSampled-07286",
     "VUID-vkCmdDrawIndexed-multisampledRenderToSingleSampled-07287",
+    // VVL bug with static state for rasterizer discard.
+    // https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13516
+    "VUID-vkCmdDraw-colorAttachmentCount-06179",
 };
 
 // With forceSampleUsageForAhbBackedImages, we assume all AHBs are gpu-sampleable, regardless of
@@ -1368,6 +1371,30 @@ void ErasePipelineCacheVkChunks(vk::GlobalOps *globalOps,
                                 const size_t numChunks,
                                 const size_t slotIndex,
                                 angle::MemoryBuffer *scratchBuffer);
+
+// Returns the blob cache's total size limit.  Android's multifile blob cache takes it from its
+// limit properties, as egl_cache.cpp does.  Otherwise, assume Android's default of 32MB.
+size_t GetBlobCacheSizeLimit()
+{
+    constexpr size_t kDefaultLimit = 32 * 1024 * 1024;
+#if defined(ANGLE_PLATFORM_ANDROID)
+    const AndroidBlobCacheProperties blobCacheProperties = GetAndroidBlobCacheProperties();
+    if (!blobCacheProperties.isMultifileEnabled())
+    {
+        return kDefaultLimit;
+    }
+    if (blobCacheProperties.debugMultifileLimit.value_or(-1) >= 0)
+    {
+        // If the debug value is set, it has precedence, return it immediately
+        return static_cast<size_t>(*blobCacheProperties.debugMultifileLimit);
+    }
+    if (blobCacheProperties.multifileLimit.value_or(-1) >= 0)
+    {
+        return static_cast<size_t>(*blobCacheProperties.multifileLimit);
+    }
+#endif
+    return kDefaultLimit;
+}
 
 void CompressAndStorePipelineCacheVk(vk::GlobalOps *globalOps,
                                      Renderer *renderer,
@@ -2509,6 +2536,8 @@ angle::Result Renderer::initialize(vk::ErrorContext *context,
         vk::ScopedVulkanApiPerfTimer::TryEnable();
     }
 
+    mBlobCacheSizeLimit = GetBlobCacheSizeLimit();
+
     bool canLoadDebugUtils = true;
 #if defined(ANGLE_SHARED_LIBVULKAN)
     {
@@ -3028,57 +3057,67 @@ angle::Result Renderer::initializeMemoryAllocator(vk::ErrorContext *context)
 // The following features and properties are not promoted to any core Vulkan versions (up to Vulkan
 // 1.4):
 //
-// - VK_EXT_provoking_vertex:                          provokingVertexLast (feature)
-// - VK_EXT_transform_feedback:                        transformFeedback (feature),
-//                                                     geometryStreams (feature)
-// - VK_EXT_device_memory_report:                      deviceMemoryReport (feature)
-// - VK_EXT_multisampled_render_to_single_sampled:     multisampledRenderToSingleSampled (feature)
-// - VK_EXT_image_2d_view_of_3d:                       image2DViewOf3D (feature)
-//                                                     sampler2DViewOf3D (feature)
-// - VK_EXT_custom_border_color:                       customBorderColors (feature)
-//                                                     customBorderColorWithoutFormat (feature)
+// - VK_EXT_provoking_vertex:                         provokingVertexLast (feature)
+// - VK_EXT_transform_feedback:                       transformFeedback (feature),
+//                                                    geometryStreams (feature)
+// - VK_EXT_device_memory_report:                     deviceMemoryReport (feature)
+// - VK_EXT_multisampled_render_to_single_sampled:    multisampledRenderToSingleSampled (feature)
+// - VK_EXT_image_2d_view_of_3d:                      image2DViewOf3D (feature)
+//                                                    sampler2DViewOf3D (feature)
+// - VK_EXT_custom_border_color:                      customBorderColors (feature)
+//                                                    customBorderColorWithoutFormat (feature)
 // - VK_KHR_depth_clamp_zero_one or
-//   VK_EXT_depth_clamp_zero_one:                      depthClampZeroOne (feature)
-// - VK_EXT_depth_clip_control:                        depthClipControl (feature)
-// - VK_EXT_primitives_generated_query:                primitivesGeneratedQuery (feature),
-//                                                     primitivesGeneratedQueryWithRasterizerDiscard
-//                                                                                        (property)
-// - VK_EXT_primitive_topology_list_restart:           primitiveTopologyListRestart (feature)
-// - VK_EXT_extended_dynamic_state3:                   (features)
-//                                                     dynamicPrimitiveTopologyUnrestricted
-//                                                                                        (property)
-// - VK_EXT_graphics_pipeline_library:                 graphicsPipelineLibrary (feature),
-//                                                     graphicsPipelineLibraryFastLinking (property)
-// - VK_KHR_fragment_shading_rate:                     pipelineFragmentShadingRate (feature)
-// - VK_EXT_fragment_shader_interlock:                 fragmentShaderPixelInterlock (feature)
-// - VK_EXT_pipeline_robustness:                       pipelineRobustness (feature)
-// - VK_EXT_pipeline_protected_access:                 pipelineProtectedAccess (feature)
+//   VK_EXT_depth_clamp_zero_one:                     depthClampZeroOne (feature)
+// - VK_EXT_depth_clip_control:                       depthClipControl (feature)
+// - VK_EXT_primitives_generated_query:               primitivesGeneratedQuery (feature),
+//                                                    primitivesGeneratedQueryWithRasterizerDiscard
+//                                                                                       (property)
+// - VK_EXT_primitive_topology_list_restart:          primitiveTopologyListRestart (feature)
+// - VK_EXT_extended_dynamic_state3:                  extendedDynamicState3AlphaToCoverageEnable
+//                                                                                       (feature)
+//                                                    extendedDynamicState3AlphaToOneEnable
+//                                                                                       (feature)
+//                                                    extendedDynamicState3DepthClampEnable
+//                                                                                       (feature)
+//                                                    extendedDynamicState3DepthClipNegativeOneToOne
+//                                                                                       (feature)
+//                                                    extendedDynamicState3LogicOpEnable (feature)
+//                                                    extendedDynamicState3PolygonMode (feature)
+//                                                    dynamicPrimitiveTopologyUnrestricted
+//                                                                                       (property)
+// - VK_EXT_graphics_pipeline_library:                graphicsPipelineLibrary (feature),
+//                                                    graphicsPipelineLibraryFastLinking (property)
+// - VK_KHR_fragment_shading_rate:                    pipelineFragmentShadingRate (feature)
+// - VK_EXT_fragment_shader_interlock:                fragmentShaderPixelInterlock (feature)
+// - VK_EXT_pipeline_robustness:                      pipelineRobustness (feature)
+// - VK_EXT_pipeline_protected_access:                pipelineProtectedAccess (feature)
 // - VK_EXT_rasterization_order_attachment_access or
-//   VK_ARM_rasterization_order_attachment_access:     rasterizationOrderColorAttachmentAccess
-//                                                                                   (feature)
-//                                                     rasterizationOrderDepthAttachmentAccess
-//                                                                                   (feature)
-//                                                     rasterizationOrderStencilAttachmentAccess
-//                                                                                   (feature)
+//   VK_ARM_rasterization_order_attachment_access:    rasterizationOrderColorAttachmentAccess
+//                                                                                  (feature)
+//                                                    rasterizationOrderDepthAttachmentAccess
+//                                                                                  (feature)
+//                                                    rasterizationOrderStencilAttachmentAccess
+//                                                                                  (feature)
 // - VK_KHR_swapchain_maintenance1 or
-//   VK_EXT_swapchain_maintenance1:                    swapchainMaintenance1 (feature)
-// - VK_EXT_legacy_dithering:                          supportsLegacyDithering (feature)
-// - VK_EXT_physical_device_drm:                       hasPrimary (property),
-//                                                     hasRender (property)
-// - VK_ANDROID_external_format_resolve:               externalFormatResolve (feature)
-// - VK_EXT_vertex_input_dynamic_state:                vertexInputDynamicState (feature)
-// - VK_EXT_shader_atomic_float:                       shaderImageFloat32Atomics (feature)
-// - VK_EXT_image_compression_control:                 imageCompressionControl (feature)
-// - VK_EXT_image_compression_control_swapchain:       imageCompressionControlSwapchain (feature)
-// - VK_EXT_device_fault:                              deviceFault (feature),
-//                                                     deviceFaultVendorBinary (feature)
-// - VK_EXT_astc_decode_mode:                          decodeModeSharedExponent (feature)
-// - VK_KHR_unified_image_layouts:                     unifiedImageLayouts (feature)
-// - VK_EXT_external_memory_host:                      minImportedHostPointerAlignment (property)
-// - VK_QCOM_tile_memory_heap:                         tileMemoryHeapFeatures (feature)
-//                                                     tileMemoryHeapProperties (property)
-// - VK_EXT_texture_compression_astc_3d:               textureCompressionASTC_3D (feature)
-// - VK_AMD_shader_core_properties:                    (properties)
+//   VK_EXT_swapchain_maintenance1:                   swapchainMaintenance1 (feature)
+// - VK_EXT_legacy_dithering:                         supportsLegacyDithering (feature)
+// - VK_EXT_physical_device_drm:                      hasPrimary (property),
+//                                                    hasRender (property)
+// - VK_ANDROID_external_format_resolve:              externalFormatResolve (feature)
+// - VK_EXT_vertex_input_dynamic_state:               vertexInputDynamicState (feature)
+// - VK_EXT_shader_atomic_float:                      shaderImageFloat32Atomics (feature)
+// - VK_EXT_image_compression_control:                imageCompressionControl (feature)
+// - VK_EXT_image_compression_control_swapchain:      imageCompressionControlSwapchain (feature)
+// - VK_EXT_device_fault:                             deviceFault (feature),
+//                                                    deviceFaultVendorBinary (feature)
+// - VK_EXT_astc_decode_mode:                         decodeModeSharedExponent (feature)
+// - VK_KHR_unified_image_layouts:                    unifiedImageLayouts (feature)
+// - VK_EXT_external_memory_host:                     minImportedHostPointerAlignment (property)
+// - VK_QCOM_tile_memory_heap:                        tileMemoryHeapFeatures (feature)
+//                                                    tileMemoryHeapProperties (property)
+// - VK_EXT_texture_compression_astc_3d:              textureCompressionASTC_3D (feature)
+// - VK_AMD_shader_core_properties:                   (properties)
+// - VK_KHR_pipeline_binary:                          pipelineBinaries (feature)
 //
 void Renderer::appendDeviceExtensionFeaturesNotPromoted(
     const vk::ExtensionNameList &deviceExtensionNames,
@@ -3262,6 +3301,11 @@ void Renderer::appendDeviceExtensionFeaturesNotPromoted(
     {
         vk::AddToPNextChain(deviceProperties, &mShaderCorePropertiesAMD);
     }
+
+    if (ExtensionFound(VK_KHR_PIPELINE_BINARY_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mPipelineBinaryFeatures);
+    }
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.1:
@@ -3408,6 +3452,8 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo12(
 // - VK_EXT_extended_dynamic_state:             extendedDynamicState (feature)
 // - VK_EXT_extended_dynamic_state2:            extendedDynamicState2 (feature),
 //                                              extendedDynamicState2LogicOp (feature)
+//                                              extendedDynamicState2PatchControlPoints
+//                                                                           (feature)
 // - VK_KHR_synchronization2:                   synchronization2 (feature)
 // - VK_KHR_dynamic_rendering:                  dynamicRendering (feature)
 // - VK_KHR_maintenance5:                       maintenance5 (feature)
@@ -3417,7 +3463,7 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo12(
 //
 // Note that VK_EXT_extended_dynamic_state2 is partially promoted to Vulkan 1.3.  If ANGLE creates a
 // Vulkan 1.3 device, it would still need to enable this extension separately for
-// extendedDynamicState2LogicOp.
+// extendedDynamicState2LogicOp and extendedDynamicState2PatchControlPoints.
 //
 void Renderer::appendDeviceExtensionFeaturesPromotedTo13(
     const vk::ExtensionNameList &deviceExtensionNames,
@@ -3843,6 +3889,9 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mShaderCorePropertiesAMD       = {};
     mShaderCorePropertiesAMD.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_AMD;
 
+    mPipelineBinaryFeatures       = {};
+    mPipelineBinaryFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_FEATURES_KHR;
+
     // Query features and properties.
     VkPhysicalDeviceFeatures2KHR deviceFeatures = {};
     deviceFeatures.sType                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
@@ -3945,6 +3994,7 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mTileMemoryHeapFeatures.pNext   = nullptr;
     mTileMemoryHeapProperties.pNext = nullptr;
     mShaderCorePropertiesAMD.pNext  = nullptr;
+    mPipelineBinaryFeatures.pNext   = nullptr;
 }
 
 // See comment above appendDeviceExtensionFeaturesNotPromoted.  Additional extensions are enabled
@@ -4276,6 +4326,12 @@ void Renderer::enableDeviceExtensionsNotPromoted(const vk::ExtensionNameList &de
     if (getFeatures().supportsAmdShaderCoreProperties.enabled)
     {
         mEnabledDeviceExtensions.push_back(VK_AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME);
+    }
+
+    if (getFeatures().preferPipelineBinaries.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_PIPELINE_BINARY_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mPipelineBinaryFeatures);
     }
 }
 
@@ -4666,16 +4722,25 @@ void Renderer::initDeviceExtensionEntryPoints()
     {
         InitTransformFeedbackEXTFunctions(mDevice);
     }
-    if (getFeatures().supportsLogicOpDynamicState.enabled)
+    if (getFeatures().supportsLogicOpDynamicState.enabled ||
+        getFeatures().supportsPatchControlPointsDynamicState.enabled)
     {
-        // VK_EXT_extended_dynamic_state2 is only partially core in Vulkan 1.3.  If the logicOp
-        // dynamic state (only from the extension) is used, need to load the entry points from the
-        // extension
+        // VK_EXT_extended_dynamic_state2 is only partially core in Vulkan 1.3.  If the logicOp or
+        // patchControlPoints dynamic state (only from the extension) are used, need to load the
+        // entry points from the extension
         InitExtendedDynamicState2EXTFunctions(mDevice);
     }
     if (getFeatures().supportsExtendedDynamicState3.enabled)
     {
         InitExtendedDynamicState3EXTFunctions(mDevice);
+        if (getFeatures().supportsDepthClipControl.enabled)
+        {
+            InitExtendedDynamicState3EXTWithDepthClipControlEXTFunctions(mDevice);
+        }
+        if (getFeatures().supportsBlendOperationAdvanced.enabled)
+        {
+            InitExtendedDynamicState3EXTWithBlendOperationAdvancedEXTFunctions(mDevice);
+        }
     }
     if (mFeatures.supportsFragmentShadingRate.enabled)
     {
@@ -4763,6 +4828,11 @@ void Renderer::initDeviceExtensionEntryPoints()
         {
             InitDynamicRenderingFunctions(mDevice);
         }
+    }
+
+    if (mFeatures.preferPipelineBinaries.enabled)
+    {
+        InitPipelineBinaryKHRFunctions(mDevice);
     }
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
 
@@ -5917,10 +5987,13 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 #endif  // defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
 
     // Disabled on SwiftShader due to http://crbug.com/40942995
+    //
+    // Disabled on Intel/windows due to pipeline creation failures when the StencilRefReplacingEXT
+    // execution mode is specified in the shader (glslang used to not emit it by mistake).
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsShaderStencilExport,
         ExtensionFound(VK_EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME, deviceExtensionNames) &&
-            !isSwiftShader);
+            !isSwiftShader && !(IsWindows() && isIntel));
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsRenderPassLoadStoreOpNone,
@@ -6567,14 +6640,80 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, supportsLogicOpDynamicState,
         mFeatures.supportsExtendedDynamicState2.enabled &&
             mExtendedDynamicState2Features.extendedDynamicState2LogicOp == VK_TRUE &&
+            mPhysicalDeviceFeatures.logicOp &&
             !(IsLinux() && isIntel && driverVersion < angle::VersionTriple(22, 2, 0)) &&
             !(IsAndroid() && isGalaxyS23));
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsPatchControlPointsDynamicState,
+        mFeatures.supportsExtendedDynamicState2.enabled &&
+            mExtendedDynamicState2Features.extendedDynamicState2PatchControlPoints == VK_TRUE);
 
     // VK_EXT_extended_dynamic_state3 has lots of features, all of which are optional.  So
     // supportsExtendedDynamicState3 only checks for the presence of the extension.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExtendedDynamicState3,
         ExtensionFound(VK_EXT_EXTENDED_DYNAMIC_STATE_3_EXTENSION_NAME, deviceExtensionNames));
+
+    // Static state for rasterizer discard is tricky in Vulkan.  The spec says that
+    // post-rasterization state is "ignored" when rasterizer discard is enabled.  Unfortunately,
+    // this has always been interpreted as VK_DYNAMIC_STATE_* for these state also needing to be
+    // ignored, which implies that if a pipeline with static rasterizer discard is bound, every
+    // post-rasterization state is perturbed and dynamic state has to be set again.  This
+    // complication is not worth handling (since we will practically always use dynamic state for
+    // rasterizer discard), so if rasterizer discard is static state, we will also use static state
+    // for the rest of post-rasterization state.
+    //
+    // Note that currently this is taken into account only for VK_EXT_extended_dynamic_state3
+    // dynamic state.  Older (more common) dynamic state does not take rasterizer discard into
+    // account, and instead VVL errors are suppressed.
+    const bool isRasterizerDiscardDynamicState =
+        mFeatures.useRasterizerDiscardEnableDynamicState.enabled;
+
+    // Disabled on Intel/windows drivers, failing
+    // FramebufferFetchES31.DrawNonFetchDrawFetchInStorageBuffer*,
+    // SimpleStateChangeTestES31.FragWriteSSBOThenChangeDrawbuffersThenWriteSSBO*,
+    // VulkanPerformanceCounterTest_ES31.ColorMaskedFramebufferFetchDraw*, and
+    // VulkanPerformanceCounterTest_ES31.FramebufferFetchRenderPassThenColorMaskedDraw* tests.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsAlphaToCoverageEnableDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3AlphaToCoverageEnable == VK_TRUE &&
+            isRasterizerDiscardDynamicState && !(isIntel && IsWindows()));
+
+    // Disabled on Imagination drivers due to test failures and device loss.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsAlphaToOneEnableDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3AlphaToOneEnable == VK_TRUE &&
+            isRasterizerDiscardDynamicState && !isPowerVR);
+
+    // Disabled on Imagination drivers due to failure of a few dEQP tests.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsDepthClampEnableDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3DepthClampEnable == VK_TRUE &&
+            mPhysicalDeviceFeatures.depthClamp && isRasterizerDiscardDynamicState && !isPowerVR);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsDepthClipNegativeOneToOneDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3DepthClipNegativeOneToOne ==
+                VK_TRUE &&
+            mFeatures.supportsDepthClipControl.enabled && isRasterizerDiscardDynamicState);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsLogicOpEnableDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3LogicOpEnable == VK_TRUE &&
+            mFeatures.supportsLogicOpDynamicState.enabled && isRasterizerDiscardDynamicState);
+
+    // Disabled on Imagination drivers due to failure of the StateChangeTestES3.PolygonMode test
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsPolygonModeDynamicState,
+        mFeatures.supportsExtendedDynamicState3.enabled &&
+            mExtendedDynamicState3Features.extendedDynamicState3PolygonMode == VK_TRUE &&
+            !isPowerVR);
 
     // Older Samsung drivers with version < 24.0.0 have a bug in imageless framebuffer support.
     const bool isSamsungDriverWithImagelessFramebufferBug =
@@ -6713,6 +6852,40 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // the above rule and would like to benefit from the gains may override this.
     ANGLE_FEATURE_CONDITION(&mFeatures, preferMonolithicPipelinesOverLibraries,
                             mFeatures.supportsGraphicsPipelineLibrary.enabled && false);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDynamicRendering,
+                            mDynamicRenderingFeatures.dynamicRendering == VK_TRUE);
+
+    // Don't enable VK_KHR_maintenance5 without VK_KHR_dynamic_rendering
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsMaintenance5,
+                            mFeatures.supportsDynamicRendering.enabled &&
+                                mMaintenance5Features.maintenance5 == VK_TRUE);
+
+    // VK_KHR_pipeline_binary requires the pipelineBinaries feature to be enabled at device
+    // creation; simply enabling the extension is not sufficient.
+    //
+    // The extension also depends on any of Vulkan 1.4, VK_KHR_extended_flags or
+    // VK_KHR_maintenance5, each of which provides VkPipelineCreateFlags2CreateInfo.  That is the
+    // only way to pass VK_PIPELINE_CREATE_2_CAPTURE_DATA_BIT_KHR, which a pipeline needs before
+    // its binaries can be captured.  ANGLE requires maintenance5, which it already enables and
+    // which every Vulkan 1.4 device supports; VK_KHR_extended_flags is not plumbed.
+    //
+    // Note that supportsMaintenance5 above is gated on supportsDynamicRendering, which is a pure
+    // device capability (dynamicRendering == VK_TRUE).  It is deliberately *not* gated on
+    // preferDynamicRendering, which is the separate policy decision about whether ANGLE actually
+    // renders with dynamic rendering and which is disabled on several vendors for performance or
+    // driver-bug reasons.  Pipeline binaries have no interaction with render pass handling, so
+    // they remain available on devices where ANGLE chooses to keep using render pass objects.
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsPipelineBinary,
+                            mPipelineBinaryFeatures.pipelineBinaries == VK_TRUE &&
+                                mFeatures.supportsMaintenance5.enabled);
+
+    // Off by default while pipeline binaries are tested.  Tests turn them on with
+    // allowPipelineBinariesForTesting, which only takes effect where the extension is supported.
+    ANGLE_FEATURE_CONDITION(&mFeatures, allowPipelineBinariesForTesting, false);
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferPipelineBinaries,
+                            mFeatures.supportsPipelineBinary.enabled &&
+                                mFeatures.allowPipelineBinariesForTesting.enabled);
 
     // To avoid memory bloating due to using pipeline caches per program, the pipeline cache in the
     // renderer can be used.
@@ -6927,14 +7100,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // VkEvent instead of GPU overhead associated with vkCmdResetEvent.
     ANGLE_FEATURE_CONDITION(&mFeatures, recycleVkEvent, isSwiftShader);
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDynamicRendering,
-                            mDynamicRenderingFeatures.dynamicRendering == VK_TRUE);
-
-    // Don't enable VK_KHR_maintenance5 without VK_KHR_dynamic_rendering
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsMaintenance5,
-                            mFeatures.supportsDynamicRendering.enabled &&
-                                mMaintenance5Features.maintenance5 == VK_TRUE);
-
     // Disabled on older Nvidia drivers due to a bug with attachment location mapping, resulting in
     // incorrect rendering in the presence of gaps in locations.  http://anglebug.com/372883691.
     ANGLE_FEATURE_CONDITION(
@@ -6954,8 +7119,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // supported. Except for SwiftShader, which crashes when binding non-attachment textures as
     // input attachments.
     //
-    // Use of dynamic rendering is disabled on older ARM proprietary drivers due to driver bugs
-    // (http://issuetracker.google.com/356051947).
+    // Use of dynamic rendering is disabled on ARM due to driver bugs
+    // (http://issuetracker.google.com/356051947, http://issuetracker.google.com/575550012).
     //
     // Use of dynamic rendering is disabled on older Qualcomm drivers due to driver bugs
     // (http://crbug.com/415738891).
@@ -6969,8 +7134,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, preferDynamicRendering,
         mFeatures.supportsDynamicRendering.enabled &&
             mFeatures.supportsDynamicRenderingLocalRead.enabled && !hasLegacyDitheringV1 &&
-            !isSwiftShader &&
-            !(isARMProprietary && driverVersion < angle::VersionTriple(52, 0, 0)) &&
+            !isSwiftShader && !isARM &&
             !(isQualcommProprietary && driverVersion < angle::VersionTriple(512, 801, 0)) &&
             !isPowerVR);
 
@@ -7423,9 +7587,10 @@ const ShPixelLocalStorageOptions &Renderer::getNativePixelLocalStorageOptions() 
 
 void Renderer::initializeFrontendFeatures(angle::FrontendFeatures *features) const
 {
+    const bool isPowerVR = IsPowerVR(mPhysicalDeviceProperties.vendorID);
+    const bool isSamsung = IsSamsung(mPhysicalDeviceProperties.vendorID);
     const bool isSwiftShader =
         IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
-    const bool isSamsung = IsSamsung(mPhysicalDeviceProperties.vendorID);
 
     // Hopefully-temporary work-around for a crash on SwiftShader.  An Android process is turning
     // off GL error checking, and then asking ANGLE to write past the end of a buffer.
@@ -7449,6 +7614,9 @@ void Renderer::initializeFrontendFeatures(angle::FrontendFeatures *features) con
     // Enable the program binary blob compression for glGetProgramBinary and glGetProgramiv.  It
     // will be decompressed when loading the program binary by glProgramBinary.
     ANGLE_FEATURE_CONDITION(features, compressProgramBinaryBlob, isSamsung);
+
+    // PowerVR compiler may crash when encountering an infinite loop
+    ANGLE_FEATURE_CONDITION(features, ensureLoopForwardProgress, isPowerVR);
 }
 
 angle::Result Renderer::getLockedPipelineCacheDataIfNew(vk::ErrorContext *context,
@@ -7549,9 +7717,9 @@ angle::Result Renderer::syncPipelineCacheVk(const gl::Context *contextGL)
     ASSERT(globalOps);
     if (mFeatures.enableAsyncPipelineCacheCompression.enabled)
     {
-        // zlib compression ratio normally ranges from 2:1 to 5:1. Set kMaxTotalSize to 64M to
-        // ensure the size can fit into the 32MB blob cache limit on supported platforms.
-        constexpr size_t kMaxTotalSize = 64 * 1024 * 1024;
+        // zlib compression ratio normally ranges from 2:1 to 5:1. Set kMaxTotalSize to twice the
+        // blob cache limit to ensure the compressed size can fit.
+        const size_t kMaxTotalSize = 2 * mBlobCacheSizeLimit;
 
         // Create task to compress.
         mCompressEvent = contextGL->getWorkerThreadPool()->postWorkerTask(

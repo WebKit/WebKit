@@ -8,7 +8,7 @@
 
 #include <array>
 
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -83,7 +83,8 @@ class MSRTTTest : public ANGLETest<MultisampledRenderToTextureTestParams>
         ASSERT_GL_NO_ERROR();
     }
 
-    void setupUniformColorProgramMultiRenderTarget(const bool bufferEnabled[8], GLuint *programOut)
+    void setupUniformColorProgramMultiRenderTarget(angle::Span<const bool, 8> bufferEnabled,
+                                                   GLuint *programOut)
     {
         std::stringstream fs;
 
@@ -95,9 +96,9 @@ class MSRTTTest : public ANGLETest<MultisampledRenderToTextureTestParams>
               "void main()\n"
               "{\n";
 
-        for (unsigned int index = 0; index < 8; index++)
+        for (size_t index = 0; index < bufferEnabled.size(); ++index)
         {
-            if (ANGLE_UNSAFE_TODO(bufferEnabled[index]))
+            if (bufferEnabled[index])
             {
                 fs << "    gl_FragData[" << index << "] = " << essl1_shaders::ColorUniform()
                    << ";\n";

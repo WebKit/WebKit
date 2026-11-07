@@ -3976,7 +3976,8 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
     stateOut->viewportState.scissorCount  = 1;
     stateOut->viewportState.pScissors     = nullptr;
 
-    if (context->getFeatures().supportsDepthClipControl.enabled)
+    if (context->getFeatures().supportsDepthClipControl.enabled &&
+        !context->getFeatures().supportsDepthClipNegativeOneToOneDynamicState.enabled)
     {
         stateOut->depthClipControl.sType =
             VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLIP_CONTROL_CREATE_INFO_EXT;
@@ -4137,6 +4138,22 @@ void GraphicsPipelineDesc::initializePipelineShadersState(
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR);
     }
+    if (context->getFeatures().supportsPatchControlPointsDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT);
+    }
+    if (context->getFeatures().supportsDepthClampEnableDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_DEPTH_CLAMP_ENABLE_EXT);
+    }
+    if (context->getFeatures().supportsDepthClipNegativeOneToOneDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_DEPTH_CLIP_NEGATIVE_ONE_TO_ONE_EXT);
+    }
+    if (context->getFeatures().supportsPolygonModeDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_POLYGON_MODE_EXT);
+    }
 }
 
 void GraphicsPipelineDesc::initializePipelineSharedNonVertexInputState(
@@ -4163,6 +4180,15 @@ void GraphicsPipelineDesc::initializePipelineSharedNonVertexInputState(
         static_cast<VkBool32>(multisample.bits.alphaToCoverageEnable);
     stateOut->multisampleState.alphaToOneEnable =
         static_cast<VkBool32>(multisample.bits.alphaToOneEnable);
+
+    if (context->getFeatures().supportsAlphaToCoverageEnableDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_ALPHA_TO_COVERAGE_ENABLE_EXT);
+    }
+    if (context->getFeatures().supportsAlphaToOneEnableDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_ALPHA_TO_ONE_ENABLE_EXT);
+    }
 }
 
 void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
@@ -4270,6 +4296,10 @@ void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
     if (context->getFeatures().supportsLogicOpDynamicState.enabled)
     {
         dynamicStateListOut->push_back(VK_DYNAMIC_STATE_LOGIC_OP_EXT);
+    }
+    if (context->getFeatures().supportsLogicOpEnableDynamicState.enabled)
+    {
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_LOGIC_OP_ENABLE_EXT);
     }
 }
 
@@ -7214,7 +7244,7 @@ VkResult PipelineCacheAccess::createGraphicsPipeline(vk::ErrorContext *context,
 {
     std::unique_lock<angle::SimpleMutex> lock = getLock();
 
-    return pipelineOut->initGraphics(context->getDevice(), createInfo, *mPipelineCache);
+    return pipelineOut->initGraphics(context->getDevice(), createInfo, mPipelineCache);
 }
 
 VkResult PipelineCacheAccess::createComputePipeline(vk::ErrorContext *context,
@@ -7223,7 +7253,7 @@ VkResult PipelineCacheAccess::createComputePipeline(vk::ErrorContext *context,
 {
     std::unique_lock<angle::SimpleMutex> lock = getLock();
 
-    return pipelineOut->initCompute(context->getDevice(), createInfo, *mPipelineCache);
+    return pipelineOut->initCompute(context->getDevice(), createInfo, mPipelineCache);
 }
 
 VkResult PipelineCacheAccess::getCacheData(vk::ErrorContext *context,

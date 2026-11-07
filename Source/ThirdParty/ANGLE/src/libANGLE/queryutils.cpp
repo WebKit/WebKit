@@ -1954,7 +1954,11 @@ angle::Result QuerySynciv(const Context *context,
             }
             else
             {
-                ANGLE_TRY(sync->getStatus(context, values));
+                // Do not pass |values| directly to the backend, as that is in user-controlled
+                // memory and the backend may access it multiple times in this call.
+                GLint result = GL_UNSIGNALED;
+                ANGLE_TRY(sync->getStatus(context, &result));
+                *values = result;
             }
             break;
 

@@ -66,7 +66,7 @@ layout(push_constant) uniform PushConstants {
 #define A_HALF
 #endif
 
-#include "third_party/ffx_spd/ffx_a.h"
+#include "third_party/ffx_spd/src/ffx_a.h"
 
 // Shared memory
 #ifdef A_HALF
@@ -171,7 +171,7 @@ AF4 SpdReduce4(AF4 v0, AF4 v1, AF4 v2, AF4 v3)
 #define SpdIncreaseAtomicCounter()
 #define SpdGetAtomicCounter() 0
 
-#include "third_party/ffx_spd/ffx_spd.h"
+#include "third_party/ffx_spd/src/ffx_spd.h"
 
 void main()
 {

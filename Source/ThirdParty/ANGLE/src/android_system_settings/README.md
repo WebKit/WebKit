@@ -3,10 +3,8 @@
 ## Introduction
 
 ANGLE Settings UI is a UI shipped as part of the ANGLE apk. The ANGLE apk can ship with a list rules
-of applications using different OpenGL ES driver. The UI provides two functionalities:
-
-1) Enable to show a message when ANGLE is loaded into the launched application;
-2) Allow to select driver choice in the UI for applications.
+of applications using different OpenGL ES driver. The UI allows to select driver choice for
+applications.
 
 ## The rule file
 

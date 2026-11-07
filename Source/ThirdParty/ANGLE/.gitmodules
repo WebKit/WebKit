@@ -82,9 +82,6 @@
 	path = third_party/gles1_conform
 	url = https://chrome-internal.googlesource.com/angle/es-cts
 	gclient-condition = checkout_angle_internal
-[submodule "third_party/glmark2/src"]
-	path = third_party/glmark2/src
-	url = https://chromium.googlesource.com/external/github.com/glmark2/glmark2
 [submodule "third_party/googletest/src"]
 	path = third_party/googletest/src
 	url = https://chromium.googlesource.com/external/github.com/google/googletest
@@ -97,10 +94,6 @@
 	path = third_party/libdrm/src
 	url = https://chromium.googlesource.com/chromiumos/third_party/libdrm
 	gclient-condition = checkout_angle_mesa or not build_with_chromium
-[submodule "third_party/libjpeg_turbo"]
-	path = third_party/libjpeg_turbo
-	url = https://chromium.googlesource.com/chromium/deps/libjpeg_turbo
-	gclient-condition = not build_with_chromium
 [submodule "third_party/libpng/src"]
 	path = third_party/libpng/src
 	url = https://android.googlesource.com/platform/external/libpng
@@ -145,10 +138,6 @@
 	path = third_party/meson
 	url = https://chromium.googlesource.com/external/github.com/mesonbuild/meson
 	gclient-condition = checkout_angle_mesa
-[submodule "third_party/nasm"]
-	path = third_party/nasm
-	url = https://chromium.googlesource.com/chromium/deps/nasm
-	gclient-condition = not build_with_chromium
 [submodule "third_party/OpenCL-CTS/src"]
 	path = third_party/OpenCL-CTS/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-CTS
@@ -266,6 +255,10 @@
 [submodule "third_party/zlib"]
 	path = third_party/zlib
 	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
+	gclient-condition = not build_with_chromium
+[submodule "third_party/zstd/src"]
+	path = third_party/zstd/src
+	url = https://chromium.googlesource.com/external/github.com/facebook/zstd.git
 	gclient-condition = not build_with_chromium
 [submodule "tools/android"]
 	path = tools/android

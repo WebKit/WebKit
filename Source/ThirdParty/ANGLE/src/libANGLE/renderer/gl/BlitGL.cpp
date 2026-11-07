@@ -429,7 +429,8 @@ angle::Result BlitGL::copyImageToLUMAWorkaroundTexture(const gl::Context *contex
     GLenum readType = source->getImplementationColorReadType(context);
 
     // getImplementationColorReadType aligns the type with ES client version
-    if (readType == GL_HALF_FLOAT_OES && mFunctions->standard == STANDARD_GL_DESKTOP)
+    if (readType == GL_HALF_FLOAT_OES && (mFunctions->standard == STANDARD_GL_DESKTOP ||
+                                          mFunctions->isAtLeastGLES(gl::Version(3, 0))))
     {
         readType = GL_HALF_FLOAT;
     }
@@ -470,7 +471,8 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
     GLenum readType   = source->getImplementationColorReadType(context);
 
     // getImplementationColorReadType aligns the type with ES client version
-    if (readType == GL_HALF_FLOAT_OES && mFunctions->standard == STANDARD_GL_DESKTOP)
+    if (readType == GL_HALF_FLOAT_OES && (mFunctions->standard == STANDARD_GL_DESKTOP ||
+                                          mFunctions->isAtLeastGLES(gl::Version(3, 0))))
     {
         readType = GL_HALF_FLOAT;
     }
@@ -767,6 +769,7 @@ angle::Result BlitGL::copySubTexture(const gl::Context *context,
                              &blitProgram));
 
     // Setup the source texture
+    ANGLE_TRY(source->setBaseLevel(context, static_cast<GLuint>(sourceLevel)));
     if (needsLumaWorkaround)
     {
         GLint luminance = (lumaFormat == GL_ALPHA) ? GL_ZERO : GL_RED;
@@ -790,7 +793,6 @@ angle::Result BlitGL::copySubTexture(const gl::Context *context,
     }
     ANGLE_TRY(source->setMinFilter(context, GL_NEAREST));
     ANGLE_TRY(source->setMagFilter(context, GL_NEAREST));
-    ANGLE_TRY(source->setBaseLevel(context, static_cast<GLuint>(sourceLevel)));
 
     // Render to the destination texture, sampling from the source texture
     ScopedGLState scopedState;
@@ -882,9 +884,12 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
     GLenum status = GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
     if (supportExternalTarget || source->getType() != gl::TextureType::External)
     {
-        ANGLE_GL_TRY(context, mFunctions->framebufferTexture2D(
-                                  GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, ToGLenum(source->getType()),
-                                  source->getTextureID(), static_cast<GLint>(sourceLevel)));
+        TextureGL::NativeLevelTarget sourceNative = source->getNativeLevelTarget(
+            NonCubeTextureTypeToTarget(source->getType()), sourceLevel);
+        ANGLE_GL_TRY(context,
+                     mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                      ToGLenum(sourceNative.target),
+                                                      sourceNative.textureID, sourceNative.level));
         status = ANGLE_GL_TRY(context, mFunctions->checkFramebufferStatus(GL_FRAMEBUFFER));
     }
     if (status != GL_FRAMEBUFFER_COMPLETE)
@@ -984,9 +989,10 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
     nativegl::TexSubImageFormat texSubImageFormat =
         nativegl::GetTexSubImageFormat(mFunctions, mFeatures, destFormat, destType);
 
-    mStateManager->bindTexture(dest->getType(), dest->getTextureID());
+    TextureGL::NativeLevelTarget destNative = dest->getNativeLevelTarget(destTarget, destLevel);
+    mStateManager->bindTexture(gl::TextureTargetToType(destNative.target), destNative.textureID);
     ANGLE_GL_TRY(context, mFunctions->texSubImage2D(
-                              ToGLenum(destTarget), static_cast<GLint>(destLevel), destOffset.x,
+                              ToGLenum(destNative.target), destNative.level, destOffset.x,
                               destOffset.y, readPixelsArea.width, readPixelsArea.height,
                               texSubImageFormat.format, texSubImageFormat.type, destMemory));
 
@@ -1009,9 +1015,11 @@ angle::Result BlitGL::copyTexSubImage(const gl::Context *context,
 
     // Make sure the source texture can create a complete framebuffer before continuing.
     mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mScratchFBO);
+    TextureGL::NativeLevelTarget sourceNative =
+        source->getNativeLevelTarget(NonCubeTextureTypeToTarget(source->getType()), sourceLevel);
     ANGLE_GL_TRY(context, mFunctions->framebufferTexture2D(
-                              GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, ToGLenum(source->getType()),
-                              source->getTextureID(), static_cast<GLint>(sourceLevel)));
+                              GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, ToGLenum(sourceNative.target),
+                              sourceNative.textureID, sourceNative.level));
     GLenum status = ANGLE_GL_TRY(context, mFunctions->checkFramebufferStatus(GL_FRAMEBUFFER));
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {
@@ -1019,12 +1027,13 @@ angle::Result BlitGL::copyTexSubImage(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    mStateManager->bindTexture(dest->getType(), dest->getTextureID());
+    TextureGL::NativeLevelTarget destNative = dest->getNativeLevelTarget(destTarget, destLevel);
+    mStateManager->bindTexture(gl::TextureTargetToType(destNative.target), destNative.textureID);
 
     // Handle GL errors during copyTexSubImage2D manually since this can fail for certain formats on
     // Pixel 2 and 4 and we have fallback paths (blit via shader) in the caller.
     ClearErrors(context, __FILE__, __FUNCTION__, __LINE__);
-    mFunctions->copyTexSubImage2D(ToGLenum(destTarget), static_cast<GLint>(destLevel), destOffset.x,
+    mFunctions->copyTexSubImage2D(ToGLenum(destNative.target), destNative.level, destOffset.x,
                                   destOffset.y, sourceArea.x, sourceArea.y, sourceArea.width,
                                   sourceArea.height);
     // Use getError to retrieve the error directly instead of using CheckError so that we don't
@@ -1065,14 +1074,20 @@ angle::Result BlitGL::clearRenderableTexture(const gl::Context *context,
     mStateManager->bindFramebuffer(GL_FRAMEBUFFER, mScratchFBO);
     ANGLE_TRY(UnbindAttachments(context, mFunctions, GL_FRAMEBUFFER, unbindTargets));
 
+    gl::TextureTarget target = imageIndex.getType() == gl::TextureType::CubeMap
+                                   ? imageIndex.getTarget()
+                                   : NonCubeTextureTypeToTarget(source->getType());
+    TextureGL::NativeLevelTarget sourceNative =
+        source->getNativeLevelTarget(target, imageIndex.getLevelIndex());
+
     if (nativegl::UseTexImage2D(source->getType()))
     {
         ASSERT(numTextureLayers == 1);
         for (GLenum bindTarget : bindTargets)
         {
             ANGLE_GL_TRY(context, mFunctions->framebufferTexture2D(
-                                      GL_FRAMEBUFFER, bindTarget, ToGLenum(imageIndex.getTarget()),
-                                      source->getTextureID(), imageIndex.getLevelIndex()));
+                                      GL_FRAMEBUFFER, bindTarget, ToGLenum(sourceNative.target),
+                                      sourceNative.textureID, sourceNative.level));
         }
 
         GLenum status = ANGLE_GL_TRY(context, mFunctions->checkFramebufferStatus(GL_FRAMEBUFFER));
@@ -1097,8 +1112,8 @@ angle::Result BlitGL::clearRenderableTexture(const gl::Context *context,
             for (GLenum bindTarget : bindTargets)
             {
                 ANGLE_GL_TRY(context, mFunctions->framebufferTexture(GL_FRAMEBUFFER, bindTarget,
-                                                                     source->getTextureID(),
-                                                                     imageIndex.getLevelIndex()));
+                                                                     sourceNative.textureID,
+                                                                     sourceNative.level));
             }
 
             GLenum status =
@@ -1129,8 +1144,8 @@ angle::Result BlitGL::clearRenderableTexture(const gl::Context *context,
                 for (GLenum bindTarget : bindTargets)
                 {
                     ANGLE_GL_TRY(context, mFunctions->framebufferTextureLayer(
-                                              GL_FRAMEBUFFER, bindTarget, source->getTextureID(),
-                                              imageIndex.getLevelIndex(), layer + firstLayer));
+                                              GL_FRAMEBUFFER, bindTarget, sourceNative.textureID,
+                                              sourceNative.level, layer + firstLayer));
                 }
 
                 GLenum status =
@@ -1420,15 +1435,23 @@ angle::Result BlitGL::generateMipmap(const gl::Context *context,
         mStateManager->setViewport(gl::Rectangle(0, 0, levelSize.width, levelSize.height));
 
         GLuint sourceTextureReadLevel = baseLevel + levelIdx - 1;
-        mStateManager->bindTexture(sourceType, source->getTextureID());
+        // With virtualizeBaseLevelAndMipchain enabled, setBaseLevel can reallocate
+        // source->getTextureID() and reset its applied filter state, so update base level and
+        // linear filter state before binding the resulting native texture ID.
         ANGLE_TRY(source->setBaseLevel(context, sourceTextureReadLevel));
+        ANGLE_TRY(source->setMinFilter(context, GL_LINEAR));
+        ANGLE_TRY(source->setMagFilter(context, GL_LINEAR));
+        mStateManager->bindTexture(sourceType, source->getTextureID());
         ANGLE_GL_TRY(context, mFunctions->drawArrays(GL_TRIANGLES, 0, 3));
 
         // Copy back to the source texture
         GLuint sourceTextureWriteLevel = sourceTextureReadLevel + 1;
-        ANGLE_GL_TRY(context, mFunctions->framebufferTexture2D(
-                                  GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, ToGLenum(sourceTarget),
-                                  source->getTextureID(), sourceTextureWriteLevel));
+        TextureGL::NativeLevelTarget writeNative =
+            source->getNativeLevelTarget(sourceTarget, sourceTextureWriteLevel);
+        ANGLE_GL_TRY(context,
+                     mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                      ToGLenum(writeNative.target),
+                                                      writeNative.textureID, writeNative.level));
         mStateManager->bindTexture(sourceType, intermediateTexture);
         ANGLE_GL_TRY(context, mFunctions->drawArrays(GL_TRIANGLES, 0, 3));
     }

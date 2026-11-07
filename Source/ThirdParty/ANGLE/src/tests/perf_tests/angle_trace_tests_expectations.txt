@@ -4,6 +4,14 @@
 
 // See deqp_support/README.md for format.
 
+// The trace disables GL_MULTISAMPLED_EXT, but EXT_multisample_compatibility is
+// not supported (no alphaToOne feature)
+42266123 SWIFTSHADER : puzzle_and_dragons = SKIP
+42266123 SWIFTSHADER : raid_shadow_legends = SKIP
+42266123 SWIFTSHADER : return_to_monkey_island = SKIP
+42266123 SWIFTSHADER : run_goddess = SKIP
+42266123 SWIFTSHADER : seaside_escape = SKIP
+
 42266611 SWIFTSHADER : gangstar_vegas = SKIP
 42266679 SWIFTSHADER : street_fighter_iv_ce = SKIP
 42266627 WIN NATIVE : respawnables = SKIP

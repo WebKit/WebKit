@@ -240,8 +240,7 @@ constexpr angle::FormatID kSupportedPixelUnpackFormats[] = {
 struct ScopedDisableOcclusionQuery
 {
     ScopedDisableOcclusionQuery(ContextMtl *contextMtl, RenderCommandEncoder *encoder)
-        : mEncoder(encoder),
-          mOcclusionQueryIsEnabled(contextMtl->isOcclusionQueryEnabledInRenderPass())
+        : mEncoder(encoder), mOcclusionQueryIsEnabled(contextMtl->hasActiveOcclusionQuery())
     {
         if (!mOcclusionQueryIsEnabled)
         {
@@ -250,7 +249,7 @@ struct ScopedDisableOcclusionQuery
 #ifndef NDEBUG
         encoder->pushDebugGroup(@"Disabled OcclusionQuery");
 #endif
-        contextMtl->disableOcclusionQueryInRenderPass();
+        contextMtl->disableActiveOcclusionQueryInRenderPass();
     }
     ~ScopedDisableOcclusionQuery()
     {
@@ -2259,7 +2258,7 @@ angle::Result VisibilityResultUtils::combineVisibilityResult(ContextMtl *context
     cmdEncoder->setComputePipelineState(pipeline);
 
     CombineVisibilityResultUniform options;
-    // Offset is viewed as 64-bit unit (ushort4) in compute shader.
+    // Offset is viewed as 64 bit unit in compute shader.
     options.startOffset = static_cast<uint32_t>(startOffset / kOcclusionQueryResultSize);
     options.numOffsets  = static_cast<uint32_t>(numOffsets);
 

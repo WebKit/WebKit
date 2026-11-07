@@ -190,8 +190,6 @@ if (NOT DEFINED TCUTIL_PLATFORM_SRCS)
 	endif ()
 endif ()
 
-include_directories(${PROJECT_BINARY_DIR}/external/vulkancts/framework/vulkan)
-
 add_library(tcutil-platform STATIC ${TCUTIL_PLATFORM_SRCS})
 if (DEQP_USE_WAYLAND)
 	add_dependencies(tcutil-platform deqp-xdg-shell)

@@ -584,6 +584,62 @@ public:
     }
 };
 
+// Verify compilation stability when declaring a large number of active vertex shader output variables
+class CompileLargeVertexOutputCountCase : public ApiCase
+{
+public:
+    CompileLargeVertexOutputCountCase(Context &context, const char *name, const char *desc, int numOutputs)
+        : ApiCase(context, name, desc)
+        , m_numOutputs(numOutputs)
+    {
+    }
+
+    ~CompileLargeVertexOutputCountCase(void)
+    {
+    }
+
+    void test(void)
+    {
+        std::ostringstream src;
+        src << "#version 300 es\n";
+        for (int i = 0; i < m_numOutputs; i++)
+            src << "out highp float v" << i << ";\n";
+        src << "void main(void)\n{\n";
+        for (int i = 0; i < m_numOutputs; i++)
+            src << "    v" << i << " = 1.0;\n";
+        src << "    gl_Position = vec4(0.0);\n}\n";
+
+        const std::string sourceStr = src.str();
+        const char *sourcePtr       = sourceStr.c_str();
+
+        glu::Shader shader(m_context.getRenderContext(), glu::SHADERTYPE_VERTEX);
+        shader.setSources(1, &sourcePtr, nullptr);
+        shader.compile();
+
+        GLint maxOutputs = 0;
+        glGetIntegerv(GL_MAX_VERTEX_OUTPUT_COMPONENTS, &maxOutputs);
+        GLU_EXPECT_NO_ERROR(glGetError(), "glGetIntegerv()");
+
+        // The sum of active output components, including built-ins, must not exceed the limit.
+        // We write to gl_Position (4 components), making it active.
+        if (m_numOutputs + 4 <= maxOutputs)
+        {
+            if (!shader.getCompileStatus())
+            {
+                m_log << TestLog::Message << "Shader compilation failed within valid output limits ("
+                      << (m_numOutputs + 4) << " <= " << maxOutputs << "). InfoLog:\n"
+                      << shader.getInfoLog() << TestLog::EndMessage;
+                TCU_FAIL("Shader compilation failed within valid output limits");
+            }
+        }
+        // Note: If outputs exceed GL_MAX_VERTEX_OUTPUT_COMPONENTS, compilation is allowed to
+        // succeed or fail with a compile error, but must not crash the driver compiler backend.
+    }
+
+private:
+    int m_numOutputs;
+};
+
 class ShaderSourceReplaceCase : public ApiCase
 {
 public:
@@ -1412,6 +1468,115 @@ private:
     de::Random m_rnd;
 };
 
+// Program binary fragment shading rate fallback case
+
+class ProgramBinaryFSRFallbackCase : public ProgramBinaryCase
+{
+public:
+    ProgramBinaryFSRFallbackCase(Context &context, const char *name, const char *desc)
+        : ProgramBinaryCase(context, name, desc)
+    {
+    }
+
+    virtual ~ProgramBinaryFSRFallbackCase(void)
+    {
+    }
+
+    void init(void)
+    {
+        if (!m_context.getContextInfo().isExtensionSupported("GL_EXT_fragment_shading_rate"))
+            throw tcu::NotSupportedError("GL_EXT_fragment_shading_rate not supported");
+
+        ProgramBinaryCase::init();
+    }
+
+    void test(void)
+    {
+        TestLog &log             = m_testCtx.getLog();
+        const glw::Functions &gl = m_context.getRenderContext().getFunctions();
+
+        const char *vertSrc = "#version 300 es\n"
+                              "in highp vec4 a_position;\n"
+                              "void main (void)\n"
+                              "{\n"
+                              "    gl_Position = a_position;\n"
+                              "}\n";
+        const char *fragSrc = "#version 300 es\n"
+                              "layout(location = 0) out mediump vec4 o_fragColor;\n"
+                              "void main (void)\n"
+                              "{\n"
+                              "    o_fragColor = vec4(0.0, 1.0, 0.0, 1.0);\n"
+                              "}\n";
+
+        const glu::ProgramSources sources = glu::makeVtxFragSources(vertSrc, fragSrc);
+        glu::ShaderProgram program(m_context.getRenderContext(), sources);
+        log << program;
+        TCU_CHECK_MSG(program.isOk(), "Couldn't build program");
+
+        ProgramBinary binary;
+        getProgramBinary(binary, program.getProgram());
+        verifyProgramBinary(binary);
+
+        log << TestLog::Message << "Loading binary back into a new program object" << TestLog::EndMessage;
+        glu::Program newProgram(m_context.getRenderContext());
+        TCU_CHECK_MSG(!binary.data.empty(), "Program binary is empty");
+        loadProgramBinary(binary, newProgram.getProgram());
+
+        GLint linkStatus = 0;
+        gl.getProgramiv(newProgram.getProgram(), GL_LINK_STATUS, &linkStatus);
+        TCU_CHECK_MSG(linkStatus == GL_TRUE, "Program failed to link after loading binary.");
+
+        std::vector<GLenum> supportedRates(16, GL_NONE);
+        GLsizei count = 0;
+        gl.getFragmentShadingRatesEXT(1, 16, &count, &supportedRates[0]);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "getFragmentShadingRatesEXT");
+
+        GLenum selectedRate = GL_SHADING_RATE_1X1_PIXELS_EXT;
+        for (GLsizei i = 0; i < count; ++i)
+        {
+            if (supportedRates[i] != GL_SHADING_RATE_1X1_PIXELS_EXT)
+            {
+                selectedRate = supportedRates[i];
+                break;
+            }
+        }
+
+        log << TestLog::Message << "Enabling fragment shading rate 0x" << std::hex << selectedRate << std::dec
+            << TestLog::EndMessage;
+        gl.shadingRateEXT(selectedRate);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "shadingRateEXT");
+
+        log << TestLog::Message << "Rendering test image with shading rate enabled" << TestLog::EndMessage;
+        gl.clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        gl.clear(GL_COLOR_BUFFER_BIT);
+        drawWithProgram(m_context.getRenderContext(), newProgram.getProgram());
+
+        uint8_t pixel[4] = {0, 0, 0, 0};
+        gl.readPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glReadPixels");
+
+        if (pixel[0] != 0 || pixel[1] != 255 || pixel[2] != 0 || pixel[3] != 255)
+        {
+            log << TestLog::Message << "Unexpected pixel color: (" << (int)pixel[0] << ", " << (int)pixel[1] << ", "
+                << (int)pixel[2] << ", " << (int)pixel[3] << "), expected (0, 255, 0, 255)" << TestLog::EndMessage;
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Pixel verification failed");
+        }
+    }
+
+    virtual void deinit(void)
+    {
+        const glw::Functions &gl = m_context.getRenderContext().getFunctions();
+
+        if (m_context.getContextInfo().isExtensionSupported("GL_EXT_fragment_shading_rate"))
+        {
+            gl.shadingRateEXT(GL_SHADING_RATE_1X1_PIXELS_EXT);
+            GLU_EXPECT_NO_ERROR(gl.getError(), "shadingRateEXT");
+        }
+
+        TestCase::deinit();
+    }
+};
+
 // Base class for program state persistence cases
 
 class ProgramBinaryPersistenceCase : public ProgramBinaryCase
@@ -1722,6 +1887,34 @@ void ShaderApiTests::init(void)
             new LinkVertexFragmentCase(m_context, "link_vertex_fragment", "Link vertex and fragment shaders"));
     }
 
+    // large output counts
+    {
+        TestCaseGroup *largeOutputsGroup = new TestCaseGroup(
+            m_context, "large_output_counts", "Compile vertex shaders with large output variable counts");
+        addChild(largeOutputsGroup);
+
+        // 60 is the minimum spec limit (60 + 4 built-in gl_Position = 64); 64 is just above spec limit;
+        // 256 and 1024 are buffer power-of-two boundaries; 1300 and 8639 test high output counts.
+        largeOutputsGroup->addChild(new CompileLargeVertexOutputCountCase(
+            m_context, "compile_vertex_shader_60_outputs",
+            "Compile vertex shader with 60 scalar varying output components", 60));
+        largeOutputsGroup->addChild(new CompileLargeVertexOutputCountCase(
+            m_context, "compile_vertex_shader_64_outputs",
+            "Compile vertex shader with 64 scalar varying output components", 64));
+        largeOutputsGroup->addChild(new CompileLargeVertexOutputCountCase(
+            m_context, "compile_vertex_shader_256_outputs",
+            "Compile vertex shader with 256 scalar varying output components", 256));
+        largeOutputsGroup->addChild(new CompileLargeVertexOutputCountCase(
+            m_context, "compile_vertex_shader_1024_outputs",
+            "Compile vertex shader with 1024 scalar varying output components", 1024));
+        largeOutputsGroup->addChild(new CompileLargeVertexOutputCountCase(
+            m_context, "compile_vertex_shader_1300_outputs",
+            "Compile vertex shader with 1300 scalar varying output components", 1300));
+        largeOutputsGroup->addChild(new CompileLargeVertexOutputCountCase(
+            m_context, "compile_vertex_shader_8639_outputs",
+            "Compile vertex shader with 8639 scalar varying output components", 8639));
+    }
+
     // shader source
     {
         TestCaseGroup *shaderSourceGroup = new TestCaseGroup(m_context, "shader_source", "glShaderSource() tests");
@@ -1802,6 +1995,9 @@ void ShaderApiTests::init(void)
             simpleCaseGroup->addChild(
                 new ProgramBinaryUniformResetCase(m_context, "uniform_reset_on_binary_load",
                                                   "Verify uniform reset on successful load of program binary"));
+            simpleCaseGroup->addChild(new ProgramBinaryFSRFallbackCase(
+                m_context, "fragment_shading_rate_fallback",
+                "Verify glProgramBinary interaction with GL_EXT_fragment_shading_rate"));
         }
 
         {

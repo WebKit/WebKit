@@ -298,6 +298,46 @@ void LocalStructTests::init(void)
                                    << "}",
                       { c.color.xyz() = c.coords.swizzle(1, 2, 0); });
 
+    LOCAL_STRUCT_CASE(complex_constructor_array_member,
+                      "Struct constructor with array members and compound expressions",
+                      LineStream() << "${HEADER}"
+                                   << ""
+                                   << "struct ST0 {"
+                                   << "    highp uint m0;"
+                                   << "    mediump mat2 m1;"
+                                   << "    highp uvec4 m2[3];"
+                                   << "    lowp uvec4 m3[3];"
+                                   << "    highp mat2 m4;"
+                                   << "};"
+                                   << ""
+                                   << "void main (void)"
+                                   << "{"
+                                   << "    ST0 st1 = ST0(packSnorm2x16(${COORDS}.xy),"
+                                   << "                  transpose(mat2(-32.6328)),"
+                                   << "                  uvec4[3](uvec4(1140032898u), uvec4(0u),"
+                                   << "                           (uvec4(3988632377u) << 8u)),"
+                                   << "                  uvec4[3](uvec4(255u),"
+                                   << "                           floatBitsToUint(${COORDS}) & uvec4(255u),"
+                                   << "                           uvec4(128u)),"
+                                   << "                  mat2(${COORDS}.xy, ${COORDS}.zw));"
+                                   << ""
+                                   << "    bool ok = true;"
+                                   << "    if (st1.m0 != packSnorm2x16(${COORDS}.xy)) ok = false;"
+                                   << "    if (st1.m2[0] != uvec4(1140032898u)) ok = false;"
+                                   << "    if (st1.m2[1] != uvec4(0u)) ok = false;"
+                                   << "    if (st1.m2[2] != (uvec4(3988632377u) << 8u)) ok = false;"
+                                   << "    if (st1.m3[0] != uvec4(255u)) ok = false;"
+                                   << "    if (st1.m3[1] != (floatBitsToUint(${COORDS}) & uvec4(255u))) ok = false;"
+                                   << "    if (st1.m3[2] != uvec4(128u)) ok = false;"
+                                   << "    if (abs(st1.m1[0][0]) < 0.001) ok = false;"
+                                   << "    if (abs(st1.m4[0][0] - ${COORDS}.x) > 0.001) ok = false;"
+                                   << "    if (abs(st1.m4[1][1] - ${COORDS}.w) > 0.001) ok = false;"
+                                   << ""
+                                   << "    ${DST} = ok ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);"
+                                   << "    ${ASSIGN_POS}"
+                                   << "}",
+                      { c.color.xyz() = tcu::Vec3(0.0f, 1.0f, 0.0f); });
+
     LOCAL_STRUCT_CASE(struct_array, "Struct array",
                       LineStream() << "${HEADER}"
                                    << "uniform int ui_zero;"

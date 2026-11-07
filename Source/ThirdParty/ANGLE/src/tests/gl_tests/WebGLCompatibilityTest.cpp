@@ -4631,8 +4631,7 @@ void main() {
     drawBuffersFeedbackLoop(program, {{GL_COLOR_ATTACHMENT0, GL_NONE}}, GL_INVALID_OPERATION);
 }
 
-// WebGL requires that all framebuffer attachments are unique
-TEST_P(WebGL2CompatibilityTest, UniqueFramebufferAttachments)
+void TestUniqueFramebufferAttachments()
 {
     GLTexture tex0;
     FillTexture2D(tex0, 8, 8, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -4645,20 +4644,125 @@ TEST_P(WebGL2CompatibilityTest, UniqueFramebufferAttachments)
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
 }
 
+// WebGL requires that all framebuffer attachments are unique
+TEST_P(WebGL2CompatibilityTest, UniqueFramebufferAttachments)
+{
+    TestUniqueFramebufferAttachments();
+}
+
 // Hardened contexts also require that all framebuffer color attachments are unique
 TEST_P(HardenedContextTest, UniqueFramebufferAttachments)
 {
-    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    TestUniqueFramebufferAttachments();
+}
 
-    GLTexture tex0;
-    FillTexture2D(tex0, 8, 8, GLColor::red, 0, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
-    ASSERT_GL_NO_ERROR();
+// Shared helper for WebGL2CompatibilityTest and HardenedContextTest. Takes drawQuadFn as a
+// callback because ANGLETestBase::drawQuad is protected and the two fixtures are separate
+// subclasses of ANGLETest<>.
+template <typename DrawQuadFn>
+void TestUniqueFramebufferAttachmentsMultiview(DrawQuadFn drawQuadFn)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OVR_multiview2"));
+
+    constexpr char kVS[] = R"(#version 300 es
+#extension GL_OVR_multiview2 : require
+layout(num_views = 2) in;
+in vec4 a_position;
+void main()
+{
+    gl_Position = a_position;
+})";
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OVR_multiview2 : require
+precision mediump float;
+layout(location = 0) out vec4 out0;
+layout(location = 1) out vec4 out1;
+void main()
+{
+    out0 = (gl_ViewID_OVR == 0u) ? vec4(1.0, 0.0, 0.0, 1.0) : vec4(0.0, 1.0, 0.0, 1.0);
+    out1 = (gl_ViewID_OVR == 0u) ? vec4(0.0, 0.0, 1.0, 1.0) : vec4(1.0, 1.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(multiviewProgram, kVS, kFS);
+
+    GLTexture texArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texArray);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, 8, 8, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex0, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tex0, 0);
+    const GLenum drawBuffers[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, drawBuffers);
+    glViewport(0, 0, 8, 8);
+
+    GLFramebuffer readFbo;
+    auto expectLayerColors = [&](const GLColor &layer0, const GLColor &layer1,
+                                 const GLColor &layer2, const GLColor &layer3) {
+        const std::array<GLColor, 4> expected = {layer0, layer1, layer2, layer3};
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, readFbo);
+        for (GLint layer = 0; layer < 4; ++layer)
+        {
+            glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texArray, 0,
+                                      layer);
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+            EXPECT_PIXEL_COLOR_EQ(0, 0, expected[layer]);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    };
+
+    // Note: GL_OVR_multiview2 requires all attachments on a framebuffer to have the same
+    // numViews (otherwise glCheckFramebufferStatus returns
+    // GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR before attachment uniqueness is checked).
+    // Test both interval orderings ([0, 2) + [2, 4) and [2, 4) + [0, 2)).
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texArray, 0, 0, 2);
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texArray, 0, 2, 2);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    drawQuadFn(multiviewProgram);
+    EXPECT_GL_NO_ERROR();
+    expectLayerColors(GLColor::red, GLColor::green, GLColor::blue, GLColor::yellow);
+
+    // Attaching overlapping layer ranges [0, 2) and [1, 3) (or [1, 3) and [0, 2)) violates
+    // attachment uniqueness (layer 1 is shared) and must return GL_FRAMEBUFFER_UNSUPPORTED.
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texArray, 0, 1, 2);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    drawQuadFn(multiviewProgram);
+    EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    expectLayerColors(GLColor::red, GLColor::green, GLColor::blue, GLColor::yellow);
+
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texArray, 0, 1, 2);
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texArray, 0, 0, 2);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    drawQuadFn(multiviewProgram);
+    EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    expectLayerColors(GLColor::red, GLColor::green, GLColor::blue, GLColor::yellow);
+
+    // Reversed non-overlapping layer ranges [2, 4) and [0, 2) are also complete and render to
+    // their respective layers.
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texArray, 0, 2, 2);
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texArray, 0, 0, 2);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    drawQuadFn(multiviewProgram);
+    EXPECT_GL_NO_ERROR();
+    expectLayerColors(GLColor::blue, GLColor::yellow, GLColor::red, GLColor::green);
+}
+
+// Verify that non-overlapping multiview layer ranges of the same 2D array texture are allowed and
+// render to their respective layers, whereas overlapping multiview layer ranges are rejected in
+// WebGL contexts.
+TEST_P(WebGL2CompatibilityTest, UniqueFramebufferAttachmentsMultiview)
+{
+    TestUniqueFramebufferAttachmentsMultiview([this](GLuint program) {
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    });
+}
+
+// Verify that non-overlapping multiview layer ranges of the same 2D array texture are allowed and
+// render to their respective layers, whereas overlapping multiview layer ranges are rejected in
+// hardened contexts.
+TEST_P(HardenedContextTest, UniqueFramebufferAttachmentsMultiview)
+{
+    TestUniqueFramebufferAttachmentsMultiview([this](GLuint program) {
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    });
 }
 
 // This tests that texture base level for immutable textures is clamped to the valid range, unlike

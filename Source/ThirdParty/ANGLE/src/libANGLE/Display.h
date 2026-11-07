@@ -15,6 +15,7 @@
 #include <atomic>
 #include <mutex>
 #include <optional>
+#include <thread>
 #include <vector>
 
 #include "common/SimpleMutex.h"
@@ -69,8 +70,8 @@ class ThreadSafeDisplay;
 
 template <typename DisplayT>
 class ScopedDisplayRefT;
-using ScopedDisplayRef      = ScopedDisplayRefT<Display>;
-using ScopedConstDisplayRef = ScopedDisplayRefT<const Display>;
+using ScopedDisplayRef           = ScopedDisplayRefT<Display>;
+using ScopedConstDisplayRef      = ScopedDisplayRefT<const Display>;
 using ScopedThreadSafeDisplayRef = ScopedDisplayRefT<ThreadSafeDisplay>;
 
 class ScopedDisplayMutexLock;
@@ -168,7 +169,7 @@ class SyncSet final : angle::NonCopyable
     // when it goes out of scope, so a mutable display is required here.
     ScopedSyncRef getSync(ThreadSafeDisplay *display, SyncID syncID) const;
 
-    void destroySync(const ThreadSafeDisplay *display, SyncID syncID);
+    Sync *removeSync(SyncID syncID);
     void releaseSync(const ThreadSafeDisplay *display, Sync *sync);
 
     void invalidateAllSyncs();
@@ -236,6 +237,7 @@ class ThreadSafeDisplay : public LabeledObject, public angle::NonCopyable
                      EGLenum type,
                      const AttributeMap &attribs,
                      Sync **outSync);
+    Sync *removeSync(egl::SyncID syncID);
     void destroySync(Sync *sync);
     void releaseSync(Sync *sync);
 
@@ -277,26 +279,65 @@ class ThreadSafeDisplay : public LabeledObject, public angle::NonCopyable
     virtual void releaseDisplayShareGroupResource(const gl::Context &context) = 0;
 
   protected:
-    [[nodiscard]] bool addRefIfNotTerminating() const
+    void addRef() const
     {
+#if defined(ANGLE_ENABLE_ASSERTS)
+        // Calling addRef() a second time on a thread that already holds a display reference is
+        // forbidden: if another thread enters terminate() in between, it will set kTerminatingBit
+        // and block in waitUntilUnreferenced(1) waiting for this thread's first reference to be
+        // released, while this second addRef() spins waiting for kTerminatingBit to clear,
+        // resulting in a deadlock. Use duplicateRef() when the current thread already holds a
+        // reference.
+        ASSERT(GetCurrentThreadDisplayRefCount() == 0);
+#endif
         // std::memory_order_relaxed might be sufficient here, but std::memory_order_acquire is used
         // for safety since there is no performance difference.
         uint32_t count = mRefCount.load(std::memory_order_acquire);
-        while (!(count & kTerminatingBit))
+        for (;;)
         {
+            while ((count & kTerminatingBit) != 0)
+            {
+                std::this_thread::yield();
+                count = mRefCount.load(std::memory_order_acquire);
+            }
             if (mRefCount.compare_exchange_weak(count, count + 1, std::memory_order_acquire,
                                                 std::memory_order_acquire))
             {
-                return true;
+                IncrementCurrentThreadDisplayRefCount();
+                return;
             }
         }
-        return false;
+    }
+    void duplicateRef() const
+    {
+#if defined(ANGLE_ENABLE_ASSERTS)
+        // Since the current thread already holds a display reference, terminate() on another thread
+        // is guaranteed to be blocked in waitUntilUnreferenced(1) and cannot proceed until all
+        // references are released. Thus, duplicating an existing reference must not wait on
+        // kTerminatingBit (which would deadlock with waitUntilUnreferenced(1)).
+        ASSERT(GetCurrentThreadDisplayRefCount() > 0);
+#endif
+        uint32_t prev = mRefCount.fetch_add(1, std::memory_order_acquire);
+        ASSERT((prev & kRefCountMask) > 0);
+        IncrementCurrentThreadDisplayRefCount();
     }
     void releaseRef() const
     {
+#if defined(ANGLE_ENABLE_ASSERTS)
+        ASSERT(GetCurrentThreadDisplayRefCount() > 0);
+#endif
+        DecrementCurrentThreadDisplayRefCount();
         uint32_t prev = mRefCount.fetch_sub(1, std::memory_order_release);
         ASSERT((prev & kRefCountMask) > 0);
     }
+#if defined(ANGLE_ENABLE_ASSERTS)
+    static uint32_t GetCurrentThreadDisplayRefCount();
+    static void IncrementCurrentThreadDisplayRefCount();
+    static void DecrementCurrentThreadDisplayRefCount();
+#else
+    static void IncrementCurrentThreadDisplayRefCount() {}
+    static void DecrementCurrentThreadDisplayRefCount() {}
+#endif
     void onPendingInternalCleanup() const;
     bool isTerminating() const;
 
@@ -634,13 +675,15 @@ template <typename DisplayT>
 class [[nodiscard]] ScopedDisplayRefT final
 {
   public:
-    ScopedDisplayRefT() : mDisplay(nullptr), mHoldingRef(false) {}
-    explicit ScopedDisplayRefT(DisplayT &display)
-        : mDisplay(&display), mHoldingRef(display.addRefIfNotTerminating())
-    {}
+    ScopedDisplayRefT() : mDisplay(nullptr) {}
+    explicit ScopedDisplayRefT(DisplayT &display) : mDisplay(&display) { mDisplay->addRef(); }
+    static ScopedDisplayRefT Duplicate(DisplayT &display)
+    {
+        return ScopedDisplayRefT(&display, DuplicateTag{});
+    }
     ~ScopedDisplayRefT()
     {
-        if (mHoldingRef)
+        if (mDisplay != nullptr)
         {
             mDisplay->releaseRef();
             if constexpr (std::is_same_v<DisplayT, ThreadSafeDisplay>)
@@ -654,28 +697,37 @@ class [[nodiscard]] ScopedDisplayRefT final
         }
     }
 
-    ScopedDisplayRefT(const ScopedDisplayRefT &other)
-        : mDisplay(other.mDisplay),
-          mHoldingRef(other.mHoldingRef && other.mDisplay->addRefIfNotTerminating())
-    {}
+    ScopedDisplayRefT(const ScopedDisplayRefT &other) : mDisplay(other.mDisplay)
+    {
+        if (mDisplay != nullptr)
+        {
+            mDisplay->duplicateRef();
+        }
+    }
 
     template <typename OtherDisplayT,
               std::enable_if_t<std::is_convertible_v<OtherDisplayT *, DisplayT *>, bool> = true>
-    ScopedDisplayRefT(const ScopedDisplayRefT<OtherDisplayT> &other)
-        : mDisplay(other.mDisplay),
-          mHoldingRef(other.mHoldingRef && other.mDisplay->addRefIfNotTerminating())
-    {}
+    ScopedDisplayRefT(const ScopedDisplayRefT<OtherDisplayT> &other) : mDisplay(other.mDisplay)
+    {
+        if (mDisplay != nullptr)
+        {
+            mDisplay->duplicateRef();
+        }
+    }
 
     ScopedDisplayRefT &operator=(const ScopedDisplayRefT &other)
     {
         if (this != &other)
         {
-            if (mHoldingRef)
+            if (other.mDisplay != nullptr)
+            {
+                other.mDisplay->duplicateRef();
+            }
+            if (mDisplay != nullptr)
             {
                 mDisplay->releaseRef();
             }
-            mDisplay    = other.mDisplay;
-            mHoldingRef = other.mHoldingRef && other.mDisplay->addRefIfNotTerminating();
+            mDisplay = other.mDisplay;
         }
         return *this;
     }
@@ -686,44 +738,41 @@ class [[nodiscard]] ScopedDisplayRefT final
     {
         if (static_cast<const void *>(this) != static_cast<const void *>(&other))
         {
-            if (mHoldingRef)
+            if (other.mDisplay != nullptr)
+            {
+                other.mDisplay->duplicateRef();
+            }
+            if (mDisplay != nullptr)
             {
                 mDisplay->releaseRef();
             }
-            mDisplay    = other.mDisplay;
-            mHoldingRef = other.mHoldingRef && other.mDisplay->addRefIfNotTerminating();
+            mDisplay = other.mDisplay;
         }
         return *this;
     }
 
-    ScopedDisplayRefT(ScopedDisplayRefT &&other) noexcept
-        : mDisplay(other.mDisplay), mHoldingRef(other.mHoldingRef)
+    ScopedDisplayRefT(ScopedDisplayRefT &&other) noexcept : mDisplay(other.mDisplay)
     {
-        other.mDisplay    = nullptr;
-        other.mHoldingRef = false;
+        other.mDisplay = nullptr;
     }
 
     template <typename OtherDisplayT,
               std::enable_if_t<std::is_convertible_v<OtherDisplayT *, DisplayT *>, bool> = true>
-    ScopedDisplayRefT(ScopedDisplayRefT<OtherDisplayT> &&other) noexcept
-        : mDisplay(other.mDisplay), mHoldingRef(other.mHoldingRef)
+    ScopedDisplayRefT(ScopedDisplayRefT<OtherDisplayT> &&other) noexcept : mDisplay(other.mDisplay)
     {
-        other.mDisplay    = nullptr;
-        other.mHoldingRef = false;
+        other.mDisplay = nullptr;
     }
 
     ScopedDisplayRefT &operator=(ScopedDisplayRefT &&other) noexcept
     {
         if (this != &other)
         {
-            if (mHoldingRef)
+            if (mDisplay != nullptr)
             {
                 mDisplay->releaseRef();
             }
-            mDisplay          = other.mDisplay;
-            mHoldingRef       = other.mHoldingRef;
-            other.mDisplay    = nullptr;
-            other.mHoldingRef = false;
+            mDisplay       = other.mDisplay;
+            other.mDisplay = nullptr;
         }
         return *this;
     }
@@ -734,14 +783,12 @@ class [[nodiscard]] ScopedDisplayRefT final
     {
         if (static_cast<const void *>(this) != static_cast<const void *>(&other))
         {
-            if (mHoldingRef)
+            if (mDisplay != nullptr)
             {
                 mDisplay->releaseRef();
             }
-            mDisplay          = other.mDisplay;
-            mHoldingRef       = other.mHoldingRef;
-            other.mDisplay    = nullptr;
-            other.mHoldingRef = false;
+            mDisplay       = other.mDisplay;
+            other.mDisplay = nullptr;
         }
         return *this;
     }
@@ -749,11 +796,18 @@ class [[nodiscard]] ScopedDisplayRefT final
     DisplayT *get() const { return mDisplay; }
 
   private:
+    struct DuplicateTag
+    {};
+
+    ScopedDisplayRefT(DisplayT *display, DuplicateTag) : mDisplay(display)
+    {
+        mDisplay->duplicateRef();
+    }
+
     template <typename OtherDisplayT>
     friend class ScopedDisplayRefT;
 
     DisplayT *mDisplay;
-    bool mHoldingRef;
 };
 
 class [[nodiscard]] ScopedDisplayMutexLock final

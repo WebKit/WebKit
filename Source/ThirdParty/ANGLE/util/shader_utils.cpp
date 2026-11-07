@@ -421,6 +421,21 @@ void main()
 })";
 }
 
+// A shader that sets gl_Position to attribute a_position, and sets gl_PointSize to 10.
+// Use for point rendering to while avoiding implementation inconsitencies wrt point
+// size.
+const char *SimpleForPoints10()
+{
+    return R"(precision highp float;
+attribute vec4 a_position;
+
+void main()
+{
+    gl_Position = a_position;
+    gl_PointSize = 10.0;
+})";
+}
+
 // A shader that simply passes through attribute a_position, setting it to gl_Position and varying
 // v_position.
 const char *Passthrough()

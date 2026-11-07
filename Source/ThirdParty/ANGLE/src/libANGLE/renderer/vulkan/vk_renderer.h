@@ -968,6 +968,7 @@ class Renderer : angle::NonCopyable
     VkPhysicalDeviceTileMemoryHeapPropertiesQCOM mTileMemoryHeapProperties;
     VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT mTextureCompressionASTC3DFeatures;
     VkPhysicalDeviceShaderCorePropertiesAMD mShaderCorePropertiesAMD;
+    VkPhysicalDevicePipelineBinaryFeaturesKHR mPipelineBinaryFeatures;
 
     uint32_t mLegacyDitheringVersion = 0;
 
@@ -1129,6 +1130,8 @@ class Renderer : angle::NonCopyable
 
     // Use thread pool to compress cache data.
     std::shared_ptr<angle::WaitableEvent> mCompressEvent;
+    // The platform blob cache's total size limit, which bounds the pipeline cache that is stored.
+    size_t mBlobCacheSizeLimit = 0;
 
     VulkanLayerVector mEnabledInstanceLayerNames;
     vk::ExtensionNameList mEnabledInstanceExtensions;

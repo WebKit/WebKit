@@ -18,10 +18,7 @@ package com.android.angle.common;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-
-import com.android.angle.R;
 
 public class Receiver extends BroadcastReceiver
 {
@@ -37,15 +34,9 @@ public class Receiver extends BroadcastReceiver
             Log.d(TAG, "Received intent: " + action);
         }
 
-        if (action.equals(context.getString(R.string.intent_angle_for_android_toast_message)))
+        if (action.equals(Intent.ACTION_BOOT_COMPLETED)
+                || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED))
         {
-            Bundle results = getResultExtras(true);
-            results.putString(context.getString(R.string.intent_key_a4a_toast_message),
-                    context.getString(R.string.angle_in_use_toast_message));
-        }
-        else if (action.equals(Intent.ACTION_BOOT_COMPLETED) || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED))
-        {
-
             updateGlobalSettings(context);
         }
     }

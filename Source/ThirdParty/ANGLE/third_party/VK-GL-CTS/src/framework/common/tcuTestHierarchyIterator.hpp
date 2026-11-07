@@ -53,7 +53,7 @@ public:
     virtual void leaveGroupNode(TestCaseGroup *testGroup)                                    = 0;
 
 protected:
-    ~TestHierarchyInflater(void);
+    ~TestHierarchyInflater(void) = default;
 };
 
 // \todo [2015-02-26 pyry] Hierarchy traversal should not depend on TestContext
@@ -61,7 +61,7 @@ class DefaultHierarchyInflater : public TestHierarchyInflater
 {
 public:
     DefaultHierarchyInflater(TestContext &testCtx);
-    ~DefaultHierarchyInflater(void);
+    ~DefaultHierarchyInflater(void) = default;
 
     virtual void enterTestPackage(TestPackage *testPackage, std::vector<TestNode *> &children);
     virtual void leaveTestPackage(TestPackage *testPackage);

@@ -34,6 +34,37 @@ void writeXmlCaselistsToFiles(TestPackageRoot &root, TestContext &testCtx, const
 void writeTxtCaselistsToFiles(TestPackageRoot &root, TestContext &testCtx, const CommandLine &cmdLine,
                               bool printPrefix = true, bool skipGroups = false);
 
+// Helper function to retrieve a shared resource of type T from a TestCase that is a descendant of a
+// TestCaseGroup. Meant to be called from TestCase::createInstance and passed to the TestInstance constructor.
+// Nested groups may each hold a resource of a different type, so groups whose resource is not a T are
+// skipped and the search continues towards the root.
+template <typename T>
+T &retrieveSharedResource(const tcu::TestNode *node)
+{
+    TCU_CHECK_INTERNAL(node);
+
+    // Traverse ancestors to find a group that contains a shared resource of type T
+    auto *ancestor = node->getParent();
+    while (ancestor && (ancestor->getNodeType() == tcu::NODETYPE_GROUP))
+    {
+        auto *group = static_cast<TestCaseGroup *>(ancestor);
+        if (auto *sharedData = dynamic_cast<T *>(group->getSharedResource()))
+            return *sharedData;
+
+        ancestor = ancestor->getParent();
+    }
+
+    // retrieveSharedResource should be called only from test cases that are descendants of a
+    // TestCaseGroup containig shared resource of the requested type. Make sure setSharedResource
+    // has been called on the ancestor group before calling this function.
+    TCU_THROW(InternalError, "No ancestor holds a shared resource of the requested type");
+}
+
+// Call reset() on the shared resources owned by node and all of its ancestors. The resources
+// themselves stay alive and must remain usable afterwards; see SharedResourceBase::reset().
+// This function is used to drop shared device child objects at Vulkan SC batch boundaries.
+void resetSharedResources(tcu::TestNode *node);
+
 } // namespace tcu
 
 #endif // _TCUTESTHIERARCHYUTIL_HPP

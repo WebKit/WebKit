@@ -1889,7 +1889,7 @@ void ContextMtl::endEncoding(bool forceSaveRenderPassContent)
             mRenderEncoder.setStoreAction(MTLStoreActionStore);
         }
 
-        disableOcclusionQueryInRenderPass();
+        disableActiveOcclusionQueryInRenderPass();
 
         mOcclusionQueryPool.prepareRenderPassVisibilityPoolBuffer(this);
 
@@ -2362,7 +2362,6 @@ angle::Result ContextMtl::onOcclusionQueryBegin(QueryMtl &query)
     {
         endEncoding(true);
     }
-
     if (mRenderEncoder.valid())
     {
         size_t resultOffset;
@@ -2389,7 +2388,7 @@ angle::Result ContextMtl::onOcclusionQueryBegin(QueryMtl &query)
 void ContextMtl::onOcclusionQueryEnd()
 {
     ASSERT(mOcclusionQueryResultBuffer);  // Frontend guarantees one active at the time.
-    disableOcclusionQueryInRenderPass();
+    disableActiveOcclusionQueryInRenderPass();
     mOcclusionQueryResultBuffer = nullptr;
 }
 
@@ -2401,7 +2400,7 @@ void ContextMtl::onOcclusionQueryDestroy(QueryMtl &query)
     mOcclusionQueryPool.discardQuery(query.getVisibilityResultBuffer());
 }
 
-void ContextMtl::disableOcclusionQueryInRenderPass()
+void ContextMtl::disableActiveOcclusionQueryInRenderPass()
 {
     if (mOcclusionQueryResultBuffer && mOcclusionQueryIsEnabledInRenderPass)
     {

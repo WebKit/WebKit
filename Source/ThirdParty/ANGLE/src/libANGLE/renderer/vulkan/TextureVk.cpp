@@ -167,11 +167,25 @@ bool CanCopyWithTransferForCopyTexture(vk::Renderer *renderer,
     const bool destHasA8    = destAngleFormat.alphaBits == 8;
     const bool destIsSigned = destAngleFormat.isSnorm() || destAngleFormat.isSint();
 
+    // CHROMIUM_copy_texture frontend validation (Tables 1.0 and 1.1) disallows compressed block
+    // formats as source or destination textures.
+    ASSERT(!srcAngleFormat.isBlock);
+    ASSERT(!destAngleFormat.isBlock);
+
+    // Every uncompressed color format in GLES has homogeneous channel bit-widths (except packed
+    // formats like RGB565, RGB5_A1, RGB10_A2, or R11F_G11F_B10F, where redBits is never 8) and
+    // starts with the Red channel (R8, RG8, RGB8, RGBA8, BGRA8; A8/L8/LA8 are emulated on Vulkan
+    // and rejected above). Thus checking srcHasR8 is sufficient to guarantee all present channels
+    // are 8-bit, and prevent two non-8-bit formats (such as RGBA16F and RGBA4, where all *Has*8
+    // booleans are false) from comparing equal on the channel checks below.
+    const bool is8BitChannelFormat = srcHasR8 && !srcAngleFormat.isYUV && !destAngleFormat.isYUV;
+
     // Copy is allowed as long as they have the same number, ordering and sign of (8-bit) channels.
     // CHROMIUM_copy_texture expects verbatim copy between these format, so this copy is done
     // regardless of sRGB, normalized, etc.
-    return srcIsBGRA == destIsBGRA && srcHasR8 == destHasR8 && srcHasG8 == destHasG8 &&
-           srcHasB8 == destHasB8 && srcHasA8 == destHasA8 && srcIsSigned == destIsSigned;
+    return is8BitChannelFormat && srcIsBGRA == destIsBGRA && srcHasR8 == destHasR8 &&
+           srcHasG8 == destHasG8 && srcHasB8 == destHasB8 && srcHasA8 == destHasA8 &&
+           srcIsSigned == destIsSigned;
 }
 
 bool CanCopyWithDraw(vk::Renderer *renderer,

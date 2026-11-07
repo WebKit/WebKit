@@ -17,7 +17,6 @@ package com.android.angle.common;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -36,7 +35,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
 
 import com.android.angle.R;
 
@@ -54,10 +52,8 @@ public class MainFragment extends PreferenceFragmentCompat
     private final boolean DEBUG = false;
 
     private boolean mIsAngleSystemDriver;
-    private SwitchPreference mShowAngleInUseSwitchPref;
     private GlobalSettings mGlobalSettings;
     private ContentObserver mGlobalSettingsObserver;
-    private Receiver mRefreshReceiver = new Receiver();
     private List<PackageInfo> mInstalledPackages = new ArrayList<>();
 
     @Override
@@ -79,7 +75,6 @@ public class MainFragment extends PreferenceFragmentCompat
                 angleRuleHelper.getPackageNamesForAngle(),
                 angleRuleHelper.getPackageNamesForNative());
 
-        createShowAngleInUseSwitchPreference();
         createInstalledAppsListPreference();
 
         mGlobalSettingsObserver = new ContentObserver(new android.os.Handler())
@@ -98,11 +93,6 @@ public class MainFragment extends PreferenceFragmentCompat
     {
         super.onResume();
 
-        getActivity().registerReceiver(mRefreshReceiver,
-                new IntentFilter(
-                        getContext().getString(R.string.intent_angle_for_android_toast_message)),
-                Context.RECEIVER_EXPORTED);
-
         getContext().getContentResolver().registerContentObserver(
                 android.provider.Settings.Global.getUriFor(
                         GlobalSettings.DRIVER_SELECTION_PACKAGES), false,
@@ -111,14 +101,11 @@ public class MainFragment extends PreferenceFragmentCompat
                 android.provider.Settings.Global.getUriFor(GlobalSettings.DRIVER_SELECTION_VALUES),
                 false,
                 mGlobalSettingsObserver);
-
-        updatePreferences();
     }
 
     @Override
     public void onPause()
     {
-        getActivity().unregisterReceiver(mRefreshReceiver);
         getContext().getContentResolver().unregisterContentObserver(mGlobalSettingsObserver);
 
         super.onPause();
@@ -142,33 +129,6 @@ public class MainFragment extends PreferenceFragmentCompat
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
     {
         addPreferencesFromResource(R.xml.main);
-    }
-
-    private void updatePreferences()
-    {
-        mShowAngleInUseSwitchPref.setChecked(mGlobalSettings.getShowAngleInUse());
-    }
-
-    private void createShowAngleInUseSwitchPreference()
-    {
-        final String showAngleInUseKey =
-                getContext().getString(R.string.pref_key_angle_in_use_dialog);
-        mShowAngleInUseSwitchPref =
-                (SwitchPreference) findPreference(showAngleInUseKey);
-
-        mShowAngleInUseSwitchPref.setOnPreferenceChangeListener(
-                new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue)
-                    {
-                        if (DEBUG)
-                        {
-                            Log.v(TAG, "Show angle in use switch: " + newValue.toString());
-                        }
-                        GlobalSettings.updateShowAngleInUse(getContext(), (Boolean) newValue);
-                        return true;
-                    }
-        });
     }
 
     private static String getSystemProperty(String key, String defaultValue) {

@@ -460,6 +460,19 @@ TEST_P(FramebufferMultiviewTest, IncompleteViewTargetsLayered)
                                      2);
     ASSERT_GL_NO_ERROR();
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Test that non-overlapping view ranges of the same texture are complete, whereas overlapping
+    // view ranges of the same texture are rejected on D3D11 (and in hardened/WebGL contexts).
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, tex, 0, 2, 2);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glFramebufferTextureMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, tex, 0, 1, 2);
+    ASSERT_GL_NO_ERROR();
+    if (IsD3D11())
+    {
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_UNSUPPORTED, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    }
 }
 
 // Test that glClear clears the contents of the color buffer for only the attached layers to a

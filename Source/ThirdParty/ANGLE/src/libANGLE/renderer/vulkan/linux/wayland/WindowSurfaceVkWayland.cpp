@@ -17,12 +17,25 @@
 namespace rx
 {
 
+namespace
+{
+// The Vulkan WSI layer attaches the buffers but never sees the wl_egl_window, so only this
+// class can report the attached size back to the application.
+void UpdateAttachedSize(wl_egl_window *eglWindow)
+{
+    eglWindow->attached_width  = eglWindow->width;
+    eglWindow->attached_height = eglWindow->height;
+}
+}  // anonymous namespace
+
 void WindowSurfaceVkWayland::ResizeCallback(wl_egl_window *eglWindow, void *payload)
 {
     WindowSurfaceVkWayland *windowSurface = reinterpret_cast<WindowSurfaceVkWayland *>(payload);
 
     windowSurface->mExtents.width  = eglWindow->width;
     windowSurface->mExtents.height = eglWindow->height;
+
+    UpdateAttachedSize(eglWindow);
 }
 
 WindowSurfaceVkWayland::WindowSurfaceVkWayland(const egl::SurfaceState &surfaceState,
@@ -35,6 +48,8 @@ WindowSurfaceVkWayland::WindowSurfaceVkWayland(const egl::SurfaceState &surfaceS
     eglWindow->driver_private  = this;
 
     mExtents = gl::Extents(eglWindow->width, eglWindow->height, 1);
+
+    UpdateAttachedSize(eglWindow);
 }
 
 WindowSurfaceVkWayland::~WindowSurfaceVkWayland()

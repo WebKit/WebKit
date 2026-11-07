@@ -8,7 +8,7 @@
 //
 
 #include "common/mathutil.h"
-#include "common/unsafe_buffers.h"
+#include "common/span.h"
 #include "image_util/copyimage.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -130,7 +130,7 @@ template <typename DestT, typename SrcT, size_t SrcN>
 void ZeroAndCopy(DestT &dest, const SrcT (&src)[SrcN])
 {
     dest.fill(0);
-    ANGLE_UNSAFE_TODO(memcpy(dest.data(), src, sizeof(SrcT) * SrcN));
+    Span(dest).copy_prefix_from(as_byte_span(src));
 }
 
 std::string EnumStr(const GLenum v)
@@ -141,15 +141,15 @@ std::string EnumStr(const GLenum v)
 }
 
 template <typename ColorT, typename DestT>
-void EncodeThenZeroAndCopy(DestT &dest, const float srcVals[4])
+void EncodeThenZeroAndCopy(DestT &dest, Span<const float, 4> srcVals)
 {
-    ColorF srcValsF = ANGLE_UNSAFE_TODO(ColorF(srcVals[0], srcVals[1], srcVals[2], srcVals[3]));
+    ColorF srcValsF(srcVals[0], srcVals[1], srcVals[2], srcVals[3]);
 
     ColorT encoded;
     ColorT::writeColor(&encoded, &srcValsF);
 
     dest.fill(0);
-    ANGLE_UNSAFE_TODO(memcpy(dest.data(), &encoded, sizeof(ColorT)));
+    Span(dest).copy_prefix_from(byte_span_from_ref(encoded));
 }
 }  // anonymous namespace
 
@@ -328,8 +328,9 @@ void TextureUploadFormatTest::TestAll(UploadSource uploadSource)
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, 1);
 
         subrectBuffer.fill(0);
-        ANGLE_UNSAFE_TODO(
-            memcpy(subrectBuffer.data() + bytesPerPixel, srcBuffer.data(), bytesPerPixel));
+        Span(subrectBuffer)
+            .subspan(bytesPerPixel)
+            .copy_prefix_from(Span(srcBuffer).first(bytesPerPixel));
         if (usePBO)
         {
             glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, subrectBuffer.size(), subrectBuffer.data());

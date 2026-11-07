@@ -12,6 +12,7 @@
 
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
+#include "util/OSWindow.h"
 
 namespace angle
 {
@@ -1842,6 +1843,215 @@ void main() {
     drawQuad(program, "position", 0.5f);
 
     checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::black);
+}
+
+// Verify that both non-PBO and PBO readPixels of an immutable NPOT texture with a clamped base
+// level do not read uninitialized staging texture memory.
+TEST_P(RobustResourceInitTestES3, TexStorage2DNPOTClampedBaseLevelPBOReadPixels)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    constexpr GLsizei kTexWidth  = 256;
+    constexpr GLsizei kTexHeight = 255;
+    constexpr GLsizei kLevels    = 8;
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, kLevels, GL_RGBA8, kTexWidth, kTexHeight);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 100);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+
+    const size_t pixelCount = static_cast<size_t>(kTexWidth * kTexHeight);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+    // Leave |tex| uninitialized by the application. With GL_ANGLE_robust_resource_initialization
+    // enabled on this fixture, ANGLE must zero-initialize |tex| to GLColor::transparentBlack
+    // (RGBA = 0, 0, 0, 0) before glReadPixels reads from it.
+    // Pre-fill the destination buffers with GLColor::magenta so that checking for
+    // GLColor::transparentBlack verifies both:
+    // 1. glReadPixels actually overwrote every pixel (did not no-op and leave magenta behind), and
+    // 2. glReadPixels read the zero-initialized texture rather than uninitialized GPU staging
+    //    texture memory.
+
+    // Non-PBO readPixels path (exercises Renderer11::readFromAttachment on D3D11).
+    std::vector<GLColor> clientPixels(pixelCount, GLColor::magenta);
+    glReadPixels(0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE, clientPixels.data());
+    ASSERT_GL_NO_ERROR();
+    for (size_t i = 0; i < pixelCount; ++i)
+    {
+        ASSERT_EQ(GLColor::transparentBlack, clientPixels[i]) << "Non-PBO mismatch at pixel " << i;
+    }
+
+    // PBO readPixels path (exercises Buffer11::PackStorage::packPixels on D3D11).
+    std::vector<GLColor> sentinelData(pixelCount, GLColor::magenta);
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, pixelCount * sizeof(GLColor), sentinelData.data(),
+                 GL_STREAM_READ);
+
+    glReadPixels(0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    const GLColor *mappedPixels = static_cast<const GLColor *>(
+        glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, pixelCount * sizeof(GLColor), GL_MAP_READ_BIT));
+    ASSERT_NE(nullptr, mappedPixels);
+
+    for (size_t i = 0; i < pixelCount; ++i)
+    {
+        // SAFETY: mappedPixels points to pixelCount GLColor elements mapped by glMapBufferRange.
+        ASSERT_EQ(GLColor::transparentBlack, ANGLE_UNSAFE_BUFFERS(mappedPixels[i]))
+            << "PBO mismatch at pixel " << i;
+    }
+
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Verify that when the frontend attachment size exceeds the D3D11 RenderTarget11 subresource size
+// (via EGL_ANGLE_window_fixed_size updated with eglSurfaceAttrib before the swapchain is resized),
+// both non-PBO and PBO glReadPixels:
+// 1. Early-out without modifying the destination buffer when ClipRenderTargetReadArea returns
+//    false (read area is inside the frontend attachment size, but completely outside the D3D11
+//    subresource bounds).
+// 2. Clip the read area to the D3D11 subresource bounds when ClipRenderTargetReadArea returns
+//    true (read area partially overlaps the D3D11 subresource bounds).
+TEST_P(RobustResourceInitTestES3, FixedSizeSurfaceExpandedBeforeSwapReadPixels)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    EGLWindow *eglWindow = getEGLWindow();
+    EGLDisplay display   = eglWindow->getDisplay();
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_window_fixed_size"));
+
+    constexpr EGLint kWidth          = 64;
+    constexpr EGLint kInitialHeight  = 64;
+    constexpr EGLint kExpandedHeight = 128;
+
+    OSWindow *osWindow = OSWindow::New();
+    ASSERT_TRUE(osWindow->initialize("FixedSizeSurfaceExpandedBeforeSwapReadPixels", kWidth,
+                                     kInitialHeight));
+
+    const EGLint surfaceAttributes[] = {
+        EGL_FIXED_SIZE_ANGLE,
+        EGL_TRUE,
+        EGL_WIDTH,
+        kWidth,
+        EGL_HEIGHT,
+        kInitialHeight,
+        EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE,
+        EGL_TRUE,
+        EGL_NONE,
+    };
+
+    EGLSurface fixedSurface = eglCreateWindowSurface(
+        display, eglWindow->getConfig(), osWindow->getNativeWindow(), surfaceAttributes);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(EGL_NO_SURFACE, fixedSurface);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, fixedSurface, fixedSurface, eglWindow->getContext()));
+    ASSERT_EGL_SUCCESS();
+
+    // Increase the frontend fixed height from 64 to 128 without calling eglSwapBuffers or
+    // eglWaitNative. Surface::getSize() immediately reports 64x128, while SwapChain11's
+    // RenderTarget11 remains 64x64 until the next swap/wait.
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(display, fixedSurface, EGL_HEIGHT, kExpandedHeight));
+    ASSERT_EGL_SUCCESS();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+    // Read (0, 64, 64, 64), which lies inside Surface::getSize() (64x128) so
+    // FramebufferD3D::readPixels does not clip it out, but lies completely outside the 64x64
+    // RenderTarget11 so ClipRenderTargetReadArea returns false and both paths early-out without
+    // modifying the destination buffer.
+    constexpr GLint kOutOfSubresourceY      = kInitialHeight;
+    constexpr GLsizei kOutOfSubresourceRows = kExpandedHeight - kInitialHeight;
+    const size_t emptyClipPixelCount        = static_cast<size_t>(kWidth * kOutOfSubresourceRows);
+
+    std::vector<GLColor> emptyClipClientPixels(emptyClipPixelCount, GLColor::magenta);
+    glReadPixels(0, kOutOfSubresourceY, kWidth, kOutOfSubresourceRows, GL_RGBA, GL_UNSIGNED_BYTE,
+                 emptyClipClientPixels.data());
+    ASSERT_GL_NO_ERROR();
+    for (size_t i = 0; i < emptyClipPixelCount; ++i)
+    {
+        ASSERT_EQ(GLColor::magenta, emptyClipClientPixels[i])
+            << "Non-PBO empty-clip early-out modified pixel " << i;
+    }
+
+    std::vector<GLColor> emptyClipSentinelData(emptyClipPixelCount, GLColor::magenta);
+    GLBuffer emptyClipPbo;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, emptyClipPbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, emptyClipPixelCount * sizeof(GLColor),
+                 emptyClipSentinelData.data(), GL_STREAM_READ);
+    glReadPixels(0, kOutOfSubresourceY, kWidth, kOutOfSubresourceRows, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    const GLColor *emptyClipMappedPixels = static_cast<const GLColor *>(glMapBufferRange(
+        GL_PIXEL_PACK_BUFFER, 0, emptyClipPixelCount * sizeof(GLColor), GL_MAP_READ_BIT));
+    ASSERT_NE(nullptr, emptyClipMappedPixels);
+    for (size_t i = 0; i < emptyClipPixelCount; ++i)
+    {
+        // SAFETY: emptyClipMappedPixels points to emptyClipPixelCount GLColor elements mapped by
+        // glMapBufferRange.
+        ASSERT_EQ(GLColor::magenta, ANGLE_UNSAFE_BUFFERS(emptyClipMappedPixels[i]))
+            << "PBO empty-clip early-out modified pixel " << i;
+    }
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Read (0, 0, 64, 128), which partially overlaps the 64x64 RenderTarget11.
+    // ClipRenderTargetReadArea clips it to (0, 0, 64, 64) and returns true, so rows 0..63 are
+    // populated with zero-initialized transparentBlack pixels and rows 64..127 remain magenta.
+    const size_t fullPixelCount  = static_cast<size_t>(kWidth * kExpandedHeight);
+    const size_t validPixelCount = static_cast<size_t>(kWidth * kInitialHeight);
+
+    std::vector<GLColor> partialClipClientPixels(fullPixelCount, GLColor::magenta);
+    glReadPixels(0, 0, kWidth, kExpandedHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                 partialClipClientPixels.data());
+    ASSERT_GL_NO_ERROR();
+    for (size_t i = 0; i < fullPixelCount; ++i)
+    {
+        const GLColor expected =
+            (i < validPixelCount) ? GLColor::transparentBlack : GLColor::magenta;
+        ASSERT_EQ(expected, partialClipClientPixels[i])
+            << "Non-PBO partial-clip mismatch at pixel " << i;
+    }
+
+    std::vector<GLColor> partialClipSentinelData(fullPixelCount, GLColor::magenta);
+    GLBuffer partialClipPbo;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, partialClipPbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, fullPixelCount * sizeof(GLColor),
+                 partialClipSentinelData.data(), GL_STREAM_READ);
+    glReadPixels(0, 0, kWidth, kExpandedHeight, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    const GLColor *partialClipMappedPixels = static_cast<const GLColor *>(glMapBufferRange(
+        GL_PIXEL_PACK_BUFFER, 0, fullPixelCount * sizeof(GLColor), GL_MAP_READ_BIT));
+    ASSERT_NE(nullptr, partialClipMappedPixels);
+    for (size_t i = 0; i < fullPixelCount; ++i)
+    {
+        const GLColor expected =
+            (i < validPixelCount) ? GLColor::transparentBlack : GLColor::magenta;
+        // SAFETY: partialClipMappedPixels points to fullPixelCount GLColor elements mapped by
+        // glMapBufferRange.
+        ASSERT_EQ(expected, ANGLE_UNSAFE_BUFFERS(partialClipMappedPixels[i]))
+            << "PBO partial-clip mismatch at pixel " << i;
+    }
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, eglWindow->getSurface(), eglWindow->getSurface(),
+                                   eglWindow->getContext()));
+    EXPECT_EGL_TRUE(eglDestroySurface(display, fixedSurface));
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
 }
 
 // Tests that drawing with an uninitialized mipped texture works as expected.
@@ -5936,10 +6146,10 @@ TEST_P(RobustResourceInitTestES3, ClearSliceOf3DInvalidateAnotherAttachmentReadb
 
     // Attach a second attachment and invalidate it.
     GLTexture toInvalidate;
-    glBindTexture(GL_TEXTURE_2D, toInvalidate);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+    glBindTexture(GL_TEXTURE_3D, toInvalidate);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, kWidth, kHeight, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  nullptr);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, toInvalidate, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, toInvalidate, 0, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 

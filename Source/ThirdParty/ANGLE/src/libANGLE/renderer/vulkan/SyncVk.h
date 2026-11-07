@@ -66,12 +66,12 @@ class SyncHelperInterface : angle::NonCopyable
                                      bool flushCommands,
                                      uint64_t timeout,
                                      MapVkResultToApiType mappingFunction,
-                                     void *outResult)                                          = 0;
-    virtual angle::Result serverWait(ContextVk *contextVk)                                     = 0;
+                                     void *outResult)                               = 0;
+    virtual angle::Result serverWait(ContextVk *contextVk)                          = 0;
     virtual angle::Result getStatus(ErrorContext *context,
                                     ContextVk *contextVk,
-                                    bool *signaledOut)                                         = 0;
-    virtual angle::Result dupNativeFenceFD(ErrorContext *context, int *fdOut) const            = 0;
+                                    bool *signaledOut)                              = 0;
+    virtual angle::Result dupNativeFenceFD(ErrorContext *context, int *fdOut) const = 0;
 };
 
 // Implementation of fence types - glFenceSync, and EGLSync(EGL_SYNC_FENCE_KHR).

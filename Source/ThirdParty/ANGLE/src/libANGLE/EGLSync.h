@@ -86,7 +86,8 @@ class [[nodiscard]] ScopedSyncRef final
 {
   public:
     ScopedSyncRef() = default;
-    ScopedSyncRef(ThreadSafeDisplay &display, Sync *sync) : mDisplay(display), mSync(sync)
+    ScopedSyncRef(ThreadSafeDisplay &display, Sync *sync)
+        : mDisplay(ScopedThreadSafeDisplayRef::Duplicate(display)), mSync(sync)
     {
         // Callers only invoke this with valid Sync* objects; if lookup fails, ScopedSyncRef() is
         // used instead.
@@ -94,7 +95,8 @@ class [[nodiscard]] ScopedSyncRef final
         mSync->addRef();
     }
     ScopedSyncRef(ThreadSafeDisplay *display, Sync *sync)
-        : mDisplay(display ? ScopedThreadSafeDisplayRef(*display) : ScopedThreadSafeDisplayRef()),
+        : mDisplay(display ? ScopedThreadSafeDisplayRef::Duplicate(*display)
+                           : ScopedThreadSafeDisplayRef()),
           mSync(sync)
     {
         if (mSync)
@@ -129,6 +131,33 @@ class [[nodiscard]] ScopedSyncRef final
     // ThreadSafeDisplay and release it when the SyncRef goes out of scope.
     ScopedThreadSafeDisplayRef mDisplay;
     Sync *mSync = nullptr;
+};
+
+class [[nodiscard]] ScopedSyncDestroy final : angle::NonCopyable
+{
+  public:
+    ScopedSyncDestroy() : mDisplay(nullptr), mSync(nullptr) {}
+    ScopedSyncDestroy(ThreadSafeDisplay *display, Sync *sync) : mDisplay(display), mSync(sync) {}
+    ~ScopedSyncDestroy()
+    {
+        if (mSync)
+        {
+            ASSERT(mDisplay != nullptr);
+            mDisplay->releaseSync(mSync);
+        }
+    }
+
+    Sync *get() const { return mSync; }
+    Sync *release()
+    {
+        Sync *sync = mSync;
+        mSync      = nullptr;
+        return sync;
+    }
+
+  private:
+    ThreadSafeDisplay *mDisplay;
+    Sync *mSync;
 };
 
 }  // namespace egl

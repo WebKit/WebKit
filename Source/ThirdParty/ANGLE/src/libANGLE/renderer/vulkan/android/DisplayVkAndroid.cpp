@@ -14,9 +14,9 @@
 #include <vulkan/vulkan.h>
 #include <cinttypes>
 
+#include "common/android_util.h"
 #include "common/angle_version_info.h"
 #include "common/string_utils.h"
-#include "common/system_utils.h"
 #include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/android/HardwareBufferImageSiblingVkAndroid.h"
@@ -34,11 +34,8 @@ void CheckAndroidBlobcacheLimits()
     // Check whether the correct blobcache mode and limits are set
 
     // https://android.googlesource.com/platform/frameworks/native/+/android16-release/opengl/libs/EGL/egl_cache.cpp#237
-    bool roBlobcacheMultifileEnabled =
-        angle::GetEnvironmentVarOrAndroidProperty("", "ro.egl.blobcache.multifile") == "true";
-    bool debugBlobcacheMultifileEnabled =
-        angle::GetEnvironmentVarOrAndroidProperty("", "debug.egl.blobcache.multifile") == "true";
-    if (!roBlobcacheMultifileEnabled && !debugBlobcacheMultifileEnabled)
+    const AndroidBlobCacheProperties blobCacheProperties = GetAndroidBlobCacheProperties();
+    if (!blobCacheProperties.isMultifileEnabled())
     {
         __android_log_print(ANDROID_LOG_INFO, "ANGLE",
                             "GL performance: HIGH: EGL blobcache multifile is not enabled.");
@@ -48,13 +45,13 @@ void CheckAndroidBlobcacheLimits()
     }
 
     // Check the Android version to determine recommended size
-    std::string androidVersionReleaseStr =
-        angle::GetEnvironmentVarOrAndroidProperty("", "ro.build.version.release");
+    std::string androidVersionReleaseStr;
     int64_t androidVersionRelease = 0;
 
     // Starting with Android 17, we've bumped up recommended to 128 MB
     int64_t recommendedBlobcacheSize = 128 * 1024 * 1024;
-    if (angle::StringToInt64(androidVersionReleaseStr, &androidVersionRelease) &&
+    if (angle::android::GetSystemProperty("ro.build.version.release", &androidVersionReleaseStr) &&
+        angle::StringToInt64(androidVersionReleaseStr, &androidVersionRelease) &&
         androidVersionRelease < 17)
     {
         recommendedBlobcacheSize = 32 * 1024 * 1024;
@@ -62,12 +59,10 @@ void CheckAndroidBlobcacheLimits()
 
     // Then check the read-only property
     // https://android.googlesource.com/platform/frameworks/native/+/android16-release/opengl/libs/EGL/egl_cache.cpp#254
-    std::string roBlobcacheMultifileLimitStr =
-        angle::GetEnvironmentVarOrAndroidProperty("", "ro.egl.blobcache.multifile_limit");
-    int64_t roBlobcacheMultifileLimit = -1;
-    if (angle::StringToInt64(roBlobcacheMultifileLimitStr, &roBlobcacheMultifileLimit))
+    if (blobCacheProperties.multifileLimit)
     {
         // The value is set, check against recommendation
+        const int64_t roBlobcacheMultifileLimit = *blobCacheProperties.multifileLimit;
         if (roBlobcacheMultifileLimit < recommendedBlobcacheSize)
         {
             __android_log_print(ANDROID_LOG_INFO, "ANGLE",
@@ -86,12 +81,10 @@ void CheckAndroidBlobcacheLimits()
 
     // Check the debug limit, which overrides read-only
     // https://android.googlesource.com/platform/frameworks/native/+/android16-release/opengl/libs/EGL/egl_cache.cpp#258
-    std::string debugBlobcacheMultifileLimitStr =
-        angle::GetEnvironmentVarOrAndroidProperty("", "debug.egl.blobcache.multifile_limit");
-    int64_t debugBlobcacheMultifileLimit = -1;
-    if (angle::StringToInt64(debugBlobcacheMultifileLimitStr, &debugBlobcacheMultifileLimit))
+    if (blobCacheProperties.debugMultifileLimit)
     {
         // The debug value is set, check it against recommendations too
+        const int64_t debugBlobcacheMultifileLimit = *blobCacheProperties.debugMultifileLimit;
         if (debugBlobcacheMultifileLimit < recommendedBlobcacheSize)
         {
             __android_log_print(ANDROID_LOG_INFO, "ANGLE",

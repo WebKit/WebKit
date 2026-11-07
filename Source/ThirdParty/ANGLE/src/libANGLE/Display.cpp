@@ -148,6 +148,9 @@ struct TLSData
 {
     angle::UnlockedTailCall unlockedTailCall;
     Error errorScratchSpace;
+#if defined(ANGLE_ENABLE_ASSERTS)
+    uint32_t displayRefCount = 0;
+#endif
 
     TLSData();
 };
@@ -1000,23 +1003,19 @@ ScopedSyncRef SyncSet::getSync(ThreadSafeDisplay *display, SyncID syncID) const
     return ScopedSyncRef();
 }
 
-void SyncSet::destroySync(const ThreadSafeDisplay *display, SyncID syncID)
+Sync *SyncSet::removeSync(SyncID syncID)
 {
     std::lock_guard<angle::SimpleMutex> lock(mMutex);
     auto iter = mSyncMap.find(syncID.value);
     if (iter == mSyncMap.end())
     {
-        return;
+        return nullptr;
     }
 
     mHandleAllocator.release(syncID.value);
     Sync *sync = iter->second;
     mSyncMap.erase(iter);
-
-    if (sync->releaseRef())
-    {
-        releaseSyncImpl(display, sync);
-    }
+    return sync;
 }
 
 void SyncSet::releaseSync(const ThreadSafeDisplay *display, Sync *sync)
@@ -1027,22 +1026,20 @@ void SyncSet::releaseSync(const ThreadSafeDisplay *display, Sync *sync)
     }
     if (sync->releaseRef())
     {
-        std::lock_guard<angle::SimpleMutex> lock(mMutex);
         releaseSyncImpl(display, sync);
     }
 }
 
 void SyncSet::releaseSyncImpl(const ThreadSafeDisplay *display, Sync *sync)
 {
-    sync->onDestroy(display);
-    SyncPool &pool = mSyncPools[sync->getType()];
+    std::unique_ptr<Sync> uniqueSync(sync);
+    uniqueSync->onDestroy(display);
+
+    std::lock_guard<angle::SimpleMutex> lock(mMutex);
+    SyncPool &pool = mSyncPools[uniqueSync->getType()];
     if (pool.size() < kMaxSyncPoolSizePerType)
     {
-        pool.push_back(std::unique_ptr<Sync>(sync));
-    }
-    else
-    {
-        delete sync;
+        pool.push_back(std::move(uniqueSync));
     }
 }
 
@@ -1065,7 +1062,8 @@ void SyncSet::destroyAllInvalidSyncs(Display *display)
 
         if (sync->releaseRef())
         {
-            releaseSyncImpl(display, sync);
+            sync->onDestroy(display);
+            delete sync;
         }
     }
 }
@@ -1222,13 +1220,14 @@ void ThreadSafeDisplay::releaseSync(Sync *sync)
     mSyncSet.releaseSync(this, sync);
 }
 
+Sync *ThreadSafeDisplay::removeSync(egl::SyncID syncID)
+{
+    return mSyncSet.removeSync(syncID);
+}
+
 void ThreadSafeDisplay::destroySync(Sync *sync)
 {
-    if (sync == nullptr)
-    {
-        return;
-    }
-    mSyncSet.destroySync(this, sync->id());
+    mSyncSet.releaseSync(this, sync);
 }
 
 Error ThreadSafeDisplay::createSync(const gl::Context *currentContext,
@@ -1834,7 +1833,10 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
 
     setUninitialized();
 
-    gl::UninitializeDebugAnnotations();
+    {
+        std::unique_lock<angle::SimpleMutex> lock(gl::GetDebugMutex());
+        gl::UninitializeDebugAnnotations();
+    }
 
     // TODO(jmadill): Store Platform in Display and deinit here.
     ANGLEResetDisplayPlatform(this);
@@ -3088,4 +3090,31 @@ Error *Display::GetCurrentThreadErrorScratchSpace()
 {
     return &GetDisplayTLS()->errorScratchSpace;
 }
+
+#if defined(ANGLE_ENABLE_ASSERTS)
+// static
+uint32_t ThreadSafeDisplay::GetCurrentThreadDisplayRefCount()
+{
+    TLSData *tls = GetDisplayTLS();
+    ASSERT(tls != nullptr);
+    return tls->displayRefCount;
+}
+
+// static
+void ThreadSafeDisplay::IncrementCurrentThreadDisplayRefCount()
+{
+    TLSData *tls = GetDisplayTLS();
+    ASSERT(tls != nullptr);
+    ++tls->displayRefCount;
+}
+
+// static
+void ThreadSafeDisplay::DecrementCurrentThreadDisplayRefCount()
+{
+    TLSData *tls = GetDisplayTLS();
+    ASSERT(tls != nullptr);
+    ASSERT(tls->displayRefCount > 0);
+    --tls->displayRefCount;
+}
+#endif
 }  // namespace egl

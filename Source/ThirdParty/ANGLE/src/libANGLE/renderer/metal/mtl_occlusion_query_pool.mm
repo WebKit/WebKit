@@ -29,12 +29,16 @@ void OcclusionQueryPool::destroy(ContextMtl *contextMtl)
     mAllocatedQueries.clear();
 }
 
+size_t OcclusionQueryPool::nextQueryOffset() const
+{
+    return mAllocatedQueries.empty()
+               ? 0
+               : (mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize);
+}
+
 bool OcclusionQueryPool::canAllocateQueryOffset(ContextMtl *contextMtl) const
 {
-    size_t nextOffset = mAllocatedQueries.empty()
-                            ? 0
-                            : (mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize);
-    return nextOffset + kOcclusionQueryResultSize <=
+    return nextQueryOffset() + kOcclusionQueryResultSize <=
            contextMtl->getDisplay()->getMaxVisibilityQueryOffset();
 }
 
@@ -58,9 +62,9 @@ angle::Result OcclusionQueryPool::beginQuery(ContextMtl *contextMtl,
                                              const BufferRef &resultBuffer,
                                              size_t *outResultOffset)
 {
-    size_t resultOffset = mAllocatedQueries.empty()
-                              ? 0
-                              : (mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize);
+    CHECK(canAllocateQueryOffset(contextMtl));
+
+    size_t resultOffset = nextQueryOffset();
 
     ANGLE_TRY(ensurePoolCapacity(contextMtl, resultOffset + kOcclusionQueryResultSize));
     discardQuery(resultBuffer);
@@ -79,6 +83,7 @@ angle::Result OcclusionQueryPool::continueQuery(ContextMtl *contextMtl,
                                                 size_t *outResultOffset)
 {
     ASSERT(resultBuffer);
+    CHECK(canAllocateQueryOffset(contextMtl));
     if (mAllocatedQueries.empty() &&
         !contextMtl->getDisplay()->getFeatures().allowBufferReadWrite.enabled)
     {
@@ -92,9 +97,7 @@ angle::Result OcclusionQueryPool::continueQuery(ContextMtl *contextMtl,
         return angle::Result::Continue;
     }
 
-    size_t resultOffset = mAllocatedQueries.empty()
-                              ? 0
-                              : (mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize);
+    size_t resultOffset = nextQueryOffset();
     ANGLE_TRY(ensurePoolCapacity(contextMtl, resultOffset + kOcclusionQueryResultSize));
 
     if (mAllocatedQueries.empty())

@@ -1370,7 +1370,186 @@ TEST_P(FramebufferTest_ES3, AttachmentWith3DLayers)
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texA, 0);
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texB, 0, 0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_NO_ERROR();
+}
+
+// Check that attachments with the same width and height but different 3D texture depth (layer
+// counts) are complete.
+TEST_P(FramebufferTest_ES3, AttachmentsWithDifferentDepths)
+{
+    GLTexture tex2D;
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLTexture tex2DArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, tex2DArray);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, 4, 4, /*depth=*/2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLTexture tex3DA;
+    glBindTexture(GL_TEXTURE_3D, tex3DA);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 4, 4, /*depth=*/1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLTexture tex3DB;
+    glBindTexture(GL_TEXTURE_3D, tex3DB);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 4, 4, /*depth=*/2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // Two 3D textures with different z-depths (1 vs. 2) have matching 2D slice dimensions (4x4).
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3DA, 0, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, tex3DB, 0, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // A 2D texture (depth 1) and a 2D array texture (depth 2) also have matching 2D dimensions.
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex2D, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, tex2DArray, 0, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Verify that attempting to render to a framebuffer with mixed 2D and 3D color attachments (which
+// is unsupported on D3D11 because OMSetRenderTargets requires all bound views to have the same
+// resource dimension) does not corrupt the previously bound framebuffer's render target.
+TEST_P(FramebufferTest_ES3, Mixed2DAnd3DColorAttachmentsDoNotCorruptPreviousFramebuffer)
+{
+    constexpr GLsizei kSize = 4;
+
+    // Bind firstFbo first and clear it to green so its render target is active on the GPU.
+    GLTexture firstTex;
+    glBindTexture(GL_TEXTURE_2D, firstTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer firstFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, firstFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, firstTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kSize, kSize);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Switch to a different framebuffer (mixedColorFbo) with a 2D color attachment and a 3D color
+    // attachment, and draw red to it.
+    GLTexture tex2D;
+    glBindTexture(GL_TEXTURE_2D, tex2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLTexture tex3D;
+    glBindTexture(GL_TEXTURE_3D, tex3D);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, kSize, kSize, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLFramebuffer mixedColorFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, mixedColorFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex2D, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, tex3D, 0, 0);
+    const GLenum drawBuffers[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, drawBuffers);
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+layout(location = 0) out vec4 out0;
+layout(location = 1) out vec4 out1;
+void main()
+{
+    out0 = vec4(1.0, 0.0, 0.0, 1.0);
+    out1 = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(mrtRedProgram, essl3_shaders::vs::Simple(), kFS);
+
+    const GLenum mixedColorStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    EXPECT_TRUE(mixedColorStatus == GL_FRAMEBUFFER_COMPLETE ||
+                mixedColorStatus == GL_FRAMEBUFFER_UNSUPPORTED);
+    drawQuad(mrtRedProgram, essl3_shaders::PositionAttrib(), 0.5f);
+    if (mixedColorStatus == GL_FRAMEBUFFER_COMPLETE)
+    {
+        // On backends that support mixed 2D/3D attachments, mixedColorFbo should now be red.
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    }
+    else
+    {
+        // On backends where mixed 2D/3D attachments are unsupported (D3D11), the draw must be
+        // rejected with GL_INVALID_FRAMEBUFFER_OPERATION.
+        EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    }
+
+    // In either case, drawing while mixedColorFbo was bound must not have overwritten firstFbo,
+    // which must still be green.
+    glBindFramebuffer(GL_FRAMEBUFFER, firstFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Verify that attempting to render to a framebuffer with a 3D color attachment and a 2D depth
+// renderbuffer attachment (which is unsupported on D3D11 because OMSetRenderTargets requires the
+// depth/stencil view to have the same resource dimension as the render target views) does not
+// corrupt the previously bound framebuffer's render target.
+TEST_P(FramebufferTest_ES3, Mixed3DColorAndDepthAttachmentsDoNotCorruptPreviousFramebuffer)
+{
+    constexpr GLsizei kSize = 4;
+
+    // Bind firstFbo first and clear it to green so its render target is active on the GPU.
+    GLTexture firstTex;
+    glBindTexture(GL_TEXTURE_2D, firstTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer firstFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, firstFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, firstTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glViewport(0, 0, kSize, kSize);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Switch to a different framebuffer (mixedDepthFbo) with a 3D color attachment and a 2D depth
+    // renderbuffer attachment, and draw red to it.
+    GLTexture tex3D;
+    glBindTexture(GL_TEXTURE_3D, tex3D);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, kSize, kSize, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLRenderbuffer depthRbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, kSize, kSize);
+
+    GLFramebuffer mixedDepthFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, mixedDepthFbo);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3D, 0, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRbo);
+
+    ANGLE_GL_PROGRAM(redProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+
+    const GLenum mixedDepthStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    EXPECT_TRUE(mixedDepthStatus == GL_FRAMEBUFFER_COMPLETE ||
+                mixedDepthStatus == GL_FRAMEBUFFER_UNSUPPORTED);
+    drawQuad(redProgram, essl3_shaders::PositionAttrib(), 0.5f);
+    if (mixedDepthStatus == GL_FRAMEBUFFER_COMPLETE)
+    {
+        // On backends that support 3D color + 2D depth attachments, mixedDepthFbo should now be
+        // red.
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    }
+    else
+    {
+        // On backends where 3D color + 2D depth attachments are unsupported (D3D11), the draw must
+        // be rejected with GL_INVALID_FRAMEBUFFER_OPERATION.
+        EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    }
+
+    // In either case, drawing while mixedDepthFbo was bound must not have overwritten firstFbo,
+    // which must still be green.
+    glBindFramebuffer(GL_FRAMEBUFFER, firstFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     EXPECT_GL_NO_ERROR();
 }
 

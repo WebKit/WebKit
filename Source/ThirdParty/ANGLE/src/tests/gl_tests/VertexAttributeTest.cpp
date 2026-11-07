@@ -1636,14 +1636,11 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
 // Test that glVertexAttribPointer call that changes only the format works.
 TEST_P(VertexAttributeOORTest, FormatOnlyChangeRefreshesElementLimit)
 {
-    // The front-end per-attribute cache is bypassed when the backend exposes robust buffer access.
-    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"));
-
     constexpr char kVS[] = R"(attribute vec4 a;
 void main()
 {
     gl_Position = a;
-    gl_PointSize = 8.0;
+    gl_PointSize = 1.0;
 })";
     constexpr char kFS[] = R"(precision mediump float;
 void main()
@@ -1667,8 +1664,10 @@ void main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     glEnableVertexAttribArray(attribLoc);
 
-    const GLint centerX = getWindowWidth() / 2;
-    const GLint centerY = getWindowHeight() / 2;
+    // Render into a 1x1 viewport so that the point, which is at (0, 0) in normalized device
+    // coordinates, lands exactly on the center of pixel (0, 0). Points are always one pixel wide
+    // here because not every backend supports a larger point size.
+    glViewport(0, 0, 1, 1);
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1677,7 +1676,7 @@ void main()
     glVertexAttribPointer(attribLoc, 1, GL_BYTE, GL_FALSE, 28, nullptr);
     glDrawArrays(GL_POINTS, 0, 2);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(centerX, centerY, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1686,17 +1685,28 @@ void main()
     glVertexAttribPointer(attribLoc, 4, GL_FLOAT, GL_FALSE, 28, nullptr);
     glDrawArrays(GL_POINTS, 0, 1);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(centerX, centerY, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     // Two vertices is out-of-bounds for the new (4xFLOAT) format.
+    glClear(GL_COLOR_BUFFER_BIT);
     glDrawArrays(GL_POINTS, 0, 2);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    if (IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"))
+    {
+        // The front-end element limit check is bypassed when the backend exposes robust buffer
+        // access, so the draw succeeds. Vertex 0 is in bounds and still draws the point.
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+    else
+    {
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
 
     glClear(GL_COLOR_BUFFER_BIT);
     glVertexAttribPointer(attribLoc, 1, GL_BYTE, GL_FALSE, 28, nullptr);
     glDrawArrays(GL_POINTS, 0, 2);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(centerX, centerY, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Test that enabling a buffer in an unused attribute doesn't crash.  There should be an active
@@ -8187,6 +8197,123 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
         .disable(Feature::UseVertexInputBindingStrideDynamicState)
         .disable(Feature::SupportsGraphicsPipelineLibrary),
     ES3_VULKAN().disable(Feature::ForceSizePointerForBoundVertexBuffers));
+
+// DefaultAttribOffsetResetAfterBufferWithNonZeroRelativeOffset
+//
+// Regression test for the Vulkan default-attribute bug where a vertex attribute switches
+// from a buffer-backed binding with a non-zero relativeOffset to a disabled array with a
+// default value. The default-value buffer must be read from offset 0, so the shader should
+// see the new default value (3, 4) and not stale or out-of-bounds data.
+TEST_P(VertexAttributeTestES31, DefaultAttribOffsetResetAfterBufferWithNonZeroRelativeOffset)
+{
+    constexpr char kVS[] = R"(#version 310 es
+layout(location = 0) in vec4  vs_in_position;
+layout(location = 1) in vec2  vs_in_color_rg;
+layout(location = 2) in float vs_in_color_b;
+layout(location = 3) in uvec3 vs_in_data0;
+layout(location = 4) in ivec2 vs_in_data1;
+out vec2  color_rg;
+out float color_b;
+flat out uvec3 data0;
+flat out ivec2 data1;
+void main()
+{
+    data0       = vs_in_data0;
+    data1       = vs_in_data1;
+    color_b     = vs_in_color_b;
+    color_rg    = vs_in_color_rg;
+    gl_Position = vs_in_position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision highp float;
+precision highp int;
+in vec2  color_rg;
+in float color_b;
+flat in uvec3 data0;
+flat in ivec2 data1;
+out vec4 fs_out_color;
+uniform uvec3 g_expected_data0;
+uniform ivec2 g_expected_data1;
+void main()
+{
+    fs_out_color = vec4(color_rg, color_b, 1.0);
+    if (data0 != g_expected_data0) fs_out_color = vec4(1.0);
+    if (data1 != g_expected_data1) fs_out_color = vec4(1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint expectedData0Loc = glGetUniformLocation(program, "g_expected_data0");
+    GLint expectedData1Loc = glGetUniformLocation(program, "g_expected_data1");
+    ASSERT_NE(-1, expectedData0Loc);
+    ASSERT_NE(-1, expectedData1Loc);
+
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+
+    constexpr GLsizei kStride = 52;
+    struct Vertex
+    {
+        float pos[2];
+        float color_rg[2];
+        float color_b;
+        uint32_t data0[3];
+        uint8_t pad[12];
+        int32_t data1[2];
+    };
+    static_assert(sizeof(Vertex) == 52, "Vertex must be 52 bytes");
+
+    const float kPositions[4][2] = {{-1.f, -1.f}, {1.f, -1.f}, {-1.f, 1.f}, {1.f, 1.f}};
+    Vertex vboData[4]            = {};
+    for (int i = 0; i < 4; ++i)
+    {
+        vboData[i].pos[0]      = kPositions[i][0];
+        vboData[i].pos[1]      = kPositions[i][1];
+        vboData[i].color_rg[0] = 0.0f;
+        vboData[i].color_rg[1] = 0.0f;
+        vboData[i].color_b     = 1.0f;
+        vboData[i].data0[0]    = 1;
+        vboData[i].data0[1]    = 2;
+        vboData[i].data0[2]    = 3;
+        vboData[i].data1[0]    = 1;
+        vboData[i].data1[1]    = 2;
+    }
+
+    GLBuffer vbo;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vboData), vboData, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glVertexAttribFormat(0, 2, GL_FLOAT, GL_FALSE, 0);
+    glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, 8);
+    glVertexAttribFormat(2, 1, GL_FLOAT, GL_FALSE, 16);
+    glVertexAttribIFormat(3, 3, GL_UNSIGNED_INT, 20);
+    glVertexAttribIFormat(4, 2, GL_INT, 44);
+    for (GLuint i = 0; i < 5; ++i)
+    {
+        glVertexAttribBinding(i, 0);
+        glEnableVertexAttribArray(i);
+    }
+    glBindVertexBuffer(0, vbo, 0, kStride);
+
+    glUniform3ui(expectedData0Loc, 1, 2, 3);
+    glUniform2i(expectedData1Loc, 1, 2);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glDisableVertexAttribArray(4);
+    glVertexAttribI4i(4, 3, 4, 0, 0);
+
+    glUniform2i(expectedData1Loc, 3, 4);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES31);
 ANGLE_INSTANTIATE_TEST_ES31_AND(

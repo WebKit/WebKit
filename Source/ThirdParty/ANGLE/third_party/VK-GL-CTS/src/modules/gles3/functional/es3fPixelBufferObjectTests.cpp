@@ -596,6 +596,312 @@ TestCase::IterateResult ReadPixelsTest::iterate(void)
     }
 }
 
+class PBOSplitUploadTest : public TestCase
+{
+public:
+    enum TestType
+    {
+        TESTTYPE_LAST_LINE = 0,
+        TESTTYPE_LAST_PIXEL
+    };
+
+    PBOSplitUploadTest(Context &context, const char *name, const char *description, TestType testType)
+        : TestCase(context, name, description)
+        , m_testType(testType)
+        , m_prog0(nullptr)
+        , m_progTex(nullptr)
+        , m_vao(0)
+        , m_vbo(0)
+        , m_frame(0)
+        , m_seed(0xdeadbeef)
+    {
+        for (int i = 0; i < P; i++)
+        {
+            m_texs[i]     = 0;
+            m_tex_w[i]    = 0;
+            m_tex_h[i]    = 0;
+            m_tex_type[i] = 0;
+        }
+    }
+
+    ~PBOSplitUploadTest(void) override
+    {
+    }
+
+    void init(void) override
+    {
+        m_frame = 0;
+        m_seed  = 0x3833388d ^ (uint32_t)m_testType;
+
+        const char *vSrc    = "#version 300 es\n"
+                              "layout(location=0) in vec4 a;\n"
+                              "void main() { gl_Position = a; }\n";
+        const char *fSrc    = "#version 300 es\n"
+                              "precision mediump float;\n"
+                              "out vec4 c;\n"
+                              "void main() { c = vec4(1.0); }\n";
+        const char *vTexSrc = "#version 300 es\n"
+                              "layout(location=0) in vec4 a;\n"
+                              "out vec2 uv;\n"
+                              "void main() { gl_Position = a; uv = a.xy * 0.5 + 0.5; }\n";
+        const char *fTexSrc = "#version 300 es\n"
+                              "precision mediump float;\n"
+                              "uniform sampler2D tex;\n"
+                              "in vec2 uv;\n"
+                              "out vec4 c;\n"
+                              "void main() { c = texture(tex, uv); }\n";
+
+        m_prog0   = new glu::ShaderProgram(m_context.getRenderContext(), glu::makeVtxFragSources(vSrc, fSrc));
+        m_progTex = new glu::ShaderProgram(m_context.getRenderContext(), glu::makeVtxFragSources(vTexSrc, fTexSrc));
+
+        if (!m_prog0->isOk() || !m_progTex->isOk())
+            throw tcu::TestError("Failed to compile shaders");
+
+        glGenVertexArrays(1, &m_vao);
+        glBindVertexArray(m_vao);
+
+        const float verts[] = {-1.0f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f,
+                               -1.0f, 1.0f,  0.0f, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f};
+        glGenBuffers(1, &m_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 16, 0);
+        glEnableVertexAttribArray(0);
+    }
+
+    void deinit(void) override
+    {
+        for (int i = 0; i < P; i++)
+        {
+            if (m_texs[i])
+            {
+                glDeleteTextures(1, &m_texs[i]);
+                m_texs[i] = 0;
+            }
+        }
+        if (m_vbo)
+        {
+            glDeleteBuffers(1, &m_vbo);
+            m_vbo = 0;
+        }
+        if (m_vao)
+        {
+            glDeleteVertexArrays(1, &m_vao);
+            m_vao = 0;
+        }
+
+        delete m_prog0;
+        m_prog0 = nullptr;
+        delete m_progTex;
+        m_progTex = nullptr;
+    }
+
+    IterateResult iterate(void) override
+    {
+        auto rng = [this]() -> uint32_t
+        {
+            m_seed ^= m_seed << 13;
+            m_seed ^= m_seed >> 7;
+            m_seed ^= m_seed << 17;
+            return m_seed;
+        };
+
+        // Candidate texture dimensions (width/height in pixels)
+        const int texSizes[] = {1, 2, 4, 8, 16, 32, 64, 128};
+
+        const GLenum fmts[] = {GL_RGBA8, GL_SRGB8_ALPHA8};
+        std::vector<uint8_t> px(65536, 0x42);
+
+        GLuint p0   = m_prog0->getProgram();
+        GLuint pTex = m_progTex->getProgram();
+
+        glBindVertexArray(m_vao);
+        glUseProgram(p0);
+
+        // Fetch target size dynamically to be safe against smaller framebuffers
+        const int targetWidth  = m_context.getRenderTarget().getWidth();
+        const int targetHeight = m_context.getRenderTarget().getHeight();
+
+        const int ACTIONS_PER_FRAME = 5000;
+        for (int a = 0; a < ACTIONS_PER_FRAME; a++)
+        {
+            uint32_t r = rng() % 600;
+
+            if (r < 150)
+            {
+                // copyTexImage2D / copyTexSubImage2D from default framebuffer
+                int i = rng() % P;
+                if (m_texs[i] && m_tex_w[i] >= 4 && m_tex_type[i] == 0)
+                {
+                    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                    glDrawArrays(GL_TRIANGLES, 0, 3);
+                    glBindTexture(GL_TEXTURE_2D, m_texs[i]);
+                    int copyW = de::min(m_tex_w[i], targetWidth);
+                    int copyH = de::min(m_tex_h[i], targetHeight);
+                    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, copyW, copyH);
+                }
+            }
+            else if (r < 250)
+            {
+                // PBO texture upload + immediate delete (vulnerable pattern)
+                int i = rng() % P;
+                if (m_texs[i] && m_tex_w[i] > 0 && m_tex_type[i] == 0)
+                {
+                    GLuint pbo = 0;
+                    int psz    = m_tex_w[i] * m_tex_h[i] * 4;
+                    glGenBuffers(1, &pbo);
+                    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+                    glBufferData(GL_PIXEL_UNPACK_BUFFER, psz, nullptr, GL_STREAM_DRAW);
+                    glBindTexture(GL_TEXTURE_2D, m_texs[i]);
+                    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_tex_w[i], m_tex_h[i], GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+                    glDeleteBuffers(1, &pbo);
+                    glDrawArrays(GL_TRIANGLES, 0, 3);
+                }
+            }
+            else if (r < 300)
+            {
+                // Texture self-feedback
+                int i = rng() % P;
+                if (m_texs[i] && m_tex_w[i] >= 4 && m_tex_type[i] == 0)
+                {
+                    GLuint ff = 0;
+                    glGenFramebuffers(1, &ff);
+                    glBindFramebuffer(GL_FRAMEBUFFER, ff);
+                    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texs[i], 0);
+                    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+                    {
+                        glViewport(0, 0, m_tex_w[i], m_tex_h[i]);
+                        glClear(GL_COLOR_BUFFER_BIT);
+                        glDrawArrays(GL_TRIANGLES, 0, 3);
+                        glUseProgram(pTex);
+                        glActiveTexture(GL_TEXTURE0);
+                        glBindTexture(GL_TEXTURE_2D, m_texs[i]);
+                        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                        glUseProgram(p0);
+                    }
+                    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                    glDeleteFramebuffers(1, &ff);
+
+                    glViewport(0, 0, targetWidth, targetHeight);
+                }
+            }
+            else if (r < 500)
+            {
+                // Texture creation
+                int i = rng() % P;
+                if (!m_texs[i])
+                {
+                    int w = texSizes[rng() % DE_LENGTH_OF_ARRAY(texSizes)];
+                    glGenTextures(1, &m_texs[i]);
+                    if (rng() % 5 == 0)
+                    {
+                        glBindTexture(GL_TEXTURE_CUBE_MAP, m_texs[i]);
+                        const GLenum faces[] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                                                GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                                                GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+                        for (int k = 0; k < 6; k++)
+                            glTexImage2D(faces[k], 0, GL_RGBA8, w, w, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                        m_tex_type[i] = 1; // 1 indicates Cubemap, 0 indicates 2D texture
+
+                        m_tex_w[i] = w;
+                        m_tex_h[i] = w; // Cubemaps must be square
+                    }
+                    else
+                    {
+                        glBindTexture(GL_TEXTURE_2D, m_texs[i]);
+                        GLenum fmt = fmts[rng() % DE_LENGTH_OF_ARRAY(fmts)];
+
+                        int h = (m_testType == TESTTYPE_LAST_PIXEL) ? 1 : w;
+
+                        glTexImage2D(GL_TEXTURE_2D, 0, fmt, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                        m_tex_type[i] = 0;
+
+                        m_tex_w[i] = w;
+                        m_tex_h[i] = h;
+                    }
+                }
+            }
+            else if (r < 550)
+            {
+                // Immutable texture storage
+                int i = rng() % P;
+                if (!m_texs[i])
+                {
+                    glGenTextures(1, &m_texs[i]);
+                    glBindTexture(GL_TEXTURE_2D, m_texs[i]);
+                    const int cand[] = {8, 16, 32, 64};
+                    int w            = cand[rng() % 4];
+
+                    int h = (m_testType == TESTTYPE_LAST_PIXEL) ? 1 : w;
+
+                    int levels = deLog2Floor32(w) + 1;
+                    glTexStorage2D(GL_TEXTURE_2D, levels, GL_RGBA8, w, h);
+                    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, px.data());
+                    glGenerateMipmap(GL_TEXTURE_2D);
+
+                    m_tex_w[i]    = w;
+                    m_tex_h[i]    = h;
+                    m_tex_type[i] = 0;
+                }
+            }
+            else if (rng() % 3 == 0)
+            {
+                int j = rng() % P;
+                if (m_texs[j])
+                {
+                    glDeleteTextures(1, &m_texs[j]);
+                    m_texs[j] = 0;
+                }
+            }
+
+            if (a % 256 == 0)
+            {
+                // Periodically clear the GL error queue to ignore generated errors
+                // and prevent driver crashes due to error queue overflow.
+                while (glGetError() != GL_NO_ERROR)
+                {
+                }
+            }
+        }
+
+        // Clear any remaining errors at the end of the frame
+        while (glGetError() != GL_NO_ERROR)
+        {
+        }
+
+        // Draw to default framebuffer for swap
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        m_frame++;
+        const int MAX_FRAMES = 50;
+        if (m_frame < MAX_FRAMES)
+        {
+            return CONTINUE;
+        }
+
+        m_testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+        return STOP;
+    }
+
+private:
+    static const int P = 16;
+    TestType m_testType;
+    glu::ShaderProgram *m_prog0;
+    glu::ShaderProgram *m_progTex;
+    GLuint m_vao;
+    GLuint m_vbo;
+    int m_frame;
+    uint32_t m_seed;
+    GLuint m_texs[P];
+    int m_tex_w[P];
+    int m_tex_h[P];
+    int m_tex_type[P]; // 0 for 2D texture, 1 for cubemap
+};
+
 } // namespace
 
 PixelBufferObjectTests::PixelBufferObjectTests(Context &context)
@@ -711,6 +1017,22 @@ void PixelBufferObjectTests::init(void)
     }
 
     addChild(renderbufferGroup);
+
+    // PBO Upload and split transfer tests (matching ANGLE split upload tests)
+    TestCaseGroup *uploadGroup =
+        new TestCaseGroup(m_context, "upload", "Tests for PBO texture upload and split transfers");
+
+    uploadGroup->addChild(new PBOSplitUploadTest(
+        m_context, "split_upload_last_line",
+        "Test that full level 0 PBO uploads with height > 1 correctly upload the last line when split",
+        PBOSplitUploadTest::TESTTYPE_LAST_LINE));
+
+    uploadGroup->addChild(new PBOSplitUploadTest(
+        m_context, "split_upload_last_pixel",
+        "Test that full level 0 PBO uploads with height == 1 correctly upload the last pixel when split",
+        PBOSplitUploadTest::TESTTYPE_LAST_PIXEL));
+
+    addChild(uploadGroup);
 }
 
 } // namespace Functional

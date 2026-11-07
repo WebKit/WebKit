@@ -35,7 +35,6 @@ class GlobalSettings
     static final String DRIVER_SELECTION_VALUES = "angle_gl_driver_selection_values";
 
     private static final String TAG = "ANGLEGlobalSettings";
-    private static final boolean DEBUG = false;
 
     private static final String SHOW_ANGLE_IN_USE_DIALOG_BOX = "show_angle_in_use_dialog_box";
     private static final String ANGLE_DEBUG_PACKAGE = "angle_debug_package";
@@ -128,34 +127,21 @@ class GlobalSettings
 
     static void clearGlobalSettings(Context context)
     {
-        // show_angle_in_use_dialog_box
-        updateShowAngleInUse(context, false);
+        // show_angle_in_use_dialog_box: only reset it if it was previously set, so that we don't
+        // create the setting when it doesn't already exist.
+        ContentResolver contentResolver = context.getContentResolver();
+        if (Settings.Global.getString(contentResolver, SHOW_ANGLE_IN_USE_DIALOG_BOX) != null)
+        {
+            Settings.Global.putInt(contentResolver, SHOW_ANGLE_IN_USE_DIALOG_BOX, 0);
+        }
 
         // clear angle_gl_driver_selection_pkgs, angle_gl_driver_selection_values
-        ContentResolver contentResolver = context.getContentResolver();
         Settings.Global.putString(contentResolver, DRIVER_SELECTION_PACKAGES, "");
         Settings.Global.putString(contentResolver, DRIVER_SELECTION_VALUES, "");
 
         // For completeness, we'll clear the angle_debug_package, but we don't allow setting
         // it via the UI
         Settings.Global.putString(contentResolver, ANGLE_DEBUG_PACKAGE, "");
-    }
-
-    static void updateShowAngleInUse(Context context, Boolean showAngleInUse)
-    {
-        if (DEBUG)
-        {
-            Log.v(TAG, "Show angle in use: " + showAngleInUse);
-        }
-        ContentResolver contentResolver = context.getContentResolver();
-        Settings.Global.putInt(contentResolver, SHOW_ANGLE_IN_USE_DIALOG_BOX,
-                showAngleInUse ? 1 : 0);
-    }
-
-    boolean getShowAngleInUse()
-    {
-        return Settings.Global.getInt(mContext.getContentResolver(),
-                SHOW_ANGLE_IN_USE_DIALOG_BOX, 0) == 1;
     }
 
     void updatePackageDriverSelection(String packageName, String driverSelectionValue)

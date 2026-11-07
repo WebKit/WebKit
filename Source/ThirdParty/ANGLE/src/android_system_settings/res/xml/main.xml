@@ -18,28 +18,13 @@
 <androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:key="@string/pref_key_angle_flags_category"
-        android:title="@string/angle_general_title">
-
-        <androidx.preference.SwitchPreference
-            android:key="@string/pref_key_angle_in_use_dialog"
-            android:title="@string/show_angle_in_use_toast_title"
-            android:summary="@string/show_angle_in_use_toast_summary"
-            android:defaultValue="false"
-            android:enabled="true"/>
-    </PreferenceCategory>
-
-    <PreferenceCategory>
-        <Preference
-            android:key="reset_to_defaults"
-            android:title="@string/reset_to_default_values"/>
-    </PreferenceCategory>
+    <Preference
+        android:key="reset_to_defaults"
+        android:title="@string/reset_to_default_values"/>
 
     <PreferenceCategory
         android:key="@string/pref_key_select_opengl_driver_category"
         android:title="@string/select_opengl_driver_title">
-
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

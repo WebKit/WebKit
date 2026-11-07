@@ -293,3 +293,4 @@
 
 # Fails on win and linux trace bots
 565518145 : ImageTest.CreateImageWithNonCurrentContext/* = SKIP_FOR_CAPTURE
+565518145 : ImageTest.CreateImageWithNonCurrentContextTwoThreads/* = SKIP_FOR_CAPTURE

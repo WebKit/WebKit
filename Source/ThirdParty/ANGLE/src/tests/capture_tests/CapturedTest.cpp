@@ -705,11 +705,20 @@ void main()
     EXPECT_PIXEL_EQ(0, 0, 0, 255, 255, 255);
 
     // Modify the green texture to ensure we bind the right index in Reset
+    // Also, modify one of its parameters to ensure it is restored in the end.
     const std::vector<GLColor> kWhiteData(kSize * kSize, GLColor::white);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, greenTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  kWhiteData.data());
+
+    // Modify parameters of the blue texture to test restoration if we have a parameter update
+    // without changing the texture content.
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, blueTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Clear pre-capture FBOs to dirty yellowTexture and fboPreCapture without binding GL_TEXTURE2
     glBindFramebuffer(GL_FRAMEBUFFER, fboYellow);

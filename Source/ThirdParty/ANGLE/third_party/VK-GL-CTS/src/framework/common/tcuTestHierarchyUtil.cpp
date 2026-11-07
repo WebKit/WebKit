@@ -254,4 +254,21 @@ void writeTxtCaselistsToFiles(TestPackageRoot &root, TestContext &testCtx, const
     }
 }
 
+void resetSharedResources(tcu::TestNode *node)
+{
+    while (node)
+    {
+        if (node->getNodeType() == tcu::NODETYPE_GROUP)
+        {
+            // Drop the device-dependent part of the resource shared by this node's children.
+            auto *group = static_cast<TestCaseGroup *>(node);
+
+            if (auto *sharedResource = group->getSharedResource())
+                sharedResource->reset();
+        }
+
+        node = node->getParent();
+    }
+}
+
 } // namespace tcu

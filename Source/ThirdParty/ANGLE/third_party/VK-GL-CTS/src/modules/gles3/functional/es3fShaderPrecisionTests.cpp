@@ -40,6 +40,11 @@
 
 #include "glwEnums.hpp"
 #include "glwFunctions.hpp"
+#include "gluObjectWrapper.hpp"
+#include "gluPixelTransfer.hpp"
+#include "gluStrUtil.hpp"
+#include "tcuTexture.hpp"
+#include "tcuImageCompare.hpp"
 
 #include <algorithm>
 
@@ -826,6 +831,233 @@ ShaderUintPrecisionCase::IterateResult ShaderUintPrecisionCase::iterate(void)
     return (m_iterNdx < m_numIters) ? CONTINUE : STOP;
 }
 
+class ShaderMediumpCombineCase : public TestCase
+{
+public:
+    ShaderMediumpCombineCase(Context &context, const char *name, const char *description, float valFloat);
+
+    IterateResult iterate(void) override;
+
+private:
+    const float m_valFloat;
+};
+
+ShaderMediumpCombineCase::ShaderMediumpCombineCase(Context &context, const char *name, const char *description,
+                                                   float valFloat)
+    : TestCase(context, name, description)
+    , m_valFloat(valFloat)
+{
+}
+
+TestCase::IterateResult ShaderMediumpCombineCase::iterate(void)
+{
+    const glu::RenderContext &renderCtx = m_context.getRenderContext();
+    const glw::Functions &gl            = renderCtx.getFunctions();
+    tcu::TestLog &log                   = m_testCtx.getLog();
+
+    const int width  = 16;
+    const int height = 16;
+
+    static const char *const s_vertShader = "#version 300 es\n"
+                                            "layout(location = 0) in vec4 pos;\n"
+                                            "out highp vec4 v_uv0;\n"
+                                            "out mediump vec4 v_uv1;\n"
+                                            "void main()\n"
+                                            "{\n"
+                                            "    gl_Position = pos;\n"
+                                            "    v_uv0       = vec4(0.5);\n"
+                                            "    v_uv1       = vec4(1.0, 0.0, 0.0, 1.0);\n"
+                                            "}\n";
+
+    static const char *const s_fragShader = "#version 300 es\n"
+                                            "precision highp float;\n"
+                                            "\n"
+                                            "layout(std140) uniform UniformBlock\n"
+                                            "{\n"
+                                            "    mediump vec4  val_vec4;\n"
+                                            "    mediump float val_float;\n"
+                                            "};\n"
+                                            "\n"
+                                            "uniform mediump sampler2D s_tex0;\n"
+                                            "uniform mediump sampler2D s_tex1;\n"
+                                            "uniform mediump sampler2D s_tex2;\n"
+                                            "\n"
+                                            "in highp vec4   v_uv0;\n"
+                                            "in mediump vec4 v_uv1;\n"
+                                            "\n"
+                                            "layout(location = 0) out mediump vec4 o_color;\n"
+                                            "\n"
+                                            "mediump vec4  tmp0;\n"
+                                            "mediump vec3  tmp1;\n"
+                                            "mediump vec3  tmp2;\n"
+                                            "mediump vec3  tmp4;\n"
+                                            "mediump vec3  tmp5;\n"
+                                            "mediump vec3  tmp7;\n"
+                                            "mediump vec3  tmp8;\n"
+                                            "mediump vec3  tmp11;\n"
+                                            "float         d0;\n"
+                                            "bool          b0;\n"
+                                            "mediump float inv0;\n"
+                                            "\n"
+                                            "void main()\n"
+                                            "{\n"
+                                            "    b0 = 0.1 < val_float;\n"
+                                            "\n"
+                                            "    if (b0)\n"
+                                            "    {\n"
+                                            "        tmp1.xyz  = texture(s_tex2, v_uv0.xy).xyz;\n"
+                                            "        tmp11.xyz = tmp1.xyz * val_vec4.xyz;\n"
+                                            "    }\n"
+                                            "    else\n"
+                                            "    {\n"
+                                            "        tmp11 = vec3(0.0);\n"
+                                            "    }\n"
+                                            "\n"
+                                            "    tmp0     = texture(s_tex1, v_uv0.xy);\n"
+                                            "    tmp4.xyz = texture(s_tex0, v_uv0.zw).xyz;\n"
+                                            "\n"
+                                            "    tmp5.xyz = tmp0.xyz * vec3(0.9);\n"
+                                            "\n"
+                                            "    d0   = dot(v_uv1.xyz, v_uv1.xyz);\n"
+                                            "    inv0 = inversesqrt(d0);\n"
+                                            "\n"
+                                            "    tmp8.xyz = vec3(inv0) * vec3(0.01);\n"
+                                            "    tmp7.xyz = tmp5.xyz + tmp8.xyz;\n"
+                                            "    tmp4.xyz = tmp4.xyz * tmp5.xyz + tmp7.xyz;\n"
+                                            "    tmp2.xyz = tmp11.xyz + tmp4.xyz;\n"
+                                            "\n"
+                                            "    o_color = vec4(tmp2.xyz * 0.25, tmp0.w);\n"
+                                            "}\n";
+
+    glu::ShaderProgram program(renderCtx, glu::ProgramSources()
+                                              << glu::VertexSource(s_vertShader) << glu::FragmentSource(s_fragShader));
+    log << program;
+    if (!program.isOk())
+        TCU_FAIL("Failed to compile or link program");
+
+    // Textures for sampling (fill with 1.0f)
+    glu::Texture inputTex(gl);
+    gl.bindTexture(GL_TEXTURE_2D, *inputTex);
+    const std::vector<uint8_t> texData(width * height * 4, 255);
+    gl.texImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData.data());
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Color attachment 0 using standard GL_RGBA8 to run on all GLES3 implementations
+    glu::Texture fboTex(gl);
+    gl.bindTexture(GL_TEXTURE_2D, *fboTex);
+    gl.texImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glu::Framebuffer fbo(gl);
+    gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo);
+    gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *fboTex, 0);
+
+    // A single GL_RGBA8 color attachment is a required framebuffer configuration in ES 3.0, so any status other
+    // than GL_FRAMEBUFFER_COMPLETE (including GL_FRAMEBUFFER_UNSUPPORTED) is a failure.
+    const uint32_t fboStatus = gl.checkFramebufferStatus(GL_FRAMEBUFFER);
+    if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+        TCU_FAIL(
+            (std::string("Incomplete framebuffer: ") + glu::getFramebufferStatusStr(fboStatus).toString()).c_str());
+
+    // Uniform buffer (val_vec4 = vec4(0.5), val_float = m_valFloat)
+    glu::Buffer ubo(gl);
+    gl.bindBuffer(GL_UNIFORM_BUFFER, *ubo);
+    const float uboData[8] = {
+        0.5f,       0.5f, 0.5f, 0.5f, // val_vec4  (offset 0)
+        m_valFloat,                   // val_float (offset 16)
+        0.0f,       0.0f, 0.0f        // padding   (offset 20..31)
+    };
+    gl.bufferData(GL_UNIFORM_BUFFER, sizeof(uboData), uboData, GL_STATIC_DRAW);
+    gl.bindBufferBase(GL_UNIFORM_BUFFER, 0, *ubo);
+
+    const uint32_t blockIndex = gl.getUniformBlockIndex(program.getProgram(), "UniformBlock");
+    TCU_CHECK(blockIndex != GL_INVALID_INDEX);
+    gl.uniformBlockBinding(program.getProgram(), blockIndex, 0);
+
+    // Vertex Array and Buffer Objects
+    glu::VertexArray vao(gl);
+    gl.bindVertexArray(*vao);
+
+    glu::Buffer vbo(gl);
+    gl.bindBuffer(GL_ARRAY_BUFFER, *vbo);
+    static const float s_verts[] = {-1.0f, -1.0f, 0.0f, 1.0f, 3.0f, -1.0f, 0.0f, 1.0f, -1.0f, 3.0f, 0.0f, 1.0f};
+    gl.bufferData(GL_ARRAY_BUFFER, sizeof(s_verts), s_verts, GL_STATIC_DRAW);
+
+    const int posLoc = gl.getAttribLocation(program.getProgram(), "pos");
+    TCU_CHECK(posLoc >= 0);
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    gl.viewport(0, 0, width, height);
+    gl.useProgram(program.getProgram());
+
+    // Bind the all-ones input texture to texture units 0-2, one unit per sampler (s_tex0..s_tex2)
+    gl.activeTexture(GL_TEXTURE0);
+    gl.bindTexture(GL_TEXTURE_2D, *inputTex);
+    gl.activeTexture(GL_TEXTURE1);
+    gl.bindTexture(GL_TEXTURE_2D, *inputTex);
+    gl.activeTexture(GL_TEXTURE2);
+    gl.bindTexture(GL_TEXTURE_2D, *inputTex);
+
+    const int loc0 = gl.getUniformLocation(program.getProgram(), "s_tex0");
+    const int loc1 = gl.getUniformLocation(program.getProgram(), "s_tex1");
+    const int loc2 = gl.getUniformLocation(program.getProgram(), "s_tex2");
+
+    if (loc0 >= 0)
+        gl.uniform1i(loc0, 0);
+    if (loc1 >= 0)
+        gl.uniform1i(loc1, 1);
+    if (loc2 >= 0)
+        gl.uniform1i(loc2, 2);
+
+    GLU_EXPECT_NO_ERROR(gl.getError(), "Setup failed");
+
+    // Draw
+    gl.drawArrays(GL_TRIANGLES, 0, 3);
+    GLU_EXPECT_NO_ERROR(gl.getError(), "Draw failed");
+
+    // Readback
+    gl.readBuffer(GL_COLOR_ATTACHMENT0);
+    tcu::TextureLevel result(tcu::TextureFormat(tcu::TextureFormat::RGBA, tcu::TextureFormat::UNORM_INT8), width,
+                             height);
+    glu::readPixels(renderCtx, 0, 0, result.getAccess());
+    GLU_EXPECT_NO_ERROR(gl.getError(), "ReadPixels failed");
+
+    // Verification
+    // All texels sample as 1.0 and inv0 = inversesqrt(dot(v_uv1.xyz, v_uv1.xyz)) = 1.0. In exact arithmetic:
+    //   tmp5        = 1.0 * 0.9              = 0.9
+    //   tmp7        = tmp5 + inv0 * 0.01     = 0.91
+    //   tmp4        = 1.0 * tmp5 + tmp7      = 1.81
+    //   tmp11       = b0 ? 1.0 * 0.5 : 0.0   (b0 = 0.1 < val_float)
+    //   o_color.rgb = (tmp11 + tmp4) * 0.25  = 0.4525 (b0 false) or 0.5775 (b0 true)
+    //   o_color.a   = 1.0
+    // The threshold covers mediump (fp16) rounding of the intermediates and UNORM8 quantization of the output.
+    const float expectedRgb = (m_valFloat > 0.1f) ? 0.5775f : 0.4525f;
+    const tcu::Vec4 expected(expectedRgb, expectedRgb, expectedRgb, 1.0f);
+    const tcu::Vec4 threshold(0.02f, 0.02f, 0.02f, 0.02f);
+
+    const bool pass = tcu::floatThresholdCompare(log, "Result", "Rendered result", expected, result.getAccess(),
+                                                 threshold, tcu::COMPARE_LOG_ON_ERROR);
+
+    // Unbind resources
+    gl.bindVertexArray(0);
+    gl.bindBuffer(GL_ARRAY_BUFFER, 0);
+    gl.bindBuffer(GL_UNIFORM_BUFFER, 0);
+    gl.bindFramebuffer(GL_FRAMEBUFFER, 0);
+    gl.activeTexture(GL_TEXTURE2);
+    gl.bindTexture(GL_TEXTURE_2D, 0);
+    gl.activeTexture(GL_TEXTURE1);
+    gl.bindTexture(GL_TEXTURE_2D, 0);
+    gl.activeTexture(GL_TEXTURE0);
+    gl.bindTexture(GL_TEXTURE_2D, 0);
+
+    m_testCtx.setTestResult(pass ? QP_TEST_RESULT_PASS : QP_TEST_RESULT_FAIL,
+                            pass ? "Pass" : "Image comparison failed");
+    return STOP;
+}
+
 ShaderPrecisionTests::ShaderPrecisionTests(Context &context)
     : TestCaseGroup(context, "precision", "Shader precision requirements validation tests")
 {
@@ -967,6 +1199,14 @@ void ShaderPrecisionTests::init(void)
                                                         uintCases[ndx].precision, uintCases[ndx].bits,
                                                         uintCases[ndx].rangeA, uintCases[ndx].rangeB, false));
     }
+
+    tcu::TestCaseGroup *mediumpCombineGroup =
+        new tcu::TestCaseGroup(m_testCtx, "mediump_combine", "Medium-precision instruction combine tests");
+    addChild(mediumpCombineGroup);
+    mediumpCombineGroup->addChild(new ShaderMediumpCombineCase(
+        m_context, "branch_false", "Medium-precision instruction combine with branch condition false", 0.0f));
+    mediumpCombineGroup->addChild(new ShaderMediumpCombineCase(
+        m_context, "branch_true", "Medium-precision instruction combine with branch condition true", 1.0f));
 }
 
 } // namespace Functional

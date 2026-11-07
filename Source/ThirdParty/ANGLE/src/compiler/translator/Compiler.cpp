@@ -802,13 +802,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     // Folding should only be able to generate warnings.
     ASSERT(mDiagnostics.numErrors() == 0);
 
-    // Fold switch statements with constant expression.  Run after FoldExpressions because the
-    // switch selector may need folding.
-    if (!FoldConstantSwitch(this, root, &mSymbolTable))
-    {
-        return false;
-    }
-
     const bool hasAnyClipCullDistance =
         parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
         parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance) ||
@@ -1031,6 +1024,20 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     {
         return false;
     }
+
+    // Fold switch statements with constant expression.  Run after FoldExpressions because the
+    // switch selector may need folding.  This pass may leave dead code, so prune it again
+    // afterwards.
+    mValidateASTOptions.validateNoStatementsAfterBranch = false;
+    if (!FoldConstantSwitch(this, root, &mSymbolTable))
+    {
+        return false;
+    }
+    if (!PruneNoOps(this, root, &mSymbolTable))
+    {
+        return false;
+    }
+    mValidateASTOptions.validateNoStatementsAfterBranch = true;
 
     if (!RemoveUnreferencedVariables(this, root, &mSymbolTable))
     {

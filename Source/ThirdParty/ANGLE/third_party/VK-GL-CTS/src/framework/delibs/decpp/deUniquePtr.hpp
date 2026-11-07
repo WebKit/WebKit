@@ -158,8 +158,12 @@ public:
     MovePtr(MovePtr<T, Deleter> &other) : UniqueBase<T, Deleter>(other.releaseData())
     {
     }
+    MovePtr(MovePtr<T, Deleter> &&other) noexcept : UniqueBase<T, Deleter>(other.releaseData())
+    {
+    }
 
     MovePtr &operator=(MovePtr<T, Deleter> &other);
+    MovePtr &operator=(MovePtr<T, Deleter> &&other) noexcept;
     T *release(void) throw();
     void clear(void)
     {
@@ -191,6 +195,12 @@ MovePtr<T, D> &MovePtr<T, D>::operator=(PtrData<T, D> data)
 
 template <typename T, class D>
 MovePtr<T, D> &MovePtr<T, D>::operator=(MovePtr<T, D> &other)
+{
+    return (*this = other.releaseData());
+}
+
+template <typename T, class D>
+MovePtr<T, D> &MovePtr<T, D>::operator=(MovePtr<T, D> &&other) noexcept
 {
     return (*this = other.releaseData());
 }

@@ -297,19 +297,6 @@ class _MaxErrorsException(Exception):
     pass
 
 
-def _skipped_or_glmark2(test, test_status):
-    if test_status == SKIP:
-        logging.info('Test skipped by suite: %s' % test)
-        return True
-
-    # GLMark2Benchmark logs .fps/.score instead of our perf metrics.
-    if test.startswith('GLMark2Benchmark.Run/'):
-        logging.info('GLMark2Benchmark missing metrics (as expected, skipping): %s' % test)
-        return True
-
-    return False
-
-
 def _sleep_until_temps_below(limit_temp):
     while True:
         max_temp = max(android_helper.GetTemps())
@@ -387,7 +374,8 @@ def _run_tests(tests, args, extra_flags, env):
                 total_errors += 1
                 break
 
-            if _skipped_or_glmark2(test, test_status):
+            if test_status == SKIP:
+                logging.info('Test skipped by suite: %s' % test)
                 results.result_skip(test)
                 break
 

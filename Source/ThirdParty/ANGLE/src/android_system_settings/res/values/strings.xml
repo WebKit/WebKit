@@ -23,29 +23,12 @@
     It is used as a subtitle or summary text to describe this ANGLE app. -->
     <string name="angle_preferences_summary">Modify ANGLE settings</string>
 
-    <!-- Category title listing ANGLE flags [CHAR_LIMIT=50]-->
-    <string name="angle_general_title">General</string>
-
-    <!-- This is the label for a toggle button.
-    When the toggle is enabled, we will show a toast indicating that ANGLE is in use.
-    This is also used as a Quick Settings tile label. -->
-    <string name="show_angle_in_use_toast_title">Show toast</string>
-
-    <!-- This is the label for a toggle button.
-    When the toggle is enabled, we will show a toast indicating that ANGLE is in use.
-    This is also used as a Quick Settings tile label. -->
-    <string name="show_angle_in_use_toast_summary">Show toast when ANGLE is loaded</string>
-
     <!-- ListPreference title listing installed packages [CHAR_LIMIT=50]-->
     <string name="select_opengl_driver_title">Select OpenGL Driver</string>
 
     <!-- These are keywords that the user can use to search for this app.
     'angle' should not be translated, as it is an app name. -->
     <string name="keywords">angle, opengl, graphics</string>
-
-    <!-- This is the message displayed in the Toast to the user when ANGLE is being used for the app.
-    'ANGLE' should not be translated, as it is an app name. -->
-    <string name="angle_in_use_toast_message">Using ANGLE</string>
 
     <!-- This is the title displayed when no apps are installed that ANGLE can be used for. -->
     <string name="no_apps_installed_title">No available apps</string>

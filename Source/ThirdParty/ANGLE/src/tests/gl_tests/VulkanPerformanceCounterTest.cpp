@@ -10515,6 +10515,188 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, OneDSBufferUsedInTwoRenderPasses
     drawQuadToVerifyStencilValue(drawGreen, 0x55);
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
 }
+// Test that a submission in the middle of the swapchain render pass, whose depth/stencil buffer
+// is in tile memory, does not drop the tile memory binding for that render pass.  Staged updates
+// to an immutable texture are force-submitted when the share group has more than one context
+// (forceSubmitImmutableTextureUpdates). That submission used to carry the vkCmdBindTileMemoryQCOM
+// of the still open render pass, so the render pass ended up in the next command buffer without
+// any tile memory bound (VUID-vkCmdDrawIndexed-commandBuffer-10746).
+//
+// This mocks the GL calls of each frame to repro the usecase:
+//   1. Scene pass into an FBO with color and depth/stencil textures: clear color and
+//      depth/stencil, draw, discard depth/stencil and glFlush (deferred, since the render pass is
+//      open).
+//   2. Bind the default framebuffer (closes the scene render pass and submits the deferred flush),
+//      clear its color only and draw a full screen quad sampling the scene color.  The surface
+//      depth/stencil is neither cleared nor used, so it gets loadOp=storeOp=DONT_CARE.
+//   3. glTexSubImage2D of a small immutable RGBA8 texture (1x56) with UNPACK_ROW_LENGTH=1.  This
+//      is force-submitted while the swapchain render pass is open.
+//   4. UI draws, blended and scissored, sampling the updated texture.
+//   5. eglSwapBuffers.
+TEST_P(VulkanPerformanceCounterTest_TileMemory, SwapchainRenderPassWithForceSubmittedTextureUpdate)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    // Only the real VK_QCOM_tile_memory_heap has the per command buffer binding this test is about.
+    ANGLE_SKIP_TEST_IF(!isFeatureEnabled(Feature::SupportsTileMemoryHeap));
+    ANGLE_SKIP_TEST_IF(!isFeatureEnabled(Feature::ForceSubmitImmutableTextureUpdates));
+
+    // The trace has a second context in the share group, so immutable texture uploads are
+    // submitted immediately.  A context only joins its share group the first time it is made
+    // current (gl::Context::initializeDefaultResources), so make it current once like the trace
+    // does (eglMakeCurrent(1, 70, 70, 76)), then switch back to the window context.
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_KHR_surfaceless_context"));
+    const EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, window->getClientMajorVersion(),
+                                     EGL_NONE};
+    EGLContext sharedContext =
+        eglCreateContext(display, window->getConfig(), window->getContext(), contextAttribs);
+    ASSERT_NE(sharedContext, EGL_NO_CONTEXT);
+    ASSERT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, sharedContext));
+    ASSERT_EGL_TRUE(
+        eglMakeCurrent(display, window->getSurface(), window->getSurface(), window->getContext()));
+
+    const GLsizei width  = getWindowWidth();
+    const GLsizei height = getWindowHeight();
+
+    setupPrograms();
+    ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),
+                     essl1_shaders::fs::Texture2D());
+
+    // Index and vertex buffers for all draws.
+    const std::array<Vector3, 4> quadVertices = GetIndexedQuadVertices();
+    const std::array<GLushort, 6> quadIndices = GetQuadIndices();
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices.data(), GL_STATIC_DRAW);
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices.data(), GL_STATIC_DRAW);
+
+    auto drawIndexed = [&](GLuint program) {
+        glUseProgram(program);
+        const GLint positionLocation =
+            glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+        ASSERT_NE(-1, positionLocation);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(positionLocation);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(quadIndices.size()), GL_UNSIGNED_SHORT,
+                       nullptr);
+    };
+
+    // Scene framebuffer : color and depth/stencil textures.
+    GLTexture sceneColor;
+    glBindTexture(GL_TEXTURE_2D, sceneColor);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, width, height);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GLTexture sceneDepthStencil;
+    glBindTexture(GL_TEXTURE_2D, sceneDepthStencil);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, width, height);
+    GLFramebuffer sceneFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneColor, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           sceneDepthStencil, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Small immutable texture updated every frame.
+    constexpr GLsizei kUpdatedTextureWidth  = 1;
+    constexpr GLsizei kUpdatedTextureHeight = 56;
+    const std::vector<GLColor> red(kUpdatedTextureWidth * kUpdatedTextureHeight, GLColor::red);
+    const std::vector<GLColor> blue(kUpdatedTextureWidth * kUpdatedTextureHeight, GLColor::blue);
+    GLTexture updatedTexture;
+    glBindTexture(GL_TEXTURE_2D, updatedTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kUpdatedTextureWidth, kUpdatedTextureHeight);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kUpdatedTextureWidth, kUpdatedTextureHeight, GL_RGBA,
+                    GL_UNSIGNED_BYTE, red.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // In the usecase the texture has been sampled by previous frames, so its updates cannot be done
+    // with a host image copy and go through a staged buffer-to-image copy.  Sample it once here.
+    glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+    glViewport(0, 0, width, height);
+    glBindTexture(GL_TEXTURE_2D, updatedTexture);
+    drawIndexed(textureProgram);
+    glFinish();
+    ASSERT_GL_NO_ERROR();
+
+    const GLfloat kSceneClearColor[]     = {0.0f, 0.0f, 0.0f, 1.0f};
+    const GLfloat kSwapchainClearColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+    const GLenum kDiscards[]             = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+
+    constexpr int kFrameCount  = 3;
+    constexpr int kUIDrawCount = 48;
+    for (int frame = 0; frame < kFrameCount; ++frame)
+    {
+        // 1. Scene pass.
+        glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+        glViewport(0, 0, width, height);
+        glDepthMask(GL_TRUE);
+        glClearBufferfv(GL_COLOR, 0, kSceneClearColor);
+        glClearBufferfi(GL_DEPTH_STENCIL, 0, 0.0f, 0);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_GEQUAL);
+        drawIndexed(drawGreen);
+        glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, kDiscards);
+        glFlush();
+
+        // 2. Swapchain pass: color clear only, full screen quad sampling the scene color.
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearBufferfv(GL_COLOR, 0, kSwapchainClearColor);
+        glDisable(GL_BLEND);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        glBindTexture(GL_TEXTURE_2D, sceneColor);
+        drawIndexed(textureProgram);
+
+        // 3. Update the immutable texture while the swapchain render pass is open.  The texture is
+        // not used by the render pass yet, so the render pass stays open and only the outside
+        // render pass commands (including the tile memory bind) are submitted.
+        const uint64_t submitCountBefore = getPerfCounters().commandQueueSubmitCallsTotal;
+        glBindTexture(GL_TEXTURE_2D, updatedTexture);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, kUpdatedTextureWidth);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kUpdatedTextureWidth, kUpdatedTextureHeight,
+                        GL_RGBA, GL_UNSIGNED_BYTE, blue.data());
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        EXPECT_GT(getPerfCounters().commandQueueSubmitCallsTotal, submitCountBefore);
+
+        // 4. UI draws in the same render pass, sampling the updated texture.
+        glEnable(GL_BLEND);
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, width, height);
+        for (int draw = 0; draw < kUIDrawCount; ++draw)
+        {
+            drawIndexed(textureProgram);
+        }
+        glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_BLEND);
+        ASSERT_GL_NO_ERROR();
+
+        // The surface depth/stencil buffer has no defined content, so it should stay in tile
+        // memory.
+        EXPECT_EQ(0u, getPerfCounters().fallbackFromTileMemory);
+
+        // 5. Present.  The swapchain render pass is submitted here, in a different command buffer
+        // than the one the force-submitted texture update went in.
+        swapBuffers();
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Verify the texture update landed.
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, updatedTexture);
+    drawIndexed(textureProgram);
+    EXPECT_PIXEL_COLOR_EQ(width / 2, height / 2, GLColor::blue);
+
+    EXPECT_EGL_TRUE(eglDestroyContext(display, sharedContext));
+}
 
 // Test that depth buffer of surface that uses tile memory will switch back to regular memory if it
 // has valid data across submissions

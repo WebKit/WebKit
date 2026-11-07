@@ -26,7 +26,9 @@
 #include "tcuDefs.hpp"
 #include "tcuTestContext.hpp"
 
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace tcu
@@ -40,7 +42,7 @@ enum TestNodeType
     NODETYPE_SELF_VALIDATE, //!< Self-validating test case -- can be executed
     NODETYPE_PERFORMANCE,   //!< Performace test case -- can be executed
     NODETYPE_CAPABILITY,    //!< Capability score case -- can be executed
-    NODETYPE_ACCURACY       //!< Accuracy test case -- can be executed
+    NODETYPE_ACCURACY,      //!< Accuracy test case -- can be executed
 };
 
 enum TestNodeClass
@@ -141,6 +143,10 @@ public:
     }
 #endif
     void getChildren(std::vector<TestNode *> &children) const;
+    TestNode *getParent(void) const
+    {
+        return m_parent;
+    }
     void addRootChild(const std::string &groupName, const CaseListFilter *caseListFilter,
                       TestCaseGroup *(*createTestGroup)(tcu::TestContext &testCtx, const std::string &name));
     void addChild(TestNode *node);
@@ -187,9 +193,29 @@ protected:
 
 private:
     const TestNodeType m_nodeType;
+    TestNode *m_parent;
     std::vector<TestNode *> m_children;
     bool m_duplicateCheck;
     bool m_useFraction0{false};
+};
+
+/*--------------------------------------------------------------------*//*!
+ * \brief Base class for shared data between test cases in a group
+ *
+ * If a test case group needs to share data between its child test cases,
+ * it can create a class that inherits from SharedResourceBase.
+ *
+ * reset() clears the contents of the shared data forcing recreation.
+  *//*--------------------------------------------------------------------*/
+class SharedResourceBase
+{
+public:
+    SharedResourceBase()          = default;
+    virtual ~SharedResourceBase() = default;
+
+    virtual void reset()
+    {
+    }
 };
 
 /*--------------------------------------------------------------------*//*!
@@ -200,6 +226,8 @@ private:
  * until init() is called.
  *
  * Default deinit() for test group will destroy all child nodes.
+ * If group contains shared data between its child test cases, it takes
+ * ownership of the shared data and will destroy it in deinit().
  *//*--------------------------------------------------------------------*/
 class TestCaseGroup : public TestNode
 {
@@ -214,7 +242,28 @@ public:
 
     virtual ~TestCaseGroup(void);
 
+    virtual void deinit(void);
+
     virtual IterateResult iterate(void);
+
+    // Take ownership of the data shared by this group's child test cases.
+    void setSharedResource(std::unique_ptr<SharedResourceBase> &&sharedResource)
+    {
+        m_sharedResource = std::move(sharedResource);
+    }
+
+    SharedResourceBase *getSharedResource(void)
+    {
+        return m_sharedResource.get();
+    }
+
+    const SharedResourceBase *getSharedResource(void) const
+    {
+        return m_sharedResource.get();
+    }
+
+private:
+    std::unique_ptr<SharedResourceBase> m_sharedResource;
 };
 
 /*--------------------------------------------------------------------*//*!
@@ -247,7 +296,7 @@ public:
     TestCase(TestContext &testCtx, const char *name, const char *description);
     TestCase(TestContext &testCtx, TestNodeType nodeType, const char *name, const char *description);
 
-    virtual ~TestCase(void);
+    virtual ~TestCase(void) = default;
 };
 
 class TestStatus

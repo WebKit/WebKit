@@ -287,6 +287,7 @@
 
 // Failures on Intel Comet Lake S UHD Graphics 630 (8086:9bc5-31.0.101.2127)
 543664599 WIN INTEL OPENGL : FramebufferTestWithFormatFallback.R4G4B4A4_NonZeroBaseLevelStagedImageReformat/* = SKIP
+556564149 WIN INTEL VULKAN : GLSLTest_ES3.InterpolantArrayReferencedWithoutIndex/* = SKIP
 
 // Failures on Intel Alder Lake S UHD Graphics 770 (8086:4680-31.0.101.5333)
 352085732 WIN INTEL OPENGL : GeometryShaderTest.LayeredFramebufferClear2DArrayColor/* = SKIP
@@ -311,6 +312,8 @@
 352085732 WIN INTEL VULKAN : OcclusionQueriesTest.MultiQueries/* = SKIP
 352085732 WIN INTEL VULKAN : OcclusionQueriesTestES3.DeleteFBOWithPendingQuery/* = SKIP
 352085732 WIN INTEL VULKAN : OcclusionQueriesTestES3.UnbindFBOWithPendingQuery/* = SKIP
+352085732 WIN INTEL VULKAN : OcclusionQueriesTestES3.DeleteActiveOcclusionQueryLeavesValidState/* = SKIP
+352085732 WIN INTEL VULKAN : OcclusionQueriesTestES3.QuerySpansRenderPassBreak/* = SKIP
 373818282 WIN INTEL OPENGL : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB/* = SKIP
 388144480 WIN INTEL VULKAN : OcclusionQueriesTest.WrongSkippedQuery/* = SKIP
 478807229 WIN INTEL VULKAN : OcclusionQueriesTestES3.QueryReuseWithMultipleFBOs/* = SKIP
@@ -341,6 +344,7 @@
 539554093 WIN NVIDIA GLES : UniformBufferTest31.UniformBufferBindingRangeChangeAfterSubData/* = SKIP
 523371282 WIN NVIDIA GLES : TransformFeedbackTest.RenderOnceChangeXfbBufferRenderAgain/* = SKIP
 523371282 WIN NVIDIA OPENGL : TransformFeedbackTest.RenderOnceChangeXfbBufferRenderAgain/* = SKIP
+556564149 WIN NVIDIA GLES : GLSLTest_ES3.InterpolantArrayReferencedWithoutIndex/* = SKIP
 
 557268102 LINUX NVIDIA VULKAN : GLSLTest_ES3.LiteralInfinityOutput/* = SKIP
 557268102 LINUX NVIDIA VULKAN : GLSLTest_ES3.LiteralNegativeInfinityOutput/* = SKIP
@@ -407,7 +411,6 @@
 // Base level greater than max level fails on Linux/OpenGL
 42267266 LINUX INTEL OPENGL : Texture2DTestES3.TextureBaseLevelGreaterThanMaxLevel3Levels/* = SKIP
 379758210 LINUX INTEL OPENGL : GLSLTest_ES3.SwizzledToBoolCoercion/* = SKIP
-437259106 LINUX INTEL : EGLDisplayTest.ContextLeakAfterTerminate/* = SKIP
 448675904 LINUX INTEL OPENGL : GLSLTestLoops.ForContinueInSwitchComplex/* = SKIP
 537235696 LINUX INTEL OPENGL : ClipDistance*.ThreeClipDistancesRedeclaredAndPassedToFunction/* = SKIP
 
@@ -541,6 +544,7 @@
 536046166 INTEL VULKAN : FramebufferTest_ES31_MSAA.MultisampleResolveWithBlitIntoMixedTextures/* = SKIP
 536046166 WIN INTEL VULKAN : FramebufferTest_ES31_MSAA.MultisampleStencilSampling/*EmulatedPrerotation* = SKIP
 540256225 INTEL VULKAN : ImageTestES3.SourceYUVTextureTargetExternalRGBSample/* = SKIP
+576082230 LINUX INTEL VULKAN : StateChangeTestES31.PatchVertices/* = SKIP
 
 // Robust init of OOB framebuffer reads is not zero'd
 500528706 VULKAN : CopyTexImageTestRobustResourceInit.OOBReadShouldBeZeroInit/* = SKIP
@@ -606,6 +610,7 @@
 40644777 MAC METAL AMD : ColorMaskForDrawBuffersTest.Blit/* = SKIP
 440536251 MAC METAL AMD : GLSLValidationTest_ES3.ManySamplerFieldsInStructComplex/* = SKIP
 443101808 MAC METAL AMD : SimpleUniformTestES3.BoolInArray/* = SKIP
+556564149 MAC METAL AMD : GLSLTest_ES3.InterpolantArrayReferencedWithoutIndex/* = SKIP
 409867243 MAC METAL : Texture2DTestES3.RGB565RenderAndReadIntoRGB565PBO/* = SKIP
 448658625 METAL : GLSLTest_ES3.SwitchConstantFoldWithVariables/* = SKIP
 464927523 METAL : GLSLTest_ES3_PackUnpackEmulation.PackHalf2x16/* = SKIP
@@ -1523,6 +1528,8 @@
 489247643 PIXEL10 VULKAN : ImageTest.BindExternalTextureAsImage_R16_UINT/* = SKIP
 489247643 PIXEL10 VULKAN : ImageTest.BindExternalTextureAsImage_R16G16_UINT/* = SKIP
 456812545 PIXEL10 VULKAN : GLSLTest_ES3.DynamicWriteStaticReadVaryingArray/* = SKIP
+575891844 PIXEL10 VULKAN : StateChangeTestES31.PatchVertices/ES3_1_Vulkan_*NoSupportsExtendedDynamicState2* = SKIP
+577276050 PIXEL10 VULKAN : StateChangeTestES3.DepthClamp/* = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
 40096874 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
@@ -1615,6 +1622,9 @@
 507904704 IOS METAL : Texture2DTestES3.SampleThenFullUpdateThenSampleAgainCompressed/* = SKIP
 507904704 IOS METAL : TextureSizeLimitTest.CompressedASTC/* = SKIP
 507904704 IOS METAL : WebGLCompatibilityTest.EnableCompressedTextureExtensionETC1/* = SKIP
+575549236 IOS METAL : FramebufferTest_RecreateFboOnAttachmentRespecification.DisabledDrawBufferCollidingAttachments/* = SKIP
+575549236 IOS METAL : FramebufferTest_RecreateFboOnAttachmentRespecification.RespecifyCollidingAttachments/* = SKIP
+550607402 IOS METAL : ASTCCompressedWithBaseLevelRobustInitTest.MutableToImmutableASTC8x5WithNonZeroBaseLevel/* = SKIP
 
 // Simulator does not support compare functions in the sampler state
 365066518 IOS METAL : ShadowSamplerFunctionTexture2DTest.Test/* = SKIP
@@ -1911,6 +1921,8 @@
 // Invalid gl_SampleMaskIn value when sample qualifier is present
 40096890 LINUX INTEL OPENGL : SampleMultisampleInterpolationTest.SampleMaskInPerSample/* = SKIP
 40096890 LINUX INTEL OPENGL : SampleMultisampleInterpolationTest.SampleMaskInPerSampleNoPerspective/* = SKIP
+556542945 PIXEL6 VULKAN : SampleMultisampleInterpolationTest.CompileNestedInterpolateAtOffset/* = SKIP
+556542945 PIXEL10 GLES : SampleMultisampleInterpolationTest.CompileNestedInterpolateAtOffset/* = SKIP
 
 // bits 24..31 from glClearValueuiv value don't work on Intel Metal.
 42266265 MAC INTEL METAL : PixelLocalStorageTest.ClearValues_r32/* = SKIP
@@ -2812,6 +2824,7 @@
 362486580 LINUX NVIDIA VULKAN : InstancingTestES31.UpdateAttribBindingByVertexAttribDivisor/* = SKIP
 362486580 LINUX NVIDIA VULKAN : LineLoopIndirectTest.UseAsUBOThenUpdateThenUByteIndexIndirectBuffer/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SimpleStateChangeTestES31.MultipleVertexArrayObjectRendering/* = SKIP
+362486580 LINUX NVIDIA VULKAN : StateChangeTestES31.PatchVertices/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SixteenBppTextureTest.RGBA5551Validation/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SixteenBppTextureTestES3.RGB5A1UploadRGB10A2/* = SKIP
 362486580 LINUX NVIDIA VULKAN : VertexAttributeTestES31.DrawArraysWithLargeStride/* = SKIP
@@ -2965,6 +2978,7 @@
 349994211 IR PIXEL4ORXL GLES : SampleVariablesTest.SamplePosition/* = SKIP
 // Untriaged failures on Pixel 4 / GLES
 349994211 IR PIXEL4ORXL GLES : GLSLTestLoops.ForContinueInSwitchComplex/* = SKIP
+573853134 IR PIXEL4ORXL GLES : ComputeShaderTest.AtomicOrMediumpUintHighBit/* = SKIP
 // Untriaged failures on Pixel 10 / GLES
 349994211 IR PIXEL10 GLES : GLSLTest_ES31.StructArraySamplerWithShortCircuitedSideEffectInIndex/* = SKIP
 349994211 IR PIXEL10 GLES : GLSLTest.ConstantFoldedConstantsRetainPrecision/* = SKIP
@@ -3077,15 +3091,6 @@
 537692502 WIN INTEL VULKAN : OcclusionQueriesTest.ExcessiveNumberOfQueries/* = SKIP
 537692502 WIN INTEL VULKAN : OcclusionQueriesTest.ManyScissoredClearsInsideQuery/* = SKIP
 
-// Intel linux driver appears has bug that running this test causing other tests to fail.
-42266581 LINUX INTEL : EGLDisplayTest.InitializeDrawSwapTerminateLoop/* = SKIP
-42266581 LINUX INTEL OPENGL : EGLDisplayTest.TerminateMultipleTimesInDifferentThreads/* = SKIP
-42266581 LINUX INTEL OPENGL : EGLNoConfigContextTest.RenderCheck/* = SKIP
-// Intel linux driver appears has some weird bug that these tests fail for no good reason. Possibly related to 520248049.
-42266581 LINUX INTEL OPENGL : EGLSurfacelessContextTest.DefaultScissorAndViewport/* = SKIP
-42266581 LINUX INTEL OPENGL : EGLSurfacelessContextTest.Switcheroo/* = SKIP
-42266581 LINUX INTEL OPENGL : EGLSurfacelessContextTest.MakeCurrentSurfaceless/* = SKIP
-
 500127519 MAC METAL INTEL : GLSLUBTest.AbsIntOverflow/* = SKIP
 
 // Failing on Windows Intel OpenGL
@@ -3099,10 +3104,14 @@
 549916890 WIN INTEL OPENGL : Texture3DIncreaseDepthTestES3.TexImage3DDepthIncreaseOutsideRangeStagedVerifyByReadPixels/* = SKIP
 
 // New tests failing on Windows Intel OpenGL
+567613573 WIN INTEL OPENGL : Texture2DTestES3_OversizedMipLevels.CubeMap/* = SKIP
 548127218 WIN INTEL OPENGL : Texture2DTestES3_OversizedMipLevels.Uncompressed/* = SKIP
 548127218 WIN INTEL OPENGL : Texture2DTestES3_OversizedMipLevels.CompressedASTC/* = SKIP
 548127218 WIN INTEL OPENGL : Texture2DTestES3_OversizedMipLevels.CompressedDXT/* = SKIP
 548127218 WIN INTEL OPENGL : Texture2DTestES3_OversizedMipLevels.CompressedETC/* = SKIP
+567613573 WIN INTEL OPENGL : Texture3DTestES3_OversizedMipLevels.OversizedDepth/* = SKIP
+567613573 WIN INTEL OPENGL : Texture2DArrayTestES3_OversizedMipLevels.OversizedLevel1/* = SKIP
+567613573 WIN INTEL OPENGL : Texture2DArrayTestES3_OversizedMipLevels.OversizedLevel1PlusDepth/* = SKIP
 558250724 WIN INTEL OPENGL : Texture2DTestES3RobustInit.CopyTexImageOutOfBoundsAcrossMips/* = SKIP
 558250724 WIN INTEL OPENGL : Texture2DTestES3RobustInit.CopyTexImagePartiallyOutOfBoundsAcrossMips/* = SKIP
 
@@ -3153,6 +3162,9 @@
 546640307 WIN QUALCOMM VULKAN : ProgramPipelineTest31.SampleTextureAThenTextureB/* = SKIP
 546640308 WIN QUALCOMM VULKAN : SimpleUniformTestES3.TernarySelectAnArrayThenIndex/* = SKIP
 546631281 WIN QUALCOMM VULKAN : Texture2DTestES3.ASTCDecodeModeSwitch/* = SKIP
+573853134 WIN QUALCOMM VULKAN : ComputeShaderTest.AtomicOrMediumpUintHighBit/* = SKIP
+556564149 WIN QUALCOMM VULKAN : GLSLTest_ES3.InterpolantArrayReferencedWithoutIndex/* = SKIP
+576082230 WIN QUALCOMM VULKAN : StateChangeTestES31.PatchVertices/* = SKIP
 
 558505634 WIN QUALCOMM D3D11 : Texture2DTestES3RobustInit.InvalidateDepthOnly/* = SKIP
 558505634 WIN QUALCOMM D3D11 : Texture2DTestES3RobustInit.InvalidateStencilOnly/* = SKIP
@@ -3196,6 +3208,58 @@
 // Vulkan pipeline depth/stencil state when FramebufferDesc is unchanged.
 568687942 VULKAN : FramebufferTest_ES3.DetachDepthWhileStencilRemainsAttached/* = SKIP
 568687942 PIXEL4ORXL GLES : FramebufferTest_ES3.DetachDepthWhileStencilRemainsAttached/* = SKIP
+
+// Platform-specific failures of new tests for the
+// VirtualizeBaseLevelAndMipchain workaround, and workarounds it
+// subsumed. These won't be fixed.
+567613573 PIXEL4ORXL GLES : Texture2DArrayTestES3_OversizedMipLevels.ProperlySizedLevel1/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture2DTestES3_MultiSizeBaseLevelChange.FillLevel0ThenRaiseBaseLevelAndModify/* = SKIP
+550607402 PIXEL4ORXL GLES : Texture2DTestES3_NonZeroBaseLevelGenMipmaps.VerifyMipmapContents/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture2DTestES3_RecreateImmutableOnBaseLevelIncrease.ImmutableNPOTTextureBaseLevelIncrease/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture2DTestES3_RecreateImmutableOnBaseLevelIncrease.ImmutableNPOTTextureBaseLevelIncreaseMaxLevel/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 MAC AMD METAL : Texture3DTestES3.NPOTGenerateMipmapDrawThenRaiseBaseLevelAndSubImage/* = SKIP
+550607402 LINUX INTEL OPENGL : Texture2DTestES3_ResetTexStorage2DBaseLevel.MutableBaseLevelSyncThenImmutableNPOTStorage/* = SKIP
+550607402 WIN INTEL OPENGL : ASTCCompressedWithBaseLevelRobustInitTest.DrawWithoutUpload4x4/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : ASTCCompressedWithBaseLevelRobustInitTest.DrawWithoutUpload8x5/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : ASTCCompressedWithBaseLevelRobustInitTest.MutableToImmutableASTC8x5WithNonZeroBaseLevel/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : Texture2DTestES3_MultiSizeBaseLevelChange.DefineLevel0ThenBaseLevel1ThenLevel2/* = SKIP
+550607402 WIN INTEL OPENGL : Texture3DTestES3.LargeLevel0ThenSmallLevel1FBOAttach/* = SKIP
+
+// Platform-specific failures from enabling the
+// VirtualizeBaseLevelAndMipchain workaround throughout TextureTest.cpp.
+// These won't be fixed.
+550607402 PIXEL4ORXL GLES : ETC1CompressedTextureTest.ETC1CompressedImageDraws/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture2DBaseMaxTestES3.GenerateMipmapAfterRebase/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture2DBaseMaxTestES3.GenerateMipmapAfterRebaseImmutable/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture2DTestES3.TextureBaseLevelGreaterThanMaxLevel3Levels/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture3DIncreaseDepthTestES3.TexImage3DDepthIncreaseOutsideRangeDrawnVerifyByDraw/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture3DIncreaseDepthTestES3.TexImage3DDepthIncreaseOutsideRangeDrawnVerifyByReadPixels/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture3DIncreaseDepthTestES3.TexImage3DDepthIncreaseOutsideRangeStagedVerifyByDraw/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 PIXEL4ORXL GLES : Texture3DIncreaseDepthTestES3.TexImage3DDepthIncreaseOutsideRangeStagedVerifyByReadPixels/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : ETC1CompressedTextureTest.ETC1CompressedImageNPOT/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : Texture2DTestES3.TextureCOMPRESSEDRGB8ETC2ImplicitAlpha1/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : Texture2DTestES3.TextureCOMPRESSEDSRGB8ETC2ImplicitAlpha1/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : Texture2DTestES3.UnpackSkipImages2D/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : Texture2DTestES3RobustInit.TextureCOMPRESSEDRGB8A1ETC2/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN INTEL OPENGL : Texture2DTestES3RobustInit.TextureCOMPRESSEDSRGB8A1ETC2/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN NVIDIA GLES : Texture2DBaseMaxTestES3.GenerateMipmapAfterRebase/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN NVIDIA GLES : Texture3DTestES3.PixelUnpackParamsChangeTexImage/ES3_OpenGLES_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN NVIDIA GLES : Texture3DTestES3.PixelUnpackParamsChangeTexImage/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 WIN NVIDIA OPENGL : Texture2DBaseMaxTestES3.GenerateMipmapAfterRebase/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+550607402 LINUX NVIDIA OPENGL : Texture2DBaseMaxTestES3.GenerateMipmapAfterRebase/ES3_OpenGL_VirtualizeBaseLevelAndMipchain = SKIP
+
+// Failures of new tests which should be fixed.
+550607402 WIN NVIDIA WGPU : MipmapTestES3.GenerateMipmapBaseLevelOutOfRangeImmutableTexture/* = SKIP
+
+// D3D11 does not support mixing 3D and non-3D attachments on the same framebuffer.
+574035865 D3D11 : FramebufferTest_ES3.AttachmentWith3DLayers/* = SKIP
+
+// OpenGL multiview emulation attaches the entire mip level via glFramebufferTexture and uses a
+// single baseViewIndex uniform (from the first attachment) to offset gl_Layer across all
+// attachments, so it cannot render to different baseViewIndex ranges on different attachments
+// (b/575564312).
+575564312 OPENGL : WebGL2CompatibilityTest.UniqueFramebufferAttachmentsMultiview/* = SKIP
+575564312 OPENGL : HardenedContextTest.UniqueFramebufferAttachmentsMultiview/* = SKIP
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Slow tests, should appear last in this file

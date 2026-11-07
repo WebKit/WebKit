@@ -23,17 +23,22 @@
 
 #include "es3fSyncTests.hpp"
 
+#include "tcuTestCase.hpp"
 #include "tcuTestLog.hpp"
 #include "tcuVector.hpp"
 #include "gluShaderProgram.hpp"
 #include "gluCallLogWrapper.hpp"
 #include "gluRenderContext.hpp"
+#include "gluContextInfo.hpp"
+#include "gluObjectWrapper.hpp"
+#include "glwFunctions.hpp"
 #include "glwEnums.hpp"
 #include "deRandom.hpp"
 #include "deStringUtil.hpp"
 #include "deString.h"
 
 #include <vector>
+#include <cstdint>
 
 using tcu::TestLog;
 
@@ -287,6 +292,98 @@ SyncTests::~SyncTests(void)
 {
 }
 
+class FboAndFenceSyncTest : public TestCase
+{
+public:
+    FboAndFenceSyncTest(Context &context)
+        : TestCase(context, "fbo_and_fence_sync",
+                   "Verify that FBO operations combined with fence sync and query maintain driver stability")
+    {
+    }
+
+    IterateResult iterate(void) override
+    {
+        const glw::Functions &gl = m_context.getRenderContext().getFunctions();
+
+        std::vector<uint8_t> pixels(0x4000, 0);
+
+        for (int iter = 0; iter < 10; ++iter)
+        {
+            glu::Framebuffer fbo0(gl);
+            glu::Framebuffer fbo1(gl);
+            glu::Renderbuffer rbo(gl);
+            glu::Texture tex0(gl);
+            glu::Texture tex1(gl);
+
+            gl.bindTexture(GL_TEXTURE_2D, *tex0);
+            gl.texStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 40, 40);
+
+            gl.bindTexture(GL_TEXTURE_2D, *tex1);
+            gl.texStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 43, 43);
+
+            gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo0);
+            gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *tex0, 0);
+            gl.readBuffer(GL_COLOR_ATTACHMENT0);
+            gl.clear(GL_COLOR_BUFFER_BIT);
+
+            gl.bindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            gl.bindRenderbuffer(GL_RENDERBUFFER, *rbo);
+            gl.renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 40, 40);
+
+            gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo1);
+            gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *tex0, 0);
+            gl.framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *rbo);
+
+            glu::Framebuffer fbTemp(gl);
+            gl.bindFramebuffer(GL_FRAMEBUFFER, *fbTemp);
+            gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+            gl.framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *rbo);
+            gl.clear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            gl.framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+            gl.framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+
+            gl.bindFramebuffer(GL_READ_FRAMEBUFFER, *fbo1);
+            gl.readPixels(0, 0, 40, 40, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+            gl.bindFramebuffer(GL_DRAW_FRAMEBUFFER, *fbo1);
+            gl.clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            {
+                glu::Framebuffer framebuffer(gl);
+                gl.bindFramebuffer(GL_FRAMEBUFFER, *framebuffer);
+                gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *tex1, 0);
+                gl.readBuffer(GL_COLOR_ATTACHMENT0);
+                gl.clear(GL_COLOR_BUFFER_BIT);
+
+                gl.bindFramebuffer(GL_FRAMEBUFFER, 0);
+            }
+
+            gl.renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 40, 40);
+            gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo1);
+            gl.framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *rbo);
+            gl.clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            GLsync sync = 0;
+            {
+                glu::Query query(gl);
+                gl.beginQuery(GL_ANY_SAMPLES_PASSED, *query);
+                sync = gl.fenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+                gl.endQuery(GL_ANY_SAMPLES_PASSED);
+            }
+
+            gl.finish();
+
+            if (sync)
+                gl.deleteSync(sync);
+        }
+
+        m_testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+        return STOP;
+    }
+};
+
 void SyncTests::init(void)
 {
     // Fence sync tests.
@@ -309,6 +406,7 @@ void SyncTests::init(void)
     addChild(new FenceSyncCase(m_context, "client_wait_sync_noflush", "", 10000, COMMAND_CLIENT_WAIT_SYNC, 0, 0, 0));
     addChild(new FenceSyncCase(m_context, "client_wait_sync_finish", "", 10000, COMMAND_CLIENT_WAIT_SYNC, 0, 0,
                                CASE_FINISH_BEFORE_WAIT));
+    addChild(new FboAndFenceSyncTest(m_context));
 }
 
 } // namespace Functional

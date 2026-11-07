@@ -1194,6 +1194,13 @@ PFN_vkGetAndroidHardwareBufferPropertiesANDROID vkGetAndroidHardwareBufferProper
 PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBufferANDROID = nullptr;
 #    endif
 
+// VK_KHR_pipeline_binary
+PFN_vkGetPipelineKeyKHR vkGetPipelineKeyKHR                           = nullptr;
+PFN_vkCreatePipelineBinariesKHR vkCreatePipelineBinariesKHR           = nullptr;
+PFN_vkDestroyPipelineBinaryKHR vkDestroyPipelineBinaryKHR             = nullptr;
+PFN_vkGetPipelineBinaryDataKHR vkGetPipelineBinaryDataKHR             = nullptr;
+PFN_vkReleaseCapturedPipelineDataKHR vkReleaseCapturedPipelineDataKHR = nullptr;
+
 #    define GET_INSTANCE_FUNC(vkName)                                                              \
         do                                                                                         \
         {                                                                                          \
@@ -1246,6 +1253,7 @@ PFN_vkCmdSetDepthClipNegativeOneToOneEXT vkCmdSetDepthClipNegativeOneToOneEXT = 
 PFN_vkCmdSetDepthClampEnableEXT vkCmdSetDepthClampEnableEXT                   = nullptr;
 PFN_vkCmdSetPolygonModeEXT vkCmdSetPolygonModeEXT                             = nullptr;
 PFN_vkCmdSetLogicOpEnableEXT vkCmdSetLogicOpEnableEXT                         = nullptr;
+PFN_vkCmdSetColorBlendAdvancedEXT vkCmdSetColorBlendAdvancedEXT               = nullptr;
 
 // VK_EXT_vertex_input_dynamic_state
 PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = nullptr;
@@ -1392,10 +1400,21 @@ void InitExtendedDynamicState3EXTFunctions(VkDevice device)
     GET_DEVICE_FUNC(vkCmdSetAlphaToCoverageEnableEXT);
     GET_DEVICE_FUNC(vkCmdSetRasterizationSamplesEXT);
     GET_DEVICE_FUNC(vkCmdSetAlphaToOneEnableEXT);
-    GET_DEVICE_FUNC(vkCmdSetDepthClipNegativeOneToOneEXT);
     GET_DEVICE_FUNC(vkCmdSetDepthClampEnableEXT);
     GET_DEVICE_FUNC(vkCmdSetPolygonModeEXT);
     GET_DEVICE_FUNC(vkCmdSetLogicOpEnableEXT);
+}
+
+// VK_EXT_extended_dynamic_state3 + VK_EXT_depth_clip_control
+void InitExtendedDynamicState3EXTWithDepthClipControlEXTFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdSetDepthClipNegativeOneToOneEXT);
+}
+
+// VK_EXT_extended_dynamic_state3 + VK_EXT_blend_operation_advanced
+void InitExtendedDynamicState3EXTWithBlendOperationAdvancedEXTFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdSetColorBlendAdvancedEXT);
 }
 
 // VK_EXT_vertex_input_dynamic_state
@@ -1484,6 +1503,15 @@ void InitExternalMemoryHostFunctions(VkDevice device)
 void InitBufferDeviceAddressFunctions(VkDevice device)
 {
     GET_DEVICE_FUNC(vkGetBufferDeviceAddressKHR);
+}
+
+void InitPipelineBinaryKHRFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkGetPipelineKeyKHR);
+    GET_DEVICE_FUNC(vkCreatePipelineBinariesKHR);
+    GET_DEVICE_FUNC(vkDestroyPipelineBinaryKHR);
+    GET_DEVICE_FUNC(vkGetPipelineBinaryDataKHR);
+    GET_DEVICE_FUNC(vkReleaseCapturedPipelineDataKHR);
 }
 
 #    undef GET_INSTANCE_FUNC

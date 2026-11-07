@@ -207,6 +207,7 @@ inline constexpr const char *kFramebufferIncompleteMultiviewMismatch = "Framebuf
 inline constexpr const char *kFramebufferIncompleteMultiviewViewsMismatch = "Framebuffer is incomplete: Attachments have inconsistent multiview view counts.";
 inline constexpr const char *kFramebufferIncompleteSurfaceless = "Framebuffer is incomplete: Framebuffer is surfaceless.";
 inline constexpr const char *kFramebufferIncompleteUnsupportedMissmatchedDimensions = "Framebuffer is incomplete: Mismatched attachment sizes are unsupported.";
+inline constexpr const char *kFramebufferIncompleteUnsupportedMixed3DAndNon3DAttachments = "Framebuffer is incomplete: Mixing 3D and non-3D attachments is unsupported.";
 inline constexpr const char *kFramebufferIncompleteUnsupportedNonUniqueAttachments = "Framebuffer is incomplete: Non-unique attachments are unsupported.";
 inline constexpr const char *kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers = "Framebuffer is incomplete: Separate depth and stencil buffers are unsupported.";
 inline constexpr const char *kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffersCombinedFormat = "Framebuffer is incomplete: Combined depth/stencil formats cannot be used with separate depth and stencil buffers.";

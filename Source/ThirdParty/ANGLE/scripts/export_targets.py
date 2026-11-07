@@ -230,7 +230,7 @@ IGNORED_INCLUDES = {
     b'perfetto/tracing/track_event.h',
     b'perfetto/tracing/track_event_legacy.h',
     b'spirv-tools/libspirv.h',
-    b'third_party/volk/volk.h',
+    b'third_party/volk/src/volk.h',
     b'vk_loader_extensions.c',
     b'vk_snippets.h',
     b'vulkan_android.h',
@@ -274,6 +274,9 @@ IGNORED_INCLUDES = {
     # Behind #if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT) in
     # src/libGLESv2/egl_stubs_getprocaddress_autogen.cpp
     b'libGLESv2/entry_points_gles_ext_explicit_context_autogen.h',
+    # zstd's decompressor includes the legacy decoder only when
+    # ZSTD_LEGACY_SUPPORT is defined, which no ANGLE build defines.
+    b'../legacy/zstd_legacy.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

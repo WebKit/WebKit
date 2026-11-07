@@ -1733,9 +1733,17 @@ angle::Result Buffer11::PackStorage::packPixels(const gl::Context *context,
     RenderTarget11 *renderTarget = nullptr;
     ANGLE_TRY(readAttachment.getRenderTarget(context, 0, &renderTarget));
 
+    gl::Rectangle clippedReadArea;
+    bool reverseRowOrder     = false;
+    const bool invertTexture = UsePresentPathFast(mRenderer, &readAttachment);
+    if (!ClipRenderTargetReadArea(*renderTarget, params.area, invertTexture, params.reverseRowOrder,
+                                  &clippedReadArea, &reverseRowOrder))
+    {
+        return angle::Result::Continue;
+    }
+
     const TextureHelper11 *srcTexture = &renderTarget->getTexture();
-    ASSERT(srcTexture->valid());
-    unsigned int srcSubresource = renderTarget->getSubresourceIndex();
+    unsigned int srcSubresource       = renderTarget->getSubresourceIndex();
 
     TextureHelper11 resolvedTexture;
     if (srcTexture->getSampleCount() > 1)
@@ -1746,25 +1754,27 @@ angle::Result Buffer11::PackStorage::packPixels(const gl::Context *context,
         srcSubresource = 0;
     }
 
-    mQueuedPackCommand.reset(new PackPixelsParams(params));
+    mQueuedPackCommand.reset(new PackPixelsParams(clippedReadArea, *params.destFormat,
+                                                  params.outputPitch, reverseRowOrder,
+                                                  params.packBuffer, params.offset));
 
-    gl::Extents srcTextureSize(params.area.width, params.area.height, 1);
+    const gl::Extents stagingTextureSize(clippedReadArea.width, clippedReadArea.height, 1);
     if (!mStagingTexture.get() || mStagingTexture.getFormat() != srcTexture->getFormat() ||
-        mStagingTexture.getExtents() != srcTextureSize ||
+        mStagingTexture.getExtents() != stagingTextureSize ||
         mStagingTexture.getTextureType() != srcTexture->getTextureType())
     {
         mStagingTexture.reset();
         ANGLE_TRY(mRenderer->createStagingTexture(context, srcTexture->getTextureType(),
-                                                  srcTexture->getFormatSet(), srcTextureSize,
+                                                  srcTexture->getFormatSet(), stagingTextureSize,
                                                   StagingAccess::READ, &mStagingTexture));
     }
 
     ID3D11DeviceContext *immediateContext = mRenderer->getDeviceContext();
     D3D11_BOX srcBox;
-    srcBox.left   = params.area.x;
-    srcBox.right  = params.area.x + params.area.width;
-    srcBox.top    = params.area.y;
-    srcBox.bottom = params.area.y + params.area.height;
+    srcBox.left   = static_cast<UINT>(clippedReadArea.x);
+    srcBox.right  = static_cast<UINT>(clippedReadArea.x + clippedReadArea.width);
+    srcBox.top    = static_cast<UINT>(clippedReadArea.y);
+    srcBox.bottom = static_cast<UINT>(clippedReadArea.y + clippedReadArea.height);
 
     // Select the correct layer from a 3D attachment
     srcBox.front = 0;

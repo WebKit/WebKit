@@ -618,16 +618,11 @@ void main() {
         // Finite because |int| is implemented with |uint| such that wraparound has
         // well-defined behavior, and eventually the values wrap around to make the
         // condition false.
-        "for (int i = 0; i >= 0; ++i) { }",
-        "for (int i = 1; i >= 0; ++i) { }",
         "for (int i = 1; i > 0; ++i) { }",
         "for (int i = 0; i < 10; i -= 1) { }",
         // Finite because of eventual wrap around to zero.
         "for (uint i = 1u; i > 0u; ++i) { }",
-        "for (uint i = 10u; i >= 1u; --i) { }",
         "for (uint i = 0u; i <= 10u; ++i) { }",
-        "for (int i = 0; i <= 2147483646; ++i) { }",
-        "for (int i = 0; i >= -2147483647; --i) { }",
     };
 
     for (const char *test : kTests)
@@ -680,6 +675,13 @@ void main() {
         "for (uint i = 10u; i >= b; ++i) { }",
         // Infinite loop because the condition is always true as |i| never changes.
         "for (uint i = 0u; i == 0u; i += 0u) { }",
+        // Infinite loop because signed integer overflow is undefined behavior
+        "for (int i = 0; i >= 0; ++i) { }",
+        "for (int i = 1; i >= 0; ++i) { }",
+        // Infinite loop because the condition is always true
+        "for (int i = 0; i <= 2147483647; ++i) { }",
+        "for (int i = 0; i >= -2147483648; ++i) { }",
+        "for (uint i = 0u; i <= 4294967295u; ++i) { }",
         "for (uint i = 0u; i >= 0u; i--) { }",
         "for (uint i = 0u; i >= 0u; i++) { }",
         "for (uint i = 0u; i <= 4294967295u; i++) { }",
@@ -687,7 +689,7 @@ void main() {
         "for (int i = 0; i >= -2147483647 - 1; i--) { }",
         "const uint z = 0u; for (uint i = 0u; i >= z; i--) { }",
         "for (int i = 0; i <= a; i++) { }",
-        "for (uint i = 0u; i >= b; i--) { }"
+        "for (uint i = 0u; i >= b; i--) { }",
     };
 
     for (const char *test : kTests)
@@ -875,6 +877,65 @@ void main()
     verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "switch");
 }
 
+// Test that nested constant switch statements (https://crbug.com/548066294) are folded away.
+// The selector is length() in this test.
+TEST_P(GLSLOutputGLSLTest_ES3, NestedConstantSwitchWithLength)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 color;
+int sideEffects = 0;
+int[1] one()
+{
+    sideEffects += 1;
+    return int[1](1);
+}
+int[2] two()
+{
+    sideEffects += 1;
+    return int[2](2, 2);
+}
+void main()
+{
+    int result = 0;
+    switch (one().length() - 1)
+    {
+        case 0:
+            result += 1;
+            switch (one().length())
+            {
+                case 0:
+                    result += 10;
+                    break;
+                case 1:
+                    result += 20;
+                    switch (two().length())
+                    {
+                        case 2:
+                            result += 300;
+                            break;
+                        default:
+                            result += 400;
+                            break;
+                    }
+                    break;
+                default:
+                    result += 50;
+                    break;
+            }
+            break;
+        case 1:
+            result += 1000;
+            break;
+        default:
+            result += 2000;
+            break;
+    }
+    color = result == 321 && sideEffects == 3 ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1);
+})";
+    compileShader(GL_FRAGMENT_SHADER, kFS);
+    verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "switch");
+}
 // Test that fall-through across cases in a constant switch is folded away.
 TEST_P(GLSLOutputGLSLTest_ES3, FallThrough)
 {

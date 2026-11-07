@@ -15801,6 +15801,139 @@ TEST_P(ImageTest, CreateImageWithNonCurrentContext)
     eglDestroyContext(display, context2);
 }
 
+// Similar to CreateImageWithNonCurrentContext, but uses two threads with context1 current on
+// thread1 and context2 current on thread2, creating image2 on thread2 with context1 as the
+// argument.
+TEST_P(ImageTest, CreateImageWithNonCurrentContextTwoThreads)
+{
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+    EGLConfig config   = window->getConfig();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() || !hasExternalExt());
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_KHR_surfaceless_context"));
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    EGLint extraAttributes1[] = {EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE, 1, EGL_NONE};
+    EGLint extraAttributes2[] = {EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE, 2, EGL_NONE};
+    if (!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_context_virtualization"))
+    {
+        extraAttributes1[0] = EGL_NONE;
+        extraAttributes2[0] = EGL_NONE;
+    }
+    EGLContext context1 = window->createContext(window->getContext(), extraAttributes1);
+    ASSERT_NE(context1, EGL_NO_CONTEXT);
+    EGLContext context2 = window->createContext(context1, extraAttributes2);
+    ASSERT_NE(context2, EGL_NO_CONTEXT);
+
+    constexpr EGLint kPBufferSize = 64;
+    const EGLint pbufferAttribs[] = {EGL_WIDTH, kPBufferSize, EGL_HEIGHT, kPBufferSize, EGL_NONE};
+    EGLSurface surface1           = eglCreatePbufferSurface(display, config, pbufferAttribs);
+    ASSERT_NE(surface1, EGL_NO_SURFACE);
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        Thread1DrewImage1,
+        Thread2CreatedImage2,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    GLTexture sourceTex1;
+    GLTexture sourceTex2;
+    GLTexture externalTex;
+    EGLImageKHR image1 = EGL_NO_IMAGE_KHR;
+    EGLImageKHR image2 = EGL_NO_IMAGE_KHR;
+
+    ASSERT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
+    std::thread thread1([&]() {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, surface1, surface1, context1));
+
+        // Create initial texture and EGLImage, bind to external texture, and draw a textured quad.
+        glBindTexture(GL_TEXTURE_2D, sourceTex1);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     GLColor::blue.data());
+        image1 = eglCreateImageKHR(display, context1, EGL_GL_TEXTURE_2D_KHR,
+                                   reinterpretHelper<EGLClientBuffer>(sourceTex1), kDefaultAttribs);
+        ASSERT_EGL_SUCCESS();
+
+        createEGLImageTargetTextureExternal(image1, externalTex);
+
+        glUseProgram(mTextureExternalProgram);
+        glBindTexture(GL_TEXTURE_EXTERNAL_OES, externalTex);
+        glUniform1i(mTextureExternalUniformLocation, 0);
+        drawQuad(mTextureExternalProgram, "position", 0.5f);
+        ASSERT_GL_NO_ERROR();
+
+        threadSynchronization.nextStep(Step::Thread1DrewImage1);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread2CreatedImage2));
+
+        threadSynchronization.nextStep(Step::Finish);
+    });
+
+    std::thread thread2([&]() {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, context2));
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1DrewImage1));
+
+        // Destroy old EGLImage and its backing texture
+        sourceTex1.reset();
+        eglDestroyImageKHR(display, image1);
+
+        // Create new backing 2D texture with initial staged data while context2 is current on
+        // thread2, but call eglCreateImageKHR with context1 (which is current on thread1).
+        constexpr GLsizei kWidth  = 64;
+        constexpr GLsizei kHeight = 64;
+        std::vector<GLColor> initialData(kWidth * kHeight, GLColor::green);
+        glBindTexture(GL_TEXTURE_2D, sourceTex2);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     initialData.data());
+
+        image2 = eglCreateImageKHR(display, context1, EGL_GL_TEXTURE_2D_KHR,
+                                   reinterpretHelper<EGLClientBuffer>(sourceTex2), kDefaultAttribs);
+        EXPECT_EQ(eglGetError(), EGL_BAD_ACCESS);
+
+        threadSynchronization.nextStep(Step::Thread2CreatedImage2);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+
+        ASSERT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    });
+
+    thread1.join();
+    thread2.join();
+
+    // Clean up
+    ASSERT_EGL_TRUE(
+        eglMakeCurrent(display, window->getSurface(), window->getSurface(), window->getContext()));
+    if (image2 != EGL_NO_IMAGE_KHR)
+    {
+        eglDestroyImageKHR(display, image2);
+    }
+    sourceTex1.reset();
+    sourceTex2.reset();
+    externalTex.reset();
+    eglDestroySurface(display, surface1);
+    eglDestroyContext(display, context1);
+    eglDestroyContext(display, context2);
+
+    ASSERT_NE(currentStep, Step::Abort);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(ImageTest,
                                        ES3_VULKAN().enable(Feature::AllocateNonZeroMemory));
 

@@ -6,7 +6,7 @@
   "src/tests/deqp_support/deqp_data_autogen.gni":
     "ee142f516fad1d6aa58ac8dc4b01ef32",
   "third_party/VK-GL-CTS/src/CMakeLists.txt":
-    "ebf11e0d9451f2898509db86b64f0055",
+    "252ece43745a49238a6c8e56be5748a1",
   "third_party/VK-GL-CTS/src/execserver/CMakeLists.txt":
     "38aa187592e6ef9a331fc1ea313fc68d",
   "third_party/VK-GL-CTS/src/executor/CMakeLists.txt":
@@ -42,7 +42,7 @@
   "third_party/VK-GL-CTS/src/framework/opengl/wrapper/CMakeLists.txt":
     "31a7adfb6e907b53ef24bb6ea044b838",
   "third_party/VK-GL-CTS/src/framework/platform/CMakeLists.txt":
-    "2ef789461e96c0ec31c5cca0a3af9c14",
+    "83e8f370c979acdd8f4d595ef63ade6b",
   "third_party/VK-GL-CTS/src/framework/qphelper/CMakeLists.txt":
     "4118a22199375e743dee74afda146f55",
   "third_party/VK-GL-CTS/src/framework/randomshaders/CMakeLists.txt":

@@ -634,7 +634,61 @@ TEST(SpanTest, Helpers)
             ANGLE_UNSAFE_TODO(EXPECT_EQ(data2[i], data1[i]));
         }
     }
+
+    // Test copy_prefix_from with a smaller fixed-extent source: the rest is left
+    // unwritten.
+    {
+        std::array<unsigned int, 4> dst            = {9, 9, 9, 9};
+        constexpr std::array<unsigned int, 2> kSrc = {1, 2};
+
+        Span(dst).copy_prefix_from(Span(kSrc));
+        EXPECT_EQ(dst, (std::array<unsigned int, 4>{1, 2, 9, 9}));
+    }
+
+    // Test copy_prefix_from with a same-size dynamic-extent source.
+    {
+        std::array<unsigned int, 3> dst = {0, 0, 0};
+        std::vector<unsigned int> src   = {4, 5, 6};
+
+        Span(dst).copy_prefix_from(Span(src));
+        EXPECT_EQ(dst, (std::array<unsigned int, 3>{4, 5, 6}));
+    }
+
+    // Test copy_prefix_from with an empty source: nothing is written.
+    {
+        std::array<unsigned int, 3> dst = {4, 5, 6};
+
+        Span(dst).copy_prefix_from(Span<const unsigned int>());
+        EXPECT_EQ(dst, (std::array<unsigned int, 3>{4, 5, 6}));
+    }
+
+    // Test copy_prefix_from into a subspan, as used for offset writes.
+    {
+        std::array<unsigned int, 4> dst = {0, 0, 0, 0};
+        std::array<unsigned int, 2> src = {7, 8};
+
+        Span(dst).subspan(1).copy_prefix_from(Span(src));
+        EXPECT_EQ(dst, (std::array<unsigned int, 4>{0, 7, 8, 0}));
+    }
 }
+
+#if __cplusplus >= 202002L
+template <typename Dst, typename Src>
+concept CanCopyPrefixFrom = requires(Dst dst, Src src) { dst.copy_prefix_from(src); };
+
+// A fixed-extent source that is larger than a fixed-extent destination is rejected at compile
+// time. (With a dynamic extent, the size is CHECKed at runtime instead.)
+static_assert(CanCopyPrefixFrom<Span<int, 4>, Span<int, 2>>);
+static_assert(CanCopyPrefixFrom<Span<int, 4>, Span<int, 4>>);
+static_assert(!CanCopyPrefixFrom<Span<int, 2>, Span<int, 4>>);
+
+// A const destination is rejected.
+static_assert(!CanCopyPrefixFrom<Span<const int, 4>, Span<int, 2>>);
+
+// A dynamic extent on either side is accepted.
+static_assert(CanCopyPrefixFrom<Span<int, 2>, Span<int>>);
+static_assert(CanCopyPrefixFrom<Span<int>, Span<const int, 4>>);
+#endif  // __cplusplus >= 202002L
 
 }  // anonymous namespace
 }  // namespace angle

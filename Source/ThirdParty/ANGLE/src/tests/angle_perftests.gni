@@ -37,7 +37,6 @@ angle_perf_tests_sources = [
   "perf_tests/UniformsPerf.cpp",
   "perf_tests/VertexArrayPerfTest.cpp",
   "perf_tests/VulkanBarriersPerf.cpp",
-  "perf_tests/glmark2Benchmark.cpp",
   "test_utils/ANGLETest.cpp",
   "test_utils/ANGLETest.h",
   "test_utils/MultiviewTest.cpp",

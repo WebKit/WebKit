@@ -151,8 +151,7 @@ class EXTMultisampleCompatibilityTest : public ANGLETest<>
 // Test simple state tracking
 TEST_P(EXTMultisampleCompatibilityTest, TestStateTracking)
 {
-    if (!isApplicable())
-        return;
+    ANGLE_SKIP_TEST_IF(!isApplicable());
 
     EXPECT_TRUE(glIsEnabled(GL_MULTISAMPLE_EXT));
     glDisable(GL_MULTISAMPLE_EXT);
@@ -172,8 +171,7 @@ TEST_P(EXTMultisampleCompatibilityTest, TestStateTracking)
 // Test that disabling GL_MULTISAMPLE_EXT is handled correctly.
 TEST_P(EXTMultisampleCompatibilityTest, DrawAndResolve)
 {
-    if (!isApplicable())
-        return;
+    ANGLE_SKIP_TEST_IF(!isApplicable());
 
     static const float kBlue[]  = {0.0f, 0.0f, 1.0f, 1.0f};
     static const float kGreen[] = {0.0f, 1.0f, 0.0f, 1.0f};
@@ -223,8 +221,7 @@ TEST_P(EXTMultisampleCompatibilityTest, DrawAndResolve)
 // Test that enabling GL_SAMPLE_ALPHA_TO_ONE_EXT affects rendering.
 TEST_P(EXTMultisampleCompatibilityTest, DrawAlphaOneAndResolve)
 {
-    if (!isApplicable())
-        return;
+    ANGLE_SKIP_TEST_IF(!isApplicable());
 
     // SAMPLE_ALPHA_TO_ONE is specified to transform alpha values of
     // covered samples to 1.0. In order to detect it, we use non-1.0
@@ -367,8 +364,7 @@ class MultisampleCompatibilityTest : public ANGLETest<>
 // Test that enabling GL_SAMPLE_COVERAGE affects rendering.
 TEST_P(MultisampleCompatibilityTest, DrawCoverageAndResolve)
 {
-    if (!isApplicable())
-        return;
+    ANGLE_SKIP_TEST_IF(!isApplicable());
 
     // TODO: Figure out why this fails on Android.
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());

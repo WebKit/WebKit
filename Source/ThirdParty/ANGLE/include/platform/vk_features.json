@@ -1084,6 +1084,62 @@
             "issue": "http://anglebug.com/42262506"
         },
         {
+            "name": "supports_patch_control_points_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the patchControlPoints feature of VK_EXT_extended_dynamic_state2 extension"
+            ],
+            "issue": "http://anglebug.com/42264446"
+        },
+        {
+            "name": "supports_alpha_to_coverage_enable_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the alphaToCoverageEnable feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
+            "name": "supports_alpha_to_one_enable_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the alphaToOneEnable feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
+            "name": "supports_depth_clamp_enable_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the depthClampEnable feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
+            "name": "supports_depth_clip_negative_one_to_one_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the depthClipNegativeOneToOne feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
+            "name": "supports_logic_op_enable_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the logicOpEnable feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
+            "name": "supports_polygon_mode_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the polygonMode feature of VK_EXT_extended_dynamic_state3 extension"
+            ],
+            "issue": "http://anglebug.com/575891833"
+        },
+        {
             "name": "supports_fragment_shading_rate",
             "category": "Features",
             "description": [
@@ -2265,7 +2321,7 @@
         },
         {
             "name": "initialize_color_attachment_with_white",
-            "category": "Workarounds",
+            "category": "AppWorkarounds",
             "description": [
                 "Initialize color tetxure attachment with white color for app bug workaround."
             ]
@@ -2306,6 +2362,30 @@
             "description": [
                 "FP64 support for OpenCL."
             ]
+        },
+        {
+            "name": "supports_pipeline_binary",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_KHR_pipeline_binary extension."
+            ],
+            "issue": "http://anglebug.com/481364092"
+        },
+        {
+            "name": "prefer_pipeline_binaries",
+            "category": "Features",
+            "description": [
+                "Prefer using VK_KHR_pipeline_binary over monolithic VkPipelineCache when supported."
+            ],
+            "issue": "http://anglebug.com/481364092"
+        },
+        {
+            "name": "allow_pipeline_binaries_for_testing",
+            "category": "Features",
+            "description": [
+                "Allow preferPipelineBinaries where VK_KHR_pipeline_binary is supported, for testing."
+            ],
+            "issue": "http://anglebug.com/481364092"
         }
     ]
 }

@@ -36,17 +36,9 @@ TestHierarchyInflater::TestHierarchyInflater(void)
 {
 }
 
-TestHierarchyInflater::~TestHierarchyInflater(void)
-{
-}
-
 // DefaultHierarchyInflater
 
 DefaultHierarchyInflater::DefaultHierarchyInflater(TestContext &testCtx) : m_testCtx(testCtx)
-{
-}
-
-DefaultHierarchyInflater::~DefaultHierarchyInflater(void)
 {
 }
 
@@ -235,7 +227,8 @@ void TestHierarchyIterator::next(void)
                 if (isTestNodeTypeExecutable(childNode->getNodeType()))
                 {
                     const std::string testName = m_nodePath + "." + childNode->getName();
-                    if (!m_caseListFilter.checkCaseFraction(m_groupNumber, testName, node->getUseFraction0()))
+                    const bool useFraction0    = (node->getUseFraction0() || childNode->getUseFraction0());
+                    if (!m_caseListFilter.checkCaseFraction(m_groupNumber, testName, useFraction0))
                         break;
                 }
                 m_sessionStack.push_back(NodeIter(childNode));

@@ -2717,6 +2717,50 @@ void main()
                                       kExpectedValues);
 }
 
+// Verify that atomicOr() on mediump uint values with bit 15 set doesn't sign-extend the result.
+// 0x8159 is within the mediump uint range [0, 2^16-1], so it must not become 0xFFFF8159.
+TEST_P(ComputeShaderTest, AtomicOrMediumpUintHighBit)
+{
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout(std430, binding = 0) buffer InOut
+{
+    mediump uint inputValues[4];
+    mediump uint result;
+    highp uint returnValue;
+};
+
+void main()
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        atomicOr(result, inputValues[i]);
+    }
+    returnValue = atomicOr(result, inputValues[0]);
+})";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program);
+
+    constexpr std::array<GLuint, 6> kInitData = {{0x8000u, 0x0100u, 0x0058u, 0x0001u, 0u, 0u}};
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kInitData), kInitData.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, buffer);
+
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    const GLuint *data = static_cast<const GLuint *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(kInitData), GL_MAP_READ_BIT));
+    ASSERT_NE(data, nullptr);
+    EXPECT_EQ(0x8159u, data[4]);
+    EXPECT_EQ(0x8159u, data[5]);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify using nested atomic functions in expressions.
 TEST_P(ComputeShaderTest, AtomicFunctionsReturnWithMultipleTypes)
 {

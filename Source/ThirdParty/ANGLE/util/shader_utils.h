@@ -74,6 +74,9 @@ ANGLE_UTIL_EXPORT const char *Simple();
 // A shader that sets gl_Position to attribute a_position, and sets gl_PointSize to 1.
 ANGLE_UTIL_EXPORT const char *SimpleForPoints();
 
+// A shader that sets gl_Position to attribute a_position, and sets gl_PointSize to 10.
+ANGLE_UTIL_EXPORT const char *SimpleForPoints10();
+
 // A shader that passes through attribute a_position, setting it to gl_Position and varying
 // v_position.
 ANGLE_UTIL_EXPORT const char *Passthrough();

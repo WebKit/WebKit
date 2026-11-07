@@ -47,6 +47,17 @@
 #include "es3fFboTestUtil.hpp"
 
 #include "glwEnums.hpp"
+#include "glwFunctions.hpp"
+#include "gluContextInfo.hpp"
+#include "gluObjectWrapper.hpp"
+#include "gluPixelTransfer.hpp"
+#include "gluRenderContext.hpp"
+#include "gluShaderProgram.hpp"
+#include "tcuRGBA.hpp"
+#include "tcuSurface.hpp"
+#include "tcuRenderTarget.hpp"
+#include "deMemory.h"
+#include "deMath.h"
 
 namespace deqp
 {
@@ -3557,6 +3568,278 @@ public:
     const uint32_t m_internalFormat;
 };
 
+// Verify FBO attachment completeness and rendering after texture respecification
+class TexImage3DFboRespecificationCase : public TestCase
+{
+public:
+    TexImage3DFboRespecificationCase(Context &context, const char *name, const char *desc, int width, int height,
+                                     int initialDepth, int reallocDepth, bool unbindFboBeforeRespecify)
+        : TestCase(context, name, desc)
+        , m_width(width)
+        , m_height(height)
+        , m_initialDepth(initialDepth)
+        , m_reallocDepth(reallocDepth)
+        , m_unbindFboBeforeRespecify(unbindFboBeforeRespecify)
+    {
+    }
+
+    ~TexImage3DFboRespecificationCase(void)
+    {
+    }
+
+    IterateResult iterate(void)
+    {
+        const glw::Functions &gl         = m_context.getRenderContext().getFunctions();
+        const glw::GLenum internalFormat = GL_RGBA8;
+
+        glw::GLint maxLayers = 0;
+        gl.getIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxLayers);
+        if (m_initialDepth > maxLayers || m_reallocDepth > maxLayers)
+        {
+            tcu::TestLog &log = m_testCtx.getLog();
+            log << tcu::TestLog::Message << "Texture layer count exceeds GL_MAX_ARRAY_TEXTURE_LAYERS (" << maxLayers
+                << "), skipping." << tcu::TestLog::EndMessage;
+            m_testCtx.setTestResult(QP_TEST_RESULT_NOT_SUPPORTED, "Array texture layers not supported");
+            return STOP;
+        }
+
+        glu::Texture tex(gl);
+        glu::Framebuffer fbo(gl);
+        const int reclaimBufferCount = 1000;
+        glu::BufferVector reclaimBuffers(gl, reclaimBufferCount);
+
+        gl.bindTexture(GL_TEXTURE_2D_ARRAY, *tex);
+        gl.texImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_width, m_height, m_initialDepth, 0, GL_RGBA,
+                      GL_UNSIGNED_BYTE, nullptr);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "Initial glTexImage3D failed");
+
+        gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo);
+        gl.framebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, *tex, 0, 0);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glFramebufferTextureLayer failed");
+
+        TCU_CHECK(gl.checkFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+
+        gl.clearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        gl.clear(GL_COLOR_BUFFER_BIT);
+        gl.finish();
+        GLU_EXPECT_NO_ERROR(gl.getError(), "Initial glClear failed");
+
+        if (m_unbindFboBeforeRespecify)
+        {
+            // Unbind FBO prior to re-specifying texture data.
+            gl.bindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+        // Respecify texture backing memory with an altered layer count (within GLES 3.0 min spec limit of 256).
+        gl.texImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_width, m_height, m_reallocDepth, 0, GL_RGBA,
+                      GL_UNSIGNED_BYTE, nullptr);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "Second glTexImage3D failed");
+
+        // Allocate additional buffer objects to exercise heap memory reuse and verify attachment state integrity.
+        // 4864 bytes targets driver internal surface allocation slab size to ensure freed texture
+        // backing memory is reclaimed and stale attachment references are detected.
+        const int allocSizeInBytes = 4864;
+        vector<uint8_t> reclaimData(allocSizeInBytes, 0x41);
+        for (int i = 0; i < reclaimBufferCount; i++)
+        {
+            gl.bindBuffer(GL_ARRAY_BUFFER, reclaimBuffers[i]);
+            gl.bufferData(GL_ARRAY_BUFFER, allocSizeInBytes, reclaimData.data(), GL_STATIC_DRAW);
+        }
+        GLU_EXPECT_NO_ERROR(gl.getError(), "Buffer allocation failed");
+
+        // Rebind FBO (if unbound) and verify framebuffer completeness and clear operation after texture respecification.
+        if (m_unbindFboBeforeRespecify)
+        {
+            gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo);
+        }
+
+        glw::GLenum status = gl.checkFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+        {
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "FBO became incomplete after respecifying texture");
+            return STOP;
+        }
+
+        gl.clearColor(0.0f, 1.0f, 0.0f, 1.0f);
+        gl.clear(GL_COLOR_BUFFER_BIT);
+        gl.finish();
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glClear after texture respecification failed");
+
+        uint8_t pixel[4] = {0, 0, 0, 0};
+        gl.readPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glReadPixels failed");
+        if (pixel[0] != 0 || pixel[1] != 255 || pixel[2] != 0 || pixel[3] != 255)
+        {
+            m_testCtx.getLog() << tcu::TestLog::Message << "Expected green pixel (0, 255, 0, 255), got ("
+                               << (int)pixel[0] << ", " << (int)pixel[1] << ", " << (int)pixel[2] << ", "
+                               << (int)pixel[3] << ")" << tcu::TestLog::EndMessage;
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Cleared pixel value did not match expected green color");
+            return STOP;
+        }
+
+        m_testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+        return STOP;
+    }
+
+private:
+    int m_width;
+    int m_height;
+    int m_initialDepth;
+    int m_reallocDepth;
+    bool m_unbindFboBeforeRespecify;
+};
+
+class ASTCCompressedSubImageWithBaseLevelCase : public TestCase
+{
+public:
+    ASTCCompressedSubImageWithBaseLevelCase(Context &context, const char *name, const char *description)
+        : TestCase(context, name, description)
+    {
+    }
+
+    void init(void)
+    {
+        // Check for GLES 3.2+ where ASTC LDR is core, or extension support.
+        const auto &ctxType = m_context.getRenderContext().getType();
+        const bool isGLES32 =
+            ctxType.getMajorVersion() > 3 || (ctxType.getMajorVersion() == 3 && ctxType.getMinorVersion() >= 2);
+        const bool hasExt = m_context.getContextInfo().isExtensionSupported("GL_KHR_texture_compression_astc_ldr") ||
+                            m_context.getContextInfo().isExtensionSupported("GL_OES_texture_compression_astc");
+        if (!isGLES32 && !hasExt)
+        {
+            throw tcu::NotSupportedError("ASTC LDR not supported");
+        }
+    }
+
+    IterateResult iterate(void)
+    {
+        const glu::RenderContext &renderCtx = m_context.getRenderContext();
+        const glw::Functions &gl            = renderCtx.getFunctions();
+        tcu::TestLog &log                   = m_testCtx.getLog();
+
+        const char *vtxShader = "#version 300 es\n"
+                                "out vec2 uv;\n"
+                                "void main()\n"
+                                "{\n"
+                                "    vec2 p = vec2(gl_VertexID & 1, gl_VertexID >> 1);\n"
+                                "    uv = p;\n"
+                                "    gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n"
+                                "}\n";
+
+        const char *fragShader = "#version 300 es\n"
+                                 "precision highp float;\n"
+                                 "uniform sampler2D t;\n"
+                                 "in vec2 uv;\n"
+                                 "out vec4 c;\n"
+                                 "void main()\n"
+                                 "{\n"
+                                 "    c = texture(t, uv);\n"
+                                 "}\n";
+
+        glu::ShaderProgram program(renderCtx, glu::makeVtxFragSources(vtxShader, fragShader));
+        if (!program.isOk())
+        {
+            log << program;
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Failed to compile shader");
+            return STOP;
+        }
+
+        gl.useProgram(program.getProgram());
+        glw::GLint texLoc = gl.getUniformLocation(program.getProgram(), "t");
+        gl.uniform1i(texLoc, 0);
+
+        // 8x5 ASTC format.
+        glw::GLenum format        = GL_COMPRESSED_RGBA_ASTC_8x5_KHR;
+        const glw::GLsizei width  = 8;
+        const glw::GLsizei height = 160;
+        const glw::GLsizei levels = 5;
+
+        // Void-extent blocks for ASTC:
+        // Format: 0xFC, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, R_lo, R_hi, G_lo, G_hi, B_lo, B_hi, A_lo, A_hi
+        static const uint8_t blockRed[16]   = {0xFC, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                               0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF};
+        static const uint8_t blockGreen[16] = {0xFC, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                               0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF};
+
+        // Level 4: 1x10 pixels. 8x5 blocks. Padded: 8x10. Blocks: 1x2 = 2 (32 bytes)
+        uint8_t dataRed[32];
+        deMemcpy(dataRed, blockRed, 16);
+        deMemcpy(&dataRed[16], blockRed, 16);
+
+        // Level 3: 1x20 pixels. 8x5 blocks. Padded: 8x20. Blocks: 1x4 = 4 (64 bytes)
+        uint8_t dataGreen[64];
+        for (int i = 0; i < 4; ++i)
+            deMemcpy(&dataGreen[i * 16], blockGreen, 16);
+
+        glu::Texture tex(gl);
+        gl.bindTexture(GL_TEXTURE_2D, *tex);
+        gl.texStorage2D(GL_TEXTURE_2D, levels, format, width, height);
+
+        gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glu::VertexArray vao(gl);
+        gl.bindVertexArray(*vao);
+
+        const int targetW = renderCtx.getRenderTarget().getWidth();
+        const int targetH = renderCtx.getRenderTarget().getHeight();
+        GLU_CHECK_GLW_CALL(gl, viewport(0, 0, targetW, targetH));
+
+        // Reviewer suggested lambda to clean up drawing and pixel validation
+        auto verifyLevelColor = [&](const tcu::RGBA &expected, const char *name) -> bool
+        {
+            // 1. Clear with Blue so a failed/dropped draw doesn't read stale red/green
+            GLU_CHECK_GLW_CALL(gl, clearColor(0.0f, 0.0f, 1.0f, 1.0f));
+            GLU_CHECK_GLW_CALL(gl, clear(GL_COLOR_BUFFER_BIT));
+
+            // 2. Draw
+            GLU_CHECK_GLW_CALL(gl, drawArrays(GL_TRIANGLE_STRIP, 0, 4));
+
+            // 3. Readback & sample center pixel (avoid corner (0,0) edge artifacts)
+            tcu::Surface surface(targetW, targetH);
+            glu::readPixels(renderCtx, 0, 0, surface.getAccess());
+            const tcu::RGBA pix = surface.getPixel(targetW / 2, targetH / 2);
+
+            const int tol = 4;
+            const bool ok = (de::abs(pix.getRed() - expected.getRed()) <= tol) &&
+                            (de::abs(pix.getGreen() - expected.getGreen()) <= tol) &&
+                            (de::abs(pix.getBlue() - expected.getBlue()) <= tol) &&
+                            (de::abs(pix.getAlpha() - expected.getAlpha()) <= tol);
+
+            if (!ok)
+            {
+                log << TestLog::Message << name << " failed. Expected: " << expected << ", Got: " << pix
+                    << TestLog::EndMessage;
+                log << TestLog::Image("Result", "Rendered Framebuffer", surface);
+            }
+            return ok;
+        };
+
+        // Upload Level 4 and verify
+        GLU_CHECK_GLW_CALL(gl, texParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 4));
+        GLU_CHECK_GLW_CALL(gl, compressedTexSubImage2D(GL_TEXTURE_2D, 4, 0, 0, 1, 10, format, 32, dataRed));
+
+        if (!verifyLevelColor(tcu::RGBA::red(), "Level 4 (BASE_LEVEL=4)"))
+        {
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Level 4 ASTC subimage base level sampling failed");
+            return STOP;
+        }
+
+        // Upload Level 3 and verify
+        GLU_CHECK_GLW_CALL(gl, texParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 3));
+        GLU_CHECK_GLW_CALL(gl, compressedTexSubImage2D(GL_TEXTURE_2D, 3, 0, 0, 1, 20, format, 64, dataGreen));
+
+        if (!verifyLevelColor(tcu::RGBA::green(), "Level 3 (BASE_LEVEL=3)"))
+        {
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Level 3 ASTC subimage base level sampling failed");
+            return STOP;
+        }
+
+        m_testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+        return STOP;
+    }
+};
+
 TextureSpecificationTests::TextureSpecificationTests(Context &context)
     : TestCaseGroup(context, "specification", "Texture Specification Tests")
 {
@@ -4206,6 +4489,10 @@ void TextureSpecificationTests::init(void)
             basicTexSubImageGroup->addChild(
                 new BasicTexSubImageCubeCase(m_context, (string(fmtName) + "_cube").c_str(), "", format, texCubeSize));
         }
+
+        basicTexSubImageGroup->addChild(new ASTCCompressedSubImageWithBaseLevelCase(
+            m_context, "astc_subimage_base_level",
+            "Test ASTC compressed sub-image update with TEXTURE_BASE_LEVEL > 0"));
     }
 
     // TexSubImage2D to empty texture.
@@ -4644,6 +4931,32 @@ void TextureSpecificationTests::init(void)
                 m_context, (std::string(depthStencilFormats[ndx].name) + "_2d_array").c_str(), "",
                 depthStencilFormats[ndx].internalFormat, tex3DWidth, tex3DHeight, tex3DDepth));
         }
+    }
+
+    // glTexImage3D() FBO attachment respecification tests.
+    {
+        tcu::TestCaseGroup *const fboRespecifyGroup = new tcu::TestCaseGroup(
+            m_testCtx, "teximage3d_fbo_respecify", "glTexImage3D() FBO attachment respecification");
+        addChild(fboRespecifyGroup);
+
+        fboRespecifyGroup->addChild(new TexImage3DFboRespecificationCase(
+            m_context, "rgba8_64x64_1_to_64_layers_unbound_fbo",
+            "Respecify 2D array texture attached to unbound FBO from 1 to 64 layers", 64, 64, 1, 64, true));
+        fboRespecifyGroup->addChild(new TexImage3DFboRespecificationCase(
+            m_context, "rgba8_64x64_1_to_64_layers_bound_fbo",
+            "Respecify 2D array texture attached to bound FBO from 1 to 64 layers", 64, 64, 1, 64, false));
+        fboRespecifyGroup->addChild(new TexImage3DFboRespecificationCase(
+            m_context, "rgba8_64x64_1_to_128_layers_unbound_fbo",
+            "Respecify 2D array texture attached to unbound FBO from 1 to 128 layers", 64, 64, 1, 128, true));
+        fboRespecifyGroup->addChild(new TexImage3DFboRespecificationCase(
+            m_context, "rgba8_64x64_1_to_128_layers_bound_fbo",
+            "Respecify 2D array texture attached to bound FBO from 1 to 128 layers", 64, 64, 1, 128, false));
+        fboRespecifyGroup->addChild(new TexImage3DFboRespecificationCase(
+            m_context, "rgba8_64x64_64_to_1_layers_unbound_fbo",
+            "Respecify 2D array texture attached to unbound FBO from 64 to 1 layers", 64, 64, 64, 1, true));
+        fboRespecifyGroup->addChild(new TexImage3DFboRespecificationCase(
+            m_context, "rgba8_64x64_64_to_1_layers_bound_fbo",
+            "Respecify 2D array texture attached to bound FBO from 64 to 1 layers", 64, 64, 64, 1, false));
     }
 
     // Basic TexSubImage3D usage.

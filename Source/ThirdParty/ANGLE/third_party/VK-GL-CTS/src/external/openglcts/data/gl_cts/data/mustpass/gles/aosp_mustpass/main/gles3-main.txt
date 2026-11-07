@@ -2139,6 +2139,7 @@ dEQP-GLES3.functional.fbo.api.delete_tex_cube_attached_to_not_bound_fbo
 dEQP-GLES3.functional.fbo.api.invalid_rbo_attachments
 dEQP-GLES3.functional.fbo.api.invalid_tex2d_attachments
 dEQP-GLES3.functional.fbo.api.invalid_texcube_attachments
+dEQP-GLES3.functional.fbo.api.teximage2d_to_texstorage2d_unbound
 dEQP-GLES3.functional.fbo.api.texture_levels
 dEQP-GLES3.functional.fbo.api.valid_rbo_attachments
 dEQP-GLES3.functional.fbo.api.valid_tex2d_attachments
@@ -4207,6 +4208,7 @@ dEQP-GLES3.functional.fence_sync.client_wait_sync_noflush
 dEQP-GLES3.functional.fence_sync.client_wait_sync_smalldraw
 dEQP-GLES3.functional.fence_sync.client_wait_sync_timeout_largedraw
 dEQP-GLES3.functional.fence_sync.client_wait_sync_timeout_smalldraw
+dEQP-GLES3.functional.fence_sync.fbo_and_fence_sync
 dEQP-GLES3.functional.fence_sync.wait_sync_largedraw
 dEQP-GLES3.functional.fence_sync.wait_sync_smalldraw
 dEQP-GLES3.functional.flush_finish.finish
@@ -8978,6 +8980,8 @@ dEQP-GLES3.functional.pbo.renderbuffer.rgba8ui_clears
 dEQP-GLES3.functional.pbo.renderbuffer.rgba8ui_triangles
 dEQP-GLES3.functional.pbo.renderbuffer.srgb8_alpha8_clears
 dEQP-GLES3.functional.pbo.renderbuffer.srgb8_alpha8_triangles
+dEQP-GLES3.functional.pbo.upload.split_upload_last_line
+dEQP-GLES3.functional.pbo.upload.split_upload_last_pixel
 dEQP-GLES3.functional.polygon_offset.default_displacement_with_units
 dEQP-GLES3.functional.polygon_offset.default_enable
 dEQP-GLES3.functional.polygon_offset.default_factor_0_slope
@@ -9760,6 +9764,12 @@ dEQP-GLES3.functional.shader_api.compile_link.link_vertex_fragment
 dEQP-GLES3.functional.shader_api.create_delete.create_fragment_shader
 dEQP-GLES3.functional.shader_api.create_delete.create_vertex_shader
 dEQP-GLES3.functional.shader_api.create_delete.delete_vertex_fragment
+dEQP-GLES3.functional.shader_api.large_output_counts.compile_vertex_shader_1024_outputs
+dEQP-GLES3.functional.shader_api.large_output_counts.compile_vertex_shader_1300_outputs
+dEQP-GLES3.functional.shader_api.large_output_counts.compile_vertex_shader_256_outputs
+dEQP-GLES3.functional.shader_api.large_output_counts.compile_vertex_shader_60_outputs
+dEQP-GLES3.functional.shader_api.large_output_counts.compile_vertex_shader_64_outputs
+dEQP-GLES3.functional.shader_api.large_output_counts.compile_vertex_shader_8639_outputs
 dEQP-GLES3.functional.shader_api.program_binary.binary_persistence.delete_shader_fragment
 dEQP-GLES3.functional.shader_api.program_binary.binary_persistence.delete_shader_vertex
 dEQP-GLES3.functional.shader_api.program_binary.binary_persistence.detach_shader_fragment
@@ -9772,6 +9782,7 @@ dEQP-GLES3.functional.shader_api.program_binary.binary_persistence.replace_shade
 dEQP-GLES3.functional.shader_api.program_binary.binary_persistence.replace_shader_vertex
 dEQP-GLES3.functional.shader_api.program_binary.binary_persistence.replace_source_fragment
 dEQP-GLES3.functional.shader_api.program_binary.binary_persistence.replace_source_vertex
+dEQP-GLES3.functional.shader_api.program_binary.simple.fragment_shading_rate_fallback
 dEQP-GLES3.functional.shader_api.program_binary.simple.get_program_binary_vertex_fragment
 dEQP-GLES3.functional.shader_api.program_binary.simple.uniform_reset_on_binary_load
 dEQP-GLES3.functional.shader_api.program_state.delete_shader_fragment
@@ -26255,6 +26266,8 @@ dEQP-GLES3.functional.shaders.precision.int.mediump_mul_fragment
 dEQP-GLES3.functional.shaders.precision.int.mediump_mul_vertex
 dEQP-GLES3.functional.shaders.precision.int.mediump_sub_fragment
 dEQP-GLES3.functional.shaders.precision.int.mediump_sub_vertex
+dEQP-GLES3.functional.shaders.precision.mediump_combine.branch_false
+dEQP-GLES3.functional.shaders.precision.mediump_combine.branch_true
 dEQP-GLES3.functional.shaders.precision.uint.highp_add_fragment
 dEQP-GLES3.functional.shaders.precision.uint.highp_add_vertex
 dEQP-GLES3.functional.shaders.precision.uint.highp_div_fragment
@@ -28867,6 +28880,8 @@ dEQP-GLES3.functional.shaders.struct.local.basic_fragment
 dEQP-GLES3.functional.shaders.struct.local.basic_not_equal_fragment
 dEQP-GLES3.functional.shaders.struct.local.basic_not_equal_vertex
 dEQP-GLES3.functional.shaders.struct.local.basic_vertex
+dEQP-GLES3.functional.shaders.struct.local.complex_constructor_array_member_fragment
+dEQP-GLES3.functional.shaders.struct.local.complex_constructor_array_member_vertex
 dEQP-GLES3.functional.shaders.struct.local.conditional_assignment_fragment
 dEQP-GLES3.functional.shaders.struct.local.conditional_assignment_vertex
 dEQP-GLES3.functional.shaders.struct.local.dynamic_loop_assignment_fragment
@@ -34951,6 +34966,7 @@ dEQP-GLES3.functional.texture.specification.basic_teximage3d.srgb8_2d_array
 dEQP-GLES3.functional.texture.specification.basic_teximage3d.srgb8_3d
 dEQP-GLES3.functional.texture.specification.basic_teximage3d.srgb8_alpha8_2d_array
 dEQP-GLES3.functional.texture.specification.basic_teximage3d.srgb8_alpha8_3d
+dEQP-GLES3.functional.texture.specification.basic_texsubimage2d.astc_subimage_base_level
 dEQP-GLES3.functional.texture.specification.basic_texsubimage2d.r11f_g11f_b10f_2d
 dEQP-GLES3.functional.texture.specification.basic_texsubimage2d.r11f_g11f_b10f_cube
 dEQP-GLES3.functional.texture.specification.basic_texsubimage2d.r16f_2d
@@ -35293,6 +35309,12 @@ dEQP-GLES3.functional.texture.specification.teximage3d_depth_pbo.depth32f_stenci
 dEQP-GLES3.functional.texture.specification.teximage3d_depth_pbo.depth_component16_2d_array
 dEQP-GLES3.functional.texture.specification.teximage3d_depth_pbo.depth_component24_2d_array
 dEQP-GLES3.functional.texture.specification.teximage3d_depth_pbo.depth_component32f_2d_array
+dEQP-GLES3.functional.texture.specification.teximage3d_fbo_respecify.rgba8_64x64_1_to_128_layers_bound_fbo
+dEQP-GLES3.functional.texture.specification.teximage3d_fbo_respecify.rgba8_64x64_1_to_128_layers_unbound_fbo
+dEQP-GLES3.functional.texture.specification.teximage3d_fbo_respecify.rgba8_64x64_1_to_64_layers_bound_fbo
+dEQP-GLES3.functional.texture.specification.teximage3d_fbo_respecify.rgba8_64x64_1_to_64_layers_unbound_fbo
+dEQP-GLES3.functional.texture.specification.teximage3d_fbo_respecify.rgba8_64x64_64_to_1_layers_bound_fbo
+dEQP-GLES3.functional.texture.specification.teximage3d_fbo_respecify.rgba8_64x64_64_to_1_layers_unbound_fbo
 dEQP-GLES3.functional.texture.specification.teximage3d_pbo.r11f_g11f_b10f_2d_array
 dEQP-GLES3.functional.texture.specification.teximage3d_pbo.r11f_g11f_b10f_3d
 dEQP-GLES3.functional.texture.specification.teximage3d_pbo.r16f_2d_array

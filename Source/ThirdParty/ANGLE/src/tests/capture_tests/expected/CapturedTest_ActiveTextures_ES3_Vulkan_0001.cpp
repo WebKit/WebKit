@@ -64,7 +64,12 @@ void ReplayFrame1(void)
     glGetError();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9729);
     glTexImage2D(GL_TEXTURE_2D, 0, 6408, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, (const GLubyte *)GetBinaryData(160));
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, gTextureMap[3]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9985);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9729);
     glBindFramebuffer(GL_FRAMEBUFFER, gFramebufferMapPerContext[3][3]);
     glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, gFramebufferMapPerContext[3][4]);
@@ -104,18 +109,16 @@ void ResetReplayContextShared(void)
     glDeleteTextures(1, gResourceIDBuffer);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9728);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9728);
     glTexImage2D(GL_TEXTURE_2D, 0, 6408, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, (const GLubyte *)GetBinaryData(224));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9728);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[4]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9728);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9728);
     glTexImage2D(GL_TEXTURE_2D, 0, 6408, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, (const GLubyte *)GetBinaryData(288));
     glBindTexture(GL_TEXTURE_2D, gTextureMap[5]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9728);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9728);
     glTexImage2D(GL_TEXTURE_2D, 0, 6408, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, (const GLubyte *)GetBinaryData(352));
+    glBindTexture(GL_TEXTURE_2D, gTextureMap[3]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9728);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9728);
 }
 
 void ResetReplayContext3(void)

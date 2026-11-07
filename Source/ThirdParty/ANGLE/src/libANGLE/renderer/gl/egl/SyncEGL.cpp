@@ -31,17 +31,12 @@ void SyncEGL::onDestroy(const egl::ThreadSafeDisplay *display)
 {
     if (*mSync != EGL_NO_SYNC_KHR)
     {
-        egl::Display::GetCurrentThreadUnlockedTailCall()->add(
-            [egl = mEGL, sync = *mSync](void *resultOut) {
-                EGLBoolean result = egl->destroySyncKHR(sync);
-                if (resultOut)
-                {
-                    // It's possible for resultOut to be null if this sync is being destructed as
-                    // part of display destruction.
-                    *static_cast<EGLBoolean *>(resultOut) = result;
-                }
-            });
-        *mSync = EGL_NO_SYNC_KHR;
+        EGLBoolean result = mEGL->destroySyncKHR(*mSync);
+        *mSync            = EGL_NO_SYNC_KHR;
+        if (result == EGL_FALSE)
+        {
+            ERR() << "eglDestroySyncKHR failed: " << mEGL->getError();
+        }
     }
 }
 

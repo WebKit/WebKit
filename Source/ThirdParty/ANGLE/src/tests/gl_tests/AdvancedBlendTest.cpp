@@ -34,6 +34,9 @@ class AdvancedBlendTest : public ANGLETest<>
 class AdvancedBlendTestES32 : public AdvancedBlendTest
 {};
 
+class AdvancedBlendMultisampleTest : public AdvancedBlendTest
+{};
+
 // Test that advanced blend cannot be used when a non-zero draw buffer is enabled.
 TEST_P(AdvancedBlendTest, NonZeroDrawBufferDisallowed)
 {
@@ -558,8 +561,86 @@ TEST_P(AdvancedBlendTest, AdvancedBlendCoherentQueryFailsIfNotSupported)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
+// Test advanced blend into a multisampled framebuffer with a quad drawn as two triangles.  The
+// samples of pixels on the shared edge are split between the triangles, and each of them must be
+// blended exactly once.
+TEST_P(AdvancedBlendMultisampleTest, SharedEdgeKHR)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_KHR_blend_equation_advanced : require
+layout(blend_support_colorburn) out;
+layout(location = 0) out mediump vec4 o_color;
+void main()
+{
+    o_color = vec4(0.5, 0.5, 0.5, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    GLRenderbuffer msaaColor;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaColor);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, w, h);
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, msaaColor);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(0.75, 0.75, 0.75, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Explicitly disable GL_BLEND_ADVANCED_COHERENT_KHR (enabled by default) to test the
+    // non-coherent path, mirroring dEQP-GLES31.functional.blend_equation_advanced.msaa.*.  No
+    // blend barrier is needed within a single draw, as the two triangles don't share samples.
+    if (EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced_coherent"))
+    {
+        glDisable(GL_BLEND_ADVANCED_COHERENT_KHR);
+    }
+
+    // colorburn(0.5, 0.75) = 0.5.  Blending a sample twice gives colorburn(0.5, 0.5) = 0.
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_COLORBURN_KHR);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    GLRenderbuffer resolveColor;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolveColor);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, w, h);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              resolveColor);
+    glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    std::vector<GLColor> pixels(w * h);
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    ASSERT_GL_NO_ERROR();
+
+    // Check the whole image, including the pixels on the diagonal shared by the two triangles.
+    const GLColor kExpected(127, 127, 127, 255);
+    for (int y = 0; y < h; ++y)
+    {
+        for (int x = 0; x < w; ++x)
+        {
+            const GLColor &actual = pixels[y * w + x];
+            ASSERT_NEAR(actual.R, kExpected.R, kPixelColorThreshhold) << "at " << x << "," << y;
+            ASSERT_NEAR(actual.G, kExpected.G, kPixelColorThreshhold) << "at " << x << "," << y;
+            ASSERT_NEAR(actual.B, kExpected.B, kPixelColorThreshhold) << "at " << x << "," << y;
+            ASSERT_NEAR(actual.A, kExpected.A, kPixelColorThreshhold) << "at " << x << "," << y;
+        }
+    }
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendTest);
 ANGLE_INSTANTIATE_TEST_ES3(AdvancedBlendTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendMultisampleTest);
+ANGLE_INSTANTIATE_TEST_ES3(AdvancedBlendMultisampleTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendTestES32);
 ANGLE_INSTANTIATE_TEST_ES32(AdvancedBlendTestES32);

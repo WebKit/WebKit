@@ -309,40 +309,36 @@
             "issue": "https://crbug.com/705865"
         },
         {
-            "name": "reset_base_level_for_ASTC_image",
+            "name": "virtualize_base_level_and_mipchain",
             "category": "Workarounds",
             "description": [
-                "Reset texture base level before calling glCompressedTexImage2D or glCompressedTexSubImage2D for ASTC textures to ",
-                "work around PowerVR driver bug."
+                "Virtualize GL_TEXTURE_BASE_LEVEL and per-level texture storage using immutable ",
+                "companion textures so native GL_TEXTURE_BASE_LEVEL is never modified and ",
+                "oversized mip levels are never allocated on a native mipchain."
             ],
-            "issue": "https://crbug.com/551708184"
+            "issue": "https://crbug.com/550607402"
         },
         {
-            "name": "recreate_immutable_texture_on_base_level_increase",
+            "name": "copy_image_sub_data_3D_fails_on_tail_mip_levels",
             "category": "Workarounds",
             "description": [
-                "Recreate native storage for immutable textures when TEXTURE_BASE_LEVEL is increased to ",
-                "work around PowerVR sparse page map OOB driver bug."
+                "Related to virtualizeBaseLevelAndMipchain workaround. ",
+                "glCopyImageSubDataEXT fails with GL_INVALID_VALUE on 1x1xD tail mip levels of ",
+                "3D textures when depth exceeds width and height; re-upload from a CPU shadow ",
+                "copy or copy slice-by-slice via glCopyTexSubImage3D instead."
             ],
-            "issue": "https://crbug.com/528131119"
+            "issue": "https://crbug.com/550607402"
         },
         {
-            "name": "reset_TexStorage2D_base_level",
+            "name": "readback_3D_depth_stencil_pbos_during_upload",
             "category": "Workarounds",
             "description": [
-                "Reset texture base level before calling glTexStorage2D to ",
-                "work around PowerVR driver bug."
+                "Related to virtualizeBaseLevelAndMipchain workaround. ",
+                "Uploading depth/stencil, format-converted, or subrect PBO data via ",
+                "glTexSubImage3D into an immutable 3D or 2D array texture has a race condition ",
+                "and offset bug on PowerVR; read back the PBO on the CPU before uploading."
             ],
-            "issue": "https://crbug.com/551573368"
-        },
-        {
-            "name": "use_temp_for_non_zero_base_level_GenMipmap_using_CopyImageSubData",
-            "category": "Workarounds",
-            "description": [
-                "Allocate a temporary texture when generating mipmaps on an immutable texture with a ",
-                "non-zero base level to avoid driver bugs."
-            ],
-            "issue": "https://crbug.com/534923522"
+            "issue": "https://crbug.com/550607402"
         },
         {
             "name": "recreate_texture_on_tex_image_3d_depth_increase",
@@ -1022,15 +1018,6 @@
             "issue": "http://crbug.com/499602793"
         },
         {
-            "name": "upload_oversized_mip_levels_via_unpack_buffer",
-            "category": "Workarounds",
-            "description": [
-                "Stage oversized nonzero-level texture definitions through a scratch pixel unpack buffer ",
-                "to work around driver bugs."
-            ],
-            "issue": "http://crbug.com/548127218"
-        },
-        {
             "name": "validate_state",
             "category": "Features",
             "description": [
@@ -1079,6 +1066,23 @@
                 "Prevents driver hash collisions on PowerVR hardware."
             ],
             "issue": "http://crbug.com/551065275"
+        },
+        {
+            "name": "finish_before_same_texture_copy",
+            "category": "Workarounds",
+            "description": [
+                "Force a finish before copying from a framebuffer whose read attachment is the ",
+                "destination texture to work around driver bugs."
+            ],
+            "issue": "https://crbug.com/552672183"
+        },
+        {
+            "name": "disable_pixel_local_storage",
+            "category": "Workarounds",
+            "description": [
+                "Disable ANGLE_shader_pixel_local_storage; kill-switch for known broken GPUs."
+            ],
+            "issue": "http://anglebug.com/40096838"
         }
     ]
 }
