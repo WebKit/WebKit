@@ -802,7 +802,9 @@ void BlockLayoutCoverageOverlay::drawRect(PageOverlay& pageOverlay, GraphicsCont
         textWidth = std::max(textWidth, font.width(TextRun(line)));
     auto badgeSize = FloatSize { textWidth + 2 * padding, lines.size() * lineHeight + (lines.size() - 1) * lineSpacing + 2 * padding };
     m_badgeRect = FloatRect { { pageOverlay.bounds().maxX() - m_obscuredContentInsets.right() - margin - badgeSize.width(), m_obscuredContentInsets.top() + margin }, badgeSize };
-    context.fillRoundedRect(FloatRoundedRect { m_badgeRect, CornerRadii { 6 } }, Color::black.colorWithAlphaByte(160));
+    // Green once the new block formatting context lays out every box.
+    auto isFullyCovered = m_coverage.boxes && m_coverage.coveredBoxes == m_coverage.boxes;
+    context.fillRoundedRect(FloatRoundedRect { m_badgeRect, CornerRadii { 6 } }, (isFullyCovered ? Color::darkGreen : Color::black).colorWithAlphaByte(160));
     context.setFillColor(Color::white);
     auto lineTop = m_badgeRect.y() + padding;
     for (auto& line : lines) {
