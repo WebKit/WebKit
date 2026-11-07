@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 12px/14px monospace; }
+.cb { position: relative; width: 200px; height: 90px; border: 1px solid; margin: 3px; display: inline-block; vertical-align: top; }
+.c { background: lightblue; }
+.query { background: orange; }
+@container (min-width: 100px) { .query { background: green; } }
+@container (min-height: 50px) { .query { height: 30px; } }
+</style>
+<div class="cb" id="resized"><div class="c" style="position: absolute; inset: 5px 50% 5px 5px; container-type: size"><div class="query">query flips</div></div></div>
+<div class="cb"><div class="c" id="width" style="position: absolute; top: 5px; left: 5px; width: 60px; container-type: inline-size"><div class="query">width grows</div></div></div>
+<div class="cb"><div class="c" id="type" style="display: flow-root"><div class="query">becomes a container</div></div></div>
+<div class="cb"><div class="c" id="text" style="position: absolute; top: 5px; left: 5px; right: 5px; container-type: inline-size"><div class="query">text</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "300px";
+document.getElementById("width").style.width = "150px";
+document.getElementById("type").style.containerType = "size";
+document.getElementById("type").style.height = "60px";
+document.getElementById("text").firstChild.firstChild.data = "longer text that wraps in the container";
+</script>

@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>body { font-family: monospace; font-size: 12px; } div { margin: 2px; }</style>
+<div><input type="search" id="search"> <input type="number" id="number" value="12"> <input id="contacts" value="contacts"> <input type="password" id="strong" value="strong"></div>
+<div><input type="search" id="width" value="width"> <input type="number" id="font" value="3"> <input id="removed" value="removed"> <input type="search" id="value" value="value"></div>
+<script>
+internals.setAutofillButtonType(document.getElementById("removed"), "Credentials");
+internals.setAutofillButtonType(document.getElementById("strong"), "StrongPassword");
+document.body.offsetHeight;
+document.getElementById("search").value = "now has a value";
+document.getElementById("number").style.height = "40px";
+internals.setAutofillButtonType(document.getElementById("contacts"), "Contacts");
+internals.setAutofillButtonType(document.getElementById("strong"), "None");
+document.getElementById("width").style.width = "60px";
+document.getElementById("font").style.fontSize = "20px";
+internals.setAutofillButtonType(document.getElementById("removed"), "None");
+document.getElementById("value").value = "a much longer value than the field";
+</script>

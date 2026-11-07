@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 5px; font-size: 16px; line-height: 16px; }
+.scroller { margin: 5px 0; padding: 3px; background: lightblue; }
+.tall { height: 60px; background: green; }
+.wide { width: 400px; height: 10px; background: blue; }
+</style>
+<div class="root">
+  <div class="scroller" style="overflow: auto; height: 30px"><div class="tall"></div></div>
+  <div class="scroller" style="overflow: scroll; height: 30px">text</div>
+  <div class="scroller" style="overflow-x: hidden; overflow-y: auto; max-height: 30px"><div class="tall"></div></div>
+  <div class="scroller" style="overflow: auto"><div class="wide"></div></div>
+  <div class="scroller" dir="rtl" style="overflow: auto; height: 30px"><div class="tall" style="width: 50px"></div></div>
+</div>
+<div class="root">
+  <div class="scroller" style="display: flex; overflow: auto; height: 30px"><div class="tall" style="width: 50px"></div></div>
+  <div class="scroller" style="display: flex; overflow: hidden; height: 30px"><div class="tall" style="width: 50px"></div></div>
+  <div>inline <span class="scroller" style="display: inline-block; overflow: auto; width: 100px; height: 30px; vertical-align: top"><span style="display: block" class="tall"></span></span></div>
+  <div class="scroller" style="overflow: auto; height: 40px"><div style="height: 50%; background: green"></div><div class="wide"></div></div>
+</div>
+<div class="root">
+  <div class="scroller" style="overflow: auto; height: 30px" id="grows">x</div>
+  <div class="scroller" style="overflow: auto; height: 30px" id="shrinks">x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x</div>
+  <div class="scroller" style="overflow: auto; width: 100px" id="widens">x</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("grows").firstChild.data = "x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x";
+document.getElementById("shrinks").firstChild.data = "x";
+document.getElementById("widens").firstChild.data = "xxxxxxxxxxxxxxxxxx";
+</script>

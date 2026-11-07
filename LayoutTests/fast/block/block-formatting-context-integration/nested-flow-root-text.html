@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; }
+.fr { display: flow-root; background: rgba(0, 128, 0, 0.2); }
+</style>
+<div class="root">
+  <p>paragraph before</p>
+  <div class="fr" style="margin: 15px 10px; padding: 5px"><p style="margin: 20px 0">text inside a flow-root with a paragraph margin</p>more <b>text</b></div>
+  <p>paragraph after</p>
+  <div class="fr"><span></span></div>
+  <div class="fr" style="margin: 10px 0"><div class="fr" style="margin: 10px 0">nested <i>flow-root</i> text</div></div>
+  <div class="fr" style="line-clamp: auto; max-height: 2.5lh">a line-clamp container clamped at its maximum height, which hides the lines after the second one</div>
+</div>

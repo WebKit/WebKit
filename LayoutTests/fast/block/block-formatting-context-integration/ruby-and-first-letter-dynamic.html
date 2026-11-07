@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>body { font-family: monospace; font-size: 12px; } div { margin: 2px; border: 1px solid; width: 300px; }
+.fl::first-letter { color: green; font-size: 2em; }
+</style>
+<div><ruby>base<rt id="annotation">short</rt></ruby> text</div>
+<div><ruby id="base">base<rt>annotation</rt></ruby> text</div>
+<div id="added">ruby added here </div>
+<div id="letter">first letter added</div>
+<div class="fl" id="text">first letter text</div>
+<div class="fl" id="removed">first letter removed</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("annotation").firstChild.data = "a much longer annotation";
+document.getElementById("base").firstChild.data = "longer base text";
+const ruby = document.createElement("ruby");
+ruby.innerHTML = "new<rt>ruby</rt>";
+document.getElementById("added").appendChild(ruby);
+document.getElementById("letter").className = "fl";
+document.getElementById("text").firstChild.data = "Changed first letter text";
+document.getElementById("removed").className = "";
+</script>

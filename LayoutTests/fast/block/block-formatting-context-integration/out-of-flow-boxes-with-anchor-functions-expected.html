@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.cb { position: relative; width: 300px; height: 120px; border: 1px solid; margin: 4px; }
+.anchor { width: 40px; height: 20px; background: orange; margin: 10px 30px; }
+.a { position: absolute; background: lightblue; }
+</style>
+<div class="cb"><div class="anchor" style="anchor-name: --a1"></div><div class="a" style="position-anchor: --a1; top: anchor(bottom); left: anchor(right)">below right</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a2"></div><div class="a" style="position-anchor: --a2; top: anchor(top); left: anchor(left); width: anchor-size(width); height: calc(anchor-size(height) * 2)">size</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a3; margin-top: 90px"></div><div class="a" style="position-anchor: --a3; top: anchor(bottom); left: anchor(left); height: 30px; position-try-fallbacks: flip-block">flip</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a4"></div><div class="a" style="top: anchor(--a4 bottom, 5px); right: anchor(--missing left, 20px)">fallback</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a5"></div><div class="a" style="position-anchor: --a5; bottom: anchor(top); left: calc(anchor(center) - 20px); width: 40px">above</div></div>
+<div class="cb" style="overflow: hidden"><div class="anchor" style="anchor-name: --a6"></div><div class="a" style="position-anchor: --a6; top: anchor(bottom); left: anchor(left); position-visibility: no-overflow; height: 200px">hidden</div></div>
+<div class="anchor" style="anchor-name: --a7"></div><div class="a" style="position-anchor: --a7; top: anchor(bottom); left: anchor(right)">icb</div>
+<div class="cb"><div class="anchor" style="anchor-name: --a8"></div><div class="a" style="position-anchor: --a8; top: anchor(bottom); left: anchor(right)"><div style="height: 50%; background: green; width: 10px"></div>nested</div></div>
