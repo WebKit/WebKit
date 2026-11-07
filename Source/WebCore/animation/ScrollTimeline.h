@@ -59,6 +59,7 @@ public:
     const WeakStyleable& sourceStyleable() const LIFETIME_BOUND { return m_source; }
     virtual RefPtr<Element> bindingsSource() const;
     virtual RefPtr<Element> source() const;
+    virtual RenderElement* sourceRenderer() const;
     void setSource(Element*);
     void setSource(const Styleable&);
 

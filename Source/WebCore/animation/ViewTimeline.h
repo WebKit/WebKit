@@ -89,10 +89,11 @@ public:
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     AnimationTimelinesController* controller() const override;
 
-    const RenderBox* sourceScrollerRenderer() const;
+    RenderBox* sourceScrollerRenderer() const;
     CheckedPtr<const RenderElement> stickyContainer() const;
     RefPtr<Element> bindingsSource() const override;
     RefPtr<Element> source() const override;
+    RenderElement* sourceRenderer() const override;
     Style::SingleAnimationRange defaultRange() const final;
 
     std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const ResolvableTimelineRange&) const final;
