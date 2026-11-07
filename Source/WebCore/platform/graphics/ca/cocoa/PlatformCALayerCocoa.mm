@@ -142,8 +142,7 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
     RetainPtr layer = owner->platformLayer();
 
     String animationKey;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *key in [layer.get() animationKeys]) {
+    for (NSString *key in [layer.get() animationKeys]) {
         if ([layer.get() animationForKey:key] == animation) {
             animationKey = key;
             break;
@@ -168,8 +167,7 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
     RetainPtr layer = owner->platformLayer();
 
     String animationKey;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *key in [layer.get() animationKeys]) {
+    for (NSString *key in [layer.get() animationKeys]) {
         if ([layer.get() animationForKey:key] == animation) {
             animationKey = key;
             break;

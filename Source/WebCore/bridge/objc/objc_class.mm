@@ -170,8 +170,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
 #endif
     if (attributes) {
         // Class overrides attributeKeys, use that array of key names.
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSString* keyName in attributes) {
+        for (NSString* keyName in attributes) {
             const char* UTF8KeyName = [keyName UTF8String]; // ObjC actually only supports ASCII names.
 
             // See if the class wants to exclude the selector from visibility in JavaScript.

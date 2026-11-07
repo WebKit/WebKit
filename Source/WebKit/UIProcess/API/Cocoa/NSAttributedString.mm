@@ -298,8 +298,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPathsSingleton()
 
     [self clearConfigurationAndRaiseExceptionIfNecessary:errorMessage];
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id fileURL in readAccessFileURLs)
+    for (id fileURL in readAccessFileURLs)
         [self validateEntry:fileURL];
 
     if ([readAccessFileURLs isEqualToArray:readOnlyAccessPathsSingleton()])

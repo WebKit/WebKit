@@ -159,8 +159,7 @@ void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CA
         return;
 
     RetainPtr sublayers = adoptNS([[parent sublayers] copy]);
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL CALayer* layer : sublayers.get()) {
+    for (CALayer* layer : sublayers.get()) {
         RetainPtr layerWithResolvedAnimations = layer;
 
         if ([[layer animationKeys] count])

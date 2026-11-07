@@ -60,8 +60,7 @@ void ScopedRenderingResourcesRequest::freeRenderingResources()
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 #if PLATFORM(MAC)
     auto devices = adoptNS(MTLCopyAllDevices());
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id<MTLDevice> device : devices.get()) {
+    for (id<MTLDevice> device : devices.get()) {
         if ([device respondsToSelector:@selector(_purgeDevice)])
             [(_MTLDevice *)device _purgeDevice];
     }

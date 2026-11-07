@@ -81,8 +81,7 @@ Ref<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
     RetainPtr<NSArray> choices = [choiceAnnotation choices];
     RetainPtr<NSString> selectedChoice = [choiceAnnotation widgetStringValue];
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSString *choice in choices.get()) {
+    for (NSString *choice in choices.get()) {
         auto choiceOption = document->createElement(optionTag, false);
         choiceOption->setAttributeWithoutSynchronization(valueAttr, choice);
         choiceOption->setTextContent(choice);

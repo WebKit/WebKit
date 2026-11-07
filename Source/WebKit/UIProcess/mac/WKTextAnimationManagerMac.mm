@@ -210,8 +210,7 @@
 
 - (void)suppressTextAnimationType
 {
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSUUID *chunkID in [_chunkToEffect allKeys]) {
+    for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
         [_effectView removeEffect:retainPtr([effectData effectID]).get()];
 
@@ -222,8 +221,7 @@
 
 - (void)restoreTextAnimationType
 {
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL NSUUID *chunkID in [_chunkToEffect allKeys]) {
+    for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
         if ([effectData type] == WebCore::TextAnimationType::Initial)
             [self addTextAnimationForAnimationID:chunkID withData:{ WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation }];

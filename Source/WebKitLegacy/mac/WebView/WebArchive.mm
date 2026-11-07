@@ -168,13 +168,11 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     }
 
     Vector<Ref<WebCore::ArchiveResource>> coreResources;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WebResource *subresource in subresources)
+    for (WebResource *subresource in subresources)
         coreResources.append(protect([subresource _coreResource].get()));
 
     Vector<Ref<WebCore::LegacyWebArchive>> coreArchives;
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL WebArchive *subframeArchive in subframeArchives)
+    for (WebArchive *subframeArchive in subframeArchives)
         coreArchives.append(protect(*[protect(subframeArchive->_private) coreArchive]));
 
     [protect(_private) setCoreArchive:WebCore::LegacyWebArchive::create([mainResource _coreResource].get(), WTF::move(coreResources), WTF::move(coreArchives), std::nullopt)];

@@ -43,8 +43,7 @@ CoreIPCPlistArray::CoreIPCPlistArray(NSArray *array)
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL id value in array) {
+    for (id value in array) {
         if (!CoreIPCPlistObject::isPlistType(value))
             continue;
         m_array.append(CoreIPCPlistObject(value));

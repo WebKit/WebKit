@@ -1126,8 +1126,7 @@ static RetainPtr<NSDictionary> contentsOfContextMenuItem(NSMenuItem *item)
 
     if (RetainPtr<NSArray<NSMenuItem *>> submenuItems = item.submenu.itemArray) {
         RetainPtr children = adoptNS([[NSMutableArray alloc] initWithCapacity:[submenuItems count]]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSMenuItem *submenuItem : submenuItems.get())
+        for (NSMenuItem *submenuItem : submenuItems.get())
             [children addObject:contentsOfContextMenuItem(submenuItem).get()];
         result.get()[@"children"] = children.get();
     }
@@ -1141,8 +1140,7 @@ RetainPtr<NSArray> WebContextMenuProxyMac::platformData() const
 
     if (RetainPtr<NSArray<NSMenuItem *>> submenuItems = [m_menu itemArray]) {
         RetainPtr children = adoptNS([[NSMutableArray alloc] initWithCapacity:[submenuItems count]]);
-        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-        for (SUPPRESS_UNRETAINED_LOCAL NSMenuItem *submenuItem : submenuItems.get())
+        for (NSMenuItem *submenuItem : submenuItems.get())
             [children addObject:contentsOfContextMenuItem(submenuItem).get()];
         [result addObject:@{ @"children": children.get() }];
     }
