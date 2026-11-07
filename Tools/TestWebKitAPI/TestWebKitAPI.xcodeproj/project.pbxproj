@@ -601,6 +601,7 @@
 				WebKit/WKWebView/ContentAutoSizing.swift,
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
+				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/SiteIsolationAnimationControlTests.swift,
 				WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift,

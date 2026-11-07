@@ -91,6 +91,8 @@ public:
     virtual bool shouldPerformSecurityChecks() const { return false; }
     virtual bool havePerformedSecurityChecks(const ResourceResponse&) const { return false; }
 
+    virtual bool hasExistingNetworkLoadToResume() const;
+
     virtual ResourceResponse responseFromResourceLoadIdentifier(ResourceLoaderIdentifier);
     virtual Vector<NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(ResourceLoaderIdentifier);
     virtual NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(ResourceLoaderIdentifier);
