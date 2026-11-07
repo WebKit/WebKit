@@ -38,6 +38,7 @@ namespace WebCore {
 class ContainerNode;
 class BlendingKeyframes;
 class GraphicsLayerAnimation;
+class ImageAnimationTimeline;
 class ReferencedSVGResources;
 class RenderBlock;
 class RenderHTMLCanvas;
@@ -293,6 +294,7 @@ public:
     void setIsClippedByLineClamp(bool isClipped) { setLineClampState(isClipped ? LineClampState::Clipped : LineClampState::None); }
 
     bool allowsAnimation() const final;
+    Ref<ImageAnimationTimeline> imageAnimationTimeline() const;
     bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }

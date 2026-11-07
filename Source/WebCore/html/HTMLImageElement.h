@@ -46,6 +46,7 @@ class HTMLFormElement;
 class HTMLImageLoader;
 class HTMLMapElement;
 class Image;
+class ImageAnimationTimeline;
 class LayoutSize;
 class SecurityOrigin;
 
@@ -195,6 +196,8 @@ public:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     WEBCORE_EXPORT void setAnimationOverride(ImageAnimationOverride);
 #endif
+    Ref<ImageAnimationTimeline> imageAnimationTimeline() const;
+    void clearImageAnimationTimeline();
 
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriority() const;
@@ -309,6 +312,7 @@ private:
     AtomString m_currentSrc;
     AtomString m_parsedUsemap;
     float m_currentPixelDensity;
+    RefPtr<ImageAnimationTimeline> m_imageAnimationTimeline;
 #if ENABLE(SERVICE_CONTROLS)
     bool m_isImageMenuEnabled { false };
 #endif

@@ -48,6 +48,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
+#include "ImageAnimationTimeline.h"
 #include "ImageOrientation.h"
 #include "ImageRequestState.h"
 #include "ImageTypes.h"
@@ -991,11 +992,45 @@ bool HTMLImageElement::allowsAnimation() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+Ref<ImageAnimationTimeline> HTMLImageElement::imageAnimationTimeline() const
+{
+    if (m_imageAnimationTimeline)
+        return *m_imageAnimationTimeline;
+    RefPtr page = document().page();
+    return page ? page->imageAnimationTimeline() : ImageAnimationTimeline::normal();
+}
+
+void HTMLImageElement::clearImageAnimationTimeline()
+{
+    RefPtr timeline = std::exchange(m_imageAnimationTimeline, nullptr);
+    if (!timeline)
+        return;
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (timeline->state() == ImageAnimationTimeline::State::Playing) {
+        if (RefPtr page = document().page())
+            page->removeIndividuallyPlayingAnimationElement(*this);
+    }
+#endif
+}
+
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void HTMLImageElement::setAnimationOverride(ImageAnimationOverride animationOverride)
 {
     if (RefPtr image = this->image()) {
         image->setAnimationOverride(animationOverride);
+        // A new timeline for each change, so that a pause holds the image where it is when next drawn.
+        switch (animationOverride) {
+        case ImageAnimationOverride::None:
+            m_imageAnimationTimeline = nullptr;
+            break;
+        case ImageAnimationOverride::Play:
+            m_imageAnimationTimeline = ImageAnimationTimeline::createPlaying();
+            break;
+        case ImageAnimationOverride::Pause:
+            m_imageAnimationTimeline = ImageAnimationTimeline::createPaused();
+            break;
+        }
         if (CheckedPtr renderer = this->renderer())
             renderer->repaint();
 

@@ -28,6 +28,7 @@
 #include <WebCore/ConcreteObjectSize.h>
 #include <WebCore/DecodingOptions.h>
 #include <WebCore/GraphicsTypes.h>
+#include <WebCore/ImageAnimationTimeline.h>
 #include <WebCore/ImageDrawDescriptorTypes.h>
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImageRenditionOptions.h>
@@ -42,6 +43,7 @@ struct ImageDrawDescriptor {
     template<typename Type> static constexpr bool isOptionType =
         std::is_same_v<Type, ConcreteObjectSize>
         || std::is_same_v<Type, ImageRenditionOptions>
+        || std::is_same_v<Type, Ref<ImageAnimationTimeline>>
         || std::is_same_v<Type, CompositeOperator>
         || std::is_same_v<Type, BlendMode>
         || std::is_same_v<Type, DecodingMode>
@@ -91,6 +93,7 @@ struct ImageDrawDescriptor {
     ConcreteObjectSize concreteObjectSize;
     ImageRenditionOptions rendition;
 
+    Ref<ImageAnimationTimeline> animationTimeline { ImageAnimationTimeline::normal() };
     CompositeOperator compositeOperator { CompositeOperator::SourceOver };
     BlendMode blendMode { BlendMode::Normal };
     ImageOrientation orientation { ImageOrientation::Orientation::FromImage };
@@ -108,6 +111,7 @@ struct ImageDrawDescriptor {
 private:
     void setOption(ConcreteObjectSize size) { concreteObjectSize = size; }
     void setOption(const ImageRenditionOptions& option) { rendition = option; }
+    void setOption(Ref<ImageAnimationTimeline> option) { animationTimeline = WTF::move(option); }
     void setOption(CompositeOperator option) { compositeOperator = option; }
     void setOption(BlendMode option) { blendMode = option; }
     void setOption(DecodingMode option) { decodingMode = option; }

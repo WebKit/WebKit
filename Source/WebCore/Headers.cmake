@@ -1871,6 +1871,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/images/Image.h
     loader/images/ImageAdapter.h
+    loader/images/ImageAnimationTimeline.h
     loader/images/ImageContentSettings.h
     loader/images/ImageDrawDescriptor.h
     loader/images/ImageDrawDescriptorTypes.h

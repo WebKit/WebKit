@@ -150,6 +150,7 @@ class HistoryItem;
 class HistoryItemClient;
 class OpportunisticTaskScheduler;
 class ImageAnalysisQueue;
+class ImageAnimationTimeline;
 class ImageOverlayController;
 class InspectorBackendClient;
 class IntSize;
@@ -915,7 +916,8 @@ public:
     void addIndividuallyPlayingAnimationElement(HTMLImageElement&);
     void removeIndividuallyPlayingAnimationElement(HTMLImageElement&);
 #endif
-    bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
+    WEBCORE_EXPORT bool imageAnimationEnabled() const;
+    ImageAnimationTimeline& imageAnimationTimeline() const { return m_imageAnimationTimeline; }
 
 #if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
     NODELETE WEBCORE_EXPORT void setVideoAutoplayPreviewsEnabled(bool);
@@ -1676,9 +1678,9 @@ private:
     JSC::Debugger* m_debugger { nullptr }; // FIXME: Use a smart pointer.
 
     bool m_canStartMedia { true };
-    bool m_imageAnimationEnabled { true };
+    Ref<ImageAnimationTimeline> m_imageAnimationTimeline;
     bool m_videoAutoplayPreviewsEnabled { true };
-    // Elements containing animations that are individually playing (potentially overriding the page-wide m_imageAnimationEnabled state).
+    // Elements containing animations that are individually playing (potentially overriding the page-wide imageAnimationEnabled() state).
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_individuallyPlayingAnimationElements;
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool m_prefersNonBlinkingCursor { false };

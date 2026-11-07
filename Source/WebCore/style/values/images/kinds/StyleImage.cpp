@@ -413,7 +413,7 @@ static NinePieceGeometry ninePieceGeometryForImage(const NinePieceGeometry& geom
 
 ImageDrawDescriptor Image::descriptorForRenderer(const RenderElement& renderer, const ImageDrawDescriptor& descriptor) const
 {
-    return { descriptor, renditionOptionsForRenderer(renderer, descriptor.rendition) };
+    return { descriptor, renditionOptionsForRenderer(renderer, descriptor.rendition), renderer.imageAnimationTimeline() };
 }
 
 ImageDrawResult Image::drawResolved(GraphicsContext& context, const RenderElement& renderer, WebCore::Image& image, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source) const
