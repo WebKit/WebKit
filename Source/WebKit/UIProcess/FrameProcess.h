@@ -40,9 +40,10 @@ enum class LoadedWebArchive : bool;
 
 // Note: This object should only be referenced by WebFrameProxy because its destructor is an
 // important part of managing the lifetime of a frame and the process used by the frame.
-// The exception is WebPageProxy::didDestroyFrame(), which keeps a removed frame's FrameProcess
+// The exceptions are WebPageProxy::didDestroyFrame(), which keeps a removed frame's FrameProcess
 // alive until the frame's process finishes removing the frame, so that frames created in the
-// meantime keep using the same process.
+// meantime keep using the same process, and WebBackForwardCacheEntry, which keeps the process
+// that holds a document cached in place in the browsing context group.
 class FrameProcess : public RefCountedAndCanMakeWeakPtr<FrameProcess> {
 public:
     ~FrameProcess();

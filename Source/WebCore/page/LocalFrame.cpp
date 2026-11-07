@@ -921,6 +921,32 @@ void LocalFrame::willDetachPage()
     ASSERT(!document() || !document()->renderView());
 }
 
+void LocalFrame::willBeReplacedByRemoteFrame()
+{
+    if (!m_cachedPageCount) {
+        loader().detachFromParent();
+        return;
+    }
+
+    ASSERT(isMainFrame());
+    ASSERT(m_doc && m_doc->backForwardCacheState() == Document::InBackForwardCache);
+    ASSERT(!tree().firstChild());
+    ASSERT(!m_existsOnlyForCachedPages);
+    m_existsOnlyForCachedPages = true;
+
+    InspectorInstrumentation::frameDetachedFromParent(*this);
+
+    if (RefPtr page = this->page()) {
+        page->removeRootFrame(*this);
+        if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->rootFrameWasRemoved(frameID());
+    }
+
+#if ASSERT_ENABLED
+    frameExistsOnlyForCachedPages(*this);
+#endif
+}
+
 String LocalFrame::displayStringModifiedByEncoding(const String& str) const
 {
     return document() ? protect(document())->displayStringModifiedByEncoding(str) : str;

@@ -86,6 +86,13 @@ header: "SessionState.h"
     std::optional<WebCore::FrameIdentifier> navigatedFrameID;
 };
 
+[CustomHeader] struct WebKit::BackForwardItemIdentifiers {
+    WebCore::BackForwardItemIdentifier itemID;
+    WebCore::BackForwardFrameItemIdentifier mainFrameItemID;
+};
+
+enum class WebKit::DidCacheOutgoingDocument : bool;
+
 [CustomHeader] struct WebKit::BackForwardListState {
     Vector<WebKit::BackForwardListItemState> items;
     std::optional<uint32_t> currentIndex;

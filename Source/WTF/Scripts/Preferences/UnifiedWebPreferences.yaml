@@ -5977,6 +5977,14 @@ SiteIsolationHighValueFraudTargetDomainsEnabled:
   humanReadableDescription: "Exclude sites on the high-value fraud target domains list from the shared web process"
   defaultValue: false
 
+SiteIsolationInPlaceBackForwardCacheEnabled:
+  type: bool
+  status: unstable
+  category: security
+  humanReadableName: "Site Isolation: in-place back/forward cache"
+  humanReadableDescription: "Keep the outgoing document in its process's existing page when the main frame changes process within its browsing context group"
+  defaultValue: false
+
 SiteIsolationSharedProcessEnabled:
   type: bool
   status: internal

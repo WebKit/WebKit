@@ -8199,6 +8199,203 @@ TEST(SiteIsolation, BFCacheCrossSitePageKeepsTopDocumentURL)
     checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 2, @"https://a.com/withframe");
 }
 
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"SiteIsolationInPlaceBackForwardCacheEnabled", true);
+    return siteIsolatedViewAndDelegate(configuration);
+}
+
+static HTTPServer serverForInPlaceBackForwardCache()
+{
+    return HTTPServer({
+        { "/main"_s, { "<script>window.token = Math.random()</script>main"_s } },
+        { "/main2"_s, { "<script>window.token = Math.random()</script>main2"_s } },
+        { "/page"_s, { "page"_s } },
+        { "/frame"_s, { "<script>alert('loaded')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+// Loads requested by the client always get a new browsing context group, so navigate from the page.
+static void navigateFromPage(TestWKWebView *webView, TestNavigationDelegate *navigationDelegate, NSString *url)
+{
+    [webView evaluateJavaScript:[NSString stringWithFormat:@"location.href = '%@'", url] completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheKeepsDocumentLeftForCrossSiteNavigation)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    RetainPtr token = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    EXPECT_NE([webView _webProcessIdentifier], mainProcess);
+
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 1, @"https://b.com/page");
+    EXPECT_EQ(countWebPages(webView), 2u);
+
+    // FIXME: Restore documents cached in place.
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main");
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"String(window.token)"] isEqualToString:token.get()]);
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheFrameLoadsInProcessOfCachedDocument)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+
+    [webView evaluateJavaScript:@"document.body.appendChild(document.createElement('iframe')).src = 'https://a.com/frame'" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded");
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, mainProcess);
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 1, @"https://b.com/page");
+
+    [webView _clearBackForwardCache];
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 0, nil);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"location.pathname" inFrame:[webView firstChildFrame]], "/frame");
+    EXPECT_EQ([webView firstChildFrame]._processIdentifier, mainProcess);
+    EXPECT_EQ(countWebPages(webView), 2u);
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheEvictionClosesWebPageWithoutFrames)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    EXPECT_EQ(countWebPages(webView), 2u);
+
+    [webView _clearBackForwardCache];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return countWebPages(webView) == 1;
+    }));
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheProcessCrash)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+
+    kill(mainProcess, SIGKILL);
+    while (processStillRunning(mainProcess))
+        Util::spinRunLoop();
+
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "page");
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main");
+    EXPECT_NE([webView _webProcessIdentifier], mainProcess);
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheEarlierDocumentSharingCachedMainFrame)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+    RetainPtr token = [webView objectByEvaluatingJavaScript:@"String(window.token)"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main2"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 1, @"https://b.com/page");
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -2, 1, @"https://b.com/page");
+
+    [webView goToBackForwardListItem:[webView backForwardList].backList.firstObject];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "main");
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"String(window.token)"] isEqualToString:token.get()]);
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheCrossSiteNavigationClearsWindowName)
+{
+    auto server = serverForInPlaceBackForwardCache();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"window.name = 'secret'; window.name"], "secret");
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"window.name"], "");
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheUncacheableDocumentDiscardsEntry)
+{
+    HTTPServer server({
+        { "/main"_s, { "main"_s } },
+        { "/nostore"_s, { { { "Cache-Control"_s, "no-store"_s } }, "<iframe src='https://b.com/frame'></iframe>"_s } },
+        { "/frame"_s, { "frame"_s } },
+        { "/page"_s, { "page"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainProcess = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/nostore"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    EXPECT_EQ([webView _webProcessIdentifier], mainProcess);
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, mainProcess);
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 1, @"https://a.com/nostore");
+    EXPECT_EQ(countWebPages(webView), 2u);
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://c.com/page");
+    EXPECT_NE([webView _webProcessIdentifier], mainProcess);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return countWebPages(webView) == 1;
+    }));
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 0, nil);
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -2, 0, nil);
+}
+
+TEST(SiteIsolation, InPlaceBackForwardCacheSkippedWhenNewMainFrameProcessHostsFrame)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe src='https://b.com/frame'></iframe>"_s } },
+        { "/frame"_s, { "frame"_s } },
+        { "/page"_s, { "page"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithInPlaceBackForwardCache(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+    pid_t iframeProcess = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE([webView _webProcessIdentifier], iframeProcess);
+
+    navigateFromPage(webView.get(), navigationDelegate.get(), @"https://b.com/page");
+    EXPECT_EQ([webView _webProcessIdentifier], iframeProcess);
+    checkTopDocumentURLsInBackForwardCacheAtIndex(webView.get(), -1, 0, nil);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return countWebPages(webView) == 1;
+    }));
+}
+
 TEST(SiteIsolation, NavigateNestedIframeSameOriginBackForward)
 {
     HTTPServer server({

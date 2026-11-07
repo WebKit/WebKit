@@ -2716,20 +2716,20 @@ void WebPage::createProvisionalFrame(ProvisionalFrameCreationParameters&& parame
     frame->createProvisionalFrame(WTF::move(parameters));
 }
 
-void WebPage::loadDidCommitInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier, RefPtr<WebCore::DocumentSyncData>&& topDocumentSyncData, CompletionHandler<void()>&& completionHandler)
+void WebPage::loadDidCommitInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier, RefPtr<WebCore::DocumentSyncData>&& topDocumentSyncData, std::optional<BackForwardItemIdentifiers>&& cacheIdentifiers, CompletionHandler<void(DidCacheOutgoingDocument)>&& completionHandler)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame || frame->page() != this)
-        return completionHandler();
+        return completionHandler(DidCacheOutgoingDocument::No);
 
-    frame->loadDidCommitInAnotherProcess(hostingProcessID, layerHostingContextIdentifier);
+    auto didCache = frame->loadDidCommitInAnotherProcess(hostingProcessID, layerHostingContextIdentifier, WTF::move(cacheIdentifiers));
 
     if (topDocumentSyncData) {
         if (RefPtr page = corePage())
             page->updateTopDocumentSyncData(topDocumentSyncData.releaseNonNull());
     }
 
-    completionHandler();
+    completionHandler(didCache);
 }
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)

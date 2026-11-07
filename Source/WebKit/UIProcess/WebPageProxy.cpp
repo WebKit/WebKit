@@ -1634,6 +1634,55 @@ RefPtr<WebBackForwardListItem> WebPageProxy::backForwardItemForCachingOutgoingDo
     return fromItem;
 }
 
+std::optional<BackForwardItemIdentifiers> WebPageProxy::cacheOutgoingDocumentInPlaceIfPossible(API::Navigation& navigation, const ProvisionalPageProxy& provisionalPage, WebFrameProxy& mainFrame, FrameProcess& previousMainFrameProcess)
+{
+    Ref preferences = m_preferences;
+    if (!preferences->siteIsolationEnabled() || !preferences->siteIsolationInPlaceBackForwardCacheEnabled())
+        return std::nullopt;
+
+    if (provisionalPage.mainFrame() != &mainFrame)
+        return std::nullopt;
+
+    RefPtr fromItem = backForwardItemForCachingOutgoingDocument(navigation);
+    if (!fromItem)
+        return std::nullopt;
+
+    // That process has already committed, so the frames it hosted for the outgoing document are no longer part of its page.
+    Ref newMainFrameProcess = provisionalPage.process();
+    for (RefPtr frame = mainFrame.traverseNext().frame; frame; frame = frame->traverseNext().frame) {
+        if (frame->process().coreProcessIdentifier() == newMainFrameProcess->coreProcessIdentifier()) {
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "cacheOutgoingDocumentInPlaceIfPossible: Not caching the document in process pid %i because the new main frame process pid %i hosts some of its frames", m_legacyMainFrameProcess->processID(), newMainFrameProcess->processID());
+            return std::nullopt;
+        }
+    }
+
+    Ref previousProcess = previousMainFrameProcess.process();
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "cacheOutgoingDocumentInPlaceIfPossible: Caching the document in process pid %i", previousProcess->processID());
+
+    protect(backForwardCache())->addEntry(*fromItem, previousProcess->coreProcessIdentifier());
+    RefPtr entry = fromItem->backForwardCacheEntry();
+    if (!entry)
+        return std::nullopt;
+    entry->setMainFrameProcess(previousMainFrameProcess);
+
+    // Frames in the previous main frame process are cached along with the main frame there.
+    Vector<Ref<WebProcessProxy>> iframeProcesses;
+    HashSet<WebCore::ProcessIdentifier> visited { previousProcess->coreProcessIdentifier() };
+    Ref browsingContextGroup = this->browsingContextGroup();
+    for (RefPtr frame = mainFrame.traverseNext().frame; frame; frame = frame->traverseNext().frame) {
+        Ref frameProcess = frame->process();
+        if (!visited.add(frameProcess->coreProcessIdentifier()).isNewEntry)
+            continue;
+        if (browsingContextGroup->remotePageInProcess(*this, frameProcess))
+            iframeProcesses.append(WTF::move(frameProcess));
+    }
+
+    entry->setCachedChildren(mainFrame.takeChildFrames());
+    suspendIframeProcessesForBackForwardCache(*fromItem, WTF::move(iframeProcesses), [](bool) { });
+
+    return BackForwardItemIdentifiers { fromItem->identifier(), fromItem->mainFrameItem().identifier() };
+}
+
 void WebPageProxy::suspendIframeProcessesForBackForwardCache(WebBackForwardListItem& item, Vector<Ref<WebProcessProxy>>&& iframeProcesses, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (iframeProcesses.isEmpty())
@@ -3027,6 +3076,12 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
     Ref preferences = this->preferences();
     if (preferences->siteIsolationEnabled() && preferences->multiProcessBackForwardCacheEnabled()) {
         RefPtr entry = item->backForwardCacheEntry();
+        // FIXME: Restore documents cached in place.
+        if (entry && entry->isCachedInPlace() && !item->suspendedPage()) {
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "goToBackForwardItem: discarding back/forward cache entry for a document cached in place");
+            protect(backForwardCache())->removeEntry(*item);
+            entry = nullptr;
+        }
         shouldRestoreFromBackForwardCache = entry ? ShouldRestoreFromBackForwardCache::Yes : ShouldRestoreFromBackForwardCache::No;
 
         if (entry && !item->suspendedPage()) {
@@ -6288,10 +6343,11 @@ Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForNavigation(WebFra
     // Under Site Isolation, keeping the current group for a site-changing, non-back/forward main-frame
     // navigation would let the incoming document share a group with the outgoing page once that page enters
     // the back/forward cache, linking their iframe processes across unrelated top-level browsing contexts.
-    // Start a fresh group instead.
+    // Start a fresh group instead, unless the outgoing document can be cached in place within the group.
     // FIXME: The non-Site-Isolation PSON path still adopts the outgoing (possibly back/forward-cached) group;
     // it should get a fresh group here too.
-    if (protect(preferences())->siteIsolationEnabled() && !navigation.targetItem() && m_mainFrame && mainFrameSiteChanges && !requestedSite.isEmpty() && !protect(m_browsingContextGroup)->hasMultiplePages())
+    Ref preferences = this->preferences();
+    if (preferences->siteIsolationEnabled() && !preferences->siteIsolationInPlaceBackForwardCacheEnabled() && !navigation.targetItem() && m_mainFrame && mainFrameSiteChanges && !requestedSite.isEmpty() && !protect(m_browsingContextGroup)->hasMultiplePages())
         return BrowsingContextGroup::create(CrossOriginMode::Shared);
 
     return carriedOverGroup(m_browsingContextGroup.copyRef());
@@ -7034,18 +7090,25 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     RefPtr navigation = m_navigationState->navigation(provisionalPage->navigationID());
     bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, *provisionalPage, WTF::move(mainFrameInPreviousProcess)) : false;
 
-    // Deferred from ProvisionalPageProxy::didCommitLoadForFrame(): if the
-    // previous main-frame process still has local frames in this BCG,
-    // transition the WebPageProxy in that process to a RemotePageProxy.
-    // Skipped when the previous page was BFCache-suspended — the page is
-    // frozen in the cache, not transitioning to "remote."
-    if (!didSuspendPreviousPage && provisionalPage->deferredRemoteTransitionSite()) {
+    RefPtr previousMainFrameProcess = provisionalPage->previousMainFrameProcess();
+    std::optional<BackForwardItemIdentifiers> cacheIdentifiers;
+    if (!didSuspendPreviousPage && navigation && mainFrameInPreviousProcess && previousMainFrameProcess)
+        cacheIdentifiers = cacheOutgoingDocumentInPlaceIfPossible(*navigation, *provisionalPage, *mainFrameInPreviousProcess, *previousMainFrameProcess);
+
+    if (!didSuspendPreviousPage && previousMainFrameProcess && (previousMainFrameProcess->frameCount() || cacheIdentifiers)) {
         ASSERT(oldMainFrameID);
+        ASSERT(provisionalPage->deferredRemoteTransitionSite());
         auto topDocumentSyncData = DocumentSyncData::create();
         topDocumentSyncData->documentURL = request.url();
         topDocumentSyncData->documentSecurityOrigin = SecurityOrigin::create(request.url());
         setTopDocumentSyncData(topDocumentSyncData.copyRef());
-        protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::LoadDidCommitInAnotherProcess(*oldMainFrameID, provisionalPage->process().coreProcessIdentifier(), std::nullopt, WTF::move(topDocumentSyncData)), [] { }, webPageIDInMainFrameProcess());
+        protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::LoadDidCommitInAnotherProcess(*oldMainFrameID, provisionalPage->process().coreProcessIdentifier(), std::nullopt, WTF::move(topDocumentSyncData), cacheIdentifiers), [weakThis = WeakPtr { *this }, cacheIdentifiers](DidCacheOutgoingDocument didCache) {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis || !cacheIdentifiers || didCache == DidCacheOutgoingDocument::Yes)
+                return;
+            WEBPAGEPROXY_RELEASE_LOG_WITH_THIS(ProcessSwapping, protectedThis, "commitProvisionalPage: the previous main frame process did not cache the outgoing document");
+            protectedThis->discardBackForwardCacheEntry(cacheIdentifiers->itemID);
+        }, webPageIDInMainFrameProcess());
         protect(m_browsingContextGroup)->transitionPageToRemotePage(*this, *provisionalPage->deferredRemoteTransitionSite());
     }
 
@@ -12847,13 +12910,14 @@ bool WebPageProxy::hasOpenedPage() const
 
 bool WebPageProxy::shouldReuseMainFrameOnProcessSwap(const BrowsingContextGroup& targetGroup) const
 {
-    if (!protect(m_preferences)->siteIsolationEnabled())
+    Ref preferences = m_preferences;
+    if (!preferences->siteIsolationEnabled())
         return false;
 
     if (browsingContextGroup().identifier() != targetGroup.identifier())
         return false;
 
-    return protect(m_browsingContextGroup)->hasMultiplePages();
+    return preferences->siteIsolationInPlaceBackForwardCacheEnabled() || protect(m_browsingContextGroup)->hasMultiplePages();
 }
 
 void WebPageProxy::addOpenedPage(WebPageProxy& page)
