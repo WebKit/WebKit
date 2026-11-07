@@ -37,7 +37,9 @@ messages -> WebAutomationSessionProxy {
     FrameViewportInLayoutViewport(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID) -> (std::optional<String> errorType, std::optional<WebCore::FloatRect> frameViewport)
 
     GetComputedRole(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> role, std::optional<String> errorType)
-    GetComputedLabel(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> role, std::optional<String> errorType)
+    GetComputedLabel(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> label, std::optional<String> errorType)
+    GetAccessibilityPropertiesForElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> errorType, struct std::optional<WebKit::ComputedAccessibilityProperties> properties)
+    GetAccessibilityPropertiesForAccessibilityNode(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::AXID accessibilityNodeID) -> (std::optional<String> errorType, struct std::optional<WebKit::ComputedAccessibilityProperties> properties)
     ConsumeUserActivation(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID) -> (std::optional<String> errorType, bool consume)
 
     SelectOptionElement(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle) -> (std::optional<String> errorType)
