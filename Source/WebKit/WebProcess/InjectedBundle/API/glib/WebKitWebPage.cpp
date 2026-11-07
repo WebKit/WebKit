@@ -932,6 +932,8 @@ WebKitWebEditor* webkit_web_page_get_editor(WebKitWebPage* webPage)
  * webkit_web_page_send_message_to_view_finish() to get the message reply.
  *
  * Since: 2.28
+ *
+ * Deprecated: 2.56
  */
 void webkit_web_page_send_message_to_view(WebKitWebPage* webPage, WebKitUserMessage* message, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
@@ -973,6 +975,8 @@ void webkit_web_page_send_message_to_view(WebKitWebPage* webPage, WebKitUserMess
  * Returns: (transfer full): a #WebKitUserMessage with the reply or %NULL in case of error.
  *
  * Since: 2.28
+ *
+ * Deprecated: 2.56
  */
 WebKitUserMessage* webkit_web_page_send_message_to_view_finish(WebKitWebPage* webPage, GAsyncResult* result, GError** error)
 {

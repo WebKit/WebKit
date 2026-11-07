@@ -170,7 +170,9 @@ static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebProcessExten
     G_GNUC_END_IGNORE_DEPRECATIONS;
 #endif
 
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     webkit_web_page_send_message_to_view(webPage, webkit_user_message_new("DocumentLoaded", nullptr), nullptr, nullptr, nullptr);
+    G_GNUC_END_IGNORE_DEPRECATIONS
 
     gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
     if (data)
@@ -504,6 +506,7 @@ static gboolean pageMessageReceivedCallback(WebKitWebPage* webPage, WebKitUserMe
     }
 
     if (!g_strcmp0(messageName, "Test.AsyncPing")) {
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         webkit_web_page_send_message_to_view(webPage, webkit_user_message_new("Test.Ping", nullptr), nullptr,
             [](GObject* object, GAsyncResult* result, gpointer) {
                 auto* webPage = WEBKIT_WEB_PAGE(object);
@@ -513,6 +516,7 @@ static gboolean pageMessageReceivedCallback(WebKitWebPage* webPage, WebKitUserMe
                 g_assert_cmpstr(webkit_user_message_get_name(reply.get()), ==, "Test.Pong");
                 webkit_web_page_send_message_to_view(webPage, webkit_user_message_new("Test.AsyncPong", nullptr), nullptr, nullptr, nullptr);
             }, nullptr);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         return TRUE;
     }
 
@@ -602,7 +606,9 @@ static char* echoCallback(const char* message)
 
 static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, WebKitWebProcessExtension* extension)
 {
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     webkit_web_page_send_message_to_view(page, webkit_user_message_new("WindowObjectCleared", nullptr), nullptr, nullptr, nullptr);
+    G_GNUC_END_IGNORE_DEPRECATIONS
     GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
     g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
     GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(jsContext.get(), "echo", G_CALLBACK(echoCallback), NULL, NULL, G_TYPE_STRING, 1, G_TYPE_STRING));
@@ -616,7 +622,9 @@ static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, W
 
 static void isolatedWorldWindowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, gpointer)
 {
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     webkit_web_page_send_message_to_view(page, webkit_user_message_new("WindowObjectClearedIsolatedWorld", nullptr), nullptr, nullptr, nullptr);
+    G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 static WebKitWebPage* getWebPage(WebKitWebProcessExtension* extension, uint64_t pageID, GDBusMethodInvocation* invocation)

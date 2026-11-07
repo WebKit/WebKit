@@ -103,14 +103,14 @@ WEBKIT_API WebKitWebFormManager *
 webkit_web_page_get_form_manager            (WebKitWebPage     *web_page,
                                              WebKitScriptWorld *world);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_web_page_send_message_to_view        (WebKitWebPage      *web_page,
                                              WebKitUserMessage  *message,
                                              GCancellable       *cancellable,
                                              GAsyncReadyCallback callback,
                                              gpointer            user_data);
 
-WEBKIT_API WebKitUserMessage *
+WEBKIT_DEPRECATED WebKitUserMessage *
 webkit_web_page_send_message_to_view_finish (WebKitWebPage      *web_page,
                                              GAsyncResult       *result,
                                              GError            **error);

@@ -525,6 +525,7 @@ public:
     {
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(message));
         m_receivedViewMessages = { };
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         webkit_web_view_send_message_to_page(m_webView.get(), message, nullptr, [](GObject*, GAsyncResult* result, gpointer userData) {
             auto* test = static_cast<UserMessageTest*>(userData);
             test->m_receivedViewMessages.append(adoptGRef(webkit_web_view_send_message_to_page_finish(test->webView(), result, &test->m_receivedError.outPtr())));
@@ -534,6 +535,7 @@ public:
                 g_assert_nonnull(test->m_receivedError.get());
             test->quitMainLoop();
         }, this);
+        G_GNUC_END_IGNORE_DEPRECATIONS
         g_main_loop_run(m_mainLoop);
         if (error)
             *error = m_receivedError.get();
@@ -722,6 +724,7 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
 
     // Message that is never replied.
     auto webView = test->createWebView();
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     webkit_web_view_send_message_to_page(webView.get(), webkit_user_message_new("Test.Infinite", nullptr), nullptr,
         [](GObject* object, GAsyncResult* result, gpointer userData) {
             auto* test = static_cast<UserMessageTest*>(userData);
@@ -730,6 +733,7 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
             g_assert_error(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED);
             test->quitMainLoop();
         }, test);
+    G_GNUC_END_IGNORE_DEPRECATIONS
     Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
     g_main_loop_run(test->m_mainLoop);
     webView = nullptr;
@@ -742,7 +746,9 @@ static void testWebProcessExtensionUserMessages(UserMessageTest* test, gconstpoi
     g_assert_cmpstr(webkit_user_message_get_name(message), ==, "DocumentLoaded");
 
     // Reply to a message received from the web process.
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     webkit_web_view_send_message_to_page(test->webView(), webkit_user_message_new("Test.AsyncPing", nullptr), nullptr, nullptr, nullptr);
+    G_GNUC_END_IGNORE_DEPRECATIONS
     message = test->waitUntilViewMessageReceived("Test.Ping");
     g_assert_true(WEBKIT_IS_USER_MESSAGE(message));
     g_assert_cmpstr(webkit_user_message_get_name(message), ==, "Test.Ping");

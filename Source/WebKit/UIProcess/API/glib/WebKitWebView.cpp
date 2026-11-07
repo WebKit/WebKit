@@ -5698,6 +5698,8 @@ void webkit_web_view_remove_frame_displayed_callback(WebKitWebView* webView, uns
  * webkit_web_view_send_message_to_page_finish() to get the message reply.
  *
  * Since: 2.28
+ *
+ * Deprecated: 2.56
  */
 void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMessage* message, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
@@ -5741,6 +5743,8 @@ void webkit_web_view_send_message_to_page(WebKitWebView* webView, WebKitUserMess
  * Returns: (transfer full): a #WebKitUserMessage with the reply or %NULL in case of error.
  *
  * Since: 2.28
+ *
+ * Deprecated: 2.56
  */
 WebKitUserMessage* webkit_web_view_send_message_to_page_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {

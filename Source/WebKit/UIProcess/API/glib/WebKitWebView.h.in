@@ -863,14 +863,14 @@ webkit_web_view_remove_frame_displayed_callback      (WebKitWebView             
                                                       guint                        id);
 #endif
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_web_view_send_message_to_page                 (WebKitWebView             *web_view,
                                                       WebKitUserMessage         *message,
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
 
-WEBKIT_API WebKitUserMessage *
+WEBKIT_DEPRECATED WebKitUserMessage *
 webkit_web_view_send_message_to_page_finish          (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
