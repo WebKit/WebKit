@@ -868,6 +868,7 @@ TEST(WKNavigation, WillGoToBackForwardListItem)
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     RetainPtr delegate = adoptNS([[BackForwardDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+    navigationTestComplete = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationTestComplete);
     navigationTestComplete = false;
@@ -1036,6 +1037,9 @@ TEST(WKNavigation, ListItemAddedRemoved)
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     RetainPtr delegate = adoptNS([[ListItemDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+    firstItem = nullptr;
+    secondItem = nullptr;
+    navigationTestComplete = false;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationTestComplete);
     navigationTestComplete = false;

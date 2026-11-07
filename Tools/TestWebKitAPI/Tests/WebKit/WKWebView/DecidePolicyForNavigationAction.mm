@@ -287,6 +287,7 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItems)
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView waitForNextPresentationUpdate];
     [[webView backForwardList] currentItem];
+    shouldCancelNavigation = false;
 
     newWebView = nullptr;
     action = nullptr;
@@ -315,6 +316,7 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItemsWit
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView waitForNextPresentationUpdate];
     [[webView backForwardList] currentItem];
+    shouldCancelNavigation = false;
 
     newWebView = nullptr;
     action = nullptr;
@@ -344,6 +346,7 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItemsWit
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView waitForNextPresentationUpdate];
     [[webView backForwardList] currentItem];
+    shouldCancelNavigation = false;
 
     newWebView = nullptr;
     action = nullptr;
@@ -397,6 +400,7 @@ TEST(WebKit, DecidePolicyForNewWindowAction)
     };
     WKPageSetPagePolicyClient(webView.page(), &policyClient.base);
 
+    decidedPolicy = false;
     WKPageLoadHTMLString(webView.page(), adoptWK(WKStringCreateWithUTF8CString("<body onload='anchorTag.click()'><a href='https://webkit.org/' id='anchorTag' target=_blank>link</a></body>")).get(), nullptr);
 
     TestWebKitAPI::Util::run(&decidedPolicy);
@@ -835,6 +839,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsTo
 TEST(WebKit, DelayDecidePolicyForNavigationAction)
 {
     shouldDelayDecision = true;
+    decidedPolicy = false;
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     RetainPtr controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
@@ -881,6 +886,7 @@ TEST(WebKit, DecidePolicyForNavigationActionFragment)
     RetainPtr webView = adoptNS([[WKWebView alloc] init]);
     RetainPtr delegate = adoptNS([[DecidePolicyForNavigationActionFragmentDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+    calls = 0;
     [webView loadHTMLString:@"<script>window.location.href='#fragment';</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&done);
 }
