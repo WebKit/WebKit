@@ -40,36 +40,44 @@ namespace WebCore {
 template<SVGPaintServerHandling::Operation op>
 bool SVGPaintServerHandling::preparePaintOperation(const RenderLayerModelObject& renderer, const Style::ComputedStyle& style) const
 {
-    auto paintServerResult = requestPaintServer<op>(renderer, style);
-    if (std::holds_alternative<std::monostate>(paintServerResult))
-        return false;
+    auto prepareWithColor = [&](const Color& color) {
+        if constexpr (op == Operation::Fill)
+            prepareFillOperation(renderer, style, color);
+        else
+            prepareStrokeOperation(renderer, style, color);
+        return true;
+    };
 
-    if (std::holds_alternative<RenderSVGResourcePaintServer*>(paintServerResult)) {
-        CheckedRef paintServer = *std::get<RenderSVGResourcePaintServer*>(paintServerResult);
-
-        if constexpr (op == Operation::Fill) {
-            if (paintServer->prepareFillOperation(m_context, renderer, style))
-                return true;
-        } else if constexpr (op == Operation::Stroke) {
-            if (paintServer->prepareStrokeOperation(m_context, renderer, style))
-                return true;
-        }
-
-        // Repeat the paint server request, but explicitly treating the paintServer as invalid/not-existent, to go through the fallback code path.
-        paintServerResult = requestPaintServer<op, URIResolving::Disabled>(renderer, style);
-        if (std::holds_alternative<std::monostate>(paintServerResult))
+    return WTF::switchOn(requestPaintServer<op>(renderer, style),
+        [](std::monostate) {
             return false;
-    }
+        },
+        [&](RenderSVGResourcePaintServer* paintServerPtr) {
+            CheckedRef paintServer = *paintServerPtr;
+            if constexpr (op == Operation::Fill) {
+                if (paintServer->prepareFillOperation(m_context, renderer, style))
+                    return true;
+            } else if constexpr (op == Operation::Stroke) {
+                if (paintServer->prepareStrokeOperation(m_context, renderer, style))
+                    return true;
+            }
 
-    ASSERT(std::holds_alternative<Color>(paintServerResult));
-    const auto& color = std::get<Color>(paintServerResult);
-
-    if constexpr (op == Operation::Fill)
-        prepareFillOperation(renderer, style, color);
-    else
-        prepareStrokeOperation(renderer, style, color);
-
-    return true;
+            // Repeat the paint server request, but explicitly treating the paintServer as invalid/not-existent, to go through the fallback code path.
+            return WTF::switchOn(requestPaintServer<op, URIResolving::Disabled>(renderer, style),
+                [](std::monostate) {
+                    return false;
+                },
+                [&](RenderSVGResourcePaintServer*) {
+                    ASSERT_NOT_REACHED();
+                    return false;
+                },
+                [&](const Color& color) {
+                    return prepareWithColor(color);
+                });
+        },
+        [&](const Color& color) {
+            return prepareWithColor(color);
+        });
 }
 
 template<SVGPaintServerHandling::Operation op, SVGPaintServerHandling::URIResolving allowPaintServerURIResolving>
