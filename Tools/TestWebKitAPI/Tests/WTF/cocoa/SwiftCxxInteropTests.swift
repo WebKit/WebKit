@@ -266,6 +266,8 @@ struct SwiftCxxInteropTests {
 
     @Test
     func moveOnlyCompletionHandlerReceivesItsArgument() async throws {
+        let baseline = Cxx.liveMoveOnlyProbeCount()
+
         let recorder = Recorder()
 
         Cxx.callMoveOnlyProbeCompletionHandler(
@@ -276,22 +278,26 @@ struct SwiftCxxInteropTests {
         )
 
         #expect(recorder.values == [5])
-        #expect(Cxx.liveMoveOnlyProbeCount() == 0, "the argument should be destroyed exactly once")
+        #expect(Cxx.liveMoveOnlyProbeCount() == baseline, "the argument should be destroyed exactly once")
     }
 
     @Test
     func moveOnlyArgumentIsDestroyedWhenTheClosureIgnoresIt() async throws {
+        let baseline = Cxx.liveMoveOnlyProbeCount()
+
         // C++ hands ownership of the argument to Swift, so nothing else will destroy it if the closure
         // does not look at it.
         Cxx.callMoveOnlyProbeCompletionHandler(8, consuming: .init { _ in })
 
-        #expect(Cxx.liveMoveOnlyProbeCount() == 0, "an ignored argument should still be destroyed")
+        #expect(Cxx.liveMoveOnlyProbeCount() == baseline, "an ignored argument should still be destroyed")
     }
 
     @Test
     func storedMoveOnlyCompletionHandlerSurvivesUntilInvoked() async throws {
         // See contextSurvivesUntilTheHandlerIsInvokedLater().
         defer { Cxx.resetStoredMoveOnlyProbeCompletionHandler() }
+
+        let baseline = Cxx.liveMoveOnlyProbeCount()
 
         let recorder = Recorder()
 
@@ -303,7 +309,7 @@ struct SwiftCxxInteropTests {
         Cxx.invokeStoredMoveOnlyProbeCompletionHandler(9)
 
         #expect(recorder.values == [9])
-        #expect(Cxx.liveMoveOnlyProbeCount() == 0, "the argument should be destroyed exactly once")
+        #expect(Cxx.liveMoveOnlyProbeCount() == baseline, "the argument should be destroyed exactly once")
     }
 
     // MARK: Copyable, non-trivially-copyable arguments
@@ -311,6 +317,8 @@ struct SwiftCxxInteropTests {
     @Test
     func copyableArgumentIsCopiedRatherThanTakenFromTheCaller() async throws {
         Cxx.resetCopyCountingProbeCounts()
+
+        let baseline = Cxx.liveCopyCountingProbeCount()
 
         let recorder = Recorder()
 
@@ -324,7 +332,7 @@ struct SwiftCxxInteropTests {
 
         #expect(recorder.values == [11], "Swift should see the value C++ passed")
         #expect(Cxx.copyCountingProbeCopyCount() == 1, "exactly one copy should be made for Swift")
-        #expect(Cxx.liveCopyCountingProbeCount() == 0, "every probe should be destroyed")
+        #expect(Cxx.liveCopyCountingProbeCount() == baseline, "every probe should be destroyed")
     }
 
     // MARK: Arguments holding a managed reference
