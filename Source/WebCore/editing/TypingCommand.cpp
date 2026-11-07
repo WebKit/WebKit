@@ -35,6 +35,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
+#include "EventHandler.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -48,6 +49,7 @@
 #include "PositionInlines.h"
 #include "Range.h"
 #include "RenderElement.h"
+#include "ScrollableArea.h"
 #include "StaticRange.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -85,6 +87,22 @@ private:
     WeakRef<TypingCommand> m_typingCommand;
     bool m_selectInsertedText;
     const String& m_text;
+};
+
+// Typing moves content between DOM nodes (e.g. splitting a text node keeps the trailing content in the original node),
+// which scroll anchoring would take for the anchor node moving.
+class ScrollAnchoringSuppressionForTyping {
+public:
+    explicit ScrollAnchoringSuppressionForTyping(const VisibleSelection& selection)
+    {
+        RefPtr node = selection.anchor().containerNode();
+        RefPtr frame = node ? node->document().frame() : nullptr;
+        if (CheckedPtr scrollableArea = frame ? protect(frame->eventHandler())->enclosingScrollableArea(node.get()) : nullptr)
+            m_suppressionScope.emplace(*scrollableArea);
+    }
+
+private:
+    std::optional<ScrollAnchoringSuppressionScope> m_suppressionScope;
 };
 
 NODELETE static inline EditAction editActionForTypingCommand(TypingCommand::Type command, TextGranularity granularity, TypingCommand::TextCompositionType compositionType, bool isAutocompletion)
@@ -174,6 +192,7 @@ void TypingCommand::deleteSelection(Ref<Document>&& document, OptionSet<Option> 
     if (!document->selection().isRange())
         return;
 
+    ScrollAnchoringSuppressionForTyping scrollAnchoringSuppression { document->selection().selection() };
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
         lastTypingCommand->setIsAutocompletion(options.contains(Option::IsAutocompletion));
         lastTypingCommand->setCompositionType(compositionType);
@@ -187,6 +206,7 @@ void TypingCommand::deleteSelection(Ref<Document>&& document, OptionSet<Option> 
 
 void TypingCommand::deleteKeyPressed(Ref<Document>&& document, OptionSet<Option> options, TextGranularity granularity)
 {
+    ScrollAnchoringSuppressionForTyping scrollAnchoringSuppression { document->selection().selection() };
     if (granularity == TextGranularity::CharacterGranularity) {
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), document);
@@ -203,6 +223,7 @@ void TypingCommand::deleteKeyPressed(Ref<Document>&& document, OptionSet<Option>
 
 void TypingCommand::forwardDeleteKeyPressed(Ref<Document>&& document, OptionSet<Option> options, TextGranularity granularity)
 {
+    ScrollAnchoringSuppressionForTyping scrollAnchoringSuppression { document->selection().selection() };
     // FIXME: Forward delete in TextEdit appears to open and close a new typing command.
     if (granularity == TextGranularity::CharacterGranularity) {
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
@@ -246,6 +267,8 @@ void TypingCommand::insertText(Ref<Document>&& document, const String& text, Eve
 
     String newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, compositionType == TextCompositionType::Pending);
 
+    ScrollAnchoringSuppressionForTyping scrollAnchoringSuppression { selectionForInsertion };
+
     bool triggeringEventIsUntrusted = triggeringEvent && !triggeringEvent->isTrusted();
 
     // Set the starting and ending selection appropriately if we are using a selection
@@ -279,6 +302,7 @@ void TypingCommand::insertText(Ref<Document>&& document, const String& text, Eve
 
 void TypingCommand::insertLineBreak(Ref<Document>&& document, OptionSet<Option> options)
 {
+    ScrollAnchoringSuppressionForTyping scrollAnchoringSuppression { document->selection().selection() };
     if (RefPtr lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
         lastTypingCommand->setIsAutocompletion(options.contains(Option::IsAutocompletion));
         lastTypingCommand->setCompositionType(TextCompositionType::None);
@@ -292,6 +316,7 @@ void TypingCommand::insertLineBreak(Ref<Document>&& document, OptionSet<Option> 
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent(Ref<Document>&& document)
 {
+    ScrollAnchoringSuppressionForTyping scrollAnchoringSuppression { document->selection().selection() };
     if (RefPtr lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
         lastTypingCommand->setIsAutocompletion(false);
         lastTypingCommand->setCompositionType(TextCompositionType::None);
@@ -304,6 +329,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Ref<Document>&& docu
 
 void TypingCommand::insertParagraphSeparator(Ref<Document>&& document, OptionSet<Option> options)
 {
+    ScrollAnchoringSuppressionForTyping scrollAnchoringSuppression { document->selection().selection() };
     if (RefPtr lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document)) {
         lastTypingCommand->setIsAutocompletion(options.contains(Option::IsAutocompletion));
         lastTypingCommand->setCompositionType(TextCompositionType::None);

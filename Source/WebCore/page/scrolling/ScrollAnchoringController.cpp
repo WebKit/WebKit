@@ -628,6 +628,10 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 
     // FIXME: Test for running animated scrolls?
     if (m_inScrollEventCount || m_suppressionCount) {
+        // Drop the suppressed update so that the next layout picks a new anchor.
+        // FIXME: Adjustments suppressed during scroll events stay queued, which keeps scroll anchoring off afterwards.
+        if (m_suppressionCount)
+            m_isQueuedForScrollPositionUpdate = false;
         m_anchoringSuppressedByStyleChange = false;
         clearAnchor();
         return;

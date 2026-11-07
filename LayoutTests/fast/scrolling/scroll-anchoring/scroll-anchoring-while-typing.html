@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+textarea, .editable {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    height: 200px;
+    overflow: auto;
+    font: 13px/16px monospace;
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+const text = Array.from({ length: 400 }, (_, i) => `Line ${i} of some text that is long enough to wrap in the scroller.`).join(" ");
+
+async function scrollCaretToMiddle(scroller)
+{
+    await UIHelper.renderingUpdate();
+    const caretTop = internals.absoluteCaretBounds().top;
+    const scrollerRect = scroller.getBoundingClientRect();
+    scroller.scrollTop += caretTop - (scrollerRect.top + scrollerRect.height / 2);
+    await UIHelper.renderingUpdate();
+}
+
+async function placeCaretInTextArea(textArea)
+{
+    textArea.value = text;
+    textArea.focus();
+    const offset = text.length / 2;
+    textArea.setSelectionRange(offset, offset);
+    await scrollCaretToMiddle(textArea);
+}
+
+async function placeCaretInEditable(editable)
+{
+    editable.textContent = text;
+    editable.focus();
+    getSelection().collapse(editable.firstChild, text.length / 2);
+    await scrollCaretToMiddle(editable);
+}
+
+let layoutCount = 0;
+async function layoutToPickScrollAnchor()
+{
+    // Scroll anchors are picked at layout, so lay out with the current content before the next change.
+    document.body.style.paddingBottom = `${++layoutCount % 2}px`;
+    await UIHelper.renderingUpdate();
+}
+
+async function execCommandAndRenderingUpdate(command, value)
+{
+    document.execCommand(command, false, value);
+    await UIHelper.renderingUpdate();
+}
+
+let scrollTopBefore;
+let scroller;
+
+window.addEventListener("load", async () => {
+    description("Typing in a scrolled text field or editable element does not trigger scroll anchoring adjustments, and scroll anchoring keeps working after typing.");
+
+    scroller = document.getElementById("first-line-break");
+    await placeCaretInTextArea(scroller);
+    await layoutToPickScrollAnchor();
+    scrollTopBefore = scroller.scrollTop;
+    await execCommandAndRenderingUpdate("insertLineBreak");
+    shouldBe("scroller.scrollTop", "scrollTopBefore");
+
+    scroller = document.getElementById("line-break-after-typing");
+    await placeCaretInTextArea(scroller);
+    await execCommandAndRenderingUpdate("insertText", "ab");
+    await layoutToPickScrollAnchor();
+    scrollTopBefore = scroller.scrollTop;
+    // Added to the typing command that is still open.
+    await execCommandAndRenderingUpdate("insertLineBreak");
+    shouldBe("scroller.scrollTop", "scrollTopBefore");
+
+    scroller = document.getElementById("anchoring-after-typing");
+    await placeCaretInEditable(scroller);
+    await execCommandAndRenderingUpdate("insertText", "a");
+    await layoutToPickScrollAnchor();
+    scrollTopBefore = scroller.scrollTop;
+    const spacer = document.createElement("div");
+    spacer.style.height = "100px";
+    scroller.insertBefore(spacer, scroller.firstChild);
+    await UIHelper.renderingUpdate();
+    shouldBe("scroller.scrollTop", "scrollTopBefore + 100");
+
+    for (const element of document.querySelectorAll("textarea, .editable"))
+        element.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<textarea id="first-line-break" style="left: 0"></textarea>
+<textarea id="line-break-after-typing" style="left: 270px"></textarea>
+<div id="anchoring-after-typing" class="editable" style="left: 540px" contenteditable></div>
+</body>
+</html>
