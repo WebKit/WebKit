@@ -185,6 +185,10 @@ private:
 #endif
     const RenderingMode m_renderingMode : 2; // NOLINT
     const bool m_isLayerCGContext : 1;
+#if HAVE(CGCONTEXT_STROKE_ARC)
+    // Whether the renderer draws a butt-capped stroked arc with exactly the coverage of filling its outline.
+    const bool m_strokesArcsLikeFills : 1;
+#endif
     mutable bool m_userToDeviceTransformKnownToBeIdentity : 1 { false };
     // Flag for pending draws. Start with true because we do not know what commands have been scheduled to the context.
     mutable bool m_hasDrawn : 1 { true };

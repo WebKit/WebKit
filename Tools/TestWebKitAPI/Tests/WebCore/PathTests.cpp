@@ -175,4 +175,52 @@ TEST(Path, IsEmpty)
 
 }
 
+TEST(Path, PieWedgeArc)
+{
+    constexpr FloatPoint center { 100, 50 };
+    constexpr PathArc expectedArc { center, 20, 0.5, 2.5, RotationDirection::Counterclockwise };
+
+    auto makeWedge = [&] {
+        Path path;
+        path.moveTo(center);
+        path.addArc(center, expectedArc.radius, expectedArc.startAngle, expectedArc.endAngle, expectedArc.direction);
+        path.addLineTo(center);
+        return path;
+    };
+
+    auto wedge = makeWedge();
+    ASSERT_TRUE(wedge.pieWedgeArc());
+    EXPECT_EQ(*wedge.pieWedgeArc(), expectedArc);
+
+    Path arcOnly;
+    arcOnly.addArc(center, expectedArc.radius, expectedArc.startAngle, expectedArc.endAngle, expectedArc.direction);
+    EXPECT_FALSE(arcOnly.pieWedgeArc());
+
+    Path offCenterMoveTo;
+    offCenterMoveTo.moveTo({ 0, 0 });
+    offCenterMoveTo.addArc(center, expectedArc.radius, expectedArc.startAngle, expectedArc.endAngle, expectedArc.direction);
+    offCenterMoveTo.addLineTo(center);
+    EXPECT_FALSE(offCenterMoveTo.pieWedgeArc());
+
+    Path offCenterLineTo;
+    offCenterLineTo.moveTo(center);
+    offCenterLineTo.addArc(center, expectedArc.radius, expectedArc.startAngle, expectedArc.endAngle, expectedArc.direction);
+    offCenterLineTo.addLineTo({ 0, 0 });
+    EXPECT_FALSE(offCenterLineTo.pieWedgeArc());
+
+    Path noClosingLine;
+    noClosingLine.moveTo(center);
+    noClosingLine.addArc(center, expectedArc.radius, expectedArc.startAngle, expectedArc.endAngle, expectedArc.direction);
+    EXPECT_FALSE(noClosingLine.pieWedgeArc());
+
+    auto closedWedge = makeWedge();
+    closedWedge.closeSubpath();
+    EXPECT_FALSE(closedWedge.pieWedgeArc());
+
+    Path twoWedges = makeWedge();
+    twoWedges.addArc(center, expectedArc.radius, expectedArc.endAngle, expectedArc.endAngle + 1, expectedArc.direction);
+    twoWedges.addLineTo(center);
+    EXPECT_FALSE(twoWedges.pieWedgeArc());
+}
+
 }

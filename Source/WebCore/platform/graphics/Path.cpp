@@ -317,6 +317,24 @@ std::optional<PathDataLine> Path::singleDataLine() const
     return std::nullopt;
 }
 
+std::optional<PathArc> Path::pieWedgeArc() const
+{
+    auto* segments = segmentsIfExists();
+    if (!segments || segments->size() != 3)
+        return std::nullopt;
+
+    auto* moveTo = std::get_if<PathMoveTo>(&(*segments)[0].data());
+    auto* arc = std::get_if<PathArc>(&(*segments)[1].data());
+    auto* lineTo = std::get_if<PathLineTo>(&(*segments)[2].data());
+    if (!moveTo || !arc || !lineTo)
+        return std::nullopt;
+
+    if (moveTo->point != arc->center || lineTo->point != arc->center)
+        return std::nullopt;
+
+    return *arc;
+}
+
 bool Path::definitelySingleLine() const
 {
     return !!singleDataLine();

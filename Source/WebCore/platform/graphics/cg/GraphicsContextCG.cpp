@@ -62,6 +62,13 @@
 #include <WebKitAdditions/IOSurfaceAdditionsBefore.mm>
 #endif
 
+#ifndef CGIOSurfaceContextUsingWebKitBehavior
+static inline bool CGIOSurfaceContextUsingWebKitBehavior(CGContextRef)
+{
+    return false;
+}
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
@@ -70,6 +77,33 @@ static void setCGFillColor(CGContextRef context, const Color& color, const Color
 {
     CGContextSetFillColorWithColor(context, cachedCGColorInDestinationStandardRange(color, colorSpace).get());
 }
+
+#if HAVE(CGCONTEXT_STROKE_ARC)
+// A butt-capped stroke of width r along the arc of radius r / 2 covers exactly the pie wedge of radius r.
+// Drawing the wedge as a stroked arc lets the renderer batch it with other stroked arcs.
+static void fillPieWedgeAsStrokeArc(CGContextRef context, const PathArc& arc, const Color& color, const ColorSpace& colorSpace)
+{
+    CGContextSaveGState(context);
+    CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(color, colorSpace).get());
+    CGContextSetLineWidth(context, arc.radius);
+    CGContextSetLineCap(context, kCGLineCapButt);
+    CGContextSetLineDash(context, 0, nullptr, 0);
+    CGContextStrokeArc(context, arc.center.x(), arc.center.y(), arc.radius / 2, arc.startAngle, arc.endAngle, arc.direction == RotationDirection::Counterclockwise);
+    CGContextRestoreGState(context);
+}
+
+// Limited to fills where any coverage difference between the stroke and the fill is invisible: a pixel drawn twice looks
+// the same as once, and a wedge that winds more than once is filled solid, as the stroke paints it.
+static bool canFillPieWedgeAsStrokeArc(const GraphicsContext& context)
+{
+    return context.fillRule() == WindRule::NonZero
+        && context.fillColor().isOpaque()
+        && context.alpha() == 1
+        && context.compositeOperation() == CompositeOperator::SourceOver
+        && context.blendMode() == BlendMode::Normal
+        && !context.hasDropShadow();
+}
+#endif
 
 CGAffineTransform getUserToBaseCTM(CGContextRef context)
 {
@@ -299,6 +333,9 @@ GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource sou
     , m_cgContext(cgContext)
     , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
     , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
+#if HAVE(CGCONTEXT_STROKE_ARC)
+    , m_strokesArcsLikeFills(CGIOSurfaceContextUsingWebKitBehavior(cgContext))
+#endif
 {
     if (!cgContext)
         return;
@@ -879,6 +916,12 @@ void GraphicsContextCG::fillPath(const Path& path)
 
     if (fillPattern())
         applyFillPattern();
+#if HAVE(CGCONTEXT_STROKE_ARC)
+    else if (auto arc = m_strokesArcsLikeFills ? path.pieWedgeArc() : std::nullopt; arc && arc->radius > 0 && canFillPieWedgeAsStrokeArc(*this)) {
+        fillPieWedgeAsStrokeArc(context.get(), *arc, fillColor(), colorSpace());
+        return;
+    }
+#endif
 
     drawPathWithCGContext(context, fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path);
 }
