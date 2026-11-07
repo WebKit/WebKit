@@ -313,6 +313,7 @@ public:
     std::optional<Error> validateOverrides(const PrepareResult&, HashMap<String, ConstantValue>&);
 
     const OverloadedDeclaration* lookupOverload(const String&) const;
+    const Vector<OverloadCandidate>& overloadCandidates(const OverloadedDeclaration&);
     // Only the type checker resolves overloads. Later passes look builtins up only for their
     // constant and validation functions, which this keeps.
     void releaseOverloadCandidates();

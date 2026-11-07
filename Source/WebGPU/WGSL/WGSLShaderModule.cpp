@@ -112,6 +112,13 @@ const OverloadedDeclaration* ShaderModule::lookupOverload(const String& name) co
     return &it->value;
 }
 
+const Vector<OverloadCandidate>& ShaderModule::overloadCandidates(const OverloadedDeclaration& declaration)
+{
+    if (declaration.overloads.isEmpty())
+        declaration.overloads = declaration.buildOverloads(m_types);
+    return declaration.overloads;
+}
+
 void ShaderModule::releaseOverloadCandidates()
 {
     for (auto& declaration : m_overloadedOperations.values())
