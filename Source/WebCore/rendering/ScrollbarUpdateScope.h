@@ -45,7 +45,7 @@ public:
     ScrollbarUpdateScope(RenderLayerScrollableArea&, ScrollPosition originalScrollPosition, EnumSet<ScrollbarOrientation> autoScrollbarChanges, HasHorizontalOverflow, HasVerticalOverflow);
     ~ScrollbarUpdateScope();
 
-    ScrollbarUpdateScope(ScrollbarUpdateScope&&) = default;
+    ScrollbarUpdateScope(ScrollbarUpdateScope&&) = delete;
     ScrollbarUpdateScope(const ScrollbarUpdateScope&) = delete;
     ScrollbarUpdateScope& operator=(const ScrollbarUpdateScope&) = delete;
 
