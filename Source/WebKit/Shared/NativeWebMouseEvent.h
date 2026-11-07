@@ -72,7 +72,7 @@ public:
     NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int, std::optional<WebCore::FloatSize>);
     NativeWebMouseEvent(GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
-    NativeWebMouseEvent(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent);
+    NativeWebMouseEvent(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::DoublePoint& position, const WebCore::DoublePoint& globalPosition, int clickCount, OptionSet<WebEventModifier> modifiers, std::optional<WebCore::FloatSize>, WebCore::PointerID, const String& pointerType, WebCore::PlatformMouseEvent::IsTouch isTouchEvent, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
     explicit NativeWebMouseEvent(const WebCore::DoublePoint&);
 #elif PLATFORM(IOS_FAMILY)
     NativeWebMouseEvent(::WebEvent *);

@@ -286,6 +286,7 @@ public:
         // PlatformMouseEvent
         m_button = platform(webEvent.button());
         m_buttons = webEvent.buttons();
+        m_syntheticClickType = coreSyntheticClickType(webEvent.syntheticClickType());
 
         m_position = webEvent.position();
         m_movementDelta = WebCore::DoublePoint(webEvent.deltaX(), webEvent.deltaY());
@@ -307,8 +308,6 @@ public:
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
 #elif PLATFORM(GTK)
         m_isTouchEvent = webEvent.isTouchEvent();
-#elif PLATFORM(WPE)
-        m_syntheticClickType = static_cast<WebCore::SyntheticClickType>(webEvent.syntheticClickType());
 #endif
 
         m_pointerId = webEvent.pointerId();

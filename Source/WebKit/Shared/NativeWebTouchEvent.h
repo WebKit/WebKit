@@ -67,6 +67,7 @@ public:
     NativeWebTouchEvent(const NativeWebTouchEvent&);
     const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
     NativeWebTouchEvent& operator=(NativeWebTouchEvent&&) = default;
+    bool isNativeWebTouchEvent() const final { return true; }
 #elif PLATFORM(WPE)
     bool isNativeWebTouchEvent() const final { return true; }
 #if USE(LIBWPE)

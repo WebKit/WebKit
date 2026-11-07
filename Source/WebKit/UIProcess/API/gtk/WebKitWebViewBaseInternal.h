@@ -41,7 +41,7 @@ struct KeyEvent {
 };
 
 enum class MouseEventType { Press, Release, Motion };
-WK_EXPORT void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType = "mouse"_s, WebCore::PlatformMouseEvent::IsTouch isTouchEvent = WebCore::PlatformMouseEvent::IsTouch::No);
+WK_EXPORT void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount, const String& pointerType = "mouse"_s, WebCore::PlatformMouseEvent::IsTouch isTouchEvent = WebCore::PlatformMouseEvent::IsTouch::No, WebCore::SyntheticClickType = WebCore::SyntheticClickType::NoTap);
 
 enum class KeyEventType { Press, Release, Insert };
 enum class ShouldTranslateKeyboardState : bool { No, Yes };

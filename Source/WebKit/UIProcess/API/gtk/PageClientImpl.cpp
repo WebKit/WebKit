@@ -34,6 +34,7 @@
 #include "GtkVersioning.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebTouchEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "ValidationBubbleGtk.h"
 #include "ViewSnapshotStore.h"
@@ -440,8 +441,14 @@ void PageClientImpl::beganExitFullScreen(const IntRect& /* initialFrame */, cons
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& event, bool wasEventHandled)
 {
-    if (wasEventHandled)
+    if (wasEventHandled) {
         webkitWebViewBasePageGrabbedTouch(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+        return;
+    }
+
+    bool isSynthesized = event.isNativeWebTouchEvent() && !static_cast<const NativeWebTouchEvent&>(event).nativeEvent();
+    if (event.type() == WebEventType::TouchEnd && isSynthesized)
+        webkitWebViewBaseSynthesizedTouchEndWasNotHandled(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
