@@ -90,21 +90,19 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     if (!element)
         return { };
 
-    // https://drafts.css-houdini.org/css-typed-om-1/#the-stylepropertymap
-    Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> values;
-
     // Ensure custom property counts are correct.
     Style::Extractor::updateStyleIfNeededForProperty(*element.get(), std::nullopt, CSSPropertyID::Custom);
 
     CheckedPtr style = element->computedStyle();
     if (!style)
-        return values;
+        return { };
 
     Ref document = element->document();
     Ref inheritedCustomProperties = style->inheritedCustomProperties();
     Ref nonInheritedCustomProperties = style->nonInheritedCustomProperties();
     const auto& exposedComputedCSSPropertyIDs = document->exposedComputedCSSPropertyIDs();
-    values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties->size() + nonInheritedCustomProperties->size());
+    // https://drafts.css-houdini.org/css-typed-om-1/#the-stylepropertymap
+    Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> values(ReserveCapacityTag { }, exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties->size() + nonInheritedCustomProperties->size());
 
     Style::Extractor computedStyleExtractor { element.get() };
     values.appendContainerWithMapping(exposedComputedCSSPropertyIDs, [&](auto propertyID) {

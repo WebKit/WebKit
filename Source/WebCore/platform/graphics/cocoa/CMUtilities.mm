@@ -256,7 +256,6 @@ static RetainPtr<CFMutableDictionaryRef> createExtensionsDictionary(const TrackI
     if (!extensions)
         return nullptr;
 
-    Vector<std::pair<FourCC, Ref<SharedBuffer>>> configurations;
     CFIndex configurationsNumKey = 0;
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     if (auto& encryptionCollection = info.encryptionDataCollection()) {
@@ -281,7 +280,7 @@ static RetainPtr<CFMutableDictionaryRef> createExtensionsDictionary(const TrackI
     if (info.isVideo())
         configurationsNumKey += downcast<const VideoInfo>(info).extensionAtoms().size();
 
-    configurations.reserveInitialCapacity(configurationsNumKey);
+    Vector<std::pair<FourCC, Ref<SharedBuffer>>> configurations(ReserveCapacityTag { }, configurationsNumKey);
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (auto& encryptionCollection = info.encryptionDataCollection())
