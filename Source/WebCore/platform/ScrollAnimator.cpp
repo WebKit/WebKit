@@ -441,6 +441,11 @@ bool ScrollAnimator::scrollAnimationEnabled() const
 }
 #endif
 
+void ScrollAnimator::stopAnimatedScroll()
+{
+    m_scrollController.stopAnimatedScroll();
+}
+
 void ScrollAnimator::cancelAnimations()
 {
     m_scrollController.stopAnimatedScroll();
