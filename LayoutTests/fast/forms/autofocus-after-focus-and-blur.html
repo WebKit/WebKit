@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<input id="candidate" autofocus>
+<input id="other">
+<script>
+promise_test(async () => {
+    other.focus();
+    assert_equals(document.activeElement, other, "Focus prerequisite");
+    other.blur();
+    assert_equals(document.activeElement, document.body, "Blur prerequisite");
+
+    await new Promise(requestAnimationFrame);
+    assert_equals(document.activeElement, candidate);
+}, "Focus removed before candidate processing does not suppress autofocus");
+</script>

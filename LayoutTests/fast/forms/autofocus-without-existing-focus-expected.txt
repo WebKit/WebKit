@@ -1,0 +1,4 @@
+
+
+PASS Initial autofocus works when no element has focus
+

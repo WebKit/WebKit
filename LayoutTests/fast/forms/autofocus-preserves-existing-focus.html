@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<input id="focused">
+<script>
+promise_test(async () => {
+    focused.focus();
+    assert_equals(document.activeElement, focused, "Focus prerequisite");
+
+    const candidate = document.createElement("input");
+    candidate.autofocus = true;
+    document.body.append(candidate);
+    await new Promise(requestAnimationFrame);
+    assert_equals(document.activeElement, focused, "Autofocus must preserve existing focus");
+
+    focused.blur();
+    assert_equals(document.activeElement, document.body, "Blur prerequisite");
+    const laterCandidate = document.createElement("input");
+    laterCandidate.autofocus = true;
+    document.body.append(laterCandidate);
+    await new Promise(requestAnimationFrame);
+    assert_equals(document.activeElement, document.body, "Cancelled autofocus must consume the autofocus opportunity");
+}, "Existing input focus cancels and consumes pending autofocus");
+</script>
