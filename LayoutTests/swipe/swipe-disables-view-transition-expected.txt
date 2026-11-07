@@ -4,4 +4,6 @@ completeSwipeGesture
 willEndSwipe
 didEndSwipe
 didRemoveSwipeSnapshot
+programmaticForward
+programmaticBack
 
