@@ -1,0 +1,39 @@
+CONSOLE MESSAGE: runFoo start
+CONSOLE MESSAGE: runBar start
+CONSOLE MESSAGE: runBar end
+CONSOLE MESSAGE: runFoo end
+Tests that a symbolic breakpoint on a class without a constructor follows the blackboxing of the script of the class, in an internal world and for a script that is blackboxed by its URL.
+
+
+== Running test suite: SymbolicBreakpoint.Construct.DefaultConstructor.Blackboxed
+-- Running test case: SymbolicBreakpoint.Construct.DefaultConstructor.InternalWorld.WithoutConstructor
+PASS: Should pause 0 time(s).
+
+-- Running test case: SymbolicBreakpoint.Construct.DefaultConstructor.InternalWorld.WithConstructor
+PASS: Should pause 0 time(s).
+
+-- Running test case: SymbolicBreakpoint.Construct.DefaultConstructor.URL.WithoutConstructor
+PASS: Should pause 1 time(s).
+PASS: Pause 1 should have the reason blackboxed-script.
+PASS: Pause 1 should be in pageMessage.
+
+-- Running test case: SymbolicBreakpoint.Construct.DefaultConstructor.URL.WithConstructor
+PASS: Should pause 1 time(s).
+PASS: Pause 1 should have the reason blackboxed-script.
+PASS: Pause 1 should be in pageMessage.
+
+-- Running test case: SymbolicBreakpoint.Construct.DefaultConstructor.URL.DeferredLineBreakpoint
+PASS: Should pause 1 time(s).
+PASS: Pause 1 should have the reason blackboxed-script.
+PASS: Pause 1 should be in pageMessage.
+
+-- Running test case: SymbolicBreakpoint.Construct.DefaultConstructor.URL.WithoutConstructor.EvaluateInBlackboxed
+PASS: Should pause 1 time(s).
+PASS: Pause 1 should have the reason blackboxed-script.
+PASS: Pause 1 should be in pageMessage.
+
+-- Running test case: SymbolicBreakpoint.Construct.DefaultConstructor.URL.DeferredBreakpoint
+PASS: Should pause 1 time(s).
+PASS: Pause 1 should have the reason blackboxed-script.
+PASS: Pause 1 should be in runDeferredBarFoo.
+
