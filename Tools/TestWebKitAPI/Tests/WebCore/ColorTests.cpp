@@ -457,4 +457,18 @@ TEST(Color, ColorWithAlphaMultipliedBy)
     }
 }
 
+TEST(Color, TransferFunctionsKeepTheSignOfExtendedComponents)
+{
+    auto expectRoundTrip = [&]<typename ColorType>() {
+        using TransferFunction = typename ColorType::TransferFunction;
+        for (float component : { -0.01f, -0.09f, -0.5f, -1.5f, 0.5f, 1.5f })
+            EXPECT_NEAR(TransferFunction::toGammaEncoded(TransferFunction::toLinear(component)), component, 0.0001f);
+    };
+
+    expectRoundTrip.template operator()<ExtendedA98RGB<float>>();
+    expectRoundTrip.template operator()<ExtendedProPhotoRGB<float>>();
+    expectRoundTrip.template operator()<ExtendedRec2020<float>>();
+    expectRoundTrip.template operator()<ExtendedSRGBA<float>>();
+}
+
 } // namespace TestWebKitAPI
