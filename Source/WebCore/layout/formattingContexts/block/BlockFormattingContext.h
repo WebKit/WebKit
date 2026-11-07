@@ -146,7 +146,7 @@ private:
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
     void handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult&);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
-    LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
+    LayoutUnit layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize = { });
     BlockLayoutResult layoutOutOfFlowIndependentFormattingContext(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
     void handleFloat(const RenderBox&, BlockLayoutResult&);
     template<typename LayoutContent> std::optional<LayoutUnit> placeBesideFloats(const RenderBox&, ContainingBlockState& boxState, LayoutUnit marginsBeforeLogicalBottom, const LayoutContent&);

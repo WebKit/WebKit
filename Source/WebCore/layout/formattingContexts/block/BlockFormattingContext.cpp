@@ -678,28 +678,44 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
     auto isLaidOutThroughRenderTree = !blockContainer || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*blockContainer);
     auto hasOwnInlineSize = isLaidOutThroughRenderTree && decidesItsOwnInlineSize(box, writingMode);
+    // A table with an auto inline size is no wider than the space, which it floors to its min-content size itself (RenderTable::updateLogicalWidth
+    // with shrinkLogicalWidthToAvoidFloats), so it keeps the inline size it has in the containing block when that fits.
+    auto shrinksIntoSpace = is<RenderTable>(box) && box.shrinkToAvoidFloats();
     struct Placement {
         BoxGeometry geometry;
         LayoutUnit spaceStart;
         LayoutUnit spaceEnd;
+        std::optional<LayoutUnit> borderBoxInlineSize { };
     };
-    auto placementIn = [&](LayoutUnit spaceStart, LayoutUnit spaceEnd) {
-        auto geometry = boxState.geometry;
-        if (!hasOwnInlineSize) {
-            auto availableInlineSize = std::min(contentBoxEnd - marginEnd, spaceEnd) - std::max(contentBoxStart + marginStart, spaceStart) + marginStart + marginEnd;
-            computeInlineSizeAndMargins(box, containingBlockState, geometry, availableInlineSize);
-        }
-        return Placement { WTF::move(geometry), spaceStart, spaceEnd };
-    };
-    // The box laid out for a placement, and its border box block size.
     auto laidOutState = std::optional<ContainingBlockState> { };
     auto laidOutContentBlockSize = std::optional<LayoutUnit> { };
+    auto laidOutGivenBorderBoxInlineSize = std::optional<LayoutUnit> { };
+    auto containingBlockBorderBoxInlineSize = std::optional<LayoutUnit> { };
+    auto placementIn = [&](LayoutUnit spaceStart, LayoutUnit spaceEnd) {
+        auto geometry = boxState.geometry;
+        auto stretchFitInlineSize = std::min(contentBoxEnd - marginEnd, spaceEnd) - std::max(contentBoxStart + marginStart, spaceStart);
+        if (!hasOwnInlineSize) {
+            computeInlineSizeAndMargins(box, containingBlockState, geometry, stretchFitInlineSize + marginStart + marginEnd);
+            return Placement { WTF::move(geometry), spaceStart, spaceEnd };
+        }
+        auto borderBoxInlineSize = std::optional<LayoutUnit> { };
+        if (shrinksIntoSpace && containingBlockBorderBoxInlineSize && stretchFitInlineSize < *containingBlockBorderBoxInlineSize)
+            borderBoxInlineSize = stretchFitInlineSize;
+        return Placement { WTF::move(geometry), spaceStart, spaceEnd, borderBoxInlineSize };
+    };
+    // The box laid out for a placement, and its border box block size.
     auto layoutFor = [&](const Placement& placement) {
-        if (laidOutState && (hasOwnInlineSize || laidOutState->geometry.borderBoxWidth() == placement.geometry.borderBoxWidth()))
+        auto hasInlineSize = [&] {
+            if (hasOwnInlineSize)
+                return laidOutGivenBorderBoxInlineSize == placement.borderBoxInlineSize;
+            return laidOutState->geometry.borderBoxWidth() == placement.geometry.borderBoxWidth();
+        };
+        if (laidOutState && hasInlineSize())
             return laidOutState->geometry.borderBoxHeight();
         auto state = containingBlockStateFor(box, placement.geometry, containingBlockState);
         state.margins = boxState.margins;
-        laidOutContentBlockSize = layoutContent(state).first;
+        laidOutContentBlockSize = layoutContent(state, placement.borderBoxInlineSize).first;
+        laidOutGivenBorderBoxInlineSize = placement.borderBoxInlineSize;
         if (!state.isLaidOutThroughRenderTree)
             computeBlockSize(box, laidOutContentBlockSize.value_or(0_lu), containingBlockState, state.geometry);
         laidOutState = WTF::move(state);
@@ -740,6 +756,11 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
         }
         return bottom;
     };
+
+    if (shrinksIntoSpace) {
+        layoutFor(placementIn(contentBoxStart, contentBoxEnd));
+        containingBlockBorderBoxInlineSize = laidOutState->geometry.borderBoxWidth();
+    }
 
     auto borderBoxLogicalTop = hypotheticalBorderBoxLogicalTop;
     // Its clear comes first (RenderBlockFlow::getClearDelta).
@@ -795,14 +816,14 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     // of it replaces.
     auto resultBoxCount = result.boxes.size();
     auto resultOutOfFlowBoxCount = result.outOfFlowBoxes.size();
-    auto layoutContent = [&](ContainingBlockState& state) {
+    auto layoutContent = [&](ContainingBlockState& state, std::optional<LayoutUnit> borderBoxInlineSize) {
         result.boxes.shrink(resultBoxCount);
         result.outOfFlowBoxes.shrink(resultOutOfFlowBoxCount);
         auto contentBlockSize = std::optional<LayoutUnit> { };
         auto legendMarginBefore = LayoutUnit { };
         CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
         if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root)) {
-            legendMarginBefore = layoutIndependentFormattingContextThroughRenderTree(box, state);
+            legendMarginBefore = layoutIndependentFormattingContextThroughRenderTree(box, state, borderBoxInlineSize);
             contentBlockSize = state.geometry.contentBoxHeight();
         } else if (!root->firstChild())
             contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box);
@@ -842,7 +863,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
         resolveBorderBoxLogicalTops(rootState);
     }
     if (!isLaidOut)
-        std::tie(contentBlockSize, legendMarginBefore) = layoutContent(rootState);
+        std::tie(contentBlockSize, legendMarginBefore) = layoutContent(rootState, { });
 
     if (stepSize) {
         auto& geometry = rootState.geometry;
@@ -880,9 +901,10 @@ static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMod
 
 // Everything that belongs to the block formatting context is computed here: the margins, the position, the containing block and, for a box
 // whose inline size its own formatting context does not decide, the stretch-fit inline size. The rest comes back from the box's own formatting
-// context, laid out through the render tree, which lays out its content: the inline size it decides (decidesItsOwnInlineSize), the block size,
-// border and padding, and what it adds to the block-start margin, which collapses with the others once the box is laid out.
-LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState)
+// context, laid out through the render tree, which lays out its content: the inline size it decides (decidesItsOwnInlineSize), unless it is
+// a table that shrinks into the space beside floats (placeBesideFloats), the block size, border and padding, and what it adds to the
+// block-start margin, which collapses with the others once the box is laid out.
+LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState, std::optional<LayoutUnit> borderBoxInlineSize)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     auto containingBlockInlineSize = containingBlockState.inlineRange.size();
@@ -898,7 +920,7 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
         .containingBlockInlineSize = containingBlockInlineSize,
         .containingBlockBlockSize = containingBlockBlockSize(),
         .relayoutChildren = containingBlockState.relayoutChildren,
-        .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? std::nullopt : std::optional { geometry.borderBoxWidth() }
+        .borderBoxInlineSize = decidesItsOwnInlineSize(box, root().writingMode()) ? borderBoxInlineSize : std::optional { geometry.borderBoxWidth() }
     };
     auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints);
 
