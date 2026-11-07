@@ -565,6 +565,9 @@ media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Pass ]
 media/media-source
 http/tests/media/media-source [ Skip ]
 imported/w3c/web-platform-tests/media-source/ [ Skip ]
+# ManagedMediaSource is supported on iOS.
+imported/w3c/web-platform-tests/media-source/managed [ Pass ]
+imported/w3c/web-platform-tests/media-source/dedicated-worker/managed [ Pass ]
 fast/history/page-cache-media-source-closed-2.html [ Skip ]
 fast/history/page-cache-media-source-closed.html [ Skip ]
 fast/history/page-cache-media-source-opened.html [ Skip ]

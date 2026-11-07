@@ -1,0 +1,3 @@
+
+PASS ManagedMediaSource constructed in a dedicated worker fires startstreaming and bufferedchange, and plays
+
