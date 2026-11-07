@@ -69,6 +69,8 @@ NODELETE static bool shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules
 
 NODELETE static bool shouldDirtyAllStyle(const StyleSheetContents& sheet)
 {
+    if (!sheet.layerRulesBeforeImportRules().isEmpty())
+        return true;
     for (auto& import : sheet.importRules()) {
         if (!import->styleSheet())
             continue;

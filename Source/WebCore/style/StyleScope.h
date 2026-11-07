@@ -191,7 +191,7 @@ private:
     };
     struct StyleSheetChange {
         ResolverUpdateType resolverUpdateType;
-        Vector<Ref<StyleSheetContents>> addedSheets { };
+        Vector<Ref<StyleSheetContents>> changedSheets { };
     };
     StyleSheetChange analyzeStyleSheetChange(const Vector<Ref<CSSStyleSheet>>& newStylesheets);
     void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
