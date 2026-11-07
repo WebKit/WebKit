@@ -1179,7 +1179,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Debugger::Location>>> Inspec
 
 void InspectorDebuggerAgent::schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
 {
-    if (m_javaScriptPauseScheduled)
+    if (m_javaScriptPauseScheduled && m_debugger.isPauseAtNextOpportunityScheduled())
         return;
 
     m_javaScriptPauseScheduled = true;
@@ -2088,6 +2088,11 @@ void InspectorDebuggerAgent::didContinue()
 
     if (m_conditionToDispatchResumed == ShouldDispatchResumed::WhenContinued)
         m_frontendDispatcher->resumed();
+}
+
+void InspectorDebuggerAgent::didNotPauseForSpecialBreakpoint()
+{
+    clearPauseDetails();
 }
 
 void InspectorDebuggerAgent::didDeferBreakpointPause(JSC::BreakpointID breakpointId)

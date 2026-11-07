@@ -238,6 +238,7 @@ public:
         virtual void breakpointActionLog(JSGlobalObject*, const String& /* data */) { }
         virtual void breakpointActionSound(BreakpointActionID) { }
         virtual void breakpointActionProbe(JSGlobalObject*, BreakpointActionID, unsigned /* batchId */, unsigned /* sampleId */, JSValue /* result */) { }
+        virtual void didNotPauseForSpecialBreakpoint() { }
         virtual void didDeferBreakpointPause(BreakpointID) { }
     };
 
