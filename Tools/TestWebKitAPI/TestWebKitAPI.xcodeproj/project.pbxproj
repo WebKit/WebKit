@@ -624,6 +624,7 @@
 				WebKit/WKWebView/SiteIsolationTextPreviewTests.swift,
 				WebKit/WKWebView/SiteIsolationUIDelegateTests.swift,
 				WebKit/WKWebView/SiteIsolationUserAgentTests.swift,
+				WebKit/WKWebView/SiteIsolationViewportSegmentsTests.swift,
 				WebKit/WKWebView/SiteIsolationWebExtensionTests.swift,
 				WebKit/WKWebView/TextExtractionTests.swift,
 				WebKit/WKWebView/TextFragments.swift,

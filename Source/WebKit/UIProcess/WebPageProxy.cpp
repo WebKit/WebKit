@@ -16722,7 +16722,9 @@ WebPageCreationParameters WebPageProxy::creationParametersForProvisionalPage(Web
 WebPageCreationParameters WebPageProxy::creationParametersForRemotePage(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RemotePageParameters&& remotePageParameters)
 {
     constexpr bool isProcessSwap = true;
-    return creationParameters(process, drawingArea, m_mainFrame->frameID(), WTF::move(remotePageParameters), isProcessSwap);
+    auto parameters = creationParameters(process, drawingArea, m_mainFrame->frameID(), WTF::move(remotePageParameters), isProcessSwap);
+    parameters.viewportSegments = { };
+    return parameters;
 }
 
 void WebPageProxy::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
