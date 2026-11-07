@@ -40,7 +40,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WritingMode.h"
 
-#include <wtf/OrderedHashSet.h>
+#include <wtf/BitVector.h>
 
 namespace WebCore {
 
@@ -261,7 +261,7 @@ FlexFormattingContext::SizeList FlexFormattingContext::computeMainSizeForFlexIte
 
 void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLayoutItem> lineItems, std::span<const FlexBaseAndHypotheticalMainSize> lineFlexBaseAndHypotheticalMainSizeList, std::span<LayoutUnit> flexItemsMainSizeList, LayoutUnit flexContainerInnerMainSize)
 {
-    auto nonFrozenSet = OrderedHashSet<size_t> { };
+    auto nonFrozenSet = BitVector { lineItems.size() };
     auto availableMainSpaceForLineContent = availableSpaceExcludingGaps(flexContainerInnerMainSize, lineItems.size(), FlexFormattingUtils::GapType::BetweenItems);
 
     // 9.7 (1) Determine the used flex factor: if the summed outer hypothetical main sizes are less than the flex
@@ -291,7 +291,7 @@ void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLay
             flexItemsMainSizeList[index] = sizing.hypotheticalMainSize;
             continue;
         }
-        nonFrozenSet.add(index);
+        nonFrozenSet.quickSet(index);
     }
 
     // 9.7 (3) Calculate the initial free space: the container's inner main size minus the summed outer sizes of its
@@ -299,7 +299,7 @@ void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLay
     auto computedFreeSpace = [&] {
         auto lineContentMainSize = LayoutUnit { };
         for (size_t index = 0; index < lineItems.size(); ++index)
-            lineContentMainSize += lineItems[index].outerMainSize(nonFrozenSet.contains(index) ? lineFlexBaseAndHypotheticalMainSizeList[index].flexBase : flexItemsMainSizeList[index]);
+            lineContentMainSize += lineItems[index].outerMainSize(nonFrozenSet.quickGet(index) ? lineFlexBaseAndHypotheticalMainSizeList[index].flexBase : flexItemsMainSizeList[index]);
         return availableMainSpaceForLineContent - lineContentMainSize;
     };
     auto initialFreeSpace = computedFreeSpace();
@@ -372,13 +372,13 @@ void FlexFormattingContext::resolveFlexibleLengthsForLineItems(std::span<FlexLay
         // Freeze over-flexed items: zero total violation freezes all remaining items, a positive one freezes the min
         // violations, a negative one the max violations.
         if (!totalViolation)
-            nonFrozenSet.clear();
+            nonFrozenSet.clearAll();
         else if (totalViolation > 0) {
             for (auto index : minimumViolationList)
-                nonFrozenSet.remove(index);
+                nonFrozenSet.quickClear(index);
         } else {
             for (auto index : maximumViolationList)
-                nonFrozenSet.remove(index);
+                nonFrozenSet.quickClear(index);
         }
     }
 }
