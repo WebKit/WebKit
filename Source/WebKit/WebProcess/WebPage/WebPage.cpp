@@ -5824,16 +5824,16 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
-
-    protect(WebProcess::singleton().parentProcessConnection())->setIgnoreInvalidMessageForTesting();
-    assertIsMainRunLoop();
-    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
-        gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
+    if ((m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey()))) {
+        protect(WebProcess::singleton().parentProcessConnection())->setIgnoreInvalidMessageForTesting();
+        assertIsMainRunLoop();
+        if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+            gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #if ENABLE(MODEL_PROCESS)
-    if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
-        modelProcessConnection->connection().setIgnoreInvalidMessageForTesting();
+        if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
+            modelProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #endif // ENABLE(MODEL_PROCESS)
+    }
 #endif // ENABLE(IPC_TESTING_API)
 
 #if ENABLE(PDF_PLUGIN)
