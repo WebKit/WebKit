@@ -183,6 +183,10 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
         m_internalContext->clearDropShadow();
 
     m_internalContext->setTextDrawingMode(contextState.textDrawingMode());
+
+    // Core Text passes the alpha as the opacity of the transparency layers it begins, for example for
+    // color glyphs with a shadow.
+    m_internalContext->setAlpha(contextState.alpha());
 }
 
 void DrawGlyphsRecorder::recordInitialColors()
