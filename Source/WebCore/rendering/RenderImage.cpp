@@ -51,6 +51,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
@@ -132,12 +133,13 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
         isFirstOnLine = true;
         isLastOnLine = true;
         lineExtentRect = imageRect;
+        auto containingBlockRect = containingBlock->borderBoxRectInContainer();
         if (containingBlock->isHorizontalWritingMode()) {
-            lineExtentRect.setX(containingBlock->x());
-            lineExtentRect.setWidth(containingBlock->borderBoxWidth());
+            lineExtentRect.setX(containingBlockRect.x());
+            lineExtentRect.setWidth(containingBlockRect.width());
         } else {
-            lineExtentRect.setY(containingBlock->y());
-            lineExtentRect.setHeight(containingBlock->borderBoxHeight());
+            lineExtentRect.setY(containingBlockRect.y());
+            lineExtentRect.setHeight(containingBlockRect.height());
         }
     } else {
         auto lineRect = run->lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes();
@@ -146,9 +148,11 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
         imageRect = IntRect { 0,  selectionTop, logicalWidth(), selectionHeight };
         isFirstOnLine = !run->nextLineLeftwardOnLine();
         isLastOnLine = !run->nextLineRightwardOnLine();
-        LogicalSelectionOffsetCaches cache(*containingBlock);
-        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
-        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
+        // An image on a line is laid out by the block that establishes its inline formatting context.
+        CheckedRef formattingContextRoot = *LayoutIntegration::LineLayout::blockContainer(*this);
+        LogicalSelectionOffsetCaches cache(formattingContextRoot);
+        LayoutUnit leftOffset = formattingContextRoot->logicalLeftSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
+        LayoutUnit rightOffset = formattingContextRoot->logicalRightSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
         lineExtentRect = IntRect(leftOffset - logicalLeft(), imageRect.y(), rightOffset - leftOffset, imageRect.height());
         if (!run->isHorizontal()) {
             imageRect = imageRect.transposedRect();

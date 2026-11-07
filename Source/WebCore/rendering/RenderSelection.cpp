@@ -80,10 +80,14 @@ static bool isValidRendererForSelection(const RenderObject& renderer, const Rend
     return renderer.canBeSelectionLeaf() || &renderer == selection.start() || &renderer == selection.end();
 }
 
+// Line and margin gaps are filled by the blocks in the containing block chain (an inline box containing block has none).
 static CheckedPtr<RenderBlock> containingBlockBelowView(const RenderObject& renderer)
 {
-    CheckedPtr containingBlock = renderer.containingBlock();
-    return is<RenderView>(containingBlock) ? nullptr : containingBlock;
+    for (CheckedPtr<RenderBoxModelObject> containingBlock = renderer.containingBlock(); containingBlock && !is<RenderView>(*containingBlock); containingBlock = containingBlock->containingBlock()) {
+        if (CheckedPtr block = dynamicDowncast<RenderBlock>(*containingBlock))
+            return block;
+    }
+    return nullptr;
 }
 
 static SelectionContext collectSelectionData(const RenderRange& selection, bool repaintDifference)
@@ -185,15 +189,13 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
             renderers.set(*start, makeUnique<RenderSelectionGeometry>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
             LOG_WITH_STREAM(Selection, stream << " added start " << *start << " with rect " << renderers.get(*start)->rect());
 
-            CheckedPtr block = start->containingBlock();
-            while (block && !is<RenderView>(*block)) {
+            for (CheckedPtr block = containingBlockBelowView(*start); block; block = containingBlockBelowView(*block)) {
                 LOG_WITH_STREAM(Selection, stream << " added block " << *block);
                 auto& blockSelectionGeometry = renderers.add(*block, nullptr).iterator->value;
                 if (blockSelectionGeometry)
                     break;
                 blockSelectionGeometry = makeUnique<RenderSelectionGeometry>(*block, clipToVisibleContent == ClipToVisibleContent::Yes);
                 LOG_WITH_STREAM(Selection, stream << " added containing block " << *block << " with rect " << blockSelectionGeometry->rect());
-                block = block->containingBlock();
             }
         }
         start = selectionIterator.next();
@@ -272,13 +274,11 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
                 m_selectionGeometryGatherer.setTextOnly(false);
 #endif
             newSelectedRenderers.set(*currentRenderer, WTF::move(selectionGeometry));
-            CheckedPtr containingBlock = currentRenderer->containingBlock();
-            while (containingBlock && !is<RenderView>(*containingBlock)) {
-                auto& blockSelectionGeometry = newSelectedBlocks.add(*containingBlock, nullptr).iterator->value;
+            for (CheckedPtr block = containingBlockBelowView(*currentRenderer); block; block = containingBlockBelowView(*block)) {
+                auto& blockSelectionGeometry = newSelectedBlocks.add(*block, nullptr).iterator->value;
                 if (blockSelectionGeometry)
                     break;
-                blockSelectionGeometry = makeUnique<RenderBlockSelectionGeometry>(*containingBlock);
-                containingBlock = containingBlock->containingBlock();
+                blockSelectionGeometry = makeUnique<RenderBlockSelectionGeometry>(*block);
 #if ENABLE(SERVICE_CONTROLS)
                 m_selectionGeometryGatherer.addGapRects(protect(blockSelectionGeometry->repaintContainer()).get(), blockSelectionGeometry->rects());
 #endif
