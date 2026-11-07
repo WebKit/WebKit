@@ -810,7 +810,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         frameFromIdentifier(parameters.mainFrameOpenerIdentifier),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
         WebProcess::singleton().broadcastChannelRegistry(),
-        makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt()),
+        makeUniqueRef<WebStorageProvider>(parameters.webPageProxyIdentifier, WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt()),
         WebModelPlayerProvider::create(*this),
         WebProcess::singleton().badgeClient(),
         m_historyItemClient.copyRef(),

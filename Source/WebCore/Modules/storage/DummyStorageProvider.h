@@ -84,6 +84,11 @@ private:
         return originDirectory;
     }
 
+    String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&, std::optional<FrameIdentifier>) final
+    {
+        return emptyString();
+    }
+
     void setMediaKeysStorageDirectory(const String& directory) final
     {
         m_mediaKeysStorageDirectory = directory;
