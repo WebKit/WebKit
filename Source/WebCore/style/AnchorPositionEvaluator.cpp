@@ -51,6 +51,7 @@
 #include "StyleableInlines.h"
 #include "WritingMode.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -272,6 +273,8 @@ void AnchorScrollAdjuster::removeMatchingSnapshots(const AnchorScrollAdjuster& c
 }
 
 namespace Style {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(AnchorPositionedToAnchorEntry);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 

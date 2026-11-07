@@ -38,9 +38,12 @@
 #include "StyleKeyword+Serialization.h"
 #include "StylePropertiesInlines.h"
 #include "StyleValueTypes+CSSValueConversion.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(PositionTryFallback);
 
 bool PositionTryFallback::PositionArea::operator==(const PositionTryFallback::PositionArea& other) const
 {

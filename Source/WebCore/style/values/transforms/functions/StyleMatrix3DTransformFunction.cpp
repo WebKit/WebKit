@@ -32,9 +32,12 @@
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Matrix3DTransformFunction);
 
 Matrix3DTransformFunction::Matrix3DTransformFunction(const TransformationMatrix& matrix)
     : TransformFunctionBase(TransformFunctionBase::Type::Matrix3D)

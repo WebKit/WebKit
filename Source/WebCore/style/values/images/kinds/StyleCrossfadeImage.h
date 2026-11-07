@@ -33,6 +33,7 @@
 #include "StyleCrossfade.h"
 #include "StyleGeneratedImage.h"
 #include "StylePrimitiveNumericTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ struct BlendingContext;
 namespace Style {
 
 class CrossfadeImage final : public GeneratedImage, private CachedImageClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CrossfadeImage);
+    WTF_MAKE_TZONE_ALLOCATED(CrossfadeImage);
 public:
     static Ref<CrossfadeImage> create(CrossfadeFunction&&);
     static Ref<CrossfadeImage> create(WebkitCrossfadeFunction&&);

@@ -30,9 +30,12 @@
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RotateTransformFunction);
 
 RotateTransformFunction::RotateTransformFunction(Number<> x, Number<> y, Number<> z, Angle<> angle, TransformFunctionBase::Type type)
     : TransformFunctionBase(type)

@@ -36,11 +36,14 @@
 #include "StyleCalculationTree+Evaluation.h"
 #include "StyleZoomPrimitives.h"
 #include <cmath>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
 namespace Calculation {
+
+WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(Value);
 
 Ref<Value> Value::create(Tree&& tree)
 {

@@ -28,6 +28,7 @@
 #include <WebCore/StyleCalculationTree.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Style {
@@ -36,7 +37,7 @@ namespace Style {
 // that is when `size` resolves, and because the basis decides how the value behaves for everything
 // other than resolving the size.
 class CalcSizeValue : public RefCounted<CalcSizeValue> {
-    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(CalcSizeValue);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(CalcSizeValue);
 public:
     // The `-webkit-min-content` family normalizes to the unprefixed keyword during conversion, so
     // only the canonical spellings appear here.

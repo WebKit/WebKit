@@ -33,9 +33,12 @@
 #include "ImageBuffer.h"
 #include "RenderElement.h"
 #include "StyleColorResolver.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ColorImage);
 
 ColorImage::ColorImage(Color&& color)
     : GeneratedImage { Type::ColorImage }

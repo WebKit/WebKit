@@ -32,10 +32,13 @@
 #include "StyleCalculationTree+Copy.h"
 #include "StyleCalculationTree+Evaluation.h"
 #include <cmath>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(CalcSizeValue);
 
 Ref<CalcSizeValue> CalcSizeValue::create(Basis&& basis, Calculation::Tree&& calculation, bool basisHasPercentage, bool hasPercentage)
 {

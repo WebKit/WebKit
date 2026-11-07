@@ -29,6 +29,7 @@
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
@@ -80,6 +81,7 @@ struct DynamicMediaQueryEvaluationChanges {
 };
 
 class RuleSet : public ThreadSafeRefCounted<RuleSet> {
+    WTF_MAKE_TZONE_ALLOCATED(RuleSet);
     WTF_MAKE_NONCOPYABLE(RuleSet);
 public:
     static Ref<RuleSet> create() { return adoptRef(*new RuleSet); }
