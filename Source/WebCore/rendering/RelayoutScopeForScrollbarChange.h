@@ -44,7 +44,7 @@ public:
 
     RelayoutScopeForScrollbarChange(const RelayoutScopeForScrollbarChange&) = delete;
     RelayoutScopeForScrollbarChange& operator=(const RelayoutScopeForScrollbarChange&) = delete;
-    RelayoutScopeForScrollbarChange(RelayoutScopeForScrollbarChange&&) = default;
+    RelayoutScopeForScrollbarChange(RelayoutScopeForScrollbarChange&&) = delete;
 
 private:
     const CheckedRef<RenderBlock> m_renderBlock;

@@ -1356,7 +1356,7 @@ std::optional<ScrollbarUpdateScope> RenderLayerScrollableArea::updateScrollInfoA
         m_layer.updateSelfPaintingLayer();
     }
 
-    return ScrollbarUpdateScope { *this, originalScrollPosition, autoScrollbarChanges, hasHorizontalOverflow ? HasHorizontalOverflow::Yes : HasHorizontalOverflow::No, hasVerticalOverflow ? HasVerticalOverflow::Yes : HasVerticalOverflow::No };
+    return std::optional<ScrollbarUpdateScope> { std::in_place, *this, originalScrollPosition, autoScrollbarChanges, hasHorizontalOverflow ? HasHorizontalOverflow::Yes : HasHorizontalOverflow::No, hasVerticalOverflow ? HasVerticalOverflow::Yes : HasVerticalOverflow::No };
 }
 
 void RenderLayerScrollableArea::updateScrollbarSteps()
