@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.highlightSelector");
+
+    let pageTarget = WI.assumingMainTarget();
+    let iframeCell = null;
+
+    async function highlightRectCount() {
+        return InspectorTest.evaluateInPage("window.internals.inspectorHighlightRects().length");
+    }
+
+    function highlightConfig() {
+        return {
+            contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+            paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+            borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+            marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+        };
+    }
+
+    // Resolves to an error, or null when the command succeeded.
+    async function highlightSelector(selectorString, frameId) {
+        try {
+            await pageTarget.DOMAgent.highlightSelector.invoke({selectorString, frameId, highlightConfig: highlightConfig()});
+            return null;
+        } catch (error) {
+            return error.message ?? String(error);
+        }
+    }
+
+    async function hideHighlight() {
+        WI.domManager.hideDOMNodeHighlight();
+        await pageTarget.DOMAgent.hideHighlight();
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Resolve a grid cell in the same-origin iframe through the page target.",
+        async test() {
+            await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+
+            let {result} = await pageTarget.RuntimeAgent.evaluate.invoke({expression: `document.querySelector("iframe").contentDocument.querySelector("#grid div")`, objectGroup: "test"});
+            let {nodeId} = await pageTarget.DOMAgent.requestNode(result.objectId);
+            await pageTarget.RuntimeAgent.releaseObjectGroup("test");
+
+            iframeCell = WI.domManager.nodeForId(nodeId);
+            InspectorTest.expectNotNull(iframeCell, "Should resolve a grid cell in the iframe.");
+            InspectorTest.expectNull(iframeCell.owningTarget, "The iframe's grid cell should belong to the page target.");
+            InspectorTest.expectNotNull(iframeCell.ownerDocument.frameIdentifier, "The iframe's document should have a frame identifier.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "NoHighlightYet",
+        description: "Should not be a highlight yet.",
+        async test() {
+            InspectorTest.expectEqual(await highlightRectCount(), 0, "Should not be a highlight yet.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "MainFrameByDefault",
+        description: "Without a frameId, the main frame's document should be searched.",
+        async test() {
+            InspectorTest.expectNull(await highlightSelector("#grid div"), "Should accept the selector.");
+            InspectorTest.expectEqual(await highlightRectCount(), 8, "Should highlight the two cells of the main frame's grid.");
+            await hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "ChildFrameById",
+        description: "With the iframe's frameId, only the iframe's document should be searched.",
+        async test() {
+            InspectorTest.expectNull(await highlightSelector("#grid div", iframeCell.ownerDocument.frameIdentifier), "Should accept the selector.");
+            InspectorTest.expectEqual(await highlightRectCount(), 24, "Should highlight the six cells of the iframe's grid.");
+            await hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "PseudoElement",
+        description: "A selector for a pseudo-element should highlight the pseudo-element.",
+        async test() {
+            InspectorTest.expectNull(await highlightSelector("#grid div::before", iframeCell.ownerDocument.frameIdentifier), "Should accept the selector.");
+            InspectorTest.expectEqual(await highlightRectCount(), 4, "Should highlight the one ::before pseudo-element.");
+            await hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvalidSelector",
+        description: "A selector that does not parse should be accepted and highlight nothing.",
+        async test() {
+            InspectorTest.expectNull(await highlightSelector("#grid div[", iframeCell.ownerDocument.frameIdentifier), "Should accept the selector.");
+            InspectorTest.expectEqual(await highlightRectCount(), 0, "Should not highlight anything.");
+            await hideHighlight();
+        }
+    });
+
+    suite.addTestCase({
+        name: "UnknownFrameId",
+        description: "An unknown frameId should be rejected.",
+        async test() {
+            InspectorTest.expectEqual(await highlightSelector("#grid div", "bogus"), "Missing frame for given frameId", "Should reject an unknown frameId.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "StylesHoverUsesPageTarget",
+        description: "WI.DOMManager.highlightSelector should search the document of the given node.",
+        async test() {
+            WI.domManager.highlightSelector("#grid div", iframeCell);
+            InspectorTest.expectEqual(await highlightRectCount(), 24, "Should highlight the six cells of the iframe's grid.");
+            await hideHighlight();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    #grid { display: grid; grid-template-columns: repeat(2, 40px); grid-template-rows: 30px; gap: 10px; }
+    #grid div { background: lightgreen; }
+</style>
+</head>
+<body onload="runTest()">
+<p>Tests for the DOM.highlightSelector command.</p>
+<div id="grid"><div></div><div></div></div>
+<iframe src="resources/highlight-selector-frame.html" width="300" height="200"></iframe>
+</body>
+</html>

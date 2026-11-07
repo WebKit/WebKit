@@ -98,10 +98,11 @@ using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameDOMAgent);
 
 // FIXME: <https://webkit.org/b/298980> Extract shared tree-building and node-binding logic into a base class shared with InspectorDOMAgent.
-// The highlight and layout-overlay commands below (innerHighlightNode, innerHighlightNodeList,
-// innerHighlightQuad, highlightRect, highlightQuad, showGridOverlay, hideGridOverlay, showFlexOverlay,
-// hideFlexOverlay) are also near-verbatim clones of the page agent's, and belong in that same base
-// class. The config parsing they share already moved to InspectorOverlayConfigParser.
+// The highlight and layout-overlay commands below (innerHighlightSelector, innerHighlightNode,
+// innerHighlightNodeList, innerHighlightQuad, highlightRect, highlightQuad, showGridOverlay,
+// hideGridOverlay, showFlexOverlay, hideFlexOverlay) are also near-verbatim clones of the page
+// agent's, and belong in that same base class. The config parsing they share already moved to
+// InspectorOverlayConfigParser.
 
 static const size_t frameMaxTextSize = 10000;
 static const char16_t frameHorizontalEllipsisUTF16[] = { horizontalEllipsis, 0 };
@@ -1732,6 +1733,60 @@ Inspector::CommandResult<void> FrameDOMAgent::highlightQuad(Ref<JSON::Array>&& q
         return makeUnexpected("Unexpected invalid quad"_s);
 
     innerHighlightQuad(WTF::move(quad), WTF::move(color), WTF::move(outlineColor), WTF::move(usePageCoordinates));
+
+    return { };
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String& selectorString, const String& frameId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
+{
+    return innerHighlightSelector(selectorString, frameId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
+}
+
+#else
+
+Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String& selectorString, const String& frameId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
+{
+    return innerHighlightSelector(selectorString, frameId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), WTF::move(showRulers));
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+Inspector::CommandResult<void> FrameDOMAgent::innerHighlightSelector(const String& selectorString, const String& frameId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, std::optional<bool>&& showRulers)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    auto highlightConfig { highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject)) };
+    if (!highlightConfig)
+        return makeUnexpected(errorString);
+
+    bool providedGridOverlayConfig { !!gridOverlayInspectorObject };
+    auto gridOverlayConfig { gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject)) };
+    if (providedGridOverlayConfig && !gridOverlayConfig)
+        return makeUnexpected(errorString);
+
+    bool providedFlexOverlayConfig { !!flexOverlayInspectorObject };
+    auto flexOverlayConfig { flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject)) };
+    if (providedFlexOverlayConfig && !flexOverlayConfig)
+        return makeUnexpected(errorString);
+
+    // Compare the FrameIdentifier only: the hosting process in a frame ID can be stale.
+    if (!frameId.isEmpty()) {
+        auto parsedFrameId { IdentifierRegistry::parseProtocolFrameId(frameId) };
+        if (!parsedFrameId || parsedFrameId->second != m_inspectedFrame->frameID())
+            return makeUnexpected("Missing frame for given frameId"_s);
+    }
+
+    RefPtr document { m_document };
+    if (!document)
+        return makeUnexpected("Missing document of frame for given frameId"_s);
+
+    auto nodes { InspectorDOMAgent::nodesMatchingSelectorForHighlight(*document, selectorString) };
+    if (!nodes)
+        return { };
+
+    protect(overlay())->highlightNodeList(StaticNodeList::create(WTF::move(*nodes)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }

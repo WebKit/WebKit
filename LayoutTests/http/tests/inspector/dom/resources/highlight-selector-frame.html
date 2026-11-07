@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    #grid { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: 36px 36px; gap: 10px; }
+    #grid div { background: lightblue; }
+    #grid div:first-child::before { content: ""; display: block; width: 10px; height: 10px; }
+</style>
+</head>
+<body>
+<div id="grid"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</body>
+</html>

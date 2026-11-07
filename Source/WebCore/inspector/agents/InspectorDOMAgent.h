@@ -114,6 +114,8 @@ public:
     static Node* scriptValueAsNode(JSC::JSValue);
     static JSC::JSValue nodeAsScriptValue(JSC::JSGlobalObject&, Node*);
 
+    static std::optional<Vector<Ref<Node>>> nodesMatchingSelectorForHighlight(Document&, const String& selectorString);
+
     // InspectorAgentBase
     void didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);

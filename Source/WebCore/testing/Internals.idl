@@ -666,6 +666,7 @@ enum LayerType {
     unsigned long inspectorGridOverlayCount();
     unsigned long inspectorFlexOverlayCount();
     DOMRectList inspectorHighlightRects();
+    DOMRectList inspectorFrameHighlightRects();
     unsigned long inspectorPaintRectCount();
 
     unsigned long markerCountForNode(Node node, DOMString markerType);
