@@ -1333,9 +1333,7 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
         -DWTF_EXPORT_PRIVATE=${_dllimport_decl}
         -D__WEBGPU__
     )
-    # iOS WebKit_Internal headers gate textual #imports behind this macro that
-    # trip strict cross-module-import-visibility checks (bug 312083).
-    if (WEBKIT_SDK_IS_MACOS)
+    if (APPLE)
         list(APPEND _flags -DWK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1)
     endif ()
     # -fexperimental-bounds-safety-attributes belongs to this hash-normalizing

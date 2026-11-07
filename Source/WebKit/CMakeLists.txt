@@ -1566,13 +1566,8 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
         ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
         ${WEBKIT_DIR}/Platform/Logging.swift
         ${WEBKIT_DIR}/Shared/API/APIArray.swift
-        ${WEBKIT_DIR}/UIProcess/WebBackForwardList.swift
-    )
-endif ()
-
-if (ENABLE_BACK_FORWARD_LIST_SWIFT OR APPLE)
-    list(APPEND WebKit_SOURCES
         ${WEBKIT_DIR}/UIProcess/StdlibExtras.swift
+        ${WEBKIT_DIR}/UIProcess/WebBackForwardList.swift
     )
 endif ()
 

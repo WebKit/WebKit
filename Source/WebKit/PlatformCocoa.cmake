@@ -1376,152 +1376,6 @@ endif ()
 
 if (WEBKIT_SDK_IS_IOS_FAMILY AND NOT WEBKIT_SDK_IS_MACCATALYST)
 
-# Stripped-down WebKit_Internal modulemap for Swift, mirroring
-# PlatformMac.cmake:72-102. The full upstream modulemap at
-# Source/WebKit/Modules/Internal/module.modulemap exposes 66 submodules
-# whose headers transitively #import (textually, via "X.h") types declared
-# in WebKit_Private (e.g. _WKTapHandlingResult from WKWebViewIOS.h,
-# WKWebExtensionWindowType from WebExtensionWindow.h, WKWebExtensionController
-# from WebExtensionController.h). When clang compiles WebKit_Internal as a
-# PCM under -explicit-module-build, its strict cross-module-import-visibility
-# check (enabled by -enable-upcoming-feature MemberImportVisibility) fires
-# on those references because WebKit_Private isn't loaded into the PCM
-# compile context. Xcode dodges this by passing -fmodule-file=WebKit_Private
-# to the WebKit_Internal PCM compile (verified by inspecting Xcode's built
-# WebKit_Internal-ATDO9JP6XFZSB8E4OQUTTMYJJ.pcm), but cmake's libSwiftScan
-# dep graph doesn't add WebKit_Private as a transitive dep of WebKit_Internal
-# because the cross-module #imports are textual, not modular. Stripping the
-# WebKit_Internal modulemap to only the submodules iOS Swift sources need
-# avoids compiling the offending headers altogether. Bug 312083.
-set(WebKit_CMAKE_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules/Internal")
-file(MAKE_DIRECTORY "${WebKit_CMAKE_MODULEMAP_DIR}")
-file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
-"module WebKit_Internal [system] {
-    module WKMaterialHostingSupport {
-        requires objc
-        header \"${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.h\"
-        export *
-    }
-
-    module _WKTextExtractionInternal {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtractionInternal.h\"
-        export *
-    }
-
-    module WKUSDStageConverter {
-        requires objc
-        header \"${WEBKIT_DIR}/ModelProcess/cocoa/WKUSDStageConverter.h\"
-        export *
-    }
-
-    module WKSurroundingsEffect {
-        requires objc
-        header \"${WEBKIT_DIR}/Platform/spi/visionos/WKSurroundingsEffect.h\"
-        export *
-    }
-
-    module WKStageModeOrbitSimulator {
-        requires objc
-        header \"${WEBKIT_DIR}/Shared/Model/WKStageModeOrbitSimulator.h\"
-        export *
-    }
-
-    module WKDeferringGestureRecognizer {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.h\"
-        export *
-    }
-
-    module WKSeparatedImageView {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView.h\"
-        export *
-    }
-
-    module WKMouseDeviceObserver {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/ios/WKMouseDeviceObserver.h\"
-        export *
-    }
-
-    module WKTextEffectManager {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/Cocoa/WKTextEffectManager.h\"
-        export *
-    }
-
-    module WKBackForwardListItemInternal {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/WKBackForwardListItemInternal.h\"
-        export *
-    }
-
-    module WKScrollGeometry {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/WKScrollGeometry.h\"
-        export *
-    }
-
-    module WKWebViewInternal {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebViewInternal.h\"
-        export *
-    }
-
-    module WKWebViewIOS {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/API/ios/WKWebViewIOS.h\"
-        export *
-    }
-
-    module WKWebViewConfigurationInternal {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h\"
-        export *
-    }
-
-    module UIWindowScene_Extras {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/Cocoa/UIWindowScene+Extras.h\"
-        export *
-    }
-
-    module JavaScriptEvaluationResult {
-        requires cplusplus20
-        header \"${WEBKIT_DIR}/Shared/JavaScriptEvaluationResult.h\"
-        export *
-    }
-
-    module JavaScriptEvaluationResultCxxInteropSupport {
-        requires cplusplus23
-        header \"${WEBKIT_DIR}/Shared/JavaScriptEvaluationResultCxxInteropSupport.h\"
-        export *
-    }
-
-    module RunJavaScriptParameters {
-        requires cplusplus23
-        header \"${WEBKIT_DIR}/Shared/RunJavaScriptParameters.h\"
-        export *
-    }
-
-    module RunJavaScriptResult {
-        requires cplusplus20
-        header \"${WEBKIT_DIR}/Shared/RunJavaScriptResult.h\"
-        export *
-    }
-
-    module PhoneNumberPossessionTypes {
-        requires cplusplus20
-        header \"${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/PhoneNumberPossessionTypes.h\"
-        export *
-    }
-
-}
-")
-set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WebKit_CMAKE_MODULEMAP_DIR}")
-
-
 target_compile_options(WebKit PRIVATE ${WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG})
 target_compile_options(WebKit PRIVATE "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CMAKE_BINARY_DIR}>")
 
@@ -1538,22 +1392,12 @@ webkit_target_add_swift_options(WebKit
     # WebKit.framework/Modules/WebKit.swiftmodule/*.swiftinterface.
     -no-verify-emitted-module-interface
     # -Xcc -D/-f flags shared with PAL/WebGPU come from
-    # _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS in WebKitMacros.cmake (which also
-    # omits WK_SUPPORTS_SWIFT_OBJCXX_INTEROP on iOS — see bug 312083). Only
+    # _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS in WebKitMacros.cmake. Only
     # -I/-isystem/-fmodule-map-file (not in the module-cache hash)
     # remain per-target here.
     "-Xcc -DHAVE_CONFIG_H=1"
     "-Xcc -I${CMAKE_BINARY_DIR}"
     "-Xfrontend -disable-cross-import-overlays"
-    # Auto-import the WebKit framework's clang module (matched by -module-name
-    # WebKit) so iOS Swift sources see public WebKit Obj-C API (WKWebView,
-    # WKError, WKFrameInfo, WKURLSchemeHandler, ...) without needing an
-    # explicit `import WebKit` line. The previous full 66-submodule
-    # WebKit_Internal modulemap re-exported these types transitively via
-    # textual #imports; the stripped modulemap above doesn't, so the
-    # underlying-module-import is now required to keep WebPage.swift and
-    # friends compiling. Bug 312083.
-    -import-underlying-module
     # Use WebKit_Private modulemap as an external client; do not pin
     # -fmodule-name=WebKit (that contradicts the loaded modulemap and feeds
     # clang module-loader cycles in the Swift dep scan).
@@ -1567,6 +1411,11 @@ webkit_target_add_swift_options(WebKit
     "-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}"
     "-Xcc -isystem${CMAKE_OSX_SYSROOT}/usr/local/include"
     "-Xcc -fmodule-map-file=${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap"
+    # -Xcc paths precede WebKit's header maps. Clang does not map a header found
+    # through a header map to its module, so a WebKit_Internal #import of
+    # "_WKFormInputSession.h" or "_WKTapHandlingResult.h" is skipped once
+    # WebKit_Private is loaded, and the declaration stays hidden.
+    "-Xcc -I${WEBKIT_DIR}/UIProcess/API/Cocoa"
 )
 
 webkit_target_add_swift_options(WebKit
