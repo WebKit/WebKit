@@ -20,12 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 import sys
+from typing import TYPE_CHECKING, Any
 
 from .command import Command
 from webkitcorepy import arguments, run
 from webkitscmpy import log, local
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
 
 
 class Track(Command):
@@ -33,7 +40,7 @@ class Track(Command):
     help = 'Track a specific remote branch (or branches) in your local checkout'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'arguments', nargs='+',
             type=str, default=None,
@@ -47,7 +54,7 @@ class Track(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -72,7 +79,7 @@ class Track(Command):
 
         if 'all' in args.arguments:
             args.arguments.remove('all')
-            branches = set()
+            branches: set[str] = set()
             for remote in repository.source_remotes():
                 branches_for = repository.branches_for(remote=remote)
                 log.info("Adding {} branches from '{}'...".format(len(branches_for), remote))
@@ -81,15 +88,15 @@ class Track(Command):
             args.arguments += list(branches)
 
         for arg in args.arguments:
-            remote = repository.remote_for(arg)
-            if not remote:
+            rmt = repository.remote_for(arg)
+            if not rmt:
                 sys.stderr.write("No remote for '{}' found\n".format(arg))
                 continue
-            print("Tracking '{}' via 'remotes/{}'".format(arg, remote))
+            print("Tracking '{}' via 'remotes/{}'".format(arg, rmt))
             result = run([
                 repository.executable(), 'branch',
                 '--set-upstream-to' if arg in repository.branches_for(remote=False) else '--track',
-                arg, '{}/{}'.format(remote, arg),
+                arg, '{}/{}'.format(rmt, arg),
             ], capture_output=True, encoding='utf-8', cwd=repository.root_path)
             code += result.returncode
             if result.returncode:

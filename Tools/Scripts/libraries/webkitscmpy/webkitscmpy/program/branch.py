@@ -20,8 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 import sys
+from typing import TYPE_CHECKING, Any, Literal
 
 from .command import Command
 from .commit import Commit
@@ -29,6 +32,11 @@ from .commit import Commit
 from webkitbugspy import Tracker, bugzilla, radar
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import local, log, remote
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitbugspy import Issue
 
 
 class Branch(Command):
@@ -40,7 +48,7 @@ class Branch(Command):
     MINIMUM_TITLE_MATCH = 8
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '-i', '--issue', '-b', '--bug', '-r',
             dest='issue', type=str,
@@ -65,13 +73,13 @@ class Branch(Command):
             )
 
     @classmethod
-    def normalize_branch_name(cls, name, repository=None):
+    def normalize_branch_name(cls, name: str, repository: local.Git | None = None) -> str:
         if not name or (repository or local.Scm).DEV_BRANCHES.match(name):
             return name
         return '{}/{}'.format(cls.PR_PREFIX, name)
 
     @classmethod
-    def editable(cls, branch, repository=None):
+    def editable(cls, branch: str, repository: local.Git | None = None) -> bool:
         if (repository or local.Scm).DEV_BRANCHES.match(branch):
             return True
         if branch in (repository or local.Scm).DEFAULT_BRANCHES:
@@ -89,11 +97,11 @@ class Branch(Command):
         return True
 
     @classmethod
-    def to_branch_name(cls, value):
+    def to_branch_name(cls, value: str) -> str:
         return string_utils.encode(re.sub(r'\W+', '-', string_utils.decode(value)).strip('-'), target_type=str)
 
     @classmethod
-    def truncate_branch_name(cls, name, limit=None):
+    def truncate_branch_name(cls, name: str, limit: int | None = None) -> str:
         limit = limit or cls.MAX_BRANCH_NAME_LENGTH
         if not name or len(name) <= limit:
             return name
@@ -103,7 +111,7 @@ class Branch(Command):
         return truncated.rstrip('-')
 
     @classmethod
-    def branch_matches_issue(cls, repository, branch, issue):
+    def branch_matches_issue(cls, repository: local.Git, branch: str, issue: Issue) -> bool:
         """Check if a development branch was created to track a specific issue.
 
         Branch names may prefix the issue's title with additional context (such as the commits a
@@ -138,13 +146,13 @@ class Branch(Command):
         return False
 
     @classmethod
-    def cc_radar(cls, args, repository, issue, rdar=None):
+    def cc_radar(cls, args: Namespace, repository: local.Git, issue: Issue | None, rdar: Issue | Literal[False] | None = None) -> Issue | None:
         needs_radar = issue and not isinstance(issue.tracker, radar.Tracker) and getattr(args, 'update_issue', True)
         needs_radar = needs_radar and any([
             isinstance(tracker, radar.Tracker) and tracker.radarclient()
             for tracker in Tracker._trackers
         ])
-        needs_radar = needs_radar and not any([
+        needs_radar = needs_radar and issue and not any([
             isinstance(reference.tracker, radar.Tracker)
             for reference in issue.references
         ])
@@ -159,7 +167,8 @@ class Branch(Command):
                     if re.match(r'\d+', input):
                         input = '<rdar://problem/{}>'.format(input)
                     rdar = Tracker.from_string(input)
-            cced = issue.cc_radar(block=True, radar=rdar)
+            assert issue is not None  # needs_radar requires an issue
+            cced = issue.cc_radar(block=True, radar=rdar or None)
             if cced and rdar and cced.id != rdar.id:
                 print('Duping {} to {}'.format(cced.link, rdar.link))
                 cced.close(original=rdar)
@@ -167,23 +176,25 @@ class Branch(Command):
         return None
 
     @classmethod
-    def ensure_issue(cls, args, repository, why=None, redact=False):
+    def ensure_issue(cls, args: Namespace, repository: local.Git, why: str | None = None, redact: bool = False) -> tuple[Issue | None, int]:
         if not args.issue:
             args.issue = repository.config().get('branch.{}.bug'.format(repository.branch))
 
+        tracker = Tracker.instance()
         if not args.issue:
             prefix = f'{why}, e' if why else 'E'
             target = 'title of new issue' if getattr(args, 'update_issue', True) else 'name of new branch'
-            if Tracker.instance() and not redact and not Tracker.instance().hide_title:
-                prompt = f'{prefix}nter issue URL, {Tracker.instance().NAME} ID, or {target}: '
-            elif Tracker.instance():
+            if tracker and not redact and not tracker.hide_title:
+                prompt = f'{prefix}nter issue URL, {tracker.NAME} ID, or {target}: '
+            elif tracker:
                 prompt = f'{prefix}nter issue URL or {target}: '
             else:
                 prompt = f'{prefix}nter name of new branch: '
             args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
 
-        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact and not Tracker.instance().hide_title:
-            issue = Tracker.instance().issue(int(args.issue))
+        issue: Issue | None
+        if string_utils.decode(args.issue).isnumeric() and tracker and not redact and not tracker.hide_title:
+            issue = tracker.issue(int(args.issue))
             if issue and issue.title and not issue.redacted:
                 args.issue = cls.to_branch_name(issue.title)
         else:
@@ -193,11 +204,12 @@ class Branch(Command):
             elif issue:
                 args.issue = str(issue.id)
 
-        rdar_to_cc = None
-        if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
+        rdar_to_cc: Issue | Literal[False] | None = None
+        if not issue and tracker and getattr(args, 'update_issue', True):
             if ' ' in args.issue:
-                if getattr(Tracker.instance(), 'credentials', None):
-                    Tracker.instance().credentials(required=True, validate=True)
+                credentials = getattr(tracker, 'credentials', None)
+                if credentials:
+                    credentials(required=True, validate=True)
 
                 description = Terminal.input('Issue description: ')
                 while not description.strip():
@@ -206,7 +218,7 @@ class Branch(Command):
 
                 needs_radar = any([isinstance(tracker, radar.Tracker) and tracker.radarclient() for tracker in Tracker._trackers])
                 radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
-                if not getattr(args, 'defaults', None) and needs_radar and not isinstance(Tracker.instance(), radar.Tracker):
+                if not getattr(args, 'defaults', None) and needs_radar and not isinstance(tracker, radar.Tracker):
                     if args.cc_radar or (radar_cc_default and args.cc_radar is not False):
                         sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
                         sys.stdout.flush()
@@ -221,7 +233,8 @@ class Branch(Command):
                         rdar_to_cc, None, None,
                     )
 
-                issue = Tracker.instance().create(
+                # Tracker.create() doesn't declare 'keywords'; the Bugzilla and Radar trackers accept it, GitHub's doesn't.
+                issue = tracker.create(  # type: ignore[call-arg]
                     title=args.issue,
                     description=description,
                     project=default_proj,
@@ -250,7 +263,7 @@ class Branch(Command):
         return issue, 0
 
     @classmethod
-    def main(cls, args, repository, why=None, redact=False, target_remote='fork', name_prefix=None, **kwargs):
+    def main(cls, args: Namespace, repository: local.Svn | local.Git | None, why: str | None = None, redact: bool = False, target_remote: str = 'fork', name_prefix: str | None = None, **kwargs: Any) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'branch' on a native Git repository\n")
             return 1

@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import argparse
 import os
 import shlex
 import sys
 import tempfile
+from typing import Any, TYPE_CHECKING
 
 from .command import Command
 from .diff.html_diff import HTMLDiff
@@ -34,13 +37,19 @@ from webkitbugspy import radar, Tracker
 from webkitcorepy import arguments, run, Terminal
 from webkitscmpy import local, log
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitbugspy import Issue
+    from webkitscmpy.scm_base import ScmBase
+
 
 class Apply(Command):
     name = 'apply'
     help = 'Apply a patch attached to a bug tracker issue (for example, a proposed revert or build fix)'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'issue', type=str,
             help='Issue the patch is attached to (an issue URL, rdar://<id>, or a bare radar id)',
@@ -59,7 +68,7 @@ class Apply(Command):
         )
 
     @classmethod
-    def resolve_issue(cls, string):
+    def resolve_issue(cls, string: str) -> Issue | None:
         '''Resolve a tracker link, URL, or bare radar id to a webkitbugspy issue.'''
         issue = Tracker.from_string(string)
         if issue:
@@ -74,7 +83,7 @@ class Apply(Command):
         return None
 
     @classmethod
-    def review(cls, patch, repository, alternatives=False):
+    def review(cls, patch: Issue.Attachment, repository: local.Git | None, alternatives: bool = False) -> bool:
         '''Open the patch as a blocking HTML diff and return whether the user accepted it. Closing the
         diff or pressing Enter accepts it; answering 'n' rejects it.'''
         content = patch.contents()
@@ -89,7 +98,7 @@ class Apply(Command):
         return diff_viewer.accepted
 
     @classmethod
-    def select_patch(cls, patches, name=None, repository=None, interactive=False):
+    def select_patch(cls, patches: list[Issue.Attachment], name: str | None = None, repository: local.Git | None = None, interactive: bool = False) -> Issue.Attachment | None:
         '''Return the patch to apply, or None. With `name`, the exact match. Otherwise non-interactive
         returns the first patch; interactive shows a menu in the order the tracker lists the patches
         (skipped when there is only one), defaulting to the first, and reviews the chosen patch's diff
@@ -114,14 +123,14 @@ class Apply(Command):
                 return None
 
     @classmethod
-    def edit_commit_message(cls, repository):
+    def edit_commit_message(cls, repository: local.Git) -> None:
         '''Amend the just-applied commit without a message flag, so git opens its message in the editor.
         No --date, so the author date `git am` preserved (or --reset-author refreshed) survives.'''
         if run([repository.executable(), 'commit', '--amend'], cwd=repository.root_path).returncode:
             sys.stderr.write("Applied the patch, but couldn't open the commit message for editing; it keeps the patch's message.\n")
 
     @classmethod
-    def head(cls, repository):
+    def head(cls, repository: local.Git) -> str | None:
         '''Hash of the current HEAD, or None on an unborn branch.'''
         result = run(
             [repository.executable(), 'rev-parse', 'HEAD'],
@@ -130,7 +139,7 @@ class Apply(Command):
         return None if result.returncode else result.stdout.strip()
 
     @classmethod
-    def commit_count(cls, repository, since):
+    def commit_count(cls, repository: local.Git, since: str) -> int | None:
         '''Number of commits `since` is behind HEAD, or None when git won't say.'''
         result = run(
             [repository.executable(), 'rev-list', '--count', '{}..HEAD'.format(since)],
@@ -144,7 +153,7 @@ class Apply(Command):
             return None
 
     @classmethod
-    def reset_author(cls, repository, since=None):
+    def reset_author(cls, repository: local.Git, since: str | None = None) -> None:
         '''Re-attribute the commits `git am` just created to the local git identity, which `git am` has
         no way to do while applying them. One commit is amended in place; an mbox that produced several
         is replayed with that amend after each one, since amending only reaches the last. --reset-author
@@ -172,7 +181,7 @@ class Apply(Command):
             sys.stderr.write("Applied the patch, but couldn't reset the commit's author; it keeps the patch's author.\n")
 
     @classmethod
-    def offer_pull_request(cls, repository, **kwargs):
+    def offer_pull_request(cls, repository: local.Git, **kwargs: Any) -> None:
         '''Offer to open a pull request for the just-applied commit, running pull-request in-process
         with its default arguments. LoggingGroup supplies the shared verbosity args its main reads,
         mirroring how the top-level parser builds each sub-command.'''
@@ -184,7 +193,7 @@ class Apply(Command):
         PullRequest.main(parser.parse_args([]), repository, **kwargs)
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: ScmBase | None, **kwargs: Any) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1

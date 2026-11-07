@@ -20,12 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 import sys
+from typing import TYPE_CHECKING, Any
 
 from .command import Command
 from webkitcorepy import arguments
 from webkitscmpy import local, log, remote
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
 
 
 class Checkout(Command):
@@ -36,7 +43,7 @@ class Checkout(Command):
     PR_RE = re.compile(r'^\[?[Pp][Rr][ -](?P<number>\d+)]?$')
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
@@ -54,13 +61,14 @@ class Checkout(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Svn | local.Git | remote.Scm | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
         if not repository.path:
             sys.stderr.write('Cannot checkout on remote repository\n')
             return 1
+        assert isinstance(repository, local.Scm)  # remote repositories have no path
 
         target = args.argument[0]
         match = cls.PR_RE.match(target)
@@ -77,6 +85,7 @@ class Checkout(Command):
                 sys.stderr.write("Failed to find 'PR-{}' associated with this repository\n".format(match.group('number')))
                 return 1
 
+            assert pr.author is not None
             fork_key = (pr._metadata or {}).get('full_name', pr.author.github)
             if isinstance(rmt, remote.GitHub) and fork_key:
                 target = '{}:{}'.format(fork_key, pr.head)

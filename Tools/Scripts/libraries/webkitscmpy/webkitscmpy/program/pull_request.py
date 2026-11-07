@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import argparse
 import os
 import re
 import sys
 import time
+from typing import Any, Callable, Sequence, TYPE_CHECKING
 
 from .command import Command
 from .commit import Commit
@@ -35,6 +38,14 @@ from .squash import Squash
 from webkitbugspy import Tracker, radar
 from webkitcorepy import arguments, run, string_utils, Terminal, OutputCapture
 from webkitscmpy import local, log, remote
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitbugspy import Issue
+    # The Commit and PullRequest commands shadow webkitscmpy's Commit and PullRequest classes in this module.
+    from webkitscmpy.commit import Commit as CommitType
+    from webkitscmpy.pull_request import PullRequest as PullRequestType
 
 
 class PullRequest(Command):
@@ -47,7 +58,7 @@ class PullRequest(Command):
     UNSAFE_MERGE_LABELS = ['unsafe-merge-queue']
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         Branch.parser(parser, loggers=loggers)
         Squash.parser(parser, loggers=loggers)
         parser.add_argument(
@@ -161,7 +172,7 @@ class PullRequest(Command):
         )
 
     @classmethod
-    def create_commit(cls, args, repository, **kwargs):
+    def create_commit(cls, args: Namespace, repository: local.Git, **kwargs: Any) -> int:
         # First, find the set of files to be modified
         modified = [] if args.will_add is False else repository.modified()
         if args.will_add:
@@ -207,7 +218,7 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def title_for(cls, commits):
+    def title_for(cls, commits: Sequence[CommitType]) -> str:
         title = os.path.commonprefix([commit.message.splitlines()[0] for commit in commits if commit.message])
         if not title:
             title = commits[0].message.splitlines()[0] if commits[0].message else '???'
@@ -215,7 +226,7 @@ class PullRequest(Command):
         return title[:-5].rstrip() if title.endswith('(Part') else title
 
     @classmethod
-    def issue_from_commits(cls, repository, source_remote, branch_point):
+    def issue_from_commits(cls, repository: local.Git, source_remote: str, branch_point: CommitType) -> str | None:
         head = repository.commit(include_log=True, include_identifier=False)
         if run([
             repository.executable(), 'merge-base', '--is-ancestor',
@@ -231,7 +242,7 @@ class PullRequest(Command):
         return None
 
     @classmethod
-    def check_pull_request_args(cls, repository, args):
+    def check_pull_request_args(cls, repository: local.Git, args: Namespace) -> bool:
         if not args.technique:
             args.technique = repository.config()['webkitscmpy.pull-request']
         if args.history is None:
@@ -246,7 +257,7 @@ class PullRequest(Command):
         return True
 
     @classmethod
-    def pull_request_branch_point(cls, repository, args, name_prefix=None, **kwargs):
+    def pull_request_branch_point(cls, repository: local.Git, args: Namespace, name_prefix: str | None = None, **kwargs: Any) -> CommitType | None:
         if args.redact and len(repository.source_remotes()) <= 1:
             sys.stderr.write('No secure remotes found in the current checkout\n')
             return None
@@ -269,9 +280,13 @@ class PullRequest(Command):
                 for remote in repository.source_remotes():
                     try:
                         candidate = repository.find('remotes/{}/{}'.format(remote, branch_point.branch), include_log=False)
-                        if not remote_head or candidate.identifier > remote_head.identifier:
-                            remote_head = candidate
-                            source_remote = remote
+                        if remote_head:
+                            # Comparing a missing identifier would raise a TypeError
+                            assert candidate.identifier is not None and remote_head.identifier is not None
+                            if candidate.identifier <= remote_head.identifier:
+                                continue
+                        remote_head = candidate
+                        source_remote = remote
                     except ValueError:
                         pass
             else:
@@ -309,13 +324,17 @@ class PullRequest(Command):
                 return None
 
         elif args.issue and repository.branch != args.issue:
+            assert repository.branch is not None  # is_suitable_branch_for_pull_request() rejects a missing branch
             error = "Creating a pull-request for '{}' but we're on '{}'\n".format(args.issue, repository.branch)
             if not repository.dev_branches.match(repository.branch):
                 sys.stderr.write(error)
                 return None
 
+            issue: Issue | None
             if string_utils.decode(args.issue).isnumeric():
-                issue = Tracker.instance().issue(int(args.issue))
+                tracker = Tracker.instance()
+                assert tracker is not None  # Looking up a numeric issue already requires a tracker
+                issue = tracker.issue(int(args.issue))
             else:
                 issue = Tracker.from_string(args.issue)
             if not issue:
@@ -336,6 +355,7 @@ class PullRequest(Command):
                 if result:
                     return None
 
+                assert repository.branch is not None  # is_suitable_branch_for_pull_request() rejects a missing branch
                 cls.write_branch_variables(
                     repository, repository.branch,
                     title=getattr(args, '_title', None) or '',
@@ -361,10 +381,11 @@ class PullRequest(Command):
         return branch_point
 
     @classmethod
-    def find_existing_pull_request(cls, repository, remote, branch=None):
+    def find_existing_pull_request(cls, repository: local.Git, remote: remote.BitBucket | remote.GitHub, branch: str | None = None) -> PullRequestType | None:
         branch = branch or repository.branch
         existing_pr = None
         user, _ = remote.credentials(required=False)
+        assert remote.pull_requests is not None  # GitHub and BitBucket always create a PRGenerator
         for pr in remote.pull_requests.find(opened=None, head=branch):
             # GitHub's search apparently uses substring matching, so check for an exact match.
             if branch != pr.head:
@@ -379,14 +400,14 @@ class PullRequest(Command):
         return existing_pr
 
     @classmethod
-    def will_reopen_closed_pull_request(cls, args, repository, existing_pr):
+    def will_reopen_closed_pull_request(cls, args: Namespace, repository: local.Git, existing_pr: PullRequestType) -> bool:
         """Decide if a closed pull-request should be re-used (and re-opened) instead of creating a new one.
 
         Non-interactive invocations never re-use a closed pull-request unless '--reopen-closed' is
         explicitly passed, since a closed pull-request usually means the change it described is no
         longer the change being pushed.
         """
-        reopen_closed = getattr(args, 'reopen_closed', None)
+        reopen_closed: bool | None = getattr(args, 'reopen_closed', None)
         if reopen_closed is not None:
             return reopen_closed
         if args.defaults is not None:
@@ -397,7 +418,7 @@ class PullRequest(Command):
         ) != 'Yes'
 
     @classmethod
-    def pre_pr_checks(cls, repository, add_edits=True):
+    def pre_pr_checks(cls, repository: local.Git, add_edits: bool = True) -> bool:
         num_checks = 0
         log.info('Running pre-PR checks...')
         for key, path in repository.config().items():
@@ -450,7 +471,7 @@ class PullRequest(Command):
         return True
 
     @classmethod
-    def is_revert_commit(cls, commit):
+    def is_revert_commit(cls, commit: CommitType) -> bool:
         if not commit.message:
             return False
         msg = commit.message.split()
@@ -460,7 +481,7 @@ class PullRequest(Command):
         return title.startswith('Revert')
 
     @classmethod
-    def add_comment_to_reverted_commit_bug_tracker(cls, repository, args, pr, commit):
+    def add_comment_to_reverted_commit_bug_tracker(cls, repository: local.Git, args: Namespace, pr: PullRequestType, commit: CommitType) -> int:
         source_remote = args.remote or repository.default_remote
         rmt = repository.remote(name=source_remote)
         if not rmt:
@@ -476,7 +497,7 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def add_comment_to_issue(cls, issue, pr, commit_class=None):
+    def add_comment_to_issue(cls, issue: Issue, pr: PullRequestType, commit_class: str | None = None) -> None:
         log.info('Checking issue assignee...')
         assigned = False
         if issue.assignee != issue.tracker.me() and commit_class != 'Gardening':
@@ -485,7 +506,7 @@ class PullRequest(Command):
             print('Assigning associated issue to {}'.format(issue.tracker.me()))
         log.info('Checking for pull request link in associated issue...')
         pr_label = 'Test gardening pull request' if commit_class == 'Gardening' else 'Pull request'
-        if pr.url and not any([pr.url in comment.content for comment in issue.comments]):
+        if pr.url and not any([pr.url in (comment.content or '') for comment in issue.comments]):
             if issue.opened:
                 # Wait until the next second so Bugzilla sends a notification for the PR opening comment
                 if assigned:
@@ -496,7 +517,7 @@ class PullRequest(Command):
             print('Posted pull request link to {}'.format(issue.link))
 
     @classmethod
-    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=None):
+    def create_pull_request(cls, repository: local.Git, args: Namespace, branch_point: CommitType, callback: Callable[[PullRequestType], int] | None = None, unblock: bool = True, update_issue: bool | None = None) -> int:
         if update_issue is None:
             update_issue = getattr(args, 'update_issue', True)
         source_remote = args.remote or repository.default_remote
@@ -544,6 +565,7 @@ class PullRequest(Command):
                 default='Yes',
             )
             if response == 'Yes':
+                assert bad_commits[0].message is not None  # bad_commits only contains commits with messages
                 cleaned = re.sub(r'Reviewed by .+\n?', '', bad_commits[0].message)
                 if run([repository.executable(), 'commit', '--amend', '-m', cleaned], cwd=repository.root_path).returncode:
                     sys.stderr.write("Failed to amend commit message\n")
@@ -553,7 +575,7 @@ class PullRequest(Command):
         radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
         not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)
         radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
-        if update_issue and radar_issue and not_radar and radar_issue.tracker.radarclient() and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
+        if update_issue and radar_issue and not_radar and isinstance(radar_issue.tracker, radar.Tracker) and radar_issue.tracker.radarclient() and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
             try:
                 not_radar.cc_radar(radar=radar_issue)
             except ValueError:
@@ -643,8 +665,9 @@ class PullRequest(Command):
         else:
             target = source_remote
 
-        existing_pr = None
+        existing_pr: PullRequestType | None = None
         if remote_repo.pull_requests:
+            assert isinstance(remote_repo, (remote.GitHub, remote.BitBucket))  # Only GitHub and BitBucket generate pull-requests
             user, _ = remote_repo.credentials(required=False)
 
             log.info("Checking if PR already exists...")
@@ -666,13 +689,14 @@ class PullRequest(Command):
                     return 1
                 existing_pr = None
 
-            if user and existing_pr and isinstance(remote_repo, remote.GitHub) and existing_pr._metadata.get('full_name'):
+            if user and existing_pr and isinstance(remote_repo, remote.GitHub) and existing_pr._metadata and existing_pr._metadata.get('full_name'):
                 pr_target = existing_pr._metadata['full_name']
                 if not pr_target.startswith('{}/'.format(user)):
                     target, repo_name = pr_target.split('/')
                     if '-' in repo_name:
                         target = '{}-{}'.format(target, repo_name.split('-')[-1])
                     base_url = repository.url(name=source_remote)
+                    assert base_url is not None  # The checks below already require a URL
                     if '://' in base_url:
                         base_url = '/'.join(base_url.split('/')[:3]) + '/'
                     else:
@@ -690,7 +714,7 @@ class PullRequest(Command):
             pr_issue = existing_pr._metadata['issue']
             labels = pr_issue.labels
             did_change = False
-            labels_to_add = []
+            labels_to_add: list[str] = []
             labels_to_remove = cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS
             if unblock:
                 labels_to_remove.append(cls.BLOCKED_LABEL)
@@ -759,9 +783,9 @@ class PullRequest(Command):
 
         if args.history or (target != source_remote and args.history is None and args.technique == 'overwrite'):
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(repository.branch))
+            matches = [regex.match(branch) for branch in repository.branches_for(remote=target)]
             count = max([
-                int(regex.match(branch).group('count')) if regex.match(branch) else 0 for branch in
-                repository.branches_for(remote=target)
+                int(match.group('count')) if match else 0 for match in matches
             ] + [0]) + 1
 
             history_branch = '{}-{}'.format(repository.branch, count)
@@ -804,6 +828,7 @@ class PullRequest(Command):
             if not args.update_title:
                 sys.stderr.write("'--no-update-title' cannot be used when creating a new pull-request.\n")
                 return 1
+            assert repository.branch is not None  # The branch was pushed above
             pr = remote_repo.pull_requests.create(
                 title=cls.title_for(commits),
                 commits=commits,
@@ -820,8 +845,8 @@ class PullRequest(Command):
 
         commit_class = None
         if repository.classifier and repository.classifier.classes and commits:
-            classes = [repository.classifier.classify(commit, repository) for commit in commits]
-            classes = [klass for klass in classes if klass]
+            candidate_classes = [repository.classifier.classify(commit, repository) for commit in commits]
+            classes = [klass for klass in candidate_classes if klass]
             if classes and len(classes) == len(commits) and len(set(klass.name for klass in classes)) == 1:
                 commit_class = classes[0].name
 
@@ -830,7 +855,7 @@ class PullRequest(Command):
         elif issue and update_issue:
             cls.add_comment_to_issue(issue, pr, commit_class=commit_class)
 
-        if radar_issue and update_issue and radar_issue.tracker.radarclient():
+        if radar_issue and update_issue and isinstance(radar_issue.tracker, radar.Tracker) and radar_issue.tracker.radarclient():
             if args.update_radar and radar_issue.state == 'Analyze' and radar_issue.substate in ['Investigate', 'Fix']:
                 try:
                     new_state = 'Fix' if pr.draft else 'Review'
@@ -869,7 +894,7 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def main(cls, args, repository, hooks=None, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | local.Svn | None, hooks: str | None = None, **kwargs: Any) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1

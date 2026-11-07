@@ -20,18 +20,26 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
+from typing import TYPE_CHECKING, Any
 
 from .command import Command
 from webkitcorepy import string_utils
 from webkitscmpy import ScmBase
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy import CommitClassifier
 
 
 class Classify(Command):
     name = 'classify'
 
     @classmethod
-    def help(cls, classifier=None):
+    def help(cls, classifier: CommitClassifier | None = None) -> str:
         result = 'Repositories may classify different commits so that automation behaves differently '
         result += 'for different types of changes. For example, a commit to garden test expectations '
         result += 'may have less stringent code-review requirements. '
@@ -44,7 +52,7 @@ class Classify(Command):
         return result
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'argument', nargs='?',
             type=str, default=None,
@@ -59,7 +67,7 @@ class Classify(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: ScmBase | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -72,8 +80,8 @@ class Classify(Command):
             return 255
 
         if args.list:
-            for klass in repository.classifier.classes:
-                print(klass.name)
+            for commit_class in repository.classifier.classes:
+                print(commit_class.name)
             return 0
 
         if not args.argument:

@@ -20,10 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import itertools
 import json
 import sys
 import re
+from typing import Any, Callable, TYPE_CHECKING
 
 from .command import Command
 from .find import Info
@@ -32,13 +35,17 @@ from datetime import datetime
 from webkitcorepy import arguments, run, string_utils
 from webkitscmpy import Commit, local, CommitClassifier
 
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+
 
 class Pickable(Command):
     class Filters(object):
         DEFAULT_FUZZ_RATIO = 90
 
         @classmethod
-        def fuzzy(cls, string, ratio=None):
+        def fuzzy(cls, string: str, ratio: int | None = None) -> re.Pattern[str] | Callable[..., bool]:
             try:
                 from rapidfuzz import fuzz
             except ModuleNotFoundError:
@@ -48,10 +55,11 @@ class Pickable(Command):
             return lambda commit, repository=None: fuzz.partial_ratio(string, commit.message.splitlines()[0]) >= ratio
 
         @classmethod
-        def gardening(cls, string, ratio=None):
-            def result(commit, repository=None, string=string, ratio=ratio):
+        def gardening(cls, string: str, ratio: int | None = None) -> Callable[..., bool]:
+            def result(commit: Commit, repository: local.Git | None = None, string: str = string, ratio: int | None = ratio) -> bool:
                 base = cls.fuzzy(string, ratio=ratio)
-                if not base(commit, repository=repository) if fuzz else base.search(commit.message.splitlines()[0]):
+                assert commit.message is not None
+                if not (base.search(commit.message.splitlines()[0]) if isinstance(base, re.Pattern) else base(commit, repository=repository)):
                     return False
                 if not repository:
                     return True
@@ -75,7 +83,7 @@ class Pickable(Command):
     help = 'List commits in a range which can be cherry-picked'
 
     @classmethod
-    def parser(cls, parser, loggers=None, classifier=None, json=True):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None, classifier: CommitClassifier | None = None, json: bool = True) -> None:
         parser.add_argument(
             'argument', nargs='+',
             type=str, default=None,
@@ -133,9 +141,9 @@ class Pickable(Command):
         )
 
     @classmethod
-    def pickable(cls, commits, repository, commits_story=None, excluded=None):
-        filtered_in = set()
-        all_commits = dict()
+    def pickable(cls, commits: list[Commit], repository: local.Git, commits_story: CommitsStory | None = None, excluded: list[str] | None = None) -> list[Commit]:
+        filtered_in: set[str] = set()
+        all_commits: dict[str, Commit] = dict()
 
         commits_story = commits_story or CommitsStory()
 
@@ -159,7 +167,7 @@ class Pickable(Command):
                 continue
             filtered_in.add(str(commit))
 
-        already_picked = set()
+        already_picked: set[str] = set()
         for ref in sorted(filtered_in):
             commit = all_commits[ref]
             relationships = Trace.relationships(commit, repository)
@@ -195,7 +203,7 @@ class Pickable(Command):
         return [commit for commit in commits if str(commit) in filtered_in]
 
     @classmethod
-    def main(cls, args, repository, printer=None, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | None, printer: Callable[..., int] | None = None, **kwargs: Any) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only run '{}' on a native Git repository\n".format(cls.name))
             return 1
@@ -209,10 +217,10 @@ class Pickable(Command):
                     sys.stderr.write("Specify branch to merge into with the --into flag\n")
                 return 1
 
-        tracked = set()
-        commits = []
+        tracked: set[str] = set()
+        commits: list[Commit] = []
         for reference in args.argument:
-            branch_point = None
+            branch_point: Commit | None = None
             if reference in repository.branches or reference in repository.tags():
                 branch_point = repository.merge_base(args.into, reference)
                 reference = '{}..{}'.format(branch_point.hash if branch_point else args.into, reference)
@@ -247,7 +255,7 @@ class Pickable(Command):
                 sys.stderr.write(str(exception) + '\n')
                 return 1
 
-            story = None
+            story: CommitsStory | None = None
             if branch_point:
                 story = CommitsStory()
                 for commit in repository.commits(begin=dict(argument=branch_point.hash), end=dict(argument=args.into)):
@@ -258,18 +266,26 @@ class Pickable(Command):
                             story.add(rel.commit)
 
             unfiltered = cls.pickable(candidates, repository, commits_story=story, excluded=args.excluded)
-            filters = []
+            filters: list[Callable[[Commit], Any]] = []
             if args.by:
                 for person in args.by:
-                    filters.append(lambda commit: commit.author == person or person in commit.author.emails or person == commit.author.github)
+                    def by_person(commit: Commit) -> bool:
+                        assert commit.author is not None
+                        return commit.author == person or person in commit.author.emails or person == commit.author.github
+                    filters.append(by_person)
             if args.filters:
                 for filter in args.filters:
-                    filters.append(lambda commit: re.search(filter, commit.message))
-            filtered = [
-                commit for commit in unfiltered
-                if commit.hash[:commit.HASH_LABEL_SIZE] not in tracked and (not filters or any([f(commit) for f in filters]))
-            ]
+                    def by_filter(commit: Commit) -> re.Match[str] | None:
+                        assert commit.message is not None
+                        return re.search(filter, commit.message)
+                    filters.append(by_filter)
+            filtered: list[Commit] = []
+            for commit in unfiltered:
+                assert commit.hash is not None
+                if commit.hash[:commit.HASH_LABEL_SIZE] not in tracked and (not filters or any([f(commit) for f in filters])):
+                    filtered.append(commit)
             for commit in filtered:
+                assert commit.hash is not None
                 tracked.add(commit.hash[:commit.HASH_LABEL_SIZE])
             commits += filtered
 
@@ -280,10 +296,16 @@ class Pickable(Command):
         filters = []
         if args.by:
             for person in args.by:
-                filters.append(lambda commit: commit.author == person or person in commit.author.emails or person == commit.author.github)
+                def by_person(commit: Commit) -> bool:
+                    assert commit.author is not None
+                    return commit.author == person or person in commit.author.emails or person == commit.author.github
+                filters.append(by_person)
         if args.filters:
             for filter in args.filters:
-                filters.append(lambda commit: re.search(filter, commit.message))
+                def by_filter(commit: Commit) -> re.Match[str] | None:
+                    assert commit.message is not None
+                    return re.search(filter, commit.message)
+                filters.append(by_filter)
         if filters:
             commits = [commit for commit in commits if any([f(commit) for f in filters])]
 

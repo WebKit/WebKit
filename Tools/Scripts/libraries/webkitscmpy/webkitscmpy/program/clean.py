@@ -20,13 +20,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import re
 import sys
+from typing import Any, TYPE_CHECKING
 
 from .command import Command
 from webkitcorepy import run, Terminal
-from webkitscmpy import log, remote
+from webkitscmpy import local, log, remote
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.local import Git, Svn
 
 
 class Clean(Command):
@@ -37,7 +45,7 @@ class Clean(Command):
     REMOTE_RE = re.compile(r'^remote\.(?P<name>\S+)\.fetch$')
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'arguments', nargs='*',
             type=str, default=None,
@@ -49,10 +57,11 @@ class Clean(Command):
         )
 
     @classmethod
-    def cleanup(cls, repository, argument, remote_target=None, verbosity=0):
+    def cleanup(cls, repository: Git | Svn, argument: str, remote_target: str | None = None, verbosity: int = 0) -> int:
         if not repository.is_git:
             sys.stderr.write('Can only clean up branches on git repositories\n')
             return 1
+        assert isinstance(repository, local.Git)  # Only Git repositories are is_git
 
         rmt = repository.remote(name=remote_target)
         if isinstance(rmt, remote.GitHub) and remote_target in (None, 'origin'):
@@ -62,6 +71,7 @@ class Clean(Command):
         else:
             target = 'origin'
 
+        branch: str | None = argument
         match = cls.PR_RE.match(argument)
         if match:
             if not rmt:
@@ -80,31 +90,31 @@ class Clean(Command):
                 sys.stderr.write("Keeping '{}' because it is still open\n".format(argument))
                 return 0
 
-            argument = pr.head
+            branch = pr.head
 
         push_env = os.environ.copy()
         push_env['VERBOSITY'] = str(verbosity)
 
         did_delete = False
         code = 0
-        regex = re.compile(r'^{}-(?P<count>\d+)$'.format(argument))
+        regex = re.compile(r'^{}-(?P<count>\d+)$'.format(branch))
         for to_delete in repository.branches_for(remote=False):
-            if to_delete == argument or regex.match(to_delete):
+            if to_delete == branch or regex.match(to_delete):
                 code += run([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path).returncode
                 did_delete = True
         for to_delete in repository.branches_for(remote=target):
-            if to_delete == argument or regex.match(to_delete) and target == 'fork':
+            if to_delete == branch or regex.match(to_delete) and target == 'fork':
                 code += run([repository.executable(), 'push', target, '--delete', to_delete], cwd=repository.root_path, env=push_env).returncode
                 did_delete = True
 
         if not did_delete:
-            sys.stderr.write("No branches matching '{}' were found\n".format(argument))
+            sys.stderr.write("No branches matching '{}' were found\n".format(branch))
             return 1
 
         return code
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: Git | Svn | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -126,14 +136,14 @@ class DeletePRBranches(Command):
     help = 'Iterate through all local development branches, find matching PRs and, if those PRs are closed, delete the local branches.'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--remote', dest='remote', type=str, default=None,
             help='Specify remote to search for pull request from.',
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: Git | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1

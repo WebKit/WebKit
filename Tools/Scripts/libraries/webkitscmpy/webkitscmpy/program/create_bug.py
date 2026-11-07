@@ -20,12 +20,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
+from typing import Any, Callable, TYPE_CHECKING
 
 from .command import Command
 
 from webkitbugspy import Tracker, bugzilla, radar
 from webkitscmpy import log
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitbugspy import Issue
 
 
 class CreateBug(Command):
@@ -34,7 +42,7 @@ class CreateBug(Command):
     help = 'Create a new bug on the configured bug tracker'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--title', dest='title', type=str, required=True,
             help='Bug title/summary',
@@ -81,7 +89,7 @@ class CreateBug(Command):
         )
 
     @classmethod
-    def parse_radar_arg(cls, value):
+    def parse_radar_arg(cls, value: str) -> str:
         """Validate and normalize a --radar argument to a single rdar:// string.
 
         Accepts a bare integer ID, rdar://NNNNN, rdar://problem/NNNNN,
@@ -112,15 +120,16 @@ class CreateBug(Command):
         return 'rdar://{}'.format(result)
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: Any, **kwargs: Any) -> int:
         tracker = Tracker.instance()
         if not tracker:
             sys.stderr.write("No bug tracker configured\n")
             return 1
 
         # Ensure credentials are available
-        if getattr(tracker, 'credentials', None):
-            tracker.credentials(required=True, validate=True)
+        credentials = getattr(tracker, 'credentials', None)
+        if credentials:
+            credentials(required=True, validate=True)
 
         # Read description from file
         description = None
@@ -179,7 +188,7 @@ class CreateBug(Command):
 
         # Create the bug (tracker.create prompts for project/component if not specified)
         try:
-            issue = tracker.create(
+            issue = tracker.create(  # type: ignore[call-arg]  # bugzilla and radar Trackers take keywords=, the base Tracker.create doesn't
                 title=args.title,
                 description=description,
                 project=project,
@@ -202,7 +211,7 @@ class CreateBug(Command):
         return 0
 
     @classmethod
-    def _post_create_operations(cls, issue, tracker, args, radar_issue=None):
+    def _post_create_operations(cls, issue: Issue, tracker: Tracker, args: Namespace, radar_issue: Issue | None = None) -> None:
         """Handle CC, assignee, see-also, depends-on, blocks, and radar linking after bug creation."""
 
         # Handle assignee
@@ -222,6 +231,7 @@ class CreateBug(Command):
             # to ensure the <rdar://N> comment and InRadar keyword come first.
             if isinstance(tracker, bugzilla.Tracker) and getattr(tracker, 'radar_importer', None):
                 importer = tracker.radar_importer
+                assert importer is not None
                 importer_ids = set(filter(None, [importer.username, importer.email] + list(importer.emails)))
                 cc_list = [cc for cc in cc_list if cc not in importer_ids]
             if cc_list:
@@ -240,10 +250,11 @@ class CreateBug(Command):
                 log.warning("Failed to add See Also: {}".format(e))
 
         # Handle relationships
-        for attr, label, apply in [
+        relationships: list[tuple[str, str, Callable[[int], object]]] = [
             ('depends_on', 'depends on', lambda bug_id: tracker.relate(issue, depends_on=tracker.issue(bug_id))),
             ('blocks', 'blocks', lambda bug_id: tracker.relate(issue, blocks=tracker.issue(bug_id))),
-        ]:
+        ]
+        for attr, label, apply in relationships:
             for bug_id in getattr(args, attr) or []:
                 try:
                     apply(bug_id)

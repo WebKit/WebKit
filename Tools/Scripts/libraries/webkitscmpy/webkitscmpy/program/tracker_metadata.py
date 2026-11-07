@@ -20,12 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import sys
+from typing import Any, TYPE_CHECKING
 
 from .command import Command
 
 from webkitbugspy import Tracker
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
 
 
 class TrackerMetadata(Command):
@@ -39,7 +46,7 @@ class TrackerMetadata(Command):
     ]
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--format', dest='output_format', type=str, default='json',
             choices=['json', 'text'],
@@ -56,7 +63,7 @@ class TrackerMetadata(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: Any, **kwargs: Any) -> int:
         tracker = Tracker.instance()
         if not tracker:
             sys.stderr.write("No bug tracker configured\n")
@@ -75,15 +82,15 @@ class TrackerMetadata(Command):
         return 0
 
     @classmethod
-    def get_tracker_metadata(cls, tracker, properties, project=None):
-        result = {}
+    def get_tracker_metadata(cls, tracker: Tracker, properties: list[str], project: str | None = None) -> dict[str, Any]:
+        result: dict[str, Any] = {}
         projects = tracker.projects
 
         if 'products' in properties:
             result['products'] = sorted(projects.keys())
 
         if 'components' in properties:
-            components = {}
+            components: dict[str, list[str]] = {}
             for name, details in sorted(projects.items()):
                 if project and name != project:
                     continue
@@ -91,7 +98,7 @@ class TrackerMetadata(Command):
             result['components'] = components
 
         if 'component_descriptions' in properties:
-            component_descriptions = {}
+            component_descriptions: dict[str, dict[str, str]] = {}
             for name, details in sorted(projects.items()):
                 if project and name != project:
                     continue
@@ -114,7 +121,7 @@ class TrackerMetadata(Command):
         return result
 
     @classmethod
-    def output_result(cls, result, output_format):
+    def output_result(cls, result: dict[str, Any], output_format: str) -> None:
         if output_format == 'json':
             print(json.dumps(result, indent=2, default=str))
         else:

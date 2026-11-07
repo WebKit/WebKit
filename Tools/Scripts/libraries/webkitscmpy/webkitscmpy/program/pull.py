@@ -20,12 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import sys
+from typing import TYPE_CHECKING, Any
 
 from .branch import Branch
 from .command import Command
 from webkitcorepy import arguments
 from webkitscmpy import local
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
 
 
 class Pull(Command):
@@ -34,7 +41,7 @@ class Pull(Command):
     help = 'Update the current checkout, synchronize git-svn if configured'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             '--prune', '--no-prune',
             dest='prune', default=None,
@@ -43,7 +50,7 @@ class Pull(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | local.Svn | None, **kwargs: Any) -> int:
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -53,6 +60,7 @@ class Pull(Command):
 
         if isinstance(repository, local.Git):
             branch_point = repository.branch_point()
+            assert branch_point is not None
             bp_remotes = set(repository.branches_for(hash=branch_point.hash, remote=None).keys())
             remote = None
             for rmt in repository.source_remotes():

@@ -119,9 +119,10 @@ class TestConflict(testing.PathTestCase):
             ]
             self.assertEqual('d8bce26fa65c6fc8f39c17927abb77f69fab82fc', local.Git(self.path).commit().hash)
 
-            self.assertEqual('integration/conflict/sha123_sha123/target_branch', program.main(
+            self.assertEqual(0, program.main(
                 args=('conflict', '1234'),
                 path=self.path,
-            ).branch)
+            ))
+            self.assertEqual('integration/conflict/sha123_sha123/target_branch', local.Git(self.path).branch)
 
             self.assertEqual('a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd', local.Git(self.path).commit().hash)

@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import difflib
 import os
 import re
@@ -27,12 +29,18 @@ import shlex
 import shutil
 import sys
 import tempfile
+from typing import Any, Iterable, TYPE_CHECKING
 
 from .command import Command
 from .pull_request import PullRequest
 
 from webkitcorepy import arguments, run, string_utils, Terminal
-from webkitscmpy import local, log, remote
+from webkitscmpy import Contributor, local, log, remote
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitscmpy.pull_request import PullRequest as PullRequestType
 
 
 class Review(Command):
@@ -49,7 +57,7 @@ class Review(Command):
     URL_RE = re.compile(r'\Ahttps?://')
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
@@ -67,7 +75,7 @@ class Review(Command):
         )
 
     @classmethod
-    def editor(cls, repository):
+    def editor(cls, repository: local.Scm | remote.Scm | None) -> list[str] | list[str | None]:
         from_config = None
         if isinstance(repository, local.Git):
             from_config = repository.config().get('core.editor', None)
@@ -78,7 +86,7 @@ class Review(Command):
         return [shutil.which('vim')]
 
     @classmethod
-    def args_for_url(cls, url):
+    def args_for_url(cls, url: str) -> tuple[str, remote.Scm] | tuple[None, None]:
         url = url.split('?')[0]
         url = url.split('#')[0]
         for candidate in cls.PR_URL_RES:
@@ -88,7 +96,7 @@ class Review(Command):
         return None, None
 
     @classmethod
-    def truncate_strs(cls, d):
+    def truncate_strs(cls, d: object) -> object:
         if not isinstance(d, dict):
             return d
         for key in d.keys():
@@ -99,12 +107,14 @@ class Review(Command):
         return d
 
     @classmethod
-    def user_delta(cls, pull_request, original, value):
+    def user_delta(cls, pull_request: PullRequestType, original: list[Contributor], value: str) -> tuple[bool, list[Contributor], list[Contributor], int]:
         returncode = 0
+        assert pull_request.generator is not None
+        assert isinstance(pull_request.generator.repository, (remote.GitHub, remote.BitBucket))
         me, _ = pull_request.generator.repository.credentials(required=False)
-        modified = []
+        modified: list[Contributor | str] = []
         for name in string_utils.split(value):
-            if name.lower() == 'me':
+            if me and name.lower() == 'me':
                 modified.append(me)
                 continue
             user = pull_request.generator.repository.contributors.get(name)
@@ -116,20 +126,20 @@ class Review(Command):
         added = [user for user in modified if user not in original]
         removed = [user for user in original if user not in modified]
 
-        added_no_me = [candidate for candidate in added if not me or candidate != me]
+        added_no_me = [candidate for candidate in added if isinstance(candidate, Contributor) and (not me or candidate != me)]
 
         return len(added_no_me) != len(added), added_no_me, removed, returncode
 
     @classmethod
     def invoke_wizard(
-        cls, editor, name,
-        header=None,
-        messages=None,
-        comments=None,
-        diff=None,
-    ):
+        cls, editor: list[str] | list[str | None], name: str,
+        header: dict[str, str | None] | None = None,
+        messages: list[str] | None = None,
+        comments: list[str] | None = None,
+        diff: Iterable[str] | None = None,
+    ) -> dict[str, Any]:
         # Textual wizards are split into 4 sections, seperated by a line of '=' characters
-        output = [[], [], [], []]
+        output: list[list[str]] = [[], [], [], []]
         edited_path = os.path.join(tempfile.gettempdir(), str(os.getpid()), '{}.diff'.format(name))
         if not os.path.exists(os.path.dirname(edited_path)):
             os.makedirs(os.path.dirname(edited_path))
@@ -153,7 +163,7 @@ class Review(Command):
             output[1].pop()
 
         # 3rd section: PR or commit comments
-        comment_for_lines = {}
+        comment_for_lines: dict[int, str] = {}
         for comment in comments or []:
             for line in comment.splitlines():
                 comment_for_lines[len(output[2])] = comment
@@ -164,7 +174,7 @@ class Review(Command):
             output[2].pop()
 
         # 4th section: Diff
-        for line in diff:
+        for line in diff or []:
             output[3].append(line.rstrip())
 
         with open(edited_path, 'w') as ofile:
@@ -178,7 +188,7 @@ class Review(Command):
 
         run(editor + [edited_path])
 
-        input = [[], [], [], []]
+        input: list[list[str]] = [[], [], [], []]
         with open(edited_path, 'r') as ifile:
             cnt = 0
             for line in ifile.readlines():
@@ -197,14 +207,14 @@ class Review(Command):
         # - Change metadata
         # - Add global comments
         # - Add diff comments
-        response = dict(
+        response: dict[str, Any] = dict(
             metadata=dict(),
             comments=[],
             diff=dict(),
         )
 
         # First section: metadata
-        resolved_metadata = dict()
+        resolved_metadata: dict[str, str] = dict()
         for line in input[0]:
             if ':' not in line:
                 continue
@@ -308,8 +318,8 @@ class Review(Command):
                     continue
                 response['diff']['diff_comments'] = response['diff'].get('diff_comments', {})
                 response['diff']['diff_comments'][file] = response['diff']['diff_comments'].get(file, {})
-                key = position or 0
-                response['diff']['diff_comments'][file][key] = response['diff']['diff_comments'][file].get(key, '') + line[2:].lstrip().rstrip() + '\n'
+                position_key = position or 0
+                response['diff']['diff_comments'][file][position_key] = response['diff']['diff_comments'][file].get(position_key, '') + line[2:].lstrip().rstrip() + '\n'
                 continue
 
             if line.startswith('  >>>>'):
@@ -326,7 +336,7 @@ class Review(Command):
         return response
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def main(cls, args: Namespace, repository: local.Git | local.Svn | remote.Scm | None, **kwargs: Any) -> int:
         editor = cls.editor(repository)
 
         target = args.argument[0]
@@ -343,11 +353,12 @@ class Review(Command):
             sys.stderr.write('No repository provided\n')
             return 1
 
+        local_repository: local.Git | None = None
         if isinstance(repository, local.Git):
-            original = repository
+            local_repository = repository
             repository = repository.remote(name=args.remote)
             if not repository:
-                sys.stderr.write("'{}' is not a remote in '{}'\n".format(args.remote, original.path))
+                sys.stderr.write("'{}' is not a remote in '{}'\n".format(args.remote, local_repository.path))
                 return 1
         elif args.remote:
             sys.stderr.write("User provided '--remote={}',\n".format(args.remote))
@@ -365,8 +376,10 @@ class Review(Command):
         match = cls.PR_RE.match(target)
         if match:
             pull_request = repository.pull_requests.get(number=int(match.group('number')))
+        elif local_repository:
+            pull_request = PullRequest.find_existing_pull_request(local_repository, repository, branch=target)
         else:
-            pull_request = PullRequest.find_existing_pull_request(repository, rmt, branch=target)
+            pull_request = None
         if not pull_request:
             sys.stderr.write("\nCannot extract PR number from '{}'\n".format(target))
             return 1
@@ -388,10 +401,10 @@ class Review(Command):
             editor=editor,
             name='pr-{}'.format(pull_request.number),
             header=header,
-            messages=([pull_request.body] if pull_request.body else []) + [commit.message for commit in pull_request.commits or []],
+            messages=([pull_request.body] if pull_request.body else []) + [commit.message for commit in pull_request.commits or [] if commit.message is not None],
             comments=[
-                '{}: {}'.format(comment.author, re.sub(cls.DETAILS_RE, '', comment.content, flags=re.S))
-                for comment in pull_request.comments
+                '{}: {}'.format(comment.author, re.sub(cls.DETAILS_RE, '', comment.content or '', flags=re.S))
+                for comment in pull_request.comments or []
             ], diff=pull_request.diff(comments=True),
         )
 
@@ -402,8 +415,10 @@ class Review(Command):
             return 0
 
         returncode = 0
-        did_approve = None
-        reviewers_to_add = set()
+        did_approve: bool | None = None
+        reviewers_to_add: set[Contributor] = set()
+        assert pull_request.generator is not None
+        assert isinstance(pull_request.generator.repository, (remote.GitHub, remote.BitBucket))
         user, _ = pull_request.generator.repository.credentials(required=False)
 
         for key in ('Approved by', 'Blocked by'):
@@ -411,6 +426,7 @@ class Review(Command):
             if value is None:
                 continue
             original = pull_request.approvers if key == 'Approved by' else pull_request.blockers
+            assert original is not None
             is_me, added, removed, rc = cls.user_delta(pull_request, original, value)
             returncode += rc
             if is_me:

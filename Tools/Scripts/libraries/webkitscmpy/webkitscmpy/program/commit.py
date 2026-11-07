@@ -20,14 +20,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import os
 import sys
+from typing import TYPE_CHECKING, Any
 
 from .command import Command
 
 from webkitbugspy import Tracker, bugzilla
 from webkitcorepy import run, string_utils, arguments
 from webkitscmpy import local
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser, Namespace
+    from logging import Logger, RootLogger
+    from webkitbugspy import Issue
 
 
 class Commit(Command):
@@ -36,7 +44,7 @@ class Commit(Command):
            'passing any provided issue to the commit message.'
 
     @classmethod
-    def parser(cls, parser, loggers=None):
+    def parser(cls, parser: ArgumentParser, loggers: list[RootLogger | Logger] | None = None) -> None:
         parser.add_argument(
             'args', nargs='*',
             type=str, default=None,
@@ -65,9 +73,9 @@ class Commit(Command):
         )
 
     @classmethod
-    def bug_urls(cls, issue):
+    def bug_urls(cls, issue: Issue | None) -> list[str]:
         if not issue:
-            return ''
+            return []
 
         issues = [(issue.link, issue.tracker)]
         types = [type(issue.tracker)]
@@ -80,22 +88,26 @@ class Commit(Command):
         return [url for url, _ in issues]
 
     @classmethod
-    def main(cls, args, repository, command=None, representation=None, **kwargs):
+    def main(
+        cls, args: Namespace, repository: local.Git | local.Svn | None, command: str | None = None,
+        representation: str | None = None, **kwargs: Any,
+    ) -> int:
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
             return 1
 
         issue = None
         if args.issue:
-            if string_utils.decode(args.issue).isnumeric() and Tracker.instance():
-                issue = Tracker.instance().issue(int(args.issue))
+            tracker = Tracker.instance()
+            if string_utils.decode(args.issue).isnumeric() and tracker:
+                issue = tracker.issue(int(args.issue))
             else:
                 issue = Tracker.from_string(args.issue)
             if not issue or not issue.title:
                 sys.stderr.write("'{}' cannot be converted to an issue\n".format(args.issue))
                 return 1
 
-        additional_args = []
+        additional_args: list[str] = []
         if args.all:
             additional_args += ['--all']
         if args.amend:
@@ -103,6 +115,7 @@ class Commit(Command):
 
         env = os.environ
         if issue:
+            assert issue.title is not None  # checked above
             env['COMMIT_MESSAGE_TITLE'] = issue.title
             env['COMMIT_MESSAGE_BUG'] = '\n'.join(cls.bug_urls(issue))
         if args.update is not None:
