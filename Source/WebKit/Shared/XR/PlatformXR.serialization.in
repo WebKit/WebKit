@@ -365,6 +365,7 @@ header: <WebCore/PlatformXR.h>
 #if ENABLE(WEBXR_LAYERS)
     bool blendTextureSourceAlpha;
     bool forceMonoPresentation;
+    bool contentUpdated;
     std::optional<PlatformXR::DeviceLayer::QuadLayerData> quadLayerData;
     std::optional<PlatformXR::DeviceLayer::EquirectLayerData> equirectLayerData;
     std::optional<PlatformXR::DeviceLayer::CylinderLayerData> cylinderLayerData;
@@ -391,6 +392,11 @@ enum class PlatformXR::LayerLayout : uint8_t {
     Stereo,
     StereoLeftRight,
     StereoTopBottom,
+};
+
+enum class PlatformXR::LayerUpdateMode : uint8_t {
+    Dynamic,
+    Static,
 };
 
 #endif

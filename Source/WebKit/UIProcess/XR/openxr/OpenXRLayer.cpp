@@ -193,12 +193,18 @@ Vector<XrCompositionLayerBaseHeader*> OpenXRCompositionLayer::endFrame(OpenXRGra
 {
     ASSERT(m_swapchain->acquiredTexture());
 
-    if (!m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
+    auto submissionState = m_swapchain->submissionState(layer.contentUpdated);
+    if (submissionState == OpenXRSwapchain::SubmissionState::None)
+        return { };
+
+    bool isNewImage = submissionState == OpenXRSwapchain::SubmissionState::NewImage;
+    if (isNewImage && !m_exportedTextures.contains(m_swapchain->acquiredTexture())) {
         releaseImages();
         return { };
     }
 
-    graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, exportDescriptor().type, committedImages());
+    if (isNewImage)
+        graphicsBinding.commitFrame(m_swapchain->acquiredTexture(), m_swapchain, exportDescriptor().type, committedImages());
 
     auto flags = layer.blendTextureSourceAlpha ? XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT : 0;
     auto isLeftEyeIndex = [layout = m_layout](size_t layerIndex) {
@@ -237,7 +243,8 @@ Vector<XrCompositionLayerBaseHeader*> OpenXRCompositionLayer::endFrame(OpenXRGra
         layerHeaders.append(header);
     }
 
-    releaseImages();
+    if (isNewImage)
+        releaseImages();
 
     return layerHeaders;
 }

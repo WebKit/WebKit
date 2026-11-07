@@ -517,6 +517,11 @@ struct FrameData {
     FrameData copy() const;
 };
 
+enum class LayerUpdateMode : uint8_t {
+    Dynamic,
+    Static,
+};
+
 #if ENABLE(WEBXR_LAYERS)
 enum class CompositionLayerType : uint8_t {
     Quad,
@@ -547,6 +552,7 @@ struct DeviceLayer {
 #if ENABLE(WEBXR_LAYERS)
     bool blendTextureSourceAlpha { false };
     bool forceMonoPresentation { false };
+    bool contentUpdated { true };
     struct QuadLayerData {
         WebCore::FloatSize worldSize;
         FrameData::Pose poseInLocalSpace;
@@ -614,7 +620,7 @@ public:
     virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
     virtual std::optional<LayerInfo> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
 #if ENABLE(WEBXR_LAYERS)
-    virtual std::optional<LayerInfo> createCompositionLayer(CompositionLayerType, WebCore::IntSize, LayerLayout) = 0;
+    virtual std::optional<LayerInfo> createCompositionLayer(CompositionLayerType, WebCore::IntSize, LayerLayout, LayerUpdateMode) = 0;
 #endif
     virtual void deleteLayer(LayerHandle) = 0;
 
