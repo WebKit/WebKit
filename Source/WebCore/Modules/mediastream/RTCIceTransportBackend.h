@@ -27,6 +27,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCIceGatheringState.h"
+#include "RTCIceRole.h"
 #include "RTCIceTransportState.h"
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
@@ -40,6 +41,7 @@ public:
     virtual void onStateChanged(RTCIceTransportState) = 0;
     virtual void onGatheringStateChanged(RTCIceGatheringState) = 0;
     virtual void onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&&, RefPtr<RTCIceCandidate>&&) = 0;
+    virtual void onRoleChanged(RTCIceRole) { }
 };
 
 class RTCIceTransportBackend {
@@ -49,6 +51,8 @@ public:
 
     virtual void registerClient(RTCIceTransportBackendClient&) = 0;
     virtual void unregisterClient() = 0;
+
+    virtual RTCIceRole role() const = 0;
 };
 
 inline bool operator==(const RTCIceTransportBackend& a, const RTCIceTransportBackend& b)

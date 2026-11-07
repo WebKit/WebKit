@@ -42,7 +42,7 @@ typedef RTCIceGatheringState IceGatheringState;
     Exposed=Window,
     SkipVTableValidation
 ] interface RTCIceTransport : EventTarget {
-    // FIXME 169662: missing readonly attribute RTCIceRole role;
+    readonly attribute RTCIceRole role;
     // FIXME 169662: missing readonly attribute RTCIceComponent component;
     readonly attribute IceTransportState state;
     readonly attribute IceGatheringState gatheringState;

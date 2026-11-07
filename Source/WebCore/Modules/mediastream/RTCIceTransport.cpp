@@ -32,6 +32,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
+#include "RTCIceRole.h"
 #include "RTCPeerConnection.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -50,6 +51,7 @@ RTCIceTransport::RTCIceTransport(ScriptExecutionContext& context, UniqueRef<RTCI
     : ActiveDOMObject(&context)
     , m_backend(WTF::move(backend))
     , m_connection(connection)
+    , m_role(m_backend->role())
 {
     m_backend->registerClient(*this);
 }
@@ -125,6 +127,19 @@ std::optional<RTCIceTransport::CandidatePair> RTCIceTransport::getSelectedCandid
 
     ASSERT(m_transportState != RTCIceTransportState::New || !m_selectedCandidatePair);
     return m_selectedCandidatePair;
+}
+
+void RTCIceTransport::onRoleChanged(RTCIceRole role)
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [role](auto& transport) mutable {
+        if (transport.m_isStopped)
+            return;
+
+        if (transport.m_role == role)
+            return;
+
+        transport.m_role = role;
+    });
 }
 
 } // namespace WebCore

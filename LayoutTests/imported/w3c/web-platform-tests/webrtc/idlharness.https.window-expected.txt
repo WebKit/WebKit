@@ -331,7 +331,7 @@ PASS RTCIceTransport interface object name
 PASS RTCIceTransport interface: existence and properties of interface prototype object
 PASS RTCIceTransport interface: existence and properties of interface prototype object's "constructor" property
 PASS RTCIceTransport interface: existence and properties of interface prototype object's @@unscopables property
-FAIL RTCIceTransport interface: attribute role assert_true: The prototype object must have a property "role" expected true got false
+PASS RTCIceTransport interface: attribute role
 FAIL RTCIceTransport interface: attribute component assert_true: The prototype object must have a property "component" expected true got false
 PASS RTCIceTransport interface: attribute state
 PASS RTCIceTransport interface: attribute gatheringState
@@ -345,7 +345,7 @@ PASS RTCIceTransport interface: attribute ongatheringstatechange
 PASS RTCIceTransport interface: attribute onselectedcandidatepairchange
 PASS RTCIceTransport must be primary interface of idlTestObjects.iceTransport
 PASS Stringification of idlTestObjects.iceTransport
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "role" with the proper type assert_inherits: property "role" not found in prototype chain
+PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "role" with the proper type
 FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "component" with the proper type assert_inherits: property "component" not found in prototype chain
 PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "state" with the proper type
 PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "gatheringState" with the proper type
