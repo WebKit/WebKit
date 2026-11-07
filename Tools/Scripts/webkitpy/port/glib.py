@@ -92,6 +92,9 @@ class GLibPort(Port):
         # gtk and wpe ports don't add a -wk2 suffix on the default port name because they don't support -wk1
         return port_name
 
+    def reference_hashes_configuration(self):
+        return [self._display_server, self._gl_rendering_backend, self._skia_rendering_backend]
+
     def _built_executables_path(self, *path):
         return self._build_path(*(('bin',) + path))
 
