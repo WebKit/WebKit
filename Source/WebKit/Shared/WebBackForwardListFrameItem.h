@@ -35,6 +35,8 @@ namespace WebKit {
 
 class FrameState;
 class WebBackForwardListItem;
+class WebPageProxy;
+class WebProcessProxy;
 
 class WebBackForwardListFrameItem : public RefCountedAndCanMakeWeakPtr<WebBackForwardListFrameItem> {
 public:
@@ -49,6 +51,7 @@ public:
     Ref<FrameState> copyFrameState();
     Ref<FrameState> copyFrameStateWithChildren();
     Ref<FrameState> copyFrameStateForReplacingDocument(const URL&);
+    Ref<FrameState> copyFrameStateWithChildrenForProcess(WebPageProxy&, WebProcessProxy&);
 
     NODELETE std::optional<WebCore::FrameIdentifier> frameID() const;
     WebCore::BackForwardFrameItemIdentifier identifier() const { return m_identifier; }

@@ -825,6 +825,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
     Tests/WebKit/WKWebView/SiteIsolationAnimationControlTests.swift
     Tests/WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationBackForwardTests.swift
     Tests/WebKit/WKWebView/SiteIsolationBrowsingContextGroupTests.swift
     Tests/WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift
     Tests/WebKit/WKWebView/SiteIsolationCookieTests.swift

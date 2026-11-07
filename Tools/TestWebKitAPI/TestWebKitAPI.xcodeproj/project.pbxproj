@@ -604,6 +604,7 @@
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/SiteIsolationAnimationControlTests.swift,
 				WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift,
+				WebKit/WKWebView/SiteIsolationBackForwardTests.swift,
 				WebKit/WKWebView/SiteIsolationBrowsingContextGroupTests.swift,
 				WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
