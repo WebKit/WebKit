@@ -47,3 +47,4 @@
 #import "WKStageMode.h"
 #import "WKStageModeOrbitSimulator.h"
 #import "WKTextAnimationManagerIOS.h"
+#import "WKWebXRImmersiveSpaceHost.h"

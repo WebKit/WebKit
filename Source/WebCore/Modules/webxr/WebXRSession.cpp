@@ -84,8 +84,7 @@ WebXRSession::WebXRSession(Document& document, XRSessionMode mode, PlatformXR::D
     }))
 {
     device.setTrackingAndRenderingClient(*this);
-    if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::WebGPU))
-        device.initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures, std::nullopt);
+    device.initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures, std::nullopt);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
@@ -156,7 +155,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
 
     // 3. If newState's baseLayer was created with an XRSession other than session,
     //    throw an InvalidStateError and abort these steps.
-    if (newState.baseLayer && newState.baseLayer.value() && newState.baseLayer.value()->session() != this)
+    if (newState.baseLayer && newState.baseLayer.value() && protect(newState.baseLayer.value())->session() != this)
         return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If newState's inlineVerticalFieldOfView is set and session is an immersive session,
@@ -175,7 +174,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
     // 7. Let activeState be session's active render state.
     // 8. If session's pending render state is null, set it to a copy of activeState.
     if (!m_pendingRenderState)
-        m_pendingRenderState = m_activeRenderState->clone();
+        m_pendingRenderState = protect(m_activeRenderState)->clone();
 
     if (newState.passthroughFullyObscured)
         m_pendingRenderState->setPassthroughFullyObscured(newState.passthroughFullyObscured.value());
@@ -194,8 +193,10 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
         m_pendingRenderState->setInlineVerticalFieldOfView(newState.inlineVerticalFieldOfView.value());
 
     // 12. If newState's baseLayer is set, set session's pending render state's baseLayer to newState's baseLayer.
-    if (newState.baseLayer)
-        m_pendingRenderState->setBaseLayer(newState.baseLayer->get());
+    if (newState.baseLayer) {
+        RefPtr baseLayer = newState.baseLayer->get();
+        protect(m_pendingRenderState)->setBaseLayer(baseLayer.get());
+    }
     // https://www.w3.org/TR/webxrlayers-1/#updaterenderstatechanges
 #if ENABLE(WEBXR_LAYERS)
     else if (newState.layers) {
@@ -212,7 +213,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
             return Exception { ExceptionCode::NotSupportedError, makeString("Cannot set more layers than the session's maxRenderLayers limit of "_s, maxLayers) };
 
         if (!m_pendingRenderState)
-            m_pendingRenderState = m_activeRenderState->clone();
+            m_pendingRenderState = protect(m_activeRenderState)->clone();
 
         for (size_t i = 0; i < newState.layers->size(); ++i) {
             const Ref layer = newState.layers->at(i);
@@ -224,8 +225,8 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
                 return Exception { ExceptionCode::TypeError, "XRWebGLLayer's session does not match the XRSession."_s };
         }
 
-        m_pendingRenderState->setBaseLayer(nullptr);
-        m_pendingRenderState->setLayers(*newState.layers);
+        protect(m_pendingRenderState)->setBaseLayer(nullptr);
+        protect(m_pendingRenderState)->setLayers(*newState.layers);
     }
 #endif
 
@@ -282,23 +283,24 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
 
     // 1. Let promise be a new Promise.
     // 2. Run the following steps in parallel:
-    scriptExecutionContext()->postTask([this, weakThis = WeakPtr { *this }, promise = WTF::move(promise), type](auto&) mutable {
-        if (!weakThis)
+    protect(scriptExecutionContext())->postTask([weakThis = WeakPtr { *this }, promise = WTF::move(promise), type](auto&) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
             return;
         // 2.1. If the result of running reference space is supported for type and session is false, queue a task to reject promise
         // with a NotSupportedError and abort these steps.
-        if (!referenceSpaceIsSupported(type)) {
-            queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [promise = WTF::move(promise)](auto&) mutable {
+        if (!protectedThis->referenceSpaceIsSupported(type)) {
+            queueTaskKeepingObjectAlive(*protectedThis, TaskSource::WebXR, [promise = WTF::move(promise)](auto&) mutable {
                 promise.reject(Exception { ExceptionCode::NotSupportedError });
             });
             return;
         }
         // 2.2. Set up any platform resources required to track reference spaces of type type.
-        if (RefPtr device = m_device)
+        if (RefPtr device = protectedThis->m_device)
             device->initializeReferenceSpace(type);
 
         // 2.3. Queue a task to run the following steps:
-        queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [type, promise = WTF::move(promise)](auto& session) mutable {
+        queueTaskKeepingObjectAlive(*protectedThis, TaskSource::WebXR, [type, promise = WTF::move(promise)](auto& session) mutable {
             if (!session.scriptExecutionContext()) {
                 promise.reject(Exception { ExceptionCode::InvalidStateError });
                 return;
@@ -415,6 +417,9 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
     // 1. Let session be the target XRSession object.
     // 2. Set session's ended value to true.
     m_ended = true;
+
+    for (auto& callback : std::exchange(m_renderingInitializedCallbacks, { }))
+        callback(false);
 
     // 3. If the active immersive session is equal to session, set the active immersive session to null.
     // 4. Remove session from the list of inline sessions.
@@ -554,6 +559,21 @@ void WebXRSession::updateSessionVisibilityState(PlatformXR::VisibilityState visi
 void WebXRSession::sessionDidInitializeRendering(uint32_t width, uint32_t height, uint32_t arrayLength)
 {
     m_initialRenderingDimensions = InitialRenderingDimensions { width, height, arrayLength };
+    for (auto& callback : std::exchange(m_renderingInitializedCallbacks, { }))
+        callback(true);
+}
+
+void WebXRSession::whenRenderingInitialized(CompletionHandler<void(bool)>&& callback)
+{
+    if (m_initialRenderingDimensions) {
+        callback(true);
+        return;
+    }
+    if (m_ended) {
+        callback(false);
+        return;
+    }
+    m_renderingInitializedCallbacks.append(WTF::move(callback));
 }
 
 void WebXRSession::applyPendingRenderState()
@@ -598,10 +618,10 @@ void WebXRSession::applyPendingRenderState()
     // 6.8 Set activeState’s composition enabled and output canvas as follows:
     if (m_mode == XRSessionMode::Inline && is<WebXRWebGLLayer>(baseLayer) && !baseLayer->isCompositionEnabled()) {
         m_activeRenderState->setCompositionEnabled(false);
-        m_activeRenderState->setOutputCanvas(baseLayer->canvas());
+        protect(m_activeRenderState)->setOutputCanvas(protect(baseLayer->canvas()).get());
     } else {
         m_activeRenderState->setCompositionEnabled(true);
-        m_activeRenderState->setOutputCanvas(nullptr);
+        protect(m_activeRenderState)->setOutputCanvas(nullptr);
     }
 
     m_requestData = {
@@ -670,9 +690,9 @@ void WebXRSession::requestFrameIfNeeded()
     if (!device)
         return;
     m_isDeviceFrameRequestPending = true;
-    device->requestFrame(WTF::move(m_requestData), [this, protectedThis = protect(*this)](auto&& frameData) {
-        m_isDeviceFrameRequestPending = false;
-        onFrame(WTF::move(frameData));
+    device->requestFrame(WTF::move(m_requestData), [protectedThis = protect(*this)](auto&& frameData) {
+        protectedThis->m_isDeviceFrameRequestPending = false;
+        protectedThis->onFrame(WTF::move(frameData));
     });
     m_requestData.reset();
 }
@@ -1075,19 +1095,19 @@ void WebXRSession::layerDestroyed(const XRCompositionLayer& layer)
 
     // https://www.w3.org/TR/webxrlayers-1/#dom-xrcompositionlayer-destroy steps 5 to 8.
     if (!m_pendingRenderState) {
-        if (!containsLayer(*m_activeRenderState))
+        if (!containsLayer(*protect(m_activeRenderState)))
             return;
-        m_pendingRenderState = m_activeRenderState->clone();
+        m_pendingRenderState = protect(m_activeRenderState)->clone();
     }
 
-    if (!containsLayer(*m_pendingRenderState))
+    if (!containsLayer(*protect(m_pendingRenderState)))
         return;
 
     auto layers = m_pendingRenderState->layers();
     layers.removeAllMatching([handle](auto& stateLayer) {
         return stateLayer->layerHandle() == handle;
     });
-    m_pendingRenderState->setLayers(layers);
+    protect(m_pendingRenderState)->setLayers(layers);
 }
 #endif
 

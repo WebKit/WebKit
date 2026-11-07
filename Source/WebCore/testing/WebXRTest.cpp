@@ -60,7 +60,7 @@ static PlatformXR::Device::FeatureList parseFeatures(const Vector<String>& featu
 void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const FakeXRDeviceInit& init, WebFakeXRDevicePromise&& promise)
 {
     // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulatedeviceconnection
-    context.postTask([this, protectedThis = protect(*this), init, promise = WTF::move(promise)](auto&) mutable {
+    context.postTask([protectedThis = protect(*this), init, promise = WTF::move(promise)](auto&) mutable {
         auto device = WebFakeXRDevice::create();
         auto& simulatedDevice = device->simulatedXRDevice();
 
@@ -104,10 +104,10 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
             simulatedDevice.setEnabledFeatures(mode, enabledFeatures);
         }
 
-        m_context->registerSimulatedXRDeviceForTesting(simulatedDevice);
+        protect(protectedThis->m_context)->registerSimulatedXRDeviceForTesting(protect(simulatedDevice));
 
         promise.resolve(device.get());
-        m_devices.append(WTF::move(device));
+        protectedThis->m_devices.append(WTF::move(device));
     });
 }
 
@@ -122,7 +122,7 @@ void WebXRTest::simulateUserActivation(Document& document, XRSimulateUserActivat
 void WebXRTest::disconnectAllDevices(DOMPromiseDeferred<void>&& promise)
 {
     for (auto& device : m_devices)
-        m_context->unregisterSimulatedXRDeviceForTesting(device->simulatedXRDevice());
+        protect(m_context)->unregisterSimulatedXRDeviceForTesting(protect(device->simulatedXRDevice()));
     m_devices.clear();
     promise.resolve();
 }

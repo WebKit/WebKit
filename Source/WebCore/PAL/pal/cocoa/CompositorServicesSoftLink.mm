@@ -30,13 +30,21 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_s
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_end_submission, void, (cp_frame_t frame), (frame), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_get_frame_index, cp_layer_frame_index_t, (cp_frame_t frame), (frame), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_query_drawables, cp_drawable_array_t, (cp_frame_t frame), (frame), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_array_get_count, size_t, (cp_drawable_array_t drawable_array), (drawable_array), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_array_get_drawable, cp_drawable_t, (cp_drawable_array_t drawable_array, size_t index), (drawable_array, index), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_drawable_get_target, cp_drawable_target, (cp_drawable_t drawable), (drawable), PAL_EXPORT)
+#if !PLATFORM(MAC)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_query_drawable, cp_drawable_t, (cp_frame_t frame), (frame), PAL_EXPORT)
+#endif
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_predict_timing, cp_frame_timing_t, (cp_frame_t frame), (frame), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_skip_frame, void, (cp_frame_t frame), (frame), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_frame_start_submission, void, (cp_frame_t frame), (frame), PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_set_minimum_frame_repeat_count, void, (cp_layer_renderer_t layer_renderer, int frame_repeat_count), (layer_renderer, frame_repeat_count), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_get_completion_event, id<MTLEvent>, (cp_layer_renderer_t layer), (layer), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_get_configuration, cp_layer_renderer_configuration_t, (cp_layer_renderer_t layer), (layer), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_set_late_frame_monitoring_enabled, void, (cp_layer_renderer_t layer, bool enabled), (layer, enabled), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_get_device, id<MTLDevice>, (cp_layer_renderer_t layer), (layer), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_get_state, cp_layer_renderer_state, (cp_layer_renderer_t layer), (layer), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_get_swapchain, cp_swapchain_t, (cp_layer_renderer_t layer), (layer), PAL_EXPORT)
@@ -46,7 +54,9 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_rend
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_capabilities_copy_system_default, cp_layer_renderer_capabilities_t, (CFErrorRef *error), (error), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_capabilities_supported_minimum_near_plane_distance, float, (cp_layer_renderer_capabilities_t layer_capabilities), (layer_capabilities), PAL_EXPORT)
 
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_create, cp_layer_renderer_configuration_t, (void), (), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_copy_system_default, cp_layer_renderer_configuration_t, (CFErrorRef *error), (error), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_copy_system_default_with_connection, cp_layer_renderer_configuration_t, (NSXPCConnection *connection, CFErrorRef *error), (connection, error), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_get_default_depth_range, simd_float2, (cp_layer_renderer_configuration_t configuration), (configuration), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_get_contents_inverted_vertically, bool, (cp_layer_renderer_configuration_t configuration), (configuration), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_set_contents_inverted_vertically, void, (cp_layer_renderer_configuration_t configuration, bool inverted_vertically), (configuration, inverted_vertically), PAL_EXPORT)
@@ -58,7 +68,9 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_rend
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_set_drawable_render_context_raster_sample_count, void, (cp_layer_renderer_configuration_t configuration, int raster_sample_count), (configuration, raster_sample_count), PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_set_color_format, void, (cp_layer_renderer_configuration_t configuration, MTLPixelFormat color_format), (configuration, color_format), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_set_color_usage, void, (cp_layer_renderer_configuration_t configuration, MTLTextureUsage color_usage), (configuration, color_usage), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_set_depth_format, void, (cp_layer_renderer_configuration_t configuration, MTLPixelFormat depth_format), (configuration, depth_format), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_set_depth_usage, void, (cp_layer_renderer_configuration_t configuration, MTLTextureUsage depth_usage), (configuration, depth_usage), PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CompositorServices, cp_layer_renderer_configuration_set_use_shared_events, void, (cp_layer_renderer_configuration_t configuration, bool use_shared_events), (configuration, use_shared_events), PAL_EXPORT)
 

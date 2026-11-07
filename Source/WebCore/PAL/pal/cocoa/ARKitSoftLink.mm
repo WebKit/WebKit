@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if HAVE(ARKIT)
+#if HAVE(ARKIT) || USE(COMPOSITORXR)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #import <ARKit/ARKit.h>
@@ -35,13 +35,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, PAL_EXPORT);
 
+#if HAVE(ARKIT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ARQuickLookPreviewItem, PAL_EXPORT);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ARSession, PAL_EXPORT);
 ALLOW_DEPRECATED_DECLARATIONS_END
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ARWorldTrackingConfiguration, PAL_EXPORT);
+#endif
 
-#if PLATFORM(VISION)
+#if PLATFORM(VISION) || USE(COMPOSITORXR)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ARMatrix4x4DoubleToFloat, simd_float4x4, (simd_double4x4 matrix), (matrix), PAL_EXPORT)
 
@@ -55,15 +57,24 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_data_providers_add_data
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_error_get_error_code, ar_error_code_t, (ar_error_t error), (error), PAL_EXPORT)
 
+#if !PLATFORM(MAC)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_plane_detection_configuration_create, ar_plane_detection_configuration_t, (void), (), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_plane_detection_configuration_set_alignment, void, (ar_plane_detection_configuration_t plane_detection_configuration, ar_plane_alignment_t alignment), (plane_detection_configuration, alignment), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_plane_detection_provider_create, ar_plane_detection_provider_t, (ar_plane_detection_configuration_t plane_detection_configuration), (plane_detection_configuration), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_plane_detection_provider_get_floor_plane_anchor_for_device_pose, void, (ar_plane_detection_provider_t plane_detection_provider, ar_plane_detection_floor_plane_completion_handler_t floor_plane_completion_handler), (plane_detection_provider, floor_plane_completion_handler), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_plane_detection_provider_is_supported, bool, (void), (), PAL_EXPORT)
+#endif // !PLATFORM(MAC)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_device_anchor_create, ar_device_anchor_t, (void), (), PAL_EXPORT)
 
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_session_create_with_device, ar_session_t, (ar_device_t device), (device), PAL_EXPORT)
+#if HAVE(CP_REMOTE_COMPOSITOR)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_device_create_with_endpoint, ar_device_t, (nw_endpoint_t endpoint), (endpoint), PAL_EXPORT)
+#endif
+#else
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_session_create, ar_session_t, (void), (), PAL_EXPORT)
+#endif
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_session_run, void, (ar_session_t session, ar_data_providers_t data_providers), (session, data_providers), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_session_set_data_provider_state_change_handler, void, (ar_session_t session, dispatch_queue_t queue, ar_session_data_provider_state_change_handler_t data_provider_state_change_handler), (session, queue, data_provider_state_change_handler), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_session_stop, void, (ar_session_t session), (session), PAL_EXPORT)
@@ -103,5 +114,5 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_accessory_tracking_prov
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, ARKit, ar_accessory_tracking_provider_is_supported, bool, (void), (), PAL_EXPORT)
 
 #endif // HAVE(SPATIAL_CONTROLLERS)
-#endif // ENABLE(WEBXR) && HAVE(WEBXR_INTERNALS)
-#endif // HAVE(ARKIT)
+#endif // PLATFORM(VISION) || USE(COMPOSITORXR)
+#endif // HAVE(ARKIT) || USE(COMPOSITORXR)

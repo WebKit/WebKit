@@ -175,12 +175,14 @@ std::optional<PlatformXR::FrameData::Pose> computeXRCompositionLayerPose(const T
 void XRCompositionLayer::recomputePose()
 {
     std::optional<TransformationMatrix> spaceTransform;
-    if (m_space)
-        spaceTransform = m_space->nativeOrigin();
+    RefPtr space = m_space;
+    if (space)
+        spaceTransform = space->nativeOrigin();
     if (!spaceTransform)
         spaceTransform = TransformationMatrix();
 
-    auto pose = computeXRCompositionLayerPose(*spaceTransform, m_transform ? &m_transform->rawTransform() : nullptr);
+    RefPtr transform = m_transform;
+    auto pose = computeXRCompositionLayerPose(*spaceTransform, transform ? &transform->rawTransform() : nullptr);
     if (!pose) {
         RELEASE_LOG_ERROR(XR, "Failed to decompose space transform, using identity transform for layer pose");
         m_poseInLocalSpace = PlatformXR::FrameData::Pose { .position = { 0, 0, 0 }, .orientation = { 0, 0, 0, 1 } };

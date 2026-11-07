@@ -47,10 +47,15 @@ public:
 
 private:
     static ASCIILiteral supplementName();
+    bool isNavigatorWebXR() const final { return true; }
 
     const RefPtr<WebXRSystem> m_xr;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NavigatorWebXR)
+    static bool isType(const WebCore::SupplementBase& supplement) { return supplement.isNavigatorWebXR(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR)

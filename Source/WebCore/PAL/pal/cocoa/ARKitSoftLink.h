@@ -28,7 +28,7 @@
 // FIXME: Remove the `__has_feature(modules)` condition when possible.
 #if !__has_feature(modules)
 
-#if HAVE(ARKIT)
+#if HAVE(ARKIT) || USE(COMPOSITORXR)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #import <ARKit/ARKit.h>
@@ -38,13 +38,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, ARKit)
 
+#if HAVE(ARKIT)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, ARQuickLookPreviewItem);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 SOFT_LINK_CLASS_FOR_HEADER(PAL, ARSession);
 ALLOW_DEPRECATED_DECLARATIONS_END
 SOFT_LINK_CLASS_FOR_HEADER(PAL, ARWorldTrackingConfiguration)
+#endif
 
-#if PLATFORM(VISION)
+#if PLATFORM(VISION) || USE(COMPOSITORXR)
 
 #import <simd/simd.h>
 
@@ -59,7 +61,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_trackable_anchor_is_tracked, bool, 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_data_provider_get_state, ar_data_provider_state_t, (ar_data_provider_t data_provider), (data_provider))
 #define ar_data_provider_get_state PAL::softLink_ARKit_ar_data_provider_get_state
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_data_providers_create, ar_data_providers_t, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_data_providers_create, ar_data_providers_t, (void), ())
 #define ar_data_providers_create PAL::softLink_ARKit_ar_data_providers_create
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_data_providers_add_data_provider, void, (ar_data_providers_t data_providers, ar_data_provider_t data_provider_to_add), (data_providers, data_provider_to_add))
 #define ar_data_providers_add_data_provider PAL::softLink_ARKit_ar_data_providers_add_data_provider
@@ -67,22 +69,33 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_data_providers_add_data_provider, v
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_error_get_error_code, ar_error_code_t, (ar_error_t error), (error))
 #define ar_error_get_error_code PAL::softLink_ARKit_ar_error_get_error_code
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_configuration_create, ar_plane_detection_configuration_t, (void), ())
+#if !PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_plane_detection_configuration_create, ar_plane_detection_configuration_t, (void), ())
 #define ar_plane_detection_configuration_create PAL::softLink_ARKit_ar_plane_detection_configuration_create
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_configuration_set_alignment, void, (ar_plane_detection_configuration_t plane_detection_configuration, ar_plane_alignment_t alignment), (plane_detection_configuration, alignment))
 #define ar_plane_detection_configuration_set_alignment PAL::softLink_ARKit_ar_plane_detection_configuration_set_alignment
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_provider_create, ar_plane_detection_provider_t, (ar_plane_detection_configuration_t plane_detection_configuration), (plane_detection_configuration))
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_plane_detection_provider_create, ar_plane_detection_provider_t, (ar_plane_detection_configuration_t plane_detection_configuration), (plane_detection_configuration))
 #define ar_plane_detection_provider_create PAL::softLink_ARKit_ar_plane_detection_provider_create
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_provider_get_floor_plane_anchor_for_device_pose, void, (ar_plane_detection_provider_t plane_detection_provider, ar_plane_detection_floor_plane_completion_handler_t floor_plane_completion_handler), (plane_detection_provider, floor_plane_completion_handler))
 #define ar_plane_detection_provider_get_floor_plane_anchor_for_device_pose PAL::softLink_ARKit_ar_plane_detection_provider_get_floor_plane_anchor_for_device_pose
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_plane_detection_provider_is_supported, bool, (void), ())
 #define ar_plane_detection_provider_is_supported PAL::softLink_ARKit_ar_plane_detection_provider_is_supported
+#endif // !PLATFORM(MAC)
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_device_anchor_create, ar_device_anchor_t, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_device_anchor_create, ar_device_anchor_t, (void), ())
 #define ar_device_anchor_create PAL::softLink_ARKit_ar_device_anchor_create
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_create, ar_session_t, (void), ())
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_session_create_with_device, ar_session_t, (ar_device_t device), (device))
+#define ar_session_create_with_device PAL::softLink_ARKit_ar_session_create_with_device
+#if HAVE(CP_REMOTE_COMPOSITOR)
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_device_create_with_endpoint, ar_device_t, (nw_endpoint_t endpoint), (endpoint))
+#define ar_device_create_with_endpoint PAL::softLink_ARKit_ar_device_create_with_endpoint
+#endif
+#else
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_session_create, ar_session_t, (void), ())
 #define ar_session_create PAL::softLink_ARKit_ar_session_create
+#endif
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_run, void, (ar_session_t session, ar_data_providers_t data_providers), (session, data_providers))
 #define ar_session_run PAL::softLink_ARKit_ar_session_run
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_set_data_provider_state_change_handler, void, (ar_session_t session, dispatch_queue_t queue, ar_session_data_provider_state_change_handler_t data_provider_state_change_handler), (session, queue, data_provider_state_change_handler))
@@ -90,11 +103,11 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_set_data_provider_state_cha
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_session_stop, void, (ar_session_t session), (session))
 #define ar_session_stop PAL::softLink_ARKit_ar_session_stop
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_world_tracking_configuration_create, ar_world_tracking_configuration_t, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_world_tracking_configuration_create, ar_world_tracking_configuration_t, (void), ())
 #define ar_world_tracking_configuration_create PAL::softLink_ARKit_ar_world_tracking_configuration_create
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_world_tracking_provider_is_supported, bool, (void), ())
 #define ar_world_tracking_provider_is_supported PAL::softLink_ARKit_ar_world_tracking_provider_is_supported
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_world_tracking_provider_create, ar_world_tracking_provider_t, (ar_world_tracking_configuration_t world_tracking_configuration), (world_tracking_configuration))
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_world_tracking_provider_create, ar_world_tracking_provider_t, (ar_world_tracking_configuration_t world_tracking_configuration), (world_tracking_configuration))
 #define ar_world_tracking_provider_create PAL::softLink_ARKit_ar_world_tracking_provider_create
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_world_tracking_provider_query_device_anchor_at_timestamp, ar_device_anchor_query_status_t, (ar_world_tracking_provider_t world_tracking_provider, CFTimeInterval timestamp, ar_device_anchor_t device_anchor), (world_tracking_provider, timestamp, device_anchor))
@@ -102,7 +115,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_world_tracking_provider_query_devic
 
 #if ENABLE(WEBXR_HANDS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_hand_anchor_create, ar_hand_anchor_t, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_hand_anchor_create, ar_hand_anchor_t, (void), ())
 #define ar_hand_anchor_create PAL::softLink_ARKit_ar_hand_anchor_create
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_hand_anchor_get_chirality, ar_hand_chirality_t, (ar_hand_anchor_t hand_anchor), (hand_anchor))
 #define ar_hand_anchor_get_chirality PAL::softLink_ARKit_ar_hand_anchor_get_chirality
@@ -112,9 +125,9 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_hand_anchor_get_hand_skeleton, ar_h
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_hand_skeleton_get_joint_named, ar_skeleton_joint_t, (ar_hand_skeleton_t hand_skeleton, ar_hand_skeleton_joint_name_t joint_name), (hand_skeleton, joint_name))
 #define ar_hand_skeleton_get_joint_named PAL::softLink_ARKit_ar_hand_skeleton_get_joint_named
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_hand_tracking_configuration_create, ar_hand_tracking_configuration_t, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_hand_tracking_configuration_create, ar_hand_tracking_configuration_t, (void), ())
 #define ar_hand_tracking_configuration_create PAL::softLink_ARKit_ar_hand_tracking_configuration_create
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_hand_tracking_provider_create, ar_hand_tracking_provider_t, (ar_hand_tracking_configuration_t hand_tracking_configuration), (hand_tracking_configuration))
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_hand_tracking_provider_create, ar_hand_tracking_provider_t, (ar_hand_tracking_configuration_t hand_tracking_configuration), (hand_tracking_configuration))
 #define ar_hand_tracking_provider_create PAL::softLink_ARKit_ar_hand_tracking_provider_create
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_hand_tracking_provider_get_latest_anchors, bool, (ar_hand_tracking_provider_t hand_tracking_provider, ar_hand_anchor_t hand_anchor_left, ar_hand_anchor_t hand_anchor_right), (hand_tracking_provider, hand_anchor_left, hand_anchor_right))
 #define ar_hand_tracking_provider_get_latest_anchors PAL::softLink_ARKit_ar_hand_tracking_provider_get_latest_anchors
@@ -139,10 +152,10 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_accessory_anchor_get_inherent_chira
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_accessory_anchor_is_tracked, bool, (ar_accessory_anchor_t accessory_anchor), (accessory_anchor))
 #define ar_accessory_anchor_is_tracked PAL::softLink_ARKit_ar_accessory_anchor_is_tracked
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_accessory_tracking_configuration_create, ar_accessory_tracking_configuration_t, (void), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_accessory_tracking_configuration_create, ar_accessory_tracking_configuration_t, (void), ())
 #define ar_accessory_tracking_configuration_create PAL::softLink_ARKit_ar_accessory_tracking_configuration_create
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_accessory_tracking_provider_create, ar_accessory_tracking_provider_t, (ar_accessory_tracking_configuration_t accessory_tracking_configuration), (accessory_tracking_configuration))
+SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(PAL, ARKit, ar_accessory_tracking_provider_create, ar_accessory_tracking_provider_t, (ar_accessory_tracking_configuration_t accessory_tracking_configuration), (accessory_tracking_configuration))
 #define ar_accessory_tracking_provider_create PAL::softLink_ARKit_ar_accessory_tracking_provider_create
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_accessory_tracking_provider_get_latest_anchors, ar_accessory_anchors_t, (ar_accessory_tracking_provider_t accessory_tracking_provider), (accessory_tracking_provider))
@@ -152,7 +165,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, ARKit, ar_accessory_tracking_provider_is_supp
 #define ar_accessory_tracking_provider_is_supported PAL::softLink_ARKit_ar_accessory_tracking_provider_is_supported
 
 #endif // HAVE(SPATIAL_CONTROLLERS)
-#endif // PLATFORM(VISION)
-#endif // HAVE(ARKIT)
+#endif // PLATFORM(VISION) || USE(COMPOSITORXR)
+#endif // HAVE(ARKIT) || USE(COMPOSITORXR)
 
 #endif // !__has_feature(modules)

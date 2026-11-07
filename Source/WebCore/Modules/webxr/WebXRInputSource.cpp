@@ -129,11 +129,11 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
     if (!session)
         return;
 
-    auto createEvent = [this, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
+    auto createEvent = [protectedThis = Ref { *this }, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
         auto init = XRInputSourceEvent::Init {
             { false, false, false },
             WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No),
-            protect(*this)
+            protectedThis.copyRef()
         };
         return XRInputSourceEvent::create(name, WTF::move(init));
     };

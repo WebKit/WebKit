@@ -584,6 +584,8 @@ set(WebKit_PROJECT_HEADERS
     WebKitSwift/TextAnimation/WKSTextStyleSourceDelegate.h
     WebKitSwift/TextAnimation/WKTextAnimationManagerIOS.h
 
+    WebKitSwift/WebXR/WKWebXRImmersiveSpaceHost.h
+
     WebKitSwift/WritingTools/WKIntelligenceReplacementTextEffectCoordinator.h
     WebKitSwift/WritingTools/WKIntelligenceSmartReplyTextEffectCoordinator.h
     WebKitSwift/WritingTools/WKIntelligenceTextEffectCoordinator.h

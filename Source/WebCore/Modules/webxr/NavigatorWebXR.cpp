@@ -51,7 +51,7 @@ WebXRSystem* NavigatorWebXR::xrIfExists(Navigator& navigator)
 
 NavigatorWebXR& NavigatorWebXR::from(Navigator& navigator)
 {
-    auto* supplement = static_cast<NavigatorWebXR*>(Supplement<Navigator>::from(&navigator, supplementName()));
+    auto* supplement = downcast<NavigatorWebXR>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<NavigatorWebXR>();
         supplement = newSupplement.get();

@@ -139,6 +139,7 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     WeakPtr<WebProcessProxy> m_immersiveSessionProcess;
+    WeakPtr<WebProcessProxy> m_processCompletingShutdownTriggeredBySystem;
     Variant<std::monostate, Ref<ProcessThrottler::ForegroundActivity>, Ref<ProcessActivityGroup>> m_immersiveSessionActivity;
 };
 

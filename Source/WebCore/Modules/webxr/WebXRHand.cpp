@@ -105,7 +105,8 @@ void WebXRHand::updateFromInputSource(const PlatformXR::FrameData::InputSource& 
         if (!handJoints[i])
             hasMissingPoses = true;
 
-        m_joints[i]->updateFromJoint(handJoints[i]);
+        Ref joint = m_joints[i];
+        joint->updateFromJoint(handJoints[i]);
     }
     m_hasMissingPoses = hasMissingPoses;
 }

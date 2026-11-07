@@ -101,12 +101,12 @@ void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOrigin
     // This is called from the constructor of WebXRSession. Since sessionDidInitializeInputSources()
     // ends up calling queueTaskKeepingObjectAlive() which refs the WebXRSession object, we
     // should delay this call after the WebXRSession has finished construction.
-    callOnMainRunLoop([this, weakThis = ThreadSafeWeakPtr { *this }]() {
+    callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }] {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
-        if (RefPtr client = trackingAndRenderingClient())
+        if (RefPtr client = protectedThis->trackingAndRenderingClient())
             client->sessionDidInitializeInputSources({ });
     });
 }

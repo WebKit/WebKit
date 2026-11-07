@@ -64,7 +64,7 @@ bool WebXRJointSpace::handHasMissingPoses() const
 
 WebXRSession* WebXRJointSpace::session() const
 {
-    return m_hand ? m_hand->session() : nullptr;
+    return m_hand ? protect(m_hand)->session() : nullptr;
 }
 
 std::optional<TransformationMatrix> WebXRJointSpace::nativeOrigin() const

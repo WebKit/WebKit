@@ -52,24 +52,25 @@ XRWebGLSubImage::XRWebGLSubImage(Ref<WebXRViewport>&& viewport, WebGLTexture& co
 
 ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLSubImage::create(Ref<WebXRViewport>&& viewport, XRCompositionLayer& layer, uint32_t colorTextureIndex)
 {
-    auto colorTexture = layer.colorTextures()[colorTextureIndex].get();
+    RefPtr colorTexture = layer.colorTextures()[colorTextureIndex];
     if (!colorTexture || !colorTexture->isUsable())
         return Exception { ExceptionCode::InvalidStateError, "Cannot get a usable texture for the subimage."_s };
 
-    IntSize colorTextureSize { static_cast<int>(layer.backing().colorTextureWidth()), static_cast<int>(layer.backing().colorTextureHeight()) };
+    Ref backing = layer.backing();
+    IntSize colorTextureSize { static_cast<int>(backing->colorTextureWidth()), static_cast<int>(backing->colorTextureHeight()) };
 
     std::optional<IntSize> depthTextureSize;
-    WebGLOpaqueTexture* depthTexture = nullptr;
+    RefPtr<WebGLOpaqueTexture> depthTexture;
     if (!layer.depthStencilTextures().isEmpty()) {
         auto depthIndex = colorTextureIndex < layer.depthStencilTextures().size() ? colorTextureIndex : 0U;
-        depthTexture = layer.depthStencilTextures()[depthIndex].get();
+        depthTexture = layer.depthStencilTextures()[depthIndex];
         if (!depthTexture || !depthTexture->isUsable())
             depthTexture = nullptr;
         else
-            depthTextureSize = IntSize { static_cast<int>(layer.backing().depthTextureWidth().value()), static_cast<int>(layer.backing().depthTextureHeight().value()) };
+            depthTextureSize = IntSize { static_cast<int>(backing->depthTextureWidth().value()), static_cast<int>(backing->depthTextureHeight().value()) };
     }
 
-    return adoptRef(*new XRWebGLSubImage(WTF::move(viewport), *colorTexture, colorTextureSize, depthTexture, depthTextureSize));
+    return adoptRef(*new XRWebGLSubImage(WTF::move(viewport), *colorTexture, colorTextureSize, depthTexture.get(), depthTextureSize));
 }
 
 const WebGLTexture& XRWebGLSubImage::colorTexture() const

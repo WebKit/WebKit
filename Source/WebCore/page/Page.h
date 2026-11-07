@@ -1194,8 +1194,8 @@ public:
     OptionSet<ThrottlingReason> throttlingReasons() const { return m_throttlingReasons; }
 
     WEBCORE_EXPORT void applicationWillResignActive();
-    NODELETE WEBCORE_EXPORT void applicationDidEnterBackground();
-    NODELETE WEBCORE_EXPORT void applicationWillEnterForeground();
+    WEBCORE_EXPORT void applicationDidEnterBackground();
+    WEBCORE_EXPORT void applicationWillEnterForeground();
     WEBCORE_EXPORT void applicationDidBecomeActive();
 
     PerformanceLogging& performanceLogging() const LIFETIME_BOUND { return m_performanceLogging; }

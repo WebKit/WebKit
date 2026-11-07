@@ -143,6 +143,8 @@ private:
     GCGLOwnedFramebuffer m_displayFBO;
     GCGLOwnedFramebuffer m_resolvedFBO;
     Vector<std::array<WebXRExternalAttachments, 2>> m_displayAttachmentsSets;
+    std::array<WebXRExternalAttachments, 2> m_temporaryDisplayAttachments;
+    bool m_usingTemporaryDisplayAttachments { false };
     size_t m_currentDisplayAttachmentIndex { 0 };
 #if PLATFORM(COCOA)
     MachSendRight m_completionSyncEvent;
