@@ -1,0 +1,23 @@
+A base appearance select has the styles of its own box type, also where a native select with the same attributes has another box type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A disabled multiple dropdown box looks disabled, like a disabled single one.
+PASS style("disabledMultipleDropdown").cursor is "not-allowed"
+PASS style("disabledMultipleDropdown").color is style("disabledDropdown").color
+PASS style("disabledMultipleDropdown").backgroundColor is style("disabledDropdown").backgroundColor
+PASS style("disabledMultipleDropdown").borderTopColor is style("disabledDropdown").borderTopColor
+
+Only an optgroup that is not the first child gets a separator, not an option after an optgroup.
+PASS getComputedStyle(multipleDropdown.querySelector("optgroup + option")).borderBlockStartStyle is "none"
+PASS getComputedStyle(listBox.querySelector("optgroup + option")).borderBlockStartStyle is "none"
+
+A list box inherits white-space and keeps its border when focused.
+PASS style("listBox").whiteSpace is "pre-wrap"
+PASS listBox.matches(':focus') is true
+PASS style("listBox").borderTopColor is unfocusedBorderColor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

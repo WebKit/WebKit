@@ -76,6 +76,13 @@ select[multiple]:-internal-select-preferred-size-one:user-invalid {
     border-color: -internal-auto-base(revert-rule, light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h)));
 }
 
+select[multiple]:-internal-select-preferred-size-one:disabled {
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 6%));
+    color: -internal-auto-base(revert-rule, color-mix(currentColor 55%));
+    border-color: -internal-auto-base(revert-rule, color-mix(currentColor 25%));
+    cursor: -internal-auto-base(revert-rule, not-allowed);
+}
+
 select[multiple]:-internal-select-preferred-size-one > button:first-child {
     all: unset;
     display: contents;
@@ -107,6 +114,7 @@ select:not(:-internal-select-preferred-size-one) {
     border-style: -internal-auto-base(revert-rule, solid);
     border-color: -internal-auto-base(revert-rule, color-mix(currentColor 50%));
     border-radius: -internal-auto-base(revert-rule, 4px);
+    white-space: -internal-auto-base(revert-rule, inherit);
     cursor: -internal-auto-base(revert-rule, default);
     text-shadow: -internal-auto-base(revert-rule, inherit);
     letter-spacing: -internal-auto-base(revert-rule, inherit);
@@ -118,7 +126,7 @@ select:not(:-internal-select-preferred-size-one):enabled {
     color: -internal-auto-base(revert-rule, inherit);
 }
 
-select:not(:-internal-select-preferred-size-one):is(:hover, :active) {
+select:not(:-internal-select-preferred-size-one):is(:hover, :focus, :active) {
     background-color: -internal-auto-base(revert-rule, transparent);
     border-color: -internal-auto-base(revert-rule, color-mix(currentColor 50%));
 }
@@ -158,4 +166,9 @@ select:not(:-internal-select-preferred-size-one) option {
 select[multiple]:-internal-select-preferred-size-one optgroup:not(:first-child),
 select:not(:-internal-select-preferred-size-one) optgroup:not(:first-child) {
     border-block-start: -internal-auto-base(revert-rule, 1px solid color-mix(currentColor 12%));
+}
+
+select[multiple]:-internal-select-preferred-size-one optgroup + option,
+select:not(:-internal-select-preferred-size-one) optgroup + option {
+    border-block-start: -internal-auto-base(revert-rule, none);
 }
