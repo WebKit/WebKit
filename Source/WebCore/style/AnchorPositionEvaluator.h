@@ -158,6 +158,10 @@ struct AnchorPositionedState {
     HashSet<ResolvedScopedName> anchorNames;
     AnchorPositionResolutionStage stage;
 
+    // Bounds retries when a found anchor candidate has no renderer yet, so a
+    // permanently unrendered candidate can't hang style resolution forever.
+    uint8_t pendingAnchorRendererRetryCount { 0 };
+
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(AnchorPositionedState);
 };
 
