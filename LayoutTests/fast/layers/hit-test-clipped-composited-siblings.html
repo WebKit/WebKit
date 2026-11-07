@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+body { margin: 0; }
+#outer { position: absolute; left: 0; top: 0; width: 200px; height: 100px; overflow: hidden; }
+#inner { position: relative; width: 400px; height: 400px; overflow: hidden; }
+.card { position: relative; width: 100px; height: 40px; will-change: transform; }
+.card > div { position: relative; width: 50px; height: 20px; will-change: transform; }
+#abs { position: absolute; left: 120px; top: 10px; width: 50px; height: 20px; will-change: transform; }
+</style>
+</head>
+<body>
+<div id="outer">
+    <div id="inner">
+        <div id="c0" class="card"><div id="g0"></div></div>
+        <div id="c1" class="card"><div id="g1"></div></div>
+        <div id="c2" class="card"><div id="g2"></div></div>
+        <div id="c3" class="card"><div id="g3"></div></div>
+        <div id="abs"></div>
+    </div>
+</div>
+<script>
+function elementAt(x, y)
+{
+    let element = document.elementFromPoint(x, y);
+    return element.id || element.localName;
+}
+
+shouldBe("elementAt(10, 10)", "'g0'");
+shouldBe("elementAt(80, 10)", "'c0'");
+shouldBe("elementAt(10, 50)", "'g1'");
+shouldBe("elementAt(80, 90)", "'c2'");
+shouldBe("elementAt(130, 15)", "'abs'");
+shouldBe("elementAt(80, 110)", "'html'");
+shouldBe("elementAt(10, 130)", "'html'");
+</script>
+</body>
+</html>
