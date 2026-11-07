@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editable" contenteditable onbeforeinput=beforeinput(event) oninput=input(event)>foo barbaz garply</div>
+<textarea id="field" onbeforeinput=beforeinput(event) oninput=input(event)>foo barbaz garply</textarea>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("DeleteToBeginningOfLine / DeleteToEndOfLine delete to the nearest visual line break, so they should report the deleteSoftLine* inputType values rather than deleteHardLine*, in both contenteditable and textarea editing hosts.");
+
+window.beforeInputType = null;
+window.inputType = null;
+
+function beforeinput(event)
+{
+    window.beforeInputType = event.inputType;
+}
+
+function input(event)
+{
+    window.inputType = event.inputType;
+}
+
+function selectInEditable(offset)
+{
+    let range = document.createRange();
+    let textNode = editable.childNodes[0];
+    getSelection().removeAllRanges();
+    range.setStart(textNode, offset);
+    range.setEnd(textNode, offset);
+    getSelection().addRange(range);
+}
+
+if (window.testRunner) {
+    debug("contenteditable:");
+    editable.focus();
+    selectInEditable(10);
+    testRunner.execCommand("DeleteToBeginningOfLine");
+    shouldBeEqualToString("beforeInputType", "deleteSoftLineBackward");
+    shouldBeEqualToString("inputType", "deleteSoftLineBackward");
+
+    editable.textContent = "foo barbaz garply";
+    selectInEditable(3);
+    testRunner.execCommand("DeleteToEndOfLine");
+    shouldBeEqualToString("beforeInputType", "deleteSoftLineForward");
+    shouldBeEqualToString("inputType", "deleteSoftLineForward");
+
+    debug("");
+    debug("textarea:");
+    field.focus();
+    field.setSelectionRange(10, 10);
+    testRunner.execCommand("DeleteToBeginningOfLine");
+    shouldBeEqualToString("beforeInputType", "deleteSoftLineBackward");
+    shouldBeEqualToString("inputType", "deleteSoftLineBackward");
+
+    field.value = "foo barbaz garply";
+    field.setSelectionRange(3, 3);
+    testRunner.execCommand("DeleteToEndOfLine");
+    shouldBeEqualToString("beforeInputType", "deleteSoftLineForward");
+    shouldBeEqualToString("inputType", "deleteSoftLineForward");
+} else
+    debug("This test requires testRunner.");
+</script>
+</body>
+</html>
