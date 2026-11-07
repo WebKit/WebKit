@@ -1,0 +1,10 @@
+Tests that a tap whose touchstart event calls preventDefault() doesn't produce a click event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clickCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

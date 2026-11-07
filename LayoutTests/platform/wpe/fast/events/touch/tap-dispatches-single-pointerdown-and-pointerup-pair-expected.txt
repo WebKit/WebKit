@@ -1,0 +1,11 @@
+Tests that a tap dispatches exactly one pointerdown and one pointerup event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pointerdownCount is 1
+PASS pointerupCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

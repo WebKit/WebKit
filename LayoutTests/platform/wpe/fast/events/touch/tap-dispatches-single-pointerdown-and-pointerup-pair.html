@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <script src="../../../../../resources/js-test.js"></script>
+  <script src="../../../../../resources/ui-helper.js"></script>
+
+<style>
+#target {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+    background: blue;
+}
+</style>
+
+</head>
+
+<body>
+  <div id="target"></div>
+  <div id="console"></div>
+
+<script>
+description("Tests that a tap dispatches exactly one pointerdown and one pointerup event.");
+window.jsTestIsAsync = true;
+
+async function tap(x, y) {
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(x, y);
+    await eventSender.asyncTouchStart();
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+}
+
+let pointerdownCount = 0;
+let pointerupCount = 0;
+
+const target = document.getElementById("target");
+target.addEventListener("pointerdown", () => pointerdownCount++);
+target.addEventListener("pointerup", () => pointerupCount++);
+
+window.addEventListener("load", async () => {
+    await UIHelper.renderingUpdate();
+
+    target.addEventListener("click", () => {
+        shouldBe("pointerdownCount", "1");
+        shouldBe("pointerupCount", "1");
+        finishJSTest();
+    }, { once: true });
+
+    // Single tap at the center of 'target'.
+    await tap(50, 50);
+});
+
+</script>
+
+</body>
+
+</html>
+

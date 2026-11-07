@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/js-test.js"></script>
+    <script src="../../../../../resources/ui-helper.js"></script>
+
+<style>
+#target {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+    background: blue;
+}
+
+#done {
+    position: absolute;
+    left: 0px;
+    top: 100px;
+    width: 100px;
+    height: 100px;
+    background: gray;
+}
+</style>
+
+</head>
+<body>
+
+<div id="target"></div>
+<div id="done"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that a tap whose touchstart event calls preventDefault() doesn't produce a click event.");
+window.jsTestIsAsync = true;
+
+async function tap(x, y) {
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(x, y);
+    await eventSender.asyncTouchStart();
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+}
+
+const done = document.getElementById("done");
+let clickCount = 0;
+// Click event on 'target' must never happen.
+const target = document.getElementById("target");
+target.addEventListener("touchstart", (e) => e.preventDefault());
+target.addEventListener("click", () => clickCount++);
+
+window.addEventListener("load", async () => {
+    await UIHelper.renderingUpdate();
+
+    // Overload click event on 'done' to check click event on 'target' didn't happen.
+    done.addEventListener("click", () => {
+        shouldBe("clickCount", "0");
+        finishJSTest();
+    }, { once: true });
+
+    // Single tap at the center of 'target', then one tap at the center of 'done'.
+    await tap(50, 50);
+    await tap(50, 150);
+});
+</script>
+</body>
+
+</html>
