@@ -260,6 +260,13 @@ public:
                 case IdentityWithProfile:
                     VALIDATE((node), canonicalResultRepresentation(node->result()) == canonicalResultRepresentation(node->child1()->result()));
                     break;
+                case VarargsLength:
+                case LoadVarargs:
+                    if (node->argumentsChild().useKind() == KnownCellUse) {
+                        VALIDATE((node), node->argumentsChild()->op() == Spread);
+                        VALIDATE((node), !node->loadVarargsData()->offset);
+                    }
+                    break;
                 case SetLocal:
                 case PutStack:
                 case Upsilon:

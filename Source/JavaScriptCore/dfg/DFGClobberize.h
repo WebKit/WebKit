@@ -1040,6 +1040,10 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     }
         
     case VarargsLength: {
+        if (node->argumentsChild().useKind() == KnownCellUse) {
+            read(Butterfly_publicLength);
+            return;
+        }
         clobberTop();
         return;
     }
@@ -1059,8 +1063,16 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
     }
 
     case LoadVarargs: {
-        if (node->argumentsChild().useKind() != OtherUse)
+        switch (node->argumentsChild().useKind()) {
+        case OtherUse:
+            break;
+        case KnownCellUse:
+            read(IndexedContiguousProperties);
+            break;
+        default:
             clobberTop();
+            break;
+        }
         LoadVarargsData* data = node->loadVarargsData();
         write(AbstractHeap(Stack, data->count));
         for (unsigned i = data->limit; i--;)

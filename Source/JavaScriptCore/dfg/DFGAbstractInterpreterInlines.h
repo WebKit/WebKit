@@ -540,7 +540,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case VarargsLength: {
-        clobberWorld();
+        if (node->argumentsChild().useKind() != KnownCellUse)
+            clobberWorld();
         setTypeForNode(node, SpecInt32Only);
         break;
     }
@@ -567,7 +568,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // https://bugs.webkit.org/show_bug.cgi?id=143071
         switch (node->op()) {
         case LoadVarargs:
-            if (node->argumentsChild().useKind() != OtherUse)
+            if (node->argumentsChild().useKind() != OtherUse && node->argumentsChild().useKind() != KnownCellUse)
                 clobberWorld();
             break;
         case ForwardVarargs:
