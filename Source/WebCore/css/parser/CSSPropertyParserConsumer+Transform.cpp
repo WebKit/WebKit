@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Transform.h"
 
+#include "CSSCalcTree+Copy.h"
+#include "CSSCalcValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSKeywordValue.h"
 #include "CSSParserContext.h"
@@ -254,6 +256,14 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSS::PropertyParse
     return CSSValueList::createSpaceSeparated(x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull());
 }
 
+static Ref<CSSPrimitiveValue> negatedCalc(const CSSCalc::Value& value)
+{
+    auto tree = CSSCalc::copy(value.tree());
+    auto type = tree.type;
+    tree.root = CSSCalc::makeChild(CSSCalc::multiply(CSSCalc::makeChild(CSSCalc::Number { .value = -1 }), WTF::move(tree.root)), type);
+    return CSSPrimitiveValue::create(CSS::UnevaluatedCalcBase { CSSCalc::Value::create(value.category(), value.range(), WTF::move(tree)) });
+}
+
 RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // https://drafts.csswg.org/css-transforms-2/#propdef-rotate
@@ -344,8 +354,14 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSS::PropertyParserSt
         // https://drafts.csswg.org/css-transforms-2/#individual-transform-serialization
         auto angleAlong = [&](const CSSPrimitiveValue& axis) -> Ref<CSSPrimitiveValue> {
             if (knownToBeNegative(axis.isNegative())) {
-                if (auto raw = angle->raw())
-                    return CSSPrimitiveValue::create(-raw->value, raw->unit);
+                return angle->switchOn(
+                    [](const CSS::UnevaluatedCalcBase& calc) -> Ref<CSSPrimitiveValue> {
+                        return negatedCalc(calc.calcValue());
+                    },
+                    [](const CSSPrimitiveValue::Raw& raw) -> Ref<CSSPrimitiveValue> {
+                        return CSSPrimitiveValue::create(-raw.value, raw.unit);
+                    }
+                );
             }
             return angle.releaseNonNull();
         };
