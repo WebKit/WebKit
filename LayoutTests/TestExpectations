@@ -151,6 +151,7 @@ inspector/page/setScreenSizeOverride.html [ Skip ]
 interaction-region [ Skip ]
 overlay-region [ Skip ]
 pdf [ Skip ]
+pdfjs [ Skip ] # Requires ENABLE(PDFJS)
 ipc/cocoa [ Skip ]
 ipc/glib [ Skip ]
 http/tests/ipc/cocoa [ Skip ]
