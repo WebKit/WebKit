@@ -62,6 +62,7 @@ namespace WTF {
         void prepend(std::unique_ptr<DataType>);
 
         std::unique_ptr<DataType> waitForMessage();
+        std::unique_ptr<DataType> waitForMessageIgnoringKilled();
         std::unique_ptr<DataType> tryGetMessage();
         Deque<std::unique_ptr<DataType>> takeAllMessages();
         std::unique_ptr<DataType> tryGetMessageIgnoringKilled();
@@ -132,6 +133,15 @@ namespace WTF {
         std::unique_ptr<DataType> result = waitForMessageFilteredWithTimeout(exitReason, [](const DataType&) { return true; }, Seconds::infinity());
         ASSERT(exitReason == MessageQueueTerminated || exitReason == MessageQueueMessageReceived);
         return result;
+    }
+
+    template<typename DataType>
+    inline auto MessageQueue<DataType>::waitForMessageIgnoringKilled() -> std::unique_ptr<DataType>
+    {
+        Locker lock { m_lock };
+        while (m_queue.isEmpty())
+            m_condition.wait(m_lock);
+        return m_queue.takeFirst();
     }
 
     template<typename DataType>

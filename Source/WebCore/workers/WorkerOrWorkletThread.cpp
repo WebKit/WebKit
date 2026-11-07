@@ -186,12 +186,6 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     g_main_context_pop_thread_default(mainContext.get());
 #endif
 
-    if (!m_childThreads.isEmptyIgnoringNullReferences()) {
-        m_runWhenLastChildThreadIsGone = [this, protectedThis = Ref { *this }]() mutable {
-            destroyWorkerGlobalScope(WTF::move(protectedThis));
-        };
-        return;
-    }
     destroyWorkerGlobalScope(WTF::move(protectedThis));
 }
 
@@ -355,8 +349,6 @@ void WorkerOrWorkletThread::addChildThread(WorkerOrWorkletThread& childThread)
 void WorkerOrWorkletThread::removeChildThread(WorkerOrWorkletThread& childThread)
 {
     m_childThreads.remove(childThread);
-    if (m_childThreads.isEmptyIgnoringNullReferences() && m_runWhenLastChildThreadIsGone)
-        std::exchange(m_runWhenLastChildThreadIsGone, nullptr)();
 }
 
 } // namespace WebCore
