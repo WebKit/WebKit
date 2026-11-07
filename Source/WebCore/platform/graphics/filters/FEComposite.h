@@ -23,6 +23,7 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ enum class CompositeOperationType : uint8_t {
 };
 
 class FEComposite final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEComposite);
+    WTF_MAKE_TZONE_ALLOCATED(FEComposite);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEComposite);
 public:
     WEBCORE_EXPORT static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4, ColorSpace = ColorSpace::SRGB());

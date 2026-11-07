@@ -42,6 +42,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/ParsingUtilities.h>
 
 #if USE(LIBWEBRTC)
@@ -58,6 +59,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoFrameCV);
 
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
 {

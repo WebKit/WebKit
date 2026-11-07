@@ -23,9 +23,12 @@
 #include "ScaleTransformOperation.h"
 
 #include "AnimationUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScaleTransformOperation);
 
 Ref<ScaleTransformOperation> ScaleTransformOperation::create(double sx, double sy, double sz, TransformOperation::Type type)
 {

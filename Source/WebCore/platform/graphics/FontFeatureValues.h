@@ -27,6 +27,7 @@
 
 #include <wtf/Hasher.h>
 #include <wtf/OrderedHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,6 +45,7 @@ enum class FontFeatureValuesType {
 };
 
 class FontFeatureValues : public RefCounted<FontFeatureValues> {
+    WTF_MAKE_TZONE_ALLOCATED(FontFeatureValues);
 public:
     // Insertion-ordered per CSS OM spec: serialization must reproduce the
     // order in which `@<variant>` tags were declared in the stylesheet.

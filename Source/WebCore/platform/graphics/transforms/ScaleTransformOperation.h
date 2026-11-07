@@ -26,12 +26,14 @@
 
 #include <WebCore/TransformOperation.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct BlendingContext;
 
 class ScaleTransformOperation final : public TransformOperation {
+    WTF_MAKE_TZONE_ALLOCATED(ScaleTransformOperation);
 public:
     static Ref<ScaleTransformOperation> create()
     {

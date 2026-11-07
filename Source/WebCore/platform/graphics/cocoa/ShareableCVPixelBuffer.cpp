@@ -31,11 +31,18 @@
 #include "CVUtilities.h"
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShareableCVPixelBufferBytes);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShareableCVPixelBufferWithBytes);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShareableCVPixelBufferWithPlanarBytes);
 
 ShareableCVPixelBufferConfiguration::ShareableCVPixelBufferConfiguration(const RetainPtr<CVPixelBufferRef>& pixelBuffer)
     : m_width(CVPixelBufferGetWidth(pixelBuffer.get()))

@@ -200,6 +200,10 @@ static const size_t kMaximumDeviceIdentifierSeedSize = 20;
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMInstanceFairPlayStreamingAVFObjC);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMInstanceSessionFairPlayStreamingAVFObjC);
+
 #if !RELEASE_LOG_DISABLED
 NODELETE static WTFLogChannel& logChannel() { return LogEME; }
 

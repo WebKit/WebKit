@@ -32,6 +32,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(CG)
@@ -65,6 +66,7 @@ struct PatternParameters {
 };
 
 class Pattern final : public ThreadSafeRefCounted<Pattern> {
+    WTF_MAKE_TZONE_ALLOCATED(Pattern);
 public:
     using Parameters = PatternParameters;
     NODELETE WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });

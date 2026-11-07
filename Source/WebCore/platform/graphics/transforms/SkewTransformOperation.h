@@ -26,12 +26,14 @@
 
 #include <WebCore/TransformOperation.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct BlendingContext;
 
 class SkewTransformOperation final : public TransformOperation {
+    WTF_MAKE_TZONE_ALLOCATED(SkewTransformOperation);
 public:
     NODELETE WEBCORE_EXPORT static Ref<SkewTransformOperation> create(double, double, TransformOperation::Type);
 

@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackRepresentation);
+
 class NullTextTrackRepresentation : public TextTrackRepresentation {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(NullTextTrackRepresentation);
 public:

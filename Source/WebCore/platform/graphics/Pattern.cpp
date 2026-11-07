@@ -29,8 +29,11 @@
 
 #include "ImageBuffer.h"
 #include "NativeImage.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Pattern);
 
 Ref<Pattern> Pattern::create(SourceImage&& tileImage, const Parameters& parameters)
 {

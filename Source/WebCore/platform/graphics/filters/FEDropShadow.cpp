@@ -25,6 +25,7 @@
 #include "FEGaussianBlur.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CORE_IMAGE)
@@ -36,6 +37,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEDropShadow);
 
 Ref<FEDropShadow> FEDropShadow::create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, ColorSpace colorSpace)
 {

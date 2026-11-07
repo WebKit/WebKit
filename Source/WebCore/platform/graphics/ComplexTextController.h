@@ -84,6 +84,7 @@ public:
     float maxGlyphBoundingBoxY() const { return m_maxGlyphBoundingBoxY; }
 
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(ComplexTextRun, WEBCORE_EXPORT);
     public:
         static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, std::span<const unsigned> originalIndices = { })
         {

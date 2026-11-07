@@ -29,6 +29,7 @@
 #include "FECompositeSoftwareApplier.h"
 #include "FECompositeSoftwareArithmeticApplier.h"
 #include "Filter.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CORE_IMAGE)
@@ -36,6 +37,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEComposite);
 
 Ref<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4, ColorSpace colorSpace)
 {

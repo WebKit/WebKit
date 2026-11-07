@@ -25,6 +25,7 @@
 
 #include "FEMergeSoftwareApplier.h"
 #include "ImageBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CORE_IMAGE)
@@ -32,6 +33,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEMerge);
 
 Ref<FEMerge> FEMerge::create(unsigned numberOfEffectInputs, ColorSpace colorSpace)
 {

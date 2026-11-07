@@ -23,6 +23,7 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ enum class ChannelSelectorType : uint8_t {
 };
 
 class FEDisplacementMap final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEDisplacementMap);
+    WTF_MAKE_TZONE_ALLOCATED(FEDisplacementMap);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEDisplacementMap);
 public:
     WEBCORE_EXPORT static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, ColorSpace = ColorSpace::SRGB(), bool in2IsTainted = false);

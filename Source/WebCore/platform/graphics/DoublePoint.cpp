@@ -28,10 +28,13 @@
 
 #include "IntPoint.h"
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DoublePoint);
 
 DoublePoint::DoublePoint(const IntPoint& p)
     : m_x(p.x()), m_y(p.y())

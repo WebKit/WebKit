@@ -29,11 +29,13 @@
 
 #include "CoreVideoExtras.h"
 #include "DisplayRefreshMonitor.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class LegacyDisplayRefreshMonitorMac : public DisplayRefreshMonitor {
+    WTF_MAKE_TZONE_ALLOCATED(LegacyDisplayRefreshMonitorMac);
 public:
     static Ref<LegacyDisplayRefreshMonitorMac> create(PlatformDisplayID displayID)
     {

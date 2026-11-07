@@ -41,6 +41,7 @@
 #include <wtf/MediaTime.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -72,6 +73,7 @@ class MediaPlayerPrivateMediaSourceAVFObjC
     , public CanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
     , private LoggerHelper
 {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaSourceAVFObjC);
 public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }

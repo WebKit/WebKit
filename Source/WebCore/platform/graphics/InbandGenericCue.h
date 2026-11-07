@@ -31,6 +31,7 @@
 #include <WebCore/InbandGenericCueIdentifier.h>
 #include <wtf/Markable.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -87,6 +88,7 @@ struct GenericCueData {
 };
 
 class InbandGenericCue : public RefCounted<InbandGenericCue> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(InbandGenericCue, WEBCORE_EXPORT);
 public:
     static Ref<InbandGenericCue> create() { return adoptRef(*new InbandGenericCue); }
     static Ref<InbandGenericCue> create(GenericCueData&& cueData) { return adoptRef(*new InbandGenericCue(WTF::move(cueData))); }

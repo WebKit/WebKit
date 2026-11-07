@@ -28,6 +28,7 @@
 
 #include "Filter.h"
 #include "FEMorphologySoftwareApplier.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CORE_IMAGE)
@@ -35,6 +36,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEMorphology);
 
 Ref<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radiusX, float radiusY, ColorSpace colorSpace)
 {

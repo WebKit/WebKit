@@ -25,10 +25,12 @@
 
 #include <WebCore/LightSource.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PointLightSource : public LightSource {
+    WTF_MAKE_TZONE_ALLOCATED(PointLightSource);
 public:
     NODELETE WEBCORE_EXPORT static Ref<PointLightSource> create(const FloatPoint3D& position);
 

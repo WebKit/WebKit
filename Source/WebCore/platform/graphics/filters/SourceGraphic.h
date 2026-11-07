@@ -22,11 +22,12 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SourceGraphic final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SourceGraphic);
+    WTF_MAKE_TZONE_ALLOCATED(SourceGraphic);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceGraphic);
 public:        
     WEBCORE_EXPORT static Ref<SourceGraphic> create(ColorSpace = ColorSpace::SRGB());

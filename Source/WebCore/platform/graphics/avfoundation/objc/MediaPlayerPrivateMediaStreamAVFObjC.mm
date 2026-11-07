@@ -131,6 +131,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateMediaStreamAVFObjC);
+
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaStreamAVFObjC
 

@@ -21,11 +21,12 @@
 #pragma once
 
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SourceAlpha final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SourceAlpha);
+    WTF_MAKE_TZONE_ALLOCATED(SourceAlpha);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceAlpha);
 public:
     WEBCORE_EXPORT static Ref<SourceAlpha> create(const ColorSpace& = ColorSpace::SRGB());

@@ -27,6 +27,7 @@
 
 #include <WebCore/SharedBuffer.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,6 +38,7 @@ class TextStream;
 namespace WebCore {
 
 class Model final : public RefCounted<Model> {
+    WTF_MAKE_TZONE_ALLOCATED(Model);
 public:
     WEBCORE_EXPORT static Ref<Model> create(Ref<SharedBuffer>&&, String&&, URL, bool isConverted = false);
     WEBCORE_EXPORT ~Model();

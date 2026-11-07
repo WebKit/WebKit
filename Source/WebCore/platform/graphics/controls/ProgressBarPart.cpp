@@ -27,8 +27,11 @@
 #include "ProgressBarPart.h"
 
 #include "ControlFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressBarPart);
 
 Ref<ProgressBarPart> ProgressBarPart::create()
 {

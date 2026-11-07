@@ -23,9 +23,12 @@
 #include "SkewTransformOperation.h"
 
 #include "AnimationUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SkewTransformOperation);
 
 Ref<SkewTransformOperation> SkewTransformOperation::create(double angleX, double angleY, TransformOperation::Type type)
 {

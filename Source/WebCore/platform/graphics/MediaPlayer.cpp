@@ -122,12 +122,15 @@
 
 namespace WebCore {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SeekTarget);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayer);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerFactory);
 
 // a null player to make MediaPlayer logic simpler
 
 class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface, public ThreadSafeRefCounted<NullMediaPlayerPrivate, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(NullMediaPlayerPrivate);
 public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
@@ -265,6 +268,7 @@ class NullMediaPlayerClient final
     : public MediaPlayerClient
     , public RefCounted<NullMediaPlayerClient>
     , public Identified<MediaPlayerClientIdentifier> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(NullMediaPlayerClient);
 public:
     NODELETE static Ref<NullMediaPlayerClient> create()
     {

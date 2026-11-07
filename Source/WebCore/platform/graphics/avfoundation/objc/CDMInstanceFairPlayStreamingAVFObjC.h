@@ -35,6 +35,7 @@
 #include <wtf/Function.h>
 #include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS AVContentKey;
@@ -85,6 +86,7 @@ public:
 };
 
 class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVContentKeySessionDelegateClient, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
+    WTF_MAKE_TZONE_ALLOCATED(CDMInstanceFairPlayStreamingAVFObjC);
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>);
 
@@ -182,6 +184,7 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
     : public CDMInstanceSession
     , public AVContentKeySessionDelegateClient
     , private ContentKeyGroupDataSource {
+    WTF_MAKE_TZONE_ALLOCATED(CDMInstanceSessionFairPlayStreamingAVFObjC);
 public:
     USING_CAN_MAKE_WEAKPTR(AVContentKeySessionDelegateClient);
 

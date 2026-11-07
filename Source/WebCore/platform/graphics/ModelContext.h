@@ -31,12 +31,14 @@
 #include <WebCore/LayoutSize.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 enum class ModelContextDisablePortal : bool { No, Yes };
 
 class ModelContext final : public RefCounted<ModelContext> {
+    WTF_MAKE_TZONE_ALLOCATED(ModelContext);
 public:
     NODELETE WEBCORE_EXPORT static Ref<ModelContext> create(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, const LayoutPoint&, ModelContextDisablePortal, std::optional<Color>);
     WEBCORE_EXPORT ~ModelContext();

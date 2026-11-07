@@ -39,8 +39,11 @@
 #include <array>
 #include <utility>
 #include <wtf/IndexedRange.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenTypeMathData);
 
 #if ENABLE(OPENTYPE_MATH)
 namespace OpenType {

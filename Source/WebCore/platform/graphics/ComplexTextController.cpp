@@ -48,6 +48,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ComplexTextController::ComplexTextRun);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ComplexTextController);
 
 class TextLayout {

@@ -36,6 +36,7 @@
 #include <wtf/DebugHeap.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(SKIA)
@@ -151,6 +152,7 @@ private:
 };
 
 class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
+    WTF_MAKE_TZONE_ALLOCATED(ShareableBitmap);
 public:
     using Handle = ShareableBitmapHandle;
 

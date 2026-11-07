@@ -26,6 +26,7 @@
 
 #include <WebCore/ColorComponents.h>
 #include <WebCore/FilterEffect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ enum class TurbulenceType : uint8_t {
 };
 
 class FETurbulence final : public FilterEffect {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FETurbulence);
+    WTF_MAKE_TZONE_ALLOCATED(FETurbulence);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FETurbulence);
 public:
     WEBCORE_EXPORT static Ref<FETurbulence> create(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, ColorSpace = ColorSpace::SRGB());

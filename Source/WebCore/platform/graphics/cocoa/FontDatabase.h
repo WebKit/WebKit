@@ -31,6 +31,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -51,7 +52,7 @@ public:
     };
 
     struct InstalledFontFamily {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InstalledFontFamily);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(InstalledFontFamily);
 
         InstalledFontFamily() = default;
 

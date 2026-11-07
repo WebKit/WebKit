@@ -28,8 +28,11 @@
 
 #include "IntSize.h"
 #include "LocalSampleBufferDisplayLayer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SampleBufferDisplayLayer);
 
 SampleBufferDisplayLayer::LayerCreator SampleBufferDisplayLayer::m_layerCreator = nullptr;
 void SampleBufferDisplayLayer::setCreator(LayerCreator creator)

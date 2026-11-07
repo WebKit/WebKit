@@ -28,12 +28,14 @@
 #include <WebCore/TransformOperation.h>
 #include <optional>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct BlendingContext;
 
 class PerspectiveTransformOperation final : public TransformOperation {
+    WTF_MAKE_TZONE_ALLOCATED(PerspectiveTransformOperation);
 public:
     NODELETE WEBCORE_EXPORT static Ref<PerspectiveTransformOperation> create(const std::optional<float>&);
 

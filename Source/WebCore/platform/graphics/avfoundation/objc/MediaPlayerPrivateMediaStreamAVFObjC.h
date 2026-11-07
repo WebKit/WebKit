@@ -36,6 +36,7 @@
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
@@ -61,6 +62,7 @@ class MediaPlayerPrivateMediaStreamAVFObjC final
     , public SampleBufferDisplayLayerClient
     , private LoggerHelper
 {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaStreamAVFObjC);
 public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }

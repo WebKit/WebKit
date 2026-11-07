@@ -35,6 +35,7 @@
 #include <wtf/MainThreadDispatcher.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 OBJC_CLASS AVAssetImageGenerator;
@@ -78,6 +79,7 @@ class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
 
 class WEBCORE_EXPORT MediaPlayerPrivateAVFoundationObjC final : public MediaPlayerPrivateAVFoundation {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaPlayerPrivateAVFoundationObjC, WEBCORE_EXPORT);
 public:
     explicit MediaPlayerPrivateAVFoundationObjC(MediaPlayer&);
     virtual ~MediaPlayerPrivateAVFoundationObjC();

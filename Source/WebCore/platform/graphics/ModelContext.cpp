@@ -26,7 +26,11 @@
 #include "config.h"
 #include "ModelContext.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelContext);
 
 Ref<ModelContext> ModelContext::create(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier, const LayoutSize& size, const LayoutPoint& origin, ModelContextDisablePortal disablePortal, std::optional<Color> backgroundColor)
 {

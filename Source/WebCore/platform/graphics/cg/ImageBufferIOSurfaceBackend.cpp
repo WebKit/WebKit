@@ -51,6 +51,7 @@
 namespace WebCore {
 
 class ImageBufferIOSurfaceDisplayFence final : public PlatformCALayerDelegatedContentsFence {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageBufferIOSurfaceDisplayFence);
 public:
     static Ref<ImageBufferIOSurfaceDisplayFence> create(RetainPtr<CGContextRef>&& context)
     {
@@ -76,6 +77,7 @@ private:
 };
 
 class ImageBufferIOSurfaceDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ImageBufferIOSurfaceDisplayDelegate);
 public:
     NODELETE static Ref<ImageBufferIOSurfaceDisplayDelegate> create(ContentsFormat contentsFormat)
     {

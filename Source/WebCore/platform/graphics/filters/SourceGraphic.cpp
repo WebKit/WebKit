@@ -23,6 +23,7 @@
 
 #include "Filter.h"
 #include "SourceGraphicSoftwareApplier.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CORE_IMAGE)
@@ -34,6 +35,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceGraphic);
 
 Ref<SourceGraphic> SourceGraphic::create(ColorSpace colorSpace)
 {

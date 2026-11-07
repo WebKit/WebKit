@@ -24,9 +24,12 @@
 
 #include "AnimationUtilities.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MatrixTransformOperation);
 
 Ref<MatrixTransformOperation> MatrixTransformOperation::create(const TransformationMatrix& t)
 {

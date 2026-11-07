@@ -27,10 +27,12 @@
 
 #include <WebCore/ControlPart.h>
 #include <WebCore/IntRect.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SliderTrackPart : public ControlPart {
+    WTF_MAKE_TZONE_ALLOCATED(SliderTrackPart);
 public:
     NODELETE static Ref<SliderTrackPart> create(StyleAppearance);
     NODELETE WEBCORE_EXPORT static Ref<SliderTrackPart> create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition);
