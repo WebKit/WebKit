@@ -49,7 +49,7 @@ extension WKUserContentController {
         // This is fine because WebKit is going to immediately make a copy of the passed-in bytes
         // into a safely managed object.
         // rdar://181746505
-        unsafe _addDataSpan(.init(typedSpan), name: name, contentWorld: contentWorld)
+        unsafe WebKit._addDataSpanForSwift(self, .init(typedSpan), name, contentWorld)
     }
 
     /// Removes a previously added data buffer from the given `WKContentWorld`.

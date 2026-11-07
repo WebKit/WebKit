@@ -232,7 +232,7 @@ private:
     protect(*_userContentControllerProxy)->removeAllUserMessageHandlers();
 }
 
-- (void)_addBuffer:(NSData *)buffer dataSpan:(std::span<const uint8_t>)dataSpan name:(NSString *)name contentWorld:(WKContentWorld *)world
+- (void)_addBuffer:(std::span<const uint8_t>)dataSpan name:(NSString *)name contentWorld:(WKContentWorld *)world
 {
     auto isInReadOnlyRegion = [] (std::span<const uint8_t> span) {
         if (span.empty())
@@ -262,14 +262,8 @@ private:
     if (isInReadOnlyRegion(dataSpan))
         sharedMemory = WebCore::SharedMemory::wrapMap(dataSpan, WebCore::SharedMemoryProtection::ReadOnly);
 
-    if (!sharedMemory) {
-        // If we have a Data, wrapping it can possibly give us a memory usage win.
-        // Otherwise, it's fine to fallback to the dataSpan version.
-        if (buffer)
-            sharedMemory = WebCore::SharedMemory::copyBuffer(WebCore::SharedBuffer::create(buffer));
-        else
-            sharedMemory = WebCore::SharedMemory::copyBuffer(WebCore::SharedBuffer::create(dataSpan));
-    }
+    if (!sharedMemory)
+        sharedMemory = WebCore::SharedMemory::copySpan(dataSpan);
 
     if (!sharedMemory) {
         ASSERT_NOT_REACHED();
@@ -281,12 +275,12 @@ private:
 
 - (void)addBuffer:(NSData *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world
 {
-    [self _addBuffer:buffer dataSpan:span(buffer) name:name contentWorld:world];
+    [self _addBuffer:span(buffer) name:name contentWorld:world];
 }
 
 - (void)_addDataSpan:(std::span<const uint8_t>)dataSpan name:(NSString *)name contentWorld:(WKContentWorld *)world
 {
-    [self _addBuffer:nil dataSpan:dataSpan name:name contentWorld:world];
+    [self _addBuffer:dataSpan name:name contentWorld:world];
 }
 
 - (void)removeBufferWithName:(NSString *)name contentWorld:(WKContentWorld *)world
@@ -401,3 +395,12 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
+
+namespace WebKit {
+
+void _addDataSpanForSwift(WKUserContentController *controller, NOESCAPE std::span<const uint8_t> dataSpan, NSString *name, WKContentWorld *world)
+{
+    [controller _addDataSpan:dataSpan name:name contentWorld:world];
+}
+
+}
