@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout('runTest()', 0)">
+<div id="description">Verify that when clearing script-writable data for an inactive first-party site, only storage tied to that first-party (including its partitioned third-party data) is removed, and storage for the same third-party under other active first-parties is preserved.</div>
+<iframe src="http://localhost:8000/resourceLoadStatistics/resources/iframe-with-storage.html"></iframe>
+<div id="output"></div>
+<br>
+<script>
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    const httpOnlyCookieName = "http-only-cookie";
+    const serverSideCookieName = "server-side-cookie";
+    const clientSideCookieName = "client-side-cookie";
+
+    internals.settings.setStorageBlockingPolicy('BlockThirdParty');
+
+    const iframe = document.getElementsByTagName("iframe")[0];
+    let popup;
+
+    const dbName = "TestDatabase";
+    const objectStoreName = "TestObjectStore";
+    const storageKey = "key";
+    const storageValue = "value";
+
+    const originUnderTest  = "http://127.0.0.1:8000";
+    const crossOrigin = "http://localhost:8000";
+    function runTest() {
+        setEnableFeature(true, function () {
+            testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(true, function() {
+                testRunner.setStatisticsHasHadUserInteraction(originUnderTest, false, function() {
+                    if (testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
+                        addOutput("FAIL: " + originUnderTest + " got logged for user interaction.");
+                    window.addEventListener("message", e => {
+                        testRunner.setStatisticsHasHadUserInteraction(crossOrigin, true, function() {
+                            if (!testRunner.isStatisticsHasHadUserInteraction(crossOrigin))
+                                addOutput("FAIL: " + crossOrigin + " did not get logged for user interaction.");
+                            else
+                                addOutput("Opened cross-origin " + crossOrigin + " popup");
+                            writeWebsiteDataAndContinue();
+                        });
+                    }, { once: true });
+                    popup = window.open(crossOrigin + "/resourceLoadStatistics/resources/popup-with-storage.html");
+                    if (popup == undefined)
+                        addOutput("FAIL: Opening " + crossOrigin + " popup with opener was not successful.");
+                    else
+                        addOutput("Opening " + crossOrigin + " popup.");
+                });
+            });
+        });
+    }
+</script>
+</body>
+</html>
