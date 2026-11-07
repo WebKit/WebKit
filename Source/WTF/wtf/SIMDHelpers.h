@@ -60,6 +60,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF::SIMD {
 
+// Very often, software emulation of SIMD constructs in SIMDe performs
+// significantly worse than a naively-coded C fallback. Allow callers to opt out
+// of emulated simd use when appropriate.
+#if CPU(ARM64) || CPU(ARM_NEON) || CPU(X86_SSE2)
+constexpr bool isHardwareAccelerated = true;
+#else
+constexpr bool isHardwareAccelerated = false;
+#endif
+
 template<typename LaneType>
 struct LaneToVector;
 
@@ -595,16 +604,18 @@ ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, con
     static_assert(threshold >= stride);
     const auto* cursor = span.data();
     const auto* end = span.data() + span.size();
-    if (span.size() >= threshold) {
-        for (; cursor + stride <= end; cursor += stride) {
-            if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(cursor))))
-                return cursor + index.value();
+    if constexpr (isHardwareAccelerated) {
+        if (span.size() >= threshold) {
+            for (; cursor + stride <= end; cursor += stride) {
+                if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(cursor))))
+                    return cursor + index.value();
+            }
+            if (cursor < end) {
+                if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(end - stride))))
+                    return end - stride + index.value();
+            }
+            return end;
         }
-        if (cursor < end) {
-            if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(end - stride))))
-                return end - stride + index.value();
-        }
-        return end;
     }
 
     for (; cursor != end; ++cursor) {
@@ -623,16 +634,18 @@ ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType
     static_assert(threshold >= stride);
     const auto* cursor = span.data();
     const auto* end = span.data() + span.size();
-    if (span.size() >= threshold) {
-        for (; cursor + stride <= end; cursor += stride) {
-            if (auto index = vectorMatch(simde_vld2q_u8(std::bit_cast<const uint8_t*>(cursor))))
-                return cursor + index.value();
+    if constexpr (isHardwareAccelerated) {
+        if (span.size() >= threshold) {
+            for (; cursor + stride <= end; cursor += stride) {
+                if (auto index = vectorMatch(simde_vld2q_u8(std::bit_cast<const uint8_t*>(cursor))))
+                    return cursor + index.value();
+            }
+            if (cursor < end) {
+                if (auto index = vectorMatch(simde_vld2q_u8(std::bit_cast<const uint8_t*>(end - stride))))
+                    return end - stride + index.value();
+            }
+            return end;
         }
-        if (cursor < end) {
-            if (auto index = vectorMatch(simde_vld2q_u8(std::bit_cast<const uint8_t*>(end - stride))))
-                return end - stride + index.value();
-        }
-        return end;
     }
 
     for (; cursor != end; ++cursor) {
@@ -654,43 +667,45 @@ ALWAYS_INLINE size_t count(std::span<const CharacterType> span, const auto& vect
     const auto* end = span.data() + span.size();
     size_t result = 0;
 
-    // Per max * 4 * stride iteration (If CharacterType is uint8_t, it is 16320 (255 * 64)).
-    // We need to limit the each iteration up to std::numeric_limits<UnsignedType>::max() because count vector's lane will overflow.
-    for (; cursor + (bulkLoadCount * stride * std::numeric_limits<UnsignedType>::max()) <= end;) {
-        std::array<VectorType<UnsignedType>, bulkLoadCount> counts { };
-        for (size_t iteration = 0; iteration < std::numeric_limits<UnsignedType>::max(); ++iteration) {
-            auto vectorx4 = SIMD::load4x(std::bit_cast<const UnsignedType*>(cursor));
-            for (size_t i = 0; i < bulkLoadCount; ++i)
-                counts[i] = SIMD::sub(counts[i], vectorMatch(vectorx4.val[i]));
-            cursor += (bulkLoadCount * stride);
+    if constexpr (isHardwareAccelerated) {
+        // Per max * 4 * stride iteration (If CharacterType is uint8_t, it is 16320 (255 * 64)).
+        // We need to limit the each iteration up to std::numeric_limits<UnsignedType>::max() because count vector's lane will overflow.
+        for (; cursor + (bulkLoadCount * stride * std::numeric_limits<UnsignedType>::max()) <= end;) {
+            std::array<VectorType<UnsignedType>, bulkLoadCount> counts { };
+            for (size_t iteration = 0; iteration < std::numeric_limits<UnsignedType>::max(); ++iteration) {
+                auto vectorx4 = SIMD::load4x(std::bit_cast<const UnsignedType*>(cursor));
+                for (size_t i = 0; i < bulkLoadCount; ++i)
+                    counts[i] = SIMD::sub(counts[i], vectorMatch(vectorx4.val[i]));
+                cursor += (bulkLoadCount * stride);
+            }
+            for (auto& count : counts)
+                result += SIMD::sum(count);
         }
-        for (auto& count : counts)
-            result += SIMD::sum(count);
-    }
 
-    // Per 4 * stride iteration (If CharacterType is uint8_t, it is 64 (4 * 16)).
-    // At this point, the remaining size must be smaller than max * 4 * stride (If CharacterType is uint8_t, it is 16320 (255 * 64)).
-    // So we do not need to consider about counts lane's overflow. If it can be overflow, it is already handled in the previous loop.
-    {
-        std::array<VectorType<UnsignedType>, bulkLoadCount> counts { };
-        for (; cursor + (bulkLoadCount * stride) <= end; cursor += (bulkLoadCount * stride)) {
-            auto vectorx4 = SIMD::load4x(std::bit_cast<const UnsignedType*>(cursor));
-            for (size_t i = 0; i < bulkLoadCount; ++i)
-                counts[i] = SIMD::sub(counts[i], vectorMatch(vectorx4.val[i]));
+        // Per 4 * stride iteration (If CharacterType is uint8_t, it is 64 (4 * 16)).
+        // At this point, the remaining size must be smaller than max * 4 * stride (If CharacterType is uint8_t, it is 16320 (255 * 64)).
+        // So we do not need to consider about counts lane's overflow. If it can be overflow, it is already handled in the previous loop.
+        {
+            std::array<VectorType<UnsignedType>, bulkLoadCount> counts { };
+            for (; cursor + (bulkLoadCount * stride) <= end; cursor += (bulkLoadCount * stride)) {
+                auto vectorx4 = SIMD::load4x(std::bit_cast<const UnsignedType*>(cursor));
+                for (size_t i = 0; i < bulkLoadCount; ++i)
+                    counts[i] = SIMD::sub(counts[i], vectorMatch(vectorx4.val[i]));
+            }
+            for (auto& count : counts)
+                result += SIMD::sum(count);
         }
-        for (auto& count : counts)
-            result += SIMD::sum(count);
-    }
 
-    // Per stride iteration (If CharacterType is uint8_t, it is 16).
-    // At this point, the remaining size must be smaller than 4 * stride (If CharacterType is uint8_t, it is 64).
-    {
-        auto count = SIMD::splat<UnsignedType>(0);
-        for (; cursor + stride <= end; cursor += stride) {
-            auto vector = SIMD::load(std::bit_cast<const UnsignedType*>(cursor));
-            count = SIMD::sub(count, vectorMatch(vector));
+        // Per stride iteration (If CharacterType is uint8_t, it is 16).
+        // At this point, the remaining size must be smaller than 4 * stride (If CharacterType is uint8_t, it is 64).
+        {
+            auto count = SIMD::splat<UnsignedType>(0);
+            for (; cursor + stride <= end; cursor += stride) {
+                auto vector = SIMD::load(std::bit_cast<const UnsignedType*>(cursor));
+                count = SIMD::sub(count, vectorMatch(vector));
+            }
+            result += SIMD::sum(count);
         }
-        result += SIMD::sum(count);
     }
 
     for (; cursor < end; ++cursor)

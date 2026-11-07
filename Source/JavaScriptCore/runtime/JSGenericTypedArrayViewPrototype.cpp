@@ -237,7 +237,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject
     std::span<Latin1Character> buffer;
     auto result = StringImpl::createUninitialized(resultLength, buffer);
     constexpr size_t stride = 8; // Because loading uint8x8_t.
-    if (length >= stride) {
+    if (SIMD::isHardwareAccelerated && (length >= stride)) {
         auto encodeVector = [&](auto input) {
             // Hex conversion characters are only 16 characters. This perfectly fits in vqtbl1q_u8's table lookup.
             // Thus, this function leverages vqtbl1q_u8 to convert vector characters in a bulk manner.
