@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; zoom: 0.85; }
+    .box { position: absolute; width: 80px; height: 80px; background: rgb(0, 200, 0); }
+</style>
+<script>
+const useImage = false;
+
+function makeCanvas()
+{
+    let canvas = document.createElement("canvas");
+    canvas.width = 120;
+    canvas.height = 120;
+    let context = canvas.getContext("2d");
+    context.fillStyle = "rgb(145, 72, 79)";
+    context.fillRect(0, 10, 120, 5);
+    context.fillRect(0, 105, 120, 5);
+    return canvas;
+}
+
+function populate()
+{
+    let pending = 0;
+    for (let i = 0; i < 8; ++i) {
+        let element = makeCanvas();
+        if (useImage) {
+            let image = new Image;
+            pending++;
+            image.onload = () => {
+                if (!--pending)
+                    testRunner.notifyDone();
+            };
+            image.src = element.toDataURL();
+            element = image;
+        }
+        element.className = "box";
+        element.style.top = (10 + i * 100 + i * 0.25) + "px";
+        element.style.left = "10px";
+        document.body.appendChild(element);
+    }
+    if (!pending)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setBackingScaleFactor(2, populate);
+} else
+    window.onload = populate;
+</script>
+</head>
+<body>
+<!-- A scaled canvas must be positioned on device pixels like an image, so the bars are symmetric in the box. -->
+</body>
+</html>

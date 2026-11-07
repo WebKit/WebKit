@@ -708,13 +708,18 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
     renderingContext->clearAccumulatedDirtyRect();
 
     if (!context.paintingDisabled()) {
+        auto snappedRect = [&] -> FloatRect {
+            if (hasDrawableContent())
+                return snappedIntRect(r);
+            return snapRectToDevicePixels(r, protect(document())->pixelSnappingScaleFactor());
+        }();
         if (!usesContentsAsLayerContents() || protect(document())->printing() || m_isSnapshotting) {
             if (renderingContext->compositingResultsNeedUpdating())
                 renderingContext->prepareForDisplay();
             if (renderingContext->isSurfaceBufferTransparentBlack(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer)) {
                 const bool skipTransparentBlackDraw = context.compositeMode() == CompositeMode { CompositeOperator::SourceOver, BlendMode::Normal };
                 if (!skipTransparentBlackDraw)
-                    context.fillRect(snappedIntRect(r), Color::transparentBlack);
+                    context.fillRect(snappedRect, Color::transparentBlack);
             } else {
                 RefPtr buffer = renderingContext->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
                 if (buffer) {
@@ -723,7 +728,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 #else
                     RasterDrawingOptions options { context.compositeOperation() };
 #endif
-                    context.drawImageBuffer(*buffer, snappedIntRect(r), options);
+                    context.drawImageBuffer(*buffer, snappedRect, options);
                 }
             }
         }
