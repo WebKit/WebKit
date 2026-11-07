@@ -5,6 +5,12 @@ PASS Property border-spacing value 'inherit' no zoom
 PASS Property border-spacing value '1px' zoom: 2
 PASS Property border-spacing value '1px 2px' zoom: 2
 PASS Property border-spacing value 'inherit' zoom: 2
+PASS Property border-width value '5px 10px' no zoom
+PASS Property border-width value '2px 4px 6px 8px' no zoom
+PASS Property border-width value 'inherit' no zoom
+PASS Property border-width value '5px 10px' zoom: 2
+PASS Property border-width value '2px 4px 6px 8px' zoom: 2
+PASS Property border-width value 'inherit' zoom: 2
 PASS Property box-shadow value 'rgb(0, 0, 0) 10px 10px 10px 0px' no zoom
 PASS Property box-shadow value 'inherit' no zoom
 PASS Property box-shadow value 'rgb(0, 0, 0) 10px 10px 10px 0px' zoom: 2

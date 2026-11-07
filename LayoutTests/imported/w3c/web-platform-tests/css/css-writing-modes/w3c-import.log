@@ -11,17 +11,20 @@ Do NOT modify or remove this file.
 Properties requiring vendor prefixes:
 padding-start
 padding-end
-Property values requiring vendor prefixes:
-None
+box-decoration-break
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-border-offset-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vlr-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vlr-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-icb-vlr-005-expected.xht
@@ -940,6 +943,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/block-plaintext-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/block-plaintext-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/block-plaintext-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/block-plaintext-paragraph-after-block-level-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/block-plaintext-paragraph-after-block-level-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/block-plaintext-paragraph-after-block-level-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vlr-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vlr-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vlr-005-expected.xht
@@ -964,6 +970,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vrl-010.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vrl-012-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-conflict-element-vrl-012.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-slice-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-slice-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-slice-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-spacing-vlr-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-spacing-vlr-003.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/border-spacing-vlr-005-expected.xht
@@ -1110,6 +1119,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/direction-vrl-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/direction-vrl-004-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/direction-vrl-004.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-004-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-min-content-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-offset-rtl-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-offset-rtl-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/dynamic-offset-rtl-001.html
@@ -1227,6 +1246,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vlr-011.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vlr-013-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vlr-013.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vlr-014-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vlr-014.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vrl-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vrl-002.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/float-vrl-004-expected.xht
@@ -1516,6 +1537,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/ortho-htb-alongside-vrl-floats-014-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/ortho-htb-alongside-vrl-floats-014-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/ortho-htb-alongside-vrl-floats-014.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-block-in-inline-block-axis-position-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-block-in-inline-inline-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-block-in-inline-inline-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-block-in-inline-line-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-cell-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-cell-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-cell-001.html
@@ -1523,6 +1548,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-child-with-border.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-child-with-padding-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-child-with-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-container-query-in-shrink-to-fit-flex-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-container-query-in-shrink-to-fit-flex.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-containing-block-height-changes-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-containing-block-height-changes-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-containing-block-height-changes.html
@@ -1553,6 +1580,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001v.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001w.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-001x.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-parent-shrink-to-fit-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-root-resize-icb-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-root-resize-icb-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-root-resize-icb-002-expected.xht
@@ -1567,6 +1595,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-root-resize-icb-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-root-resize-icb-007-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-root-resize-icb-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-static-position-margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-static-position-margin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/orthogonal-static-position-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/outline-inline-block-vrl-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/outline-inline-block-vrl-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/outline-inline-slr-005.xht
@@ -1634,6 +1665,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/percent-padding-vrl-006.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/percentage-padding-in-shrink-to-fit-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/percentage-padding-in-shrink-to-fit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/placeholder-sideways-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/relpos-inline-overflowing-block-vrl-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/relpos-inline-overflowing-block-vrl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/replaced-content-image-002.xht
@@ -1667,6 +1699,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-vrl-008.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/scrollbar-vertical-rl-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/scrollbar-vertical-rl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-inline-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-lr-main-axis-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sideways-lr-main-axis.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vlr-001-expected.xht
@@ -2190,12 +2234,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-compression-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-decorations-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-decorations-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-gen-con-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-gen-con-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-gen-con-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-inherit-all-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-inherit-all-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-inherit-all-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-inherit-all-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-letter-spacing-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-letter-spacing-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-letter-spacing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-line-breaking-rules-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-line-breaking-rules-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-line-breaking-rules-001.html
@@ -2217,6 +2267,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-value-all-002-expected-mismatch.html
@@ -2357,6 +2408,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-upright-vrl-100.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-sideways-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-sideways-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-sideways-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-underline-position-alphabetic-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-underline-position-auto-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/text-underline-position-left-001.xht
@@ -2401,12 +2455,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-009-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-009.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-029-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-029-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-029.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-031-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-031-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-031.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-033-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-033-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-033.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-035-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-035-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-035.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-037.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-slr-039.xht
@@ -2451,6 +2509,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-026-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-026-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-026.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-containing-block-width-changes-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-containing-block-width-changes-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vertical-containing-block-width-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vlr-text-orientation-sideways-alongside-vlr-floats-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vlr-text-orientation-sideways-alongside-vlr-floats-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/vlr-text-orientation-sideways-alongside-vlr-floats.html
@@ -2523,6 +2584,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-direction-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-direction-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-computed-writing-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-contain-root-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-contain-root-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/wm-propagation-body-contain-root.html

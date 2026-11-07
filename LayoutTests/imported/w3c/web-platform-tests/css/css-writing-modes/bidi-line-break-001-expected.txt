@@ -6,6 +6,12 @@ PASS
     <span class="embed" dir="ltr">00</span> <span class="embed" dir="ltr">00</span>
 
 PASS
+    <span class="isolate" dir="ltr">aa</span>-<span class="isolate" dir="ltr">bb</span>
+
+PASS
+    <span class="embed" dir="ltr">aa</span>-<span class="embed" dir="ltr">bb</span>
+
+PASS
     <span dir="ltr">00</span> <span dir="ltr">00</span>
 
 PASS
@@ -20,10 +26,20 @@ PASS
 PASS
     <span class="embed" dir="ltr">00 </span><span class="embed" dir="ltr">00</span>
 
+PASS
+    <span class="isolate" dir="ltr">aa-</span><span class="isolate" dir="ltr">bb</span>
+
+PASS
+    <span class="embed" dir="ltr">aa-</span><span class="embed" dir="ltr">bb</span>
+
+00 00
+00 00
+aa-bb
+aa-bb
 00 00
 00 00
 00 00
 00 00
 00 00
-00 00
-00 00
+aa-bb
+aa-bb

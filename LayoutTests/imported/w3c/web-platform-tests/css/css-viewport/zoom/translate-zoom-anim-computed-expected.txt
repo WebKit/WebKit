@@ -1,0 +1,4 @@
+
+PASS Zoom does not affect the computed transform matrix of a translated animated element.
+PASS Zoom does not affect the computed transform matrix of a translated animated element that uses mixed px/percentage values.
+

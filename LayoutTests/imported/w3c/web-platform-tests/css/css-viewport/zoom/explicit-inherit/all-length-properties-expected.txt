@@ -1,0 +1,159 @@
+
+PASS animation-range-end: 10px; parent=10px; child=10px
+PASS animation-range-start: 10px; parent=10px; child=10px
+PASS backdrop-filter: blur(10px); parent=blur(10px); child=blur(10px)
+PASS background-image: linear-gradient(black 10px, white 20px); parent=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px); child=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px)
+PASS background-position-x: 10px; parent=10px; child=10px
+PASS background-position-y: 10px; parent=10px; child=10px
+PASS background-size: 10px; parent=10px auto; child=10px auto
+PASS baseline-shift: 10px; parent=10px; child=10px
+PASS block-size: 10px; parent=10px; child=10px
+PASS block-step-size: 10px; parent=10px; child=10px
+PASS border-block-end-width: 10px; parent=0px; child=0px
+PASS border-block-start-width: 10px; parent=0px; child=0px
+PASS border-bottom-left-radius: 10px; parent=10px; child=10px
+PASS border-bottom-right-radius: 10px; parent=10px; child=10px
+PASS border-bottom-width: 10px; parent=0px; child=0px
+PASS border-end-end-radius: 10px; parent=10px; child=10px
+PASS border-end-start-radius: 10px; parent=10px; child=10px
+PASS border-image-outset: 10px; parent=10px; child=10px
+PASS border-image-source: linear-gradient(black 10px, white 20px); parent=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px); child=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px)
+PASS border-image-width: 10px; parent=10px; child=10px
+PASS border-inline-end-width: 10px; parent=0px; child=0px
+PASS border-inline-start-width: 10px; parent=0px; child=0px
+PASS border-left-width: 10px; parent=0px; child=0px
+PASS border-right-width: 10px; parent=0px; child=0px
+PASS border-start-end-radius: 10px; parent=10px; child=10px
+PASS border-start-start-radius: 10px; parent=10px; child=10px
+PASS border-top-left-radius: 10px; parent=10px; child=10px
+PASS border-top-right-radius: 10px; parent=10px; child=10px
+PASS border-top-width: 10px; parent=0px; child=0px
+PASS bottom: 10px; parent=10px; child=10px
+PASS box-shadow: 10px 20px; parent=rgb(0, 0, 0) 10px 20px 0px 0px; child=rgb(0, 0, 0) 10px 20px 0px 0px
+PASS clip: rect(10px 20px 30px 40px); parent=rect(10px, 20px, 30px, 40px); child=rect(10px, 20px, 30px, 40px)
+PASS clip-path: inset(10px); parent=inset(10px); child=inset(10px)
+PASS column-gap: 10px; parent=10px; child=10px
+PASS column-rule-width: 10px; parent=10px; child=10px
+PASS column-width: 10px; parent=10px; child=10px
+PASS contain-intrinsic-block-size: 10px; parent=10px; child=10px
+PASS contain-intrinsic-height: 10px; parent=10px; child=10px
+PASS contain-intrinsic-inline-size: 10px; parent=10px; child=10px
+PASS contain-intrinsic-width: 10px; parent=10px; child=10px
+PASS content: linear-gradient(black 10px, white 20px); parent=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px); child=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px)
+PASS cx: 10px; parent=10px; child=10px
+PASS cy: 10px; parent=10px; child=10px
+PASS filter: blur(10px); parent=blur(10px); child=blur(10px)
+PASS fit-tolerance: 10px; parent=10px; child=10px
+PASS flex-basis: 10px; parent=10px; child=10px
+PASS font-size: 10px; parent=10px; child=10px
+PASS grid-auto-columns: 10px; parent=10px; child=10px
+PASS grid-auto-rows: 10px; parent=10px; child=10px
+PASS grid-template-columns: 10px; parent=10px; child=10px
+PASS grid-template-rows: 10px; parent=10px; child=10px
+PASS height: 10px; parent=10px; child=10px
+PASS inline-size: 10px; parent=10px; child=10px
+PASS inset-block-end: 10px; parent=10px; child=10px
+PASS inset-block-start: 10px; parent=10px; child=10px
+PASS inset-inline-end: 10px; parent=10px; child=10px
+PASS inset-inline-start: 10px; parent=10px; child=10px
+PASS left: 10px; parent=10px; child=10px
+PASS letter-spacing: 10px; parent=10px; child=10px
+PASS line-height: 10px; parent=10px; child=10px
+PASS list-style-image: linear-gradient(black 10px, white 20px); parent=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px); child=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px)
+PASS margin-block-end: 10px; parent=10px; child=10px
+PASS margin-block-start: 10px; parent=10px; child=10px
+PASS margin-bottom: 10px; parent=10px; child=10px
+PASS margin-inline-end: 10px; parent=10px; child=10px
+PASS margin-inline-start: 10px; parent=10px; child=10px
+PASS margin-left: 10px; parent=10px; child=10px
+PASS margin-right: 10px; parent=10px; child=10px
+PASS margin-top: 10px; parent=10px; child=10px
+PASS mask-border-outset: 10px; parent=10px; child=10px
+PASS mask-border-source: linear-gradient(black 10px, white 20px); parent=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px); child=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px)
+PASS mask-border-width: 10px; parent=10px; child=10px
+PASS mask-image: linear-gradient(black 10px, white 20px); parent=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px); child=linear-gradient(rgb(0, 0, 0) 10px, rgb(255, 255, 255) 20px)
+PASS mask-size: 10px; parent=10px auto; child=10px auto
+PASS max-block-size: 10px; parent=10px; child=10px
+PASS max-height: 10px; parent=10px; child=10px
+PASS max-inline-size: 10px; parent=10px; child=10px
+PASS max-width: 10px; parent=10px; child=10px
+PASS min-block-size: 10px; parent=10px; child=10px
+PASS min-height: 10px; parent=10px; child=10px
+PASS min-inline-size: 10px; parent=10px; child=10px
+PASS min-width: 10px; parent=10px; child=10px
+PASS object-position: 10px; parent=10px 50%; child=10px 50%
+PASS object-view-box: inset(10px); parent=inset(10px); child=inset(10px)
+PASS offset-anchor: 10px; parent=10px 50%; child=10px 50%
+PASS offset-distance: 10px; parent=10px; child=10px
+PASS offset-path: inset(10px); parent=inset(10px); child=inset(10px)
+PASS offset-position: 10px; parent=10px 50%; child=10px 50%
+PASS outline-offset: 10px; parent=10px; child=10px
+PASS outline-width: 10px; parent=10px; child=10px
+PASS overflow-clip-margin: 10px; parent=10px; child=10px
+PASS padding-block-end: 10px; parent=10px; child=10px
+PASS padding-block-start: 10px; parent=10px; child=10px
+PASS padding-bottom: 10px; parent=10px; child=10px
+PASS padding-inline-end: 10px; parent=10px; child=10px
+PASS padding-inline-start: 10px; parent=10px; child=10px
+PASS padding-left: 10px; parent=10px; child=10px
+PASS padding-right: 10px; parent=10px; child=10px
+PASS padding-top: 10px; parent=10px; child=10px
+PASS perspective: 10px; parent=10px; child=10px
+PASS perspective-origin: 10px; parent=10px 0px; child=10px 0px
+PASS r: 10px; parent=10px; child=10px
+PASS right: 10px; parent=10px; child=10px
+PASS row-gap: 10px; parent=10px; child=10px
+PASS rx: 10px; parent=10px; child=10px
+PASS ry: 10px; parent=10px; child=10px
+PASS scroll-margin-block-end: 10px; parent=10px; child=10px
+PASS scroll-margin-block-start: 10px; parent=10px; child=10px
+PASS scroll-margin-bottom: 10px; parent=10px; child=10px
+PASS scroll-margin-inline-end: 10px; parent=10px; child=10px
+PASS scroll-margin-inline-start: 10px; parent=10px; child=10px
+PASS scroll-margin-left: 10px; parent=10px; child=10px
+PASS scroll-margin-right: 10px; parent=10px; child=10px
+PASS scroll-margin-top: 10px; parent=10px; child=10px
+PASS scroll-padding-block-end: 10px; parent=10px; child=10px
+PASS scroll-padding-block-start: 10px; parent=10px; child=10px
+PASS scroll-padding-bottom: 10px; parent=10px; child=10px
+PASS scroll-padding-inline-end: 10px; parent=10px; child=10px
+PASS scroll-padding-inline-start: 10px; parent=10px; child=10px
+PASS scroll-padding-left: 10px; parent=10px; child=10px
+PASS scroll-padding-right: 10px; parent=10px; child=10px
+PASS scroll-padding-top: 10px; parent=10px; child=10px
+PASS shape-margin: 10px; parent=10px; child=10px
+PASS shape-outside: inset(10px); parent=inset(10px); child=inset(10px)
+PASS stroke-dasharray: 10px; parent=10px; child=10px
+PASS stroke-dashoffset: 10px; parent=10px; child=10px
+PASS stroke-width: 10px; parent=10px; child=10px
+PASS tab-size: 10px; parent=10px; child=10px
+PASS text-decoration-inset: 10px; parent=10px; child=10px
+PASS text-decoration-thickness: 10px; parent=10px; child=10px
+PASS text-indent: 10px; parent=10px; child=10px
+PASS text-shadow: 10px 20px; parent=rgb(0, 0, 0) 10px 20px 0px; child=rgb(0, 0, 0) 10px 20px 0px
+PASS text-underline-offset: 10px; parent=10px; child=10px
+PASS timeline-trigger-activation-range-end: 10px; parent=10px; child=10px
+PASS timeline-trigger-activation-range-start: 10px; parent=10px; child=10px
+PASS timeline-trigger-active-range-end: 10px; parent=10px; child=10px
+PASS timeline-trigger-active-range-start: 10px; parent=10px; child=10px
+PASS top: 10px; parent=10px; child=10px
+PASS transform-origin: 10px; parent=10px 0px; child=10px 0px
+PASS translate: 10px; parent=10px; child=10px
+PASS vertical-align: 10px; parent=10px; child=10px
+PASS view-timeline-inset: 10px; parent=10px; child=10px
+PASS width: 10px; parent=10px; child=10px
+PASS word-spacing: 10px; parent=10px; child=10px
+PASS x: 10px; parent=10px; child=10px
+PASS y: 10px; parent=10px; child=10px
+PASS -webkit-border-horizontal-spacing: 10px; parent=10px; child=10px
+PASS -webkit-border-vertical-spacing: 10px; parent=10px; child=10px
+PASS -webkit-box-reflect: below 10px; parent=below 10px none; child=below 10px none
+PASS -webkit-mask-position-x: 10px; parent=10px; child=10px
+PASS -webkit-mask-position-y: 10px; parent=10px; child=10px
+PASS -webkit-text-stroke-width: 10px; parent=10px; child=10px
+PASS -webkit-perspective-origin-x
+PASS -webkit-perspective-origin-y
+PASS -webkit-transform-origin-x
+PASS -webkit-transform-origin-y
+PASS -webkit-transform-origin-z
+

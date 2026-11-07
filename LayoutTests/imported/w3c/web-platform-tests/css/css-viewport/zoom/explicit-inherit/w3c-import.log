@@ -1,0 +1,60 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/all-length-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/border-radius-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/border-radius.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/bottom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/column-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/column-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/column.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/flex-basis-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/flex-basis-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/flex-basis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/left-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/left.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/margin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/margin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/max-height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/max-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/max-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/max-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/min-height-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/min-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/min-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/min-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/outline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/outline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/outline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/padding-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/padding-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/right-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/right.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/webkit-border-radius-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/webkit-border-radius.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/webkit-flex-basis-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/webkit-flex-basis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/width-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/zoom/explicit-inherit/width.html

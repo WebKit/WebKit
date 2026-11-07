@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/WEB_FEATURES.yml
@@ -19,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/selection-pseudo-with-decoration-invalidation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/selection-pseudo-with-decoration-invalidation-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/selection-pseudo-with-decoration-invalidation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-inset-invalidation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-inset-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-dashed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-dashed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-double-expected.html

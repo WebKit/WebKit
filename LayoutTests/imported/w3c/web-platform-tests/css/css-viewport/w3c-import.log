@@ -10,12 +10,7 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/computedStyle-zoom.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/width-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/width-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-viewport/width.html

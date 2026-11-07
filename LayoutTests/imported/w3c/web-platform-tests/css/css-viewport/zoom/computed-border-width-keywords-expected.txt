@@ -1,0 +1,5 @@
+
+PASS border-width: thin
+PASS border-width: medium
+PASS border-width: thick
+

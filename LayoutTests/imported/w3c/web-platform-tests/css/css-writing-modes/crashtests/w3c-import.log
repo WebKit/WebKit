@@ -10,10 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/bidi-inline-continuation-first-in-flow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/chrome-bug-1512988.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-percent-height-multicol-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/crashtests/orthogonal-scroll-percent-height-crash.html

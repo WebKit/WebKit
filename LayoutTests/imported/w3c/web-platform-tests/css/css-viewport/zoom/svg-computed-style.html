@@ -19,6 +19,11 @@
       "value": "10px 20px",
       "otherValues": ["1px", "1px 2px"]
     },
+    "border-width": {
+      "value": "1px",
+      "otherValues": ["5px 10px", "2px 4px 6px 8px"],
+      "requiredProperties": { "border-style": "solid" }
+    },
     "box-shadow": {
       "value": "rgb(0, 0, 0) 5px 5px 5px 0px",
       "otherValues": ["rgb(0, 0, 0) 10px 10px 10px 0px"]
@@ -124,11 +129,12 @@
 
     // cleanup
     svg.style.removeProperty(property);
-    target.style.removeProperty("zoom");
+    target.style.removeProperty(property);
+    target.style.removeProperty('zoom');
     if (requiredProperties) {
       for (const [prop, reqValue] of Object.entries(requiredProperties)) {
-        svg.style.removeProperty(reqValue);
-        target.style.removeProperty(reqValue);
+        svg.style.removeProperty(prop);
+        target.style.removeProperty(prop);
       }
     }
   }

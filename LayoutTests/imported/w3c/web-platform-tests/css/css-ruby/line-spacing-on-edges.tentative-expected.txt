@@ -1,0 +1,12 @@
+baseannotation
+First block
+baseannotation
+First block
+baseannotation
+Third block
+Fourth block
+
+FAIL Line-over ruby on the first line: <rt> box top is above the block container top assert_less_than: expected a number less than 16 but got 16
+FAIL Two IFCs with line-height: 1.5em: second IFC first-line <rt> top is above first IFC bottom assert_less_than: expected a number less than 80 but got 80
+FAIL Two IFCs with line-height: 1.5em in a multicol container: second IFC first-line <rt> top is above first IFC bottom assert_less_than: expected a number less than 148 but got 148
+

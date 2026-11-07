@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/100x100-lime.png
@@ -149,6 +147,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation-upright-001.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation-upright-vrl-002.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/text-orientation.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wait-for-width-test-font.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/width-test.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-003-exp-res.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/support/wm-propagation-body-035-exp-res.png

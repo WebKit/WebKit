@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/line-through-vertical-ref.html
@@ -21,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-color-selection-pseudo-01-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-decorating-box-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-decorating-box-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-dotted-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-dotted-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-001-ref.html
@@ -48,7 +47,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-023-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-024-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-025-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-026-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-027-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-028-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-029-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-orthogonal-block-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-percentage-slice-multiline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-percentage-slice-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-svg-fragment-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-inset-svg-fragment-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-line-010-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-line-011-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-line-012-ref.xht
@@ -56,6 +63,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-line-recalc-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-line-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-lines-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-propagated-ink-overflow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-propagation-01-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-propagation-02-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-propagation-03-ref.html
@@ -109,6 +117,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-thickness-vertical-green-rect-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-underline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-wavy-covers-whole-line-length-001-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-decoration-wavy-phase-across-elements-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-emphasis-color-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-emphasis-position-over-left-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-emphasis-position-over-left-002-ref.xht
@@ -145,5 +154,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-from-font-variable-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-horizontal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-horizontal2-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-vertical-ja-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/reference/text-underline-position-vertical-ref.html
