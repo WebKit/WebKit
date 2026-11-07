@@ -2069,6 +2069,21 @@ private:
         nextWithoutClearingLineTerminator();
     }
 
+    bool hasFailedAssignmentPattern(unsigned offset) const
+    {
+        for (unsigned failedOffset : m_failedAssignmentPatternOffsets) {
+            if (failedOffset == offset)
+                return true;
+        }
+        return false;
+    }
+
+    void rememberFailedAssignmentPattern(unsigned offset)
+    {
+        if (!hasFailedAssignmentPattern(offset))
+            m_failedAssignmentPatternOffsets.append(offset);
+    }
+
     template <class TreeBuilder>
     ALWAYS_INLINE void internalSaveState(TreeBuilder& context, SavePoint& savePoint)
     {
@@ -2159,6 +2174,7 @@ private:
     SuperBinding m_superBinding;
     bool m_hasStackOverflow;
     ScopeStack m_scopeStack;
+    Vector<unsigned> m_failedAssignmentPatternOffsets;
 
     static void verifyLayout();
 };
