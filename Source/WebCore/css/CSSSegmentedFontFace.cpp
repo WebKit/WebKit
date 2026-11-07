@@ -113,12 +113,16 @@ static void appendFont(FontRanges& ranges, Ref<FontAccessor>&& fontAccessor, con
 
 FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescription, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues)
 {
-    auto addResult = m_cache.add(std::make_tuple(FontDescriptionKey(fontDescription), fontPaletteValues), FontRanges());
-    auto& ranges = addResult.iterator->value;
+    auto key = std::make_tuple(FontDescriptionKey(fontDescription), fontPaletteValues);
 
-    if (!addResult.isNewEntry)
-        return ranges;
+    if (auto entry = m_cache.find(key); entry != m_cache.end())
+        return entry->value;
 
+    // Build the result in a local. The loop below calls out to CSSFontFace::font(), which for a local()
+    // source completes the load synchronously, notifies clients and can therefore resolve a FontFace
+    // `loaded` promise, running author script that re-enters this function. A reference into m_cache's
+    // bucket array would dangle the moment such a reentrant insertion rehashed the table.
+    FontRanges ranges;
     auto desiredRequest = fontDescription.fontSelectionRequest();
 
     for (auto& face : m_fontFaces) {
@@ -139,6 +143,7 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
     }
     
     ranges.shrinkToFit();
+    m_cache.add(WTF::move(key), ranges);
     return ranges;
 }
 
