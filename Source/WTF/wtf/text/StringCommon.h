@@ -632,7 +632,7 @@ ALWAYS_INLINE const uint32_t* find32(const uint32_t* pointer, uint32_t character
 
 ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character, size_t length)
 {
-    constexpr size_t scalarThreshold = 4;
+    constexpr size_t scalarThreshold = SIMD::isHardwareAccelerated ? 4 : std::numeric_limits<size_t>::max();
     size_t index = 0;
     size_t runway = std::min(scalarThreshold, length);
     for (; index < runway; ++index) {
@@ -1379,7 +1379,7 @@ inline void copyElements(std::span<float> destinationSpan, std::span<const doubl
     constexpr size_t memoryAccessSize = 8;
     static_assert(sizeof(double) == 8, "SIMD code assumes 64-bit doubles");
     static_assert(sizeof(float) == 4, "SIMD code assumes 32-bit floats");
-    if (length >= memoryAccessSize) {
+    if (SIMD::isHardwareAccelerated && (length >= memoryAccessSize)) {
         const uintptr_t memoryAccessMask = memoryAccessSize - 1;
         const size_t simdIterations = length & ~memoryAccessMask;
         const auto* const sourceEnd = source + simdIterations;

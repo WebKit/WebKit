@@ -151,7 +151,7 @@ template<typename CharacterType>
 
     constexpr size_t stride = 16;
     constexpr size_t halfStride = stride / 2;
-    if (span.size() >= stride) {
+    if (SIMD::isHardwareAccelerated && (span.size() >= stride)) {
         auto doStridedDecode = [&]() ALWAYS_INLINE_LAMBDA {
             if constexpr (sizeof(CharacterType) == 1) {
                 for (; cursor + stride <= end; cursor += stride, output += halfStride) {
