@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not hang. Each feComposite uses the previous result for both of its inputs, so expanding the filter graph as a tree takes exponential time.</p>
+<svg width="100" height="100">
+    <filter id="filter" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"></filter>
+    <rect id="rect" width="100" height="100" fill="green"/>
+</svg>
+<pre id="result"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const svgNS = "http://www.w3.org/2000/svg";
+const filter = document.getElementById("filter");
+for (let i = 0; i < 199; ++i) {
+    const composite = document.createElementNS(svgNS, "feComposite");
+    if (i) {
+        composite.setAttribute("in", "r" + (i - 1));
+        composite.setAttribute("in2", "r" + (i - 1));
+    }
+    composite.setAttribute("result", "r" + i);
+    filter.appendChild(composite);
+}
+
+document.getElementById("rect").setAttribute("filter", "url(#filter)");
+document.body.offsetHeight;
+
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        document.getElementById("result").textContent = "PASS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+</script>
+</body>
+</html>
