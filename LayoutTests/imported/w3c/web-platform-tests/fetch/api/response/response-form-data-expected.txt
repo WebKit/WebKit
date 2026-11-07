@@ -8,9 +8,56 @@ PASS Validate form data - twoPartsWithTransportPadding
 PASS Validate buggy form data - empty
 PASS Validate buggy form data - cr1
 PASS Validate buggy form data - cr2
-FAIL Validate buggy form data - cr3 assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Validate buggy form data - cr3
 PASS Validate buggy form data - cr_
 PASS Validate buggy form data - dashes
-FAIL Validate buggy form data - boundary assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Validate buggy form data - boundary
 PASS Empty form data
+PASS Parse file part without Content-Type
+PASS Parse file part with Content-Type
+PASS Parse file part with Content-Type before Content-Disposition
+PASS Parse string and file parts
+PASS Parse percent sequences in a name are not decoded
+PASS Parse percent sequences in a filename are not decoded
+PASS Parse empty filename
+PASS Parse empty string part
+PASS Parse empty file part
+PASS Parse value containing the boundary as text
+PASS Parse value containing --boundary not preceded by CRLF
+PASS Parse value containing CRLF
+PASS Parse transport padding after close delimiter
+PASS Parse transport padding after close delimiter at end of input
+PASS Parse epilogue after close delimiter
+PASS Parse duplicate names
+PASS Parse unknown headers are ignored
+PASS Parse Content-Transfer-Encoding is ignored
+PASS Parse header names are case-insensitive
+PASS Parse Content-Type value is trimmed
+PASS Parse Content-Type is ASCII lowercased
+PASS Parse non-ASCII Content-Type is ignored
+PASS Parse Content-Type containing a control character is ignored
+PASS Parse empty Content-Type
+PASS Parse non-ASCII name
+PASS Parse non-ASCII filename
+PASS Parse non-ASCII value
+PASS Parse NUL in a name
+PASS Parse other control characters in a name
+FAIL Parse duplicate Content-Type, last one wins assert_equals: entry 0 type expected "text/plain" but got "text/html"
+PASS Parse _charset_ is a normal entry
+PASS Parse failure: preamble before the first delimiter
+PASS Parse failure: junk after close delimiter
+PASS Parse failure: no Content-Disposition
+PASS Parse failure: header without a colon
+FAIL Parse failure: header name that is not a token assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Parse failure: no close delimiter
+PASS Parse failure: no CRLF before close delimiter
+PASS Parse failure: bare LF in a name
+PASS Parse failure: bare CR in a name
+PASS Parse failure: bare LF in a filename
+PASS Parse failure: bare LF in a header value
+PASS Parse failure: nothing after the first delimiter
+PASS Parse failure: no boundary parameter
+PASS Parse failure: empty boundary parameter
+PASS Parse invalid UTF-8 in a name
+PASS Parse invalid UTF-8 in a value
 
