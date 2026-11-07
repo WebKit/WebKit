@@ -1,0 +1,83 @@
+Test that under Site Isolation, layout, style and paint records are reported by the frame target of the frame that did the work, with node IDs from that frame target.
+
+
+
+== Running test suite: SiteIsolation.Timeline.FrameTargetLayoutRecords
+-- Running test case: SiteIsolation.Timeline.FrameTargetLayoutRecords.Setup
+PASS: Should find the same-origin iframe target.
+PASS: Should find the cross-origin iframe target.
+PASS: The frame targets' documents are available.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetLayoutRecords.MainFrame
+PASS: The invalidate-styles record should come from the main frame target.
+PASS: The invalidate-styles record should have a DOM node.
+PASS: The invalidate-styles record's DOM node should belong to the main frame target.
+PASS: The invalidate-styles record's DOM node should have node type 9.
+PASS: The recalculate-styles record should come from the main frame target.
+PASS: The recalculate-styles record should have a DOM node.
+PASS: The recalculate-styles record's DOM node should belong to the main frame target.
+PASS: The recalculate-styles record's DOM node should have node type 9.
+PASS: The invalidate-layout record should come from the main frame target.
+PASS: The invalidate-layout record should have a DOM node.
+PASS: The invalidate-layout record's DOM node should belong to the main frame target.
+PASS: The invalidate-layout record's DOM node should have node type 1.
+PASS: The invalidate-layout record's DOM node should be #main-box.
+PASS: The schedule-layout record should come from the main frame target.
+PASS: The schedule-layout record should have a DOM node.
+PASS: The schedule-layout record's DOM node should belong to the main frame target.
+PASS: The schedule-layout record's DOM node should have node type 9.
+PASS: The layout record should come from the main frame target.
+PASS: The layout record should have a DOM node.
+PASS: The layout record's DOM node should belong to the main frame target.
+PASS: The layout record's DOM node should have node type 9.
+PASS: Capturing stopped.
+PASS: No layout, style or paint records should come from the page target.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetLayoutRecords.CrossOriginFrame
+PASS: The invalidate-styles record should come from the cross-origin iframe target.
+PASS: The invalidate-styles record should have a DOM node.
+PASS: The invalidate-styles record's DOM node should belong to the cross-origin iframe target.
+PASS: The invalidate-styles record's DOM node should have node type 9.
+PASS: The recalculate-styles record should come from the cross-origin iframe target.
+PASS: The recalculate-styles record should have a DOM node.
+PASS: The recalculate-styles record's DOM node should belong to the cross-origin iframe target.
+PASS: The recalculate-styles record's DOM node should have node type 9.
+PASS: The invalidate-layout record should come from the cross-origin iframe target.
+PASS: The invalidate-layout record should have a DOM node.
+PASS: The invalidate-layout record's DOM node should belong to the cross-origin iframe target.
+PASS: The invalidate-layout record's DOM node should have node type 1.
+PASS: The invalidate-layout record's DOM node should be #box.
+PASS: The forced-layout record should come from the cross-origin iframe target.
+PASS: The forced-layout record should have a DOM node.
+PASS: The forced-layout record's DOM node should belong to the cross-origin iframe target.
+PASS: The forced-layout record's DOM node should have node type 9.
+PASS: The paint record should come from the cross-origin iframe target.
+PASS: The paint record's DOM node should belong to the cross-origin iframe target.
+PASS: Capturing stopped.
+PASS: No layout, style or paint records should come from the page target.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetLayoutRecords.SameOriginFrameForcedByParent
+PASS: The invalidate-styles record should come from the same-origin iframe target.
+PASS: The invalidate-styles record should have a DOM node.
+PASS: The invalidate-styles record's DOM node should belong to the same-origin iframe target.
+PASS: The invalidate-styles record's DOM node should have node type 9.
+PASS: The recalculate-styles record should come from the same-origin iframe target.
+PASS: The recalculate-styles record should have a DOM node.
+PASS: The recalculate-styles record's DOM node should belong to the same-origin iframe target.
+PASS: The recalculate-styles record's DOM node should have node type 9.
+PASS: The forced-layout record should come from the same-origin iframe target.
+PASS: The forced-layout record should have a DOM node.
+PASS: The forced-layout record's DOM node should belong to the same-origin iframe target.
+PASS: The forced-layout record's DOM node should have node type 9.
+PASS: The forced layout should point to the parent's script.
+PASS: Capturing stopped.
+PASS: No layout, style or paint records should come from the page target.
+
+-- Running test case: SiteIsolation.Timeline.FrameTargetLayoutRecords.SameOriginFrameLargestContentfulPaint
+PASS: The largest-contentful-paint record should come from the same-origin iframe target.
+PASS: The largest-contentful-paint record should have a DOM node.
+PASS: The largest-contentful-paint record's DOM node should belong to the same-origin iframe target.
+PASS: The largest-contentful-paint record's DOM node should have node type 1.
+PASS: The largest-contentful-paint record's DOM node should be #large-text.
+PASS: Capturing stopped.
+

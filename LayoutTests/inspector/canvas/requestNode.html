@@ -53,7 +53,7 @@ function test() {
                             return;
                         }
 
-                        nodesMap.set(canvas, nodeIds.map((nodeId) => WI.Canvas._domNodeForId(canvas.target, nodeId)));
+                        nodesMap.set(canvas, nodeIds.map((nodeId) => WI.domManager.nodeForIdInTarget(nodeId, canvas.target)));
                         if (nodesMap.size === expectedLength)
                             finish();
                     });
