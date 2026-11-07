@@ -39,8 +39,10 @@
 #include "compiler/translator/tree_util/BuiltIn_autogen.h"
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
 #include "compiler/translator/util.h"
 #include "compiler/translator/wgsl/OutputUniformBlocks.h"
@@ -2688,6 +2690,54 @@ bool AppendVertexShaderDepthCorrectionToMain(TCompiler *compiler,
     return RunAtTheEndOfShader(compiler, root, ifCall, &compiler->getSymbolTable());
 }
 
+// WebGPU's @builtin(position) is in framebuffer coordinates, with the origin at the upper left
+// corner, and the backend renders the default framebuffer upside down relative to GL so that its
+// origin is at the lower left corner. This operation flips gl_FragCoord.y for flipped framebuffers.
+// It replaces gl_FragCoord with a variable that is set at the start of main():
+//
+//     ANGLE_flippedFragCoord = vec4((gl_FragCoord.xy - pivot) * flipXY + pivot, gl_FragCoord.zw)
+//
+// where pivot is half the render area and flipXY is the driver uniforms' fragment flip.
+[[nodiscard]] bool InsertFragCoordCorrection(TCompiler *compiler,
+                                             TIntermBlock *root,
+                                             const DriverUniform *driverUniforms)
+{
+    TSymbolTable *symbolTable  = &compiler->getSymbolTable();
+    const TVariable *fragCoord = static_cast<const TVariable *>(
+        symbolTable->findBuiltIn(ImmutableString("gl_FragCoord"), compiler->getShaderVersion()));
+
+    TVariable *flippedFragCoord =
+        new TVariable(symbolTable, ImmutableString("ANGLE_flippedFragCoord"),
+                      StaticType::GetBasic<EbtFloat, EbpHigh, 4>(), SymbolType::AngleInternal);
+    DeclareGlobalVariable(root, flippedFragCoord);
+    if (!ReplaceVariable(compiler, root, fragCoord, flippedFragCoord))
+    {
+        return false;
+    }
+
+    TIntermTyped *flipXY = driverUniforms->getFlipXY(symbolTable, DriverUniformFlip::Fragment);
+    TIntermTyped *pivot  = driverUniforms->getHalfRenderArea();
+
+    TIntermSwizzle *fragCoordXY = new TIntermSwizzle(new TIntermSymbol(fragCoord), {0, 1});
+    TIntermSwizzle *fragCoordZW = new TIntermSwizzle(new TIntermSymbol(fragCoord), {2, 3});
+
+    // Create the expression "(gl_FragCoord.xy - pivot) * flipXY + pivot"
+    TIntermBinary *removePivot = new TIntermBinary(EOpSub, fragCoordXY, pivot);
+    TIntermBinary *flippedXY   = new TIntermBinary(EOpMul, removePivot, flipXY);
+    TIntermBinary *plusPivot   = new TIntermBinary(EOpAdd, flippedXY, pivot->deepCopy());
+
+    TIntermSequence args = {plusPivot, fragCoordZW};
+    TIntermTyped *flippedValue =
+        TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtFloat, EbpHigh, 4>(), &args);
+    TIntermBinary *assignment =
+        new TIntermBinary(EOpAssign, new TIntermSymbol(flippedFragCoord), flippedValue);
+
+    TIntermSequence *mainSequence = FindMain(root)->getBody()->getSequence();
+    mainSequence->insert(mainSequence->begin(), assignment);
+
+    return compiler->validateAST(root);
+}
+
 }  // namespace
 
 TranslatorWGSL::TranslatorWGSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
@@ -2752,6 +2802,15 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
         }
 
         if (!AppendVertexShaderDepthCorrectionToMain(this, root, &driverUniforms))
+        {
+            return false;
+        }
+    }
+
+    if (getShaderType() == GL_FRAGMENT_SHADER &&
+        FindSymbolNode(root, BuiltInVariable::gl_FragCoord()->name()) != nullptr)
+    {
+        if (!InsertFragCoordCorrection(this, root, &driverUniforms))
         {
             return false;
         }

@@ -475,4 +475,265 @@ ANGLE_INSTANTIATE_TEST_ES2_AND(ViewportTest, ES2_D3D11_PRESENT_PATH_FAST());
 // This test suite is not instantiated on some OSes.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ViewportTest);
 
+struct Rect
+{
+    bool contains(int px, int py) const
+    {
+        return px >= x && px < x + width && py >= y && py < y + height;
+    }
+
+    int x;
+    int y;
+    int width;
+    int height;
+};
+
+// Tests viewports that do not cover the whole framebuffer, on the default framebuffer and on a
+// framebuffer object.
+class ViewportOffsetTest : public ANGLETest<>
+{
+  protected:
+    static constexpr int kSize = 32;
+
+    ViewportOffsetTest()
+    {
+        setWindowWidth(kSize);
+        setWindowHeight(kSize);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    void testSetUp() override
+    {
+        mProgram = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        ASSERT_NE(0u, mProgram);
+        mColorLocation = glGetUniformLocation(mProgram, essl1_shaders::ColorUniform());
+        ASSERT_NE(-1, mColorLocation);
+    }
+
+    void testTearDown() override { glDeleteProgram(mProgram); }
+
+    // Binds the default framebuffer, or a framebuffer object with an RGBA8 color texture.
+    void bindFramebuffer(bool useFramebufferObject)
+    {
+        if (!useFramebufferObject)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            return;
+        }
+        glBindTexture(GL_TEXTURE_2D, mColorTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorTexture,
+                               0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    }
+
+    void clear()
+    {
+        glViewport(0, 0, kSize, kSize);
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    // Draws a quad that covers the clip space coordinates [-scale, scale].
+    void drawColorQuad(const GLColor &color, float scale)
+    {
+        glUseProgram(mProgram);
+        const angle::Vector4 colorF = color.toNormalizedVector();
+        glUniform4f(mColorLocation, colorF[0], colorF[1], colorF[2], colorF[3]);
+        drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.0f, scale, true);
+    }
+
+    GLuint mProgram      = 0;
+    GLint mColorLocation = -1;
+    GLTexture mColorTexture;
+    GLFramebuffer mFramebuffer;
+};
+
+// Tests drawing into a grid of viewports that tile the framebuffer.
+TEST_P(ViewportOffsetTest, Tiles)
+{
+    constexpr int kTileSize = kSize / 4;
+    auto tileColor          = [](int tileX, int tileY) {
+        return GLColor(static_cast<GLubyte>(32 + tileX * 64), static_cast<GLubyte>(32 + tileY * 64),
+                       128, 255);
+    };
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        clear();
+        for (int tileY = 0; tileY < 4; ++tileY)
+        {
+            for (int tileX = 0; tileX < 4; ++tileX)
+            {
+                glViewport(tileX * kTileSize, tileY * kTileSize, kTileSize, kTileSize);
+                drawColorQuad(tileColor(tileX, tileY), 1.0f);
+            }
+        }
+        ASSERT_GL_NO_ERROR();
+        for (int tileY = 0; tileY < 4; ++tileY)
+        {
+            for (int tileX = 0; tileX < 4; ++tileX)
+            {
+                SCOPED_TRACE(testing::Message() << "framebuffer object: " << useFramebufferObject
+                                                << ", tile: (" << tileX << ", " << tileY << ")");
+                EXPECT_PIXEL_RECT_EQ(tileX * kTileSize, tileY * kTileSize, kTileSize, kTileSize,
+                                     tileColor(tileX, tileY));
+            }
+        }
+    }
+}
+
+// Tests viewports that extend past the edges of the framebuffer. The viewport maps clip space to
+// window coordinates; only the rasterization is limited to the framebuffer.
+TEST_P(ViewportOffsetTest, PartiallyOutsideFramebuffer)
+{
+    struct Case
+    {
+        Rect viewport;
+        // The window coordinates of the quad that covers the clip space coordinates [-0.5, 0.5],
+        // clipped to the framebuffer.
+        Rect expectedQuad;
+    };
+    constexpr int kHalf    = kSize / 2;
+    constexpr int kQuarter = kSize / 4;
+    const Case kCases[]    = {
+        {{kHalf, kHalf, kSize, kSize}, {kHalf + kQuarter, kHalf + kQuarter, kQuarter, kQuarter}},
+        {{-kHalf, -kHalf, kSize, kSize}, {0, 0, kQuarter, kQuarter}},
+        {{0, kHalf, kSize, kSize}, {kQuarter, kHalf + kQuarter, kHalf, kQuarter}},
+        {{kHalf, 0, kSize, kSize}, {kHalf + kQuarter, kQuarter, kQuarter, kHalf}},
+        {{0, -kHalf, kSize, kSize}, {kQuarter, 0, kHalf, kQuarter}},
+        {{-kHalf, 0, kSize, kSize}, {0, kQuarter, kQuarter, kHalf}},
+        {{-kSize, -kSize, kSize * 4, kSize * 4}, {0, 0, kSize, kSize}},
+    };
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        for (const Case &testCase : kCases)
+        {
+            clear();
+            glViewport(testCase.viewport.x, testCase.viewport.y, testCase.viewport.width,
+                       testCase.viewport.height);
+            drawColorQuad(GLColor::green, 0.5f);
+            ASSERT_GL_NO_ERROR();
+
+            SCOPED_TRACE(testing::Message()
+                         << "framebuffer object: " << useFramebufferObject << ", viewport: ("
+                         << testCase.viewport.x << ", " << testCase.viewport.y << ", "
+                         << testCase.viewport.width << ", " << testCase.viewport.height << ")");
+            std::vector<GLColor> pixels(kSize * kSize);
+            glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+            int wrongPixels = 0;
+            for (int y = 0; y < kSize; ++y)
+            {
+                for (int x = 0; x < kSize; ++x)
+                {
+                    const GLColor &expected =
+                        testCase.expectedQuad.contains(x, y) ? GLColor::green : GLColor::black;
+                    if (pixels[y * kSize + x] != expected && wrongPixels++ == 0)
+                    {
+                        ADD_FAILURE() << "first wrong pixel: (" << x << ", " << y
+                                      << "), expected " << expected << ", actual "
+                                      << pixels[y * kSize + x];
+                    }
+                }
+            }
+            EXPECT_EQ(0, wrongPixels);
+        }
+    }
+}
+
+// Tests viewports that do not intersect the framebuffer: nothing is drawn.
+TEST_P(ViewportOffsetTest, OutsideFramebuffer)
+{
+    const Rect kViewports[] = {
+        {kSize, 0, kSize, kSize},
+        {0, kSize, kSize, kSize},
+        {-kSize, 0, kSize, kSize},
+        {0, -kSize, kSize, kSize},
+    };
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        for (const Rect &viewport : kViewports)
+        {
+            clear();
+            glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+            drawColorQuad(GLColor::green, 1.0f);
+            ASSERT_GL_NO_ERROR();
+            SCOPED_TRACE(testing::Message()
+                         << "framebuffer object: " << useFramebufferObject << ", viewport: ("
+                         << viewport.x << ", " << viewport.y << ", " << viewport.width << ", "
+                         << viewport.height << ")");
+            EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::black);
+        }
+    }
+}
+
+// Tests that gl_FragCoord.xy are the window coordinates of the fragment, with the origin at the
+// lower left corner, whatever the viewport.
+TEST_P(ViewportOffsetTest, FragCoord)
+{
+    constexpr char kFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(gl_FragCoord.xy / 32.0, 0.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    static_assert(kSize == 32);
+
+    const Rect kViewports[] = {
+        {0, 0, kSize, kSize},
+        {kSize / 4, kSize / 8, kSize / 2, kSize / 2},
+        {kSize / 2, kSize / 2, kSize, kSize},
+    };
+    for (bool useFramebufferObject : {false, true})
+    {
+        bindFramebuffer(useFramebufferObject);
+        for (const Rect &viewport : kViewports)
+        {
+            clear();
+            glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+            drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f, 1.0f, true);
+            ASSERT_GL_NO_ERROR();
+
+            SCOPED_TRACE(testing::Message()
+                         << "framebuffer object: " << useFramebufferObject << ", viewport: ("
+                         << viewport.x << ", " << viewport.y << ", " << viewport.width << ", "
+                         << viewport.height << ")");
+            std::vector<GLColor> pixels(kSize * kSize);
+            glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+            int wrongPixels = 0;
+            for (int y = 0; y < kSize; ++y)
+            {
+                for (int x = 0; x < kSize; ++x)
+                {
+                    GLColor expected = GLColor::black;
+                    if (viewport.contains(x, y))
+                    {
+                        expected.R = static_cast<GLubyte>(std::round((x + 0.5f) / 32.0f * 255.0f));
+                        expected.G = static_cast<GLubyte>(std::round((y + 0.5f) / 32.0f * 255.0f));
+                    }
+                    const GLColor &actual = pixels[y * kSize + x];
+                    const bool near       = std::abs(actual.R - expected.R) <= 1 &&
+                                      std::abs(actual.G - expected.G) <= 1 &&
+                                      actual.B == expected.B && actual.A == expected.A;
+                    if (!near && wrongPixels++ == 0)
+                    {
+                        ADD_FAILURE() << "first wrong pixel: (" << x << ", " << y
+                                      << "), expected " << expected << ", actual " << actual;
+                    }
+                }
+            }
+            EXPECT_EQ(0, wrongPixels);
+        }
+    }
+}
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ViewportOffsetTest);
+
 }  // namespace
