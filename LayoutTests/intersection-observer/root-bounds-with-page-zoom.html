@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<link rel="help" href="https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverentry-rootbounds">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+body {
+    margin: 0;
+}
+#root {
+    width: 320px;
+    height: 300px;
+    margin: 80px 0 0 40px;
+    overflow: hidden;
+}
+#content {
+    position: relative;
+    height: 3000px;
+}
+#target {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 1px;
+}
+</style>
+
+<div id="root"><div id="content"><div id="target"></div></div></div>
+
+<script>
+    window.internals.setPageZoomFactor(0.75);
+    root.scrollTop = 2;
+
+    function assertRectEquals(actual, expected) {
+        assert_approx_equals(actual.left, expected.left, 1, "left");
+        assert_approx_equals(actual.top, expected.top, 1, "top");
+        assert_approx_equals(actual.width, expected.width, 1, "width");
+        assert_approx_equals(actual.height, expected.height, 1, "height");
+    }
+
+    async_test((t) => {
+        let observer = new IntersectionObserver(t.step_func_done((entries) => {
+            observer.disconnect();
+            let entry = entries[entries.length - 1];
+            assert_false(entry.isIntersecting, "isIntersecting");
+            assertRectEquals(entry.boundingClientRect, target.getBoundingClientRect());
+            assertRectEquals(entry.rootBounds, root.getBoundingClientRect());
+            assert_less_than(entry.boundingClientRect.bottom, entry.rootBounds.top, "target is above root");
+        }), { root });
+        observer.observe(target);
+    }, "rootBounds of an element root is in the same coordinate space as boundingClientRect under page zoom");
+
+    async_test((t) => {
+        let observer = new IntersectionObserver(t.step_func_done((entries) => {
+            observer.disconnect();
+            let entry = entries[entries.length - 1];
+            assertRectEquals(entry.rootBounds, new DOMRect(0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight));
+        }));
+        observer.observe(root);
+    }, "rootBounds of the implicit root is in the same coordinate space as boundingClientRect under page zoom");
+</script>
