@@ -299,7 +299,7 @@ void layoutWithBlockFormattingContextForBlockInInline(Layout::BlockFormattingCon
     // which size the line. The box's own inline content, as the root of its inline formatting context, gets the geometry the block formatting
     // context gave it, with the used ones (LineLayout::updateFormattingContextGeometries).
     auto inlineMargins = layoutState.geometryForBox(block).horizontalMargin();
-    auto box = blockFormattingContext.layoutBlockLevelBoxInInlineContent(blockRenderer, lineLogicalTop, inlineLayoutState.lineCount(), inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks(), blockLayoutResult);
+    auto box = blockFormattingContext.layoutBlockLevelBoxInInlineContent(blockRenderer, lineLogicalTop, inlineLayoutState.lineCount(), inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks(), inlineLayoutState.placedFloats(), blockLayoutResult);
 
     // Like the render tree path above: the line of the box ends where the content after it starts, and the box sits in it at its border box
     // top.

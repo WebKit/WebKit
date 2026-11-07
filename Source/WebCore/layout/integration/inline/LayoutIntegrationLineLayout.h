@@ -109,10 +109,10 @@ public:
     // It also lays out the block-level boxes in the inline content, and adds them to the result it is building, and gives the floats that
     // intrude into the content, in the logical coordinates of the root's border box, which the root's FloatingObjects do not list then.
     LayoutResult layout(const Layout::BlockLayoutState&, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&, const Layout::PlacedFloats::List& intrudingFloats, ForceFullLayout);
-    // The floats in the inline content, as its last layout placed them, and those that intruded into it, in the logical coordinates of the
-    // root's border box.
+    // The floats in the inline content, as its last layout placed them, and those it was laid out with as intruding into it, in the logical
+    // coordinates of the root's border box.
     Layout::PlacedFloats::List floatsInContent() const;
-    Layout::PlacedFloats::List intrudingFloats() const;
+    const Layout::PlacedFloats::List& intrudingFloats() const LIFETIME_BOUND { return m_intrudingFloats; }
     // The block-level box on the last line with content, whose margins after it stay open for the margins after the content.
     RenderBox* blockLevelBoxAtEnd() const;
     const std::optional<Layout::ConstraintsForInlineContent>& inlineContentConstraints() const LIFETIME_BOUND { return m_inlineContentConstraints; }
@@ -242,6 +242,7 @@ private:
     Layout::BlockFormattingState* m_blockFormattingState { nullptr };
     Layout::InlineContentCache* m_inlineContentCache { nullptr };
     std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
+    Layout::PlacedFloats::List m_intrudingFloats;
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;

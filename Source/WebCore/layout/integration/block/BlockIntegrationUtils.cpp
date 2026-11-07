@@ -405,7 +405,7 @@ bool BlockIntegrationUtils::inlineContentHasFloats(const RenderBlockFlow& blockC
     return false;
 }
 
-bool BlockIntegrationUtils::inlineContentMakesLineBoxes(const RenderBlockFlow& blockContainer)
+bool BlockIntegrationUtils::inlineContentMakesLineBoxesBeforeBlockLevelBoxes(const RenderBlockFlow& blockContainer)
 {
     for (CheckedPtr<const RenderObject> descendant = blockContainer.firstChild(); descendant;) {
         if (descendant->isFloatingOrOutOfFlowPositioned()) {
@@ -418,9 +418,10 @@ bool BlockIntegrationUtils::inlineContentMakesLineBoxes(const RenderBlockFlow& b
         } else if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(*descendant)) {
             if (!lineBreak->isWBR())
                 return true;
-        } else if (is<RenderBox>(*descendant))
-            return true;
-        else if (descendant->isInlineBox()) {
+        } else if (CheckedPtr box = dynamicDowncast<RenderBox>(*descendant)) {
+            // The block-start margin of a block-level box can still collapse with the block container's.
+            return !box->isBlockLevelBox();
+        } else if (descendant->isInlineBox()) {
             CheckedRef inlineBox = downcast<RenderBoxModelObject>(*descendant);
             CheckedRef style = inlineBox->style();
             auto writingMode = blockContainer.writingMode();
@@ -447,7 +448,7 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
     // line-clamp budget as it gets laid out, and what the content before it left of the budget may have changed: RenderBlockFlow::layoutInFlowChildren
     // lays out all the content of a line-clamp container's formatting context again.
     auto isInLineClampContext = !!blockLayoutState.lineClamp();
-    auto contentNeedsLayout = isInLineClampContext || inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
+    auto contentNeedsLayout = relayoutChildren || isInLineClampContext || inlineContentRoot.selfNeedsLayout() || inlineContentRoot.normalChildNeedsLayout() || inlineContentRoot.outOfFlowChildNeedsStaticPositionLayout();
     if (CheckedPtr lineLayout = inlineContentRoot.inlineLayout(); lineLayout && !contentNeedsLayout && lineLayout->hasContent() && !inlineContentConstraintsChanged(*lineLayout, constraints) && !intrudingFloatsChanged(*lineLayout, intrudingFloats)) {
         auto keptContentLayoutResult = lineLayout->hasBlocks() ? keptInlineContentWithBlockLevelBoxesLayoutResult(inlineContentRoot, *lineLayout) : std::optional { inlineContentLayoutResult(*lineLayout) };
         if (keptContentLayoutResult) {
