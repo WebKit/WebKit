@@ -396,7 +396,10 @@ public:
         return byteCount(bitCount);
     }
     unsigned outOfLineMemoryUse() const { return outOfLineMemoryUse(size()); }
-        
+
+    static constexpr unsigned maxInlineBitCount() { return maxInlineBits(); }
+    static constexpr uintptr_t inlineBitMask() { return static_cast<uintptr_t>(1) << maxInlineBitCount(); }
+
     WTF_EXPORT_PRIVATE void shiftRightByMultipleOf64(size_t);
 
 private:
