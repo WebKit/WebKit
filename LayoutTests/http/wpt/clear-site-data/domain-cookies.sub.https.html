@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const helperPath = ":{{ports[https][0]}}/WebKit/clear-site-data/resources/domain-cookies-helper.html";
+const siteHost = "{{hosts[][]}}";
+const parentHost = "{{hosts[][www]}}";
+const siblingHost = "{{hosts[][www1]}}";
+const deepHost = "{{hosts[][www2.www]}}";
+const otherSiteHost = "{{hosts[alt][]}}";
+const otherSiteDeepHost = "{{hosts[alt][www2.www]}}";
+
+// Hosts with a helper popup. parentHost only appears as a Domain attribute.
+const helperHosts = [siteHost, siblingHost, deepHost, otherSiteHost, otherSiteDeepHost];
+
+// Each cookie is set from `setter`, optionally with a Domain attribute, is visible from `visibleFrom`, and
+// belongs to the registrable domain `site`.
+const cookies = [
+    { name: "csd-site-host-only", site: siteHost, setter: siteHost, visibleFrom: [siteHost] },
+    { name: "csd-site-domain-site", site: siteHost, setter: siteHost, domain: siteHost, visibleFrom: [siteHost, siblingHost, deepHost] },
+    { name: "csd-sibling-host-only", site: siteHost, setter: siblingHost, visibleFrom: [siblingHost] },
+    { name: "csd-sibling-domain-site", site: siteHost, setter: siblingHost, domain: siteHost, visibleFrom: [siteHost, siblingHost, deepHost] },
+    { name: "csd-deep-host-only", site: siteHost, setter: deepHost, visibleFrom: [deepHost] },
+    { name: "csd-deep-domain-parent", site: siteHost, setter: deepHost, domain: parentHost, visibleFrom: [deepHost] },
+    { name: "csd-other-domain-other", site: otherSiteHost, setter: otherSiteHost, domain: otherSiteHost, visibleFrom: [otherSiteHost, otherSiteDeepHost] },
+    { name: "csd-other-deep-host-only", site: otherSiteHost, setter: otherSiteDeepHost, visibleFrom: [otherSiteDeepHost] },
+];
+
+function describeCookie(cookie)
+{
+    return cookie.name + " (" + (cookie.domain ? "Domain=" + cookie.domain + " set from " : "host-only on ") + cookie.setter + ")";
+}
+
+let nextMessageId = 0;
+const pendingReplies = new Map();
+const pendingReadiness = new Map();
+
+window.addEventListener("message", (event) => {
+    if (event.data.ready) {
+        pendingReadiness.get(event.source)?.();
+        return;
+    }
+    pendingReplies.get(event.data.id)?.(event.data.result);
+    pendingReplies.delete(event.data.id);
+});
+
+function openHelper(host)
+{
+    return new Promise((resolve) => {
+        const helper = open("https://" + host + helperPath);
+        pendingReadiness.set(helper, () => resolve(helper));
+    });
+}
+
+function send(helper, message)
+{
+    return new Promise((resolve) => {
+        const id = nextMessageId++;
+        pendingReplies.set(id, resolve);
+        helper.postMessage({ id, ...message }, "*");
+    });
+}
+
+function cookieNames(cookieString)
+{
+    return cookieString.split(";").map((cookie) => cookie.split("=")[0].trim()).filter((name) => name);
+}
+
+const helpers = new Map();
+
+async function getCookieNames(host)
+{
+    return cookieNames(await send(helpers.get(host), { command: "get" })).sort();
+}
+
+function expectedNamesVisibleFrom(host)
+{
+    return cookies.filter((cookie) => cookie.visibleFrom.includes(host)).map((cookie) => cookie.name).sort();
+}
+
+promise_test(async () => {
+    assert_false([...helperHosts, parentHost].some((host) => host.includes("{{")), "host names should be substituted");
+    for (const host of helperHosts)
+        helpers.set(host, await openHelper(host));
+}, "Open helper windows");
+
+function clearSiteDataScenario(clearingHost, shouldBeCleared)
+{
+    promise_test(async () => {
+        for (const host of helperHosts)
+            await send(helpers.get(host), { command: "reset" });
+        for (const host of helperHosts)
+            assert_array_equals(await getCookieNames(host), [], "no cookies visible from " + host + " after reset");
+
+        for (const cookie of cookies) {
+            await send(helpers.get(cookie.setter), { command: "set", cookies: [
+                cookie.name + "=1; path=/" + (cookie.domain ? "; domain=" + cookie.domain : ""),
+            ] });
+        }
+        for (const host of helperHosts)
+            assert_array_equals(await getCookieNames(host), expectedNamesVisibleFrom(host), "cookies visible from " + host + " before clearing");
+
+        await send(helpers.get(clearingHost), { command: "clear" });
+    }, "[clear from " + clearingHost + "] Reset and set cookies, then fetch a resource with 'Clear-Site-Data: \"cookies\"'");
+
+    for (const cookie of cookies) {
+        const cleared = shouldBeCleared(cookie);
+        promise_test(async () => {
+            for (const host of cookie.visibleFrom) {
+                const names = await getCookieNames(host);
+                if (cleared)
+                    assert_false(names.includes(cookie.name), "not visible from " + host);
+                else
+                    assert_true(names.includes(cookie.name), "still visible from " + host);
+            }
+        }, "[clear from " + clearingHost + "] " + describeCookie(cookie) + " is " + (cleared ? "cleared" : "kept"));
+    }
+}
+
+const isOnSite = (cookie) => cookie.site === siteHost;
+
+clearSiteDataScenario(siteHost, isOnSite);
+clearSiteDataScenario(deepHost, isOnSite);
+clearSiteDataScenario(otherSiteDeepHost, (cookie) => !isOnSite(cookie));
+
+promise_test(async () => {
+    for (const host of helperHosts)
+        await send(helpers.get(host), { command: "reset" });
+    for (const host of helperHosts)
+        assert_array_equals(await getCookieNames(host), [], "no cookies visible from " + host);
+    for (const helper of helpers.values())
+        helper.close();
+}, "Clean up");
+</script>
+</body>
+</html>
