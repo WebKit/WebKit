@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/style-sheet-injection.js"></script>
+</head>
+<body>
+<script>
+// The page animates #target with its own @keyframes pulse (red). The quirk redefines @keyframes pulse (green),
+// and the quirk's keyframes must win over the page's keyframes of the same name.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (!window.internals)
+    document.body.textContent = "FAIL: this test requires window.internals.";
+else {
+    StyleSheetQuirkHelpers.installQuirk("*://127.0.0.1/*", undefined, "@keyframes pulse { from, to { color: rgb(0, 128, 0); } }");
+    location.href = "resources/style-sheet-injection-keyframes-target.html";
+}
+</script>
+</body>
+</html>

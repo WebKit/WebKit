@@ -247,7 +247,8 @@ void Resolver::addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
     const auto& animationName = rule->name();
-    m_keyframesRuleMap.set(animationName, WTF::move(rule));
+    auto& ruleMap = m_isCollectingQuirkRules ? m_quirkKeyframesRuleMap : m_keyframesRuleMap;
+    ruleMap.set(animationName, WTF::move(rule));
     protect(document())->keyframesRuleDidChange(animationName);
 }
 
@@ -464,8 +465,9 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
 
 bool Resolver::isAnimationNameValid(const AtomString& name) const
 {
-    return m_keyframesRuleMap.find(name) != m_keyframesRuleMap.end()
-        || userAgentKeyframes().find(name) != userAgentKeyframes().end();
+    return m_keyframesRuleMap.contains(name)
+        || m_quirkKeyframesRuleMap.contains(name)
+        || userAgentKeyframes().contains(name);
 }
 
 static std::pair<SingleAnimationRangeName, Percentage<>> deprecatedStyleRuleKeyframeKeyToStyle(const StyleRuleKeyframe::Key& key)
@@ -484,7 +486,10 @@ RefPtr<StyleRuleKeyframes> Resolver::keyframesRuleForName(const AtomString& anim
         return nullptr;
 
     m_keyframesRuleMap.checkConsistency();
+    m_quirkKeyframesRuleMap.checkConsistency();
 
+    if (RefPtr rule = m_quirkKeyframesRuleMap.get(animationName))
+        return rule;
     if (RefPtr rule = m_keyframesRuleMap.get(animationName))
         return rule;
     return userAgentKeyframes().get(animationName);
@@ -654,6 +659,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
     if (m_matchAuthorAndUserStyles) {
         collector.matchUserRules();
         collector.matchAuthorRules();
+        collector.matchQuirkRules();
     }
 
     ASSERT(!collector.matchedPseudoElements());
@@ -744,8 +750,10 @@ Vector<Ref<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element*
             collector.matchUserRules();
     }
 
-    if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules))
+    if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules)) {
         collector.matchAuthorRules();
+        collector.matchQuirkRules();
+    }
 
     return collector.matchedRuleList();
 }

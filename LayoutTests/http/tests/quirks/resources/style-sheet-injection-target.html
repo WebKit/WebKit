@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <script src="style-sheet-injection.js"></script>
+<style>#target { color: rgb(255, 0, 0) !important; }</style>
 </head>
 <body>
-<p id="target">Target</p>
+<p id="target" style="color: rgb(0, 0, 255) !important">Target</p>
 <pre id="output"></pre>
 <script>
 window.addEventListener("pageshow", event => {

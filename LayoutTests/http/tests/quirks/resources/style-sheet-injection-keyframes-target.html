@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="style-sheet-injection.js"></script>
+<style>
+@keyframes pulse { from, to { color: rgb(255, 0, 0); } }
+#target { animation: pulse 100s linear paused; }
+</style>
+</head>
+<body>
+<p id="target">Target</p>
+<pre id="output"></pre>
+<script>
+document.getElementById("output").textContent = [
+    "quirk active: " + internals.activeQuirkNames().includes("NeedsStyleSheetInjectedQuirk"),
+    "color: " + getComputedStyle(document.getElementById("target")).color
+].join("\n");
+testRunner.notifyDone();
+</script>
+</body>
+</html>

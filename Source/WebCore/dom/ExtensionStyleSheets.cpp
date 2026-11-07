@@ -148,9 +148,6 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     for (const auto& userStyleSheet : m_pageSpecificStyleSheets)
         addStyleSheet(userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
 
-    for (const auto& source : m_quirkStyleSheets)
-        addStyleSheet({ }, source, UserStyleLevel::Author);
-
     RefPtr frame = document->frame();
     RefPtr userContentProvider = frame ? frame->userContentProvider() : nullptr;
 
@@ -205,11 +202,18 @@ void ExtensionStyleSheets::removePageSpecificUserStyleSheet(const UserStyleSheet
 
 void ExtensionStyleSheets::setQuirkStyleSheets(Vector<String>&& sources)
 {
-    if (m_quirkStyleSheets == sources)
+    if (m_quirkStyleSheetSources == sources)
         return;
 
-    m_quirkStyleSheets = WTF::move(sources);
-    invalidateInjectedStyleSheetCache();
+    for (auto& sheet : m_quirkStyleSheets)
+        sheet->detachFromDocument();
+
+    m_quirkStyleSheetSources = WTF::move(sources);
+    m_quirkStyleSheets = m_quirkStyleSheetSources.map([&](auto& source) {
+        return createExtensionsStyleSheet(protect(m_document), { }, source, UserStyleLevel::Author);
+    });
+
+    protect(m_document->styleScope())->didChangeExtensionStyleSheets();
 }
 
 bool ExtensionStyleSheets::hasCachedInjectedStyleSheets() const
@@ -287,6 +291,8 @@ void ExtensionStyleSheets::detachFromDocument()
     for (auto& sheet : m_userStyleSheets)
         sheet->detachFromDocument();
     for (auto& sheet : m_authorStyleSheetsForTesting)
+        sheet->detachFromDocument();
+    for (auto& sheet : m_quirkStyleSheets)
         sheet->detachFromDocument();
 }
 
