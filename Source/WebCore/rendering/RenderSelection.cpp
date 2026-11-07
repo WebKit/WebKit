@@ -40,6 +40,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "VisibleSelection.h"
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/TextStream.h>
 
@@ -172,7 +173,26 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
 {
     LOG_WITH_STREAM(Selection, stream << "SelectionData::collectBounds (clip to visible " << (clipToVisibleContent == ClipToVisibleContent::Yes ? "yes" : "no"));
 
-    SelectionContext::RendererMap renderers;
+    // Create a single bounding box rect that encloses the whole selection.
+    LayoutRect selectionRect;
+    SingleThreadWeakHashSet<RenderObject> processedRenderers;
+    auto uniteSelectionGeometry = [&](RenderObject& renderer) {
+        RenderSelectionGeometry selectionGeometry(renderer, clipToVisibleContent == ClipToVisibleContent::Yes);
+        // RenderSelectionGeometry::rect() is in the coordinates of the repaintContainer, so map to page coordinates.
+        LayoutRect currentRect = selectionGeometry.rect();
+        LOG_WITH_STREAM(Selection, stream << " added " << renderer << " with rect " << currentRect);
+        if (currentRect.isEmpty())
+            return;
+
+        if (CheckedPtr repaintContainer = selectionGeometry.repaintContainer()) {
+            FloatRect localRect = currentRect;
+            FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(localRect);
+            currentRect = absQuad.enclosingBoundingBox();
+            LOG_WITH_STREAM(Selection, stream << " rect " << localRect << " mapped to " << currentRect << " in container " << *repaintContainer);
+        }
+        selectionRect.unite(currentRect);
+    };
+
     CheckedPtr start = m_renderRange.start();
     CheckedPtr<RenderObject> stop;
     if (CheckedPtr rangeEnd = m_renderRange.end())
@@ -181,40 +201,19 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
     RenderRangeIterator selectionIterator(start.get());
     while (start && start != stop) {
         if (isValidRendererForSelection(*start, m_renderRange)) {
-            // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-            renderers.set(*start, makeUnique<RenderSelectionGeometry>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
-            LOG_WITH_STREAM(Selection, stream << " added start " << *start << " with rect " << renderers.get(*start)->rect());
+            if (processedRenderers.add(*start).isNewEntry)
+                uniteSelectionGeometry(*start);
 
+            // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
             CheckedPtr block = start->containingBlock();
             while (block && !is<RenderView>(*block)) {
-                LOG_WITH_STREAM(Selection, stream << " added block " << *block);
-                auto& blockSelectionGeometry = renderers.add(*block, nullptr).iterator->value;
-                if (blockSelectionGeometry)
+                if (!processedRenderers.add(*block).isNewEntry)
                     break;
-                blockSelectionGeometry = makeUnique<RenderSelectionGeometry>(*block, clipToVisibleContent == ClipToVisibleContent::Yes);
-                LOG_WITH_STREAM(Selection, stream << " added containing block " << *block << " with rect " << blockSelectionGeometry->rect());
+                uniteSelectionGeometry(*block);
                 block = block->containingBlock();
             }
         }
         start = selectionIterator.next();
-    }
-
-    // Now create a single bounding box rect that encloses the whole selection.
-    LayoutRect selectionRect;
-    for (auto selectionEntry : renderers) {
-        auto* selectionGeometry = selectionEntry.value.get();
-        // RenderSelectionGeometry::rect() is in the coordinates of the repaintContainer, so map to page coordinates.
-        LayoutRect currentRect = selectionGeometry->rect();
-        if (currentRect.isEmpty())
-            continue;
-
-        if (CheckedPtr repaintContainer = selectionGeometry->repaintContainer()) {
-            FloatRect localRect = currentRect;
-            FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(localRect);
-            currentRect = absQuad.enclosingBoundingBox();
-            LOG_WITH_STREAM(Selection, stream << " rect " << localRect << " mapped to " << currentRect << " in container " << *repaintContainer);
-        }
-        selectionRect.unite(currentRect);
     }
 
     LOG_WITH_STREAM(Selection, stream << " final rect " << selectionRect);
