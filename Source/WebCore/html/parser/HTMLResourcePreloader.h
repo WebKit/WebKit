@@ -58,6 +58,7 @@ public:
     void setNonce(const String& nonce) { m_nonceAttribute = nonce; }
     void setIntegrity(const String& integrity) { m_integrityAttribute = integrity; }
     void setScriptIsAsync(bool value) { m_scriptIsAsync = value; }
+    void setLinkPreload(bool value) { m_linkPreload = value; }
     CachedResource::Type resourceType() const { return m_resourceType; }
 
 private:
@@ -72,6 +73,7 @@ private:
     String m_nonceAttribute;
     String m_integrityAttribute;
     bool m_scriptIsAsync { false };
+    bool m_linkPreload { false };
     CachedResource::Type m_resourceType;
     ScriptType m_scriptType;
     ReferrerPolicy m_referrerPolicy;
