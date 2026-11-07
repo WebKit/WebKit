@@ -591,6 +591,8 @@ TEST(ScriptTrackingPrivacyTests, ScriptWrittenCookies)
     }
     EXPECT_TRUE(foundPureCookie);
     EXPECT_TRUE(foundTaintedCookie);
+
+    [dataStore deleteAllCookiesAndLocalStorage];
 }
 
 TEST(ScriptTrackingPrivacyTests, LocalStorage)
