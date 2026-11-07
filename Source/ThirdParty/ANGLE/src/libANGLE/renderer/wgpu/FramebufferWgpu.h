@@ -13,6 +13,7 @@
 #include "libANGLE/renderer/FramebufferImpl.h"
 #include "libANGLE/renderer/RenderTargetCache.h"
 #include "libANGLE/renderer/wgpu/RenderTargetWgpu.h"
+#include "libANGLE/renderer/wgpu/UtilsWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
@@ -140,32 +141,40 @@ class FramebufferWgpu : public FramebufferImpl
                                       bool clearDepth,
                                       bool clearStencil);
 
-    bool formatsAndSizesMatchForDirectCopy(const gl::Context *context,
-                                           const FramebufferWgpu *readFramebuffer,
-                                           RenderTargetWgpu *readRenderTarget,
-                                           RenderTargetWgpu *drawRenderTarget,
-                                           const gl::Rectangle &sourceArea,
-                                           const gl::Rectangle &destArea) const;
+    // The geometry of a blit after clipping, in GL window coordinates of the framebuffers.
+    struct BlitGeometry
+    {
+        // The destination rectangle. It is not reversed.
+        gl::Rectangle dstArea;
+        // The part of dstArea inside the scissor.
+        gl::Rectangle dstScissor;
+        // The source rectangle that maps to dstArea. Reversed if the blit flips.
+        gl::RectangleImpl<double> srcArea;
+        // The rectangles of the blit call, which define the GL_NEAREST mapping exactly.
+        gl::Rectangle callSrcArea;
+        gl::Rectangle callDstArea;
+    };
+
+    angle::Result blitColorAttachment(const gl::Context *context,
+                                      const BlitGeometry &geometry,
+                                      RenderTargetWgpu *readRenderTarget,
+                                      bool srcFlipY,
+                                      RenderTargetWgpu *drawRenderTarget,
+                                      GLenum filter);
+
+    angle::Result blitDepthStencilAttachment(const gl::Context *context,
+                                             const BlitGeometry &geometry,
+                                             RenderTargetWgpu *readRenderTarget,
+                                             bool srcFlipY,
+                                             RenderTargetWgpu *drawRenderTarget,
+                                             bool blitDepth,
+                                             bool blitStencil);
 
     angle::Result blitWithDirectCopy(ContextWgpu *contextWgpu,
                                      RenderTargetWgpu *readRenderTarget,
                                      RenderTargetWgpu *drawRenderTarget,
-                                     const gl::Rectangle &sourceArea,
-                                     const gl::Rectangle &destArea,
-                                     bool srcFlipY,
-                                     bool dstFlipY,
+                                     const webgpu::UtilsWgpu::BlitParams &params,
                                      WGPUTextureAspect aspect);
-
-    angle::Result blitWithShader(const gl::Context *context,
-                                 RenderTargetWgpu *readRenderTarget,
-                                 RenderTargetWgpu *drawRenderTarget,
-                                 const gl::Rectangle &sourceArea,
-                                 const gl::Rectangle &destArea,
-                                 GLenum filter,
-                                 bool srcFlipY,
-                                 bool dstFlipY,
-                                 WGPUTextureAspect aspect,
-                                 const gl::Rectangle *scissor);
 
     angle::Result getBlitImageAndSize(ContextWgpu *contextWgpu,
                                       RenderTargetWgpu *renderTarget,

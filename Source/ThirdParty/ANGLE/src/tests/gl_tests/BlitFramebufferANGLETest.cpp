@@ -6,6 +6,7 @@
 
 #include <array>
 
+#include "common/mathutil.h"
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -4361,6 +4362,1432 @@ TEST_P(BlitFramebufferTest, Blit3DTo2DArray)
 TEST_P(BlitFramebufferTest, Blit2DArrayTo3D)
 {
     test3DBlit(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_3D);
+}
+
+// The corners of a blit rectangle, in the order of the glBlitFramebuffer arguments.
+struct BlitCorners
+{
+    GLint x0;
+    GLint y0;
+    GLint x1;
+    GLint y1;
+};
+
+struct BlitCase
+{
+    BlitCorners src;
+    BlitCorners dst;
+};
+
+// The source of the blit cases below is 12x9 pixels and the destination is 32x24 pixels.
+constexpr GLsizei kBlitPatternWidth  = 12;
+constexpr GLsizei kBlitPatternHeight = 9;
+constexpr GLsizei kBlitTargetWidth   = 32;
+constexpr GLsizei kBlitTargetHeight  = 24;
+
+constexpr BlitCase kScaledBlitCases[] = {
+    // Magnify by 2.
+    {{1, 1, 9, 7}, {4, 2, 20, 14}},
+    // Minify by 3.
+    {{0, 0, 12, 9}, {5, 5, 9, 8}},
+    // Magnify by 2, with the destination flipped in x.
+    {{1, 1, 9, 7}, {20, 2, 4, 14}},
+    // Magnify by 2, with the source flipped in y.
+    {{1, 7, 9, 1}, {4, 2, 20, 14}},
+    // Magnify by 3 in x and 2 in y, with the destination flipped in both.
+    {{2, 1, 7, 8}, {30, 23, 15, 9}},
+    // As above, with the source flipped instead.
+    {{7, 8, 2, 1}, {15, 9, 30, 23}},
+};
+
+constexpr BlitCase kClippedBlitCases[] = {
+    // The source starts outside the read framebuffer.
+    {{-2, -3, 6, 5}, {2, 2, 18, 18}},
+    // The source ends outside the read framebuffer.
+    {{6, 5, 14, 12}, {4, 4, 20, 18}},
+    // As the first case, with the destination flipped.
+    {{-2, -3, 6, 5}, {18, 18, 2, 2}},
+    // The destination is partly outside the draw framebuffer.
+    {{2, 1, 10, 8}, {-8, 10, 24, 31}},
+    // Both are partly outside, and flipped.
+    {{-4, 10, 8, -2}, {28, -6, 4, 30}},
+};
+
+// Returns floor(src0 + (dst + 0.5 - dst0) * (src1 - src0) / (dst1 - dst0)), the source pixel of
+// destination pixel dst for GL_NEAREST, computed exactly.
+GLint NearestBlitSourcePixel(GLint dst, GLint src0, GLint src1, GLint dst0, GLint dst1)
+{
+    int64_t numerator = 2 * int64_t(src0) * (dst1 - dst0) +
+                        (2 * int64_t(dst) + 1 - 2 * dst0) * (int64_t(src1) - src0);
+    int64_t denominator = 2 * (int64_t(dst1) - dst0);
+    if (denominator < 0)
+    {
+        numerator   = -numerator;
+        denominator = -denominator;
+    }
+    int64_t quotient = numerator / denominator;
+    if (quotient * denominator > numerator)
+    {
+        --quotient;
+    }
+    return static_cast<GLint>(quotient);
+}
+
+// Computes the result of a GL_NEAREST blit on the CPU. Destination pixels whose source pixel is
+// outside the source image are left untouched, as WebGL 2.0 requires and ANGLE implements.
+template <typename T>
+std::vector<T> ReferenceNearestBlit(const std::vector<T> &src,
+                                    GLsizei srcWidth,
+                                    GLsizei srcHeight,
+                                    const std::vector<T> &dst,
+                                    GLsizei dstWidth,
+                                    GLsizei dstHeight,
+                                    const BlitCase &blit,
+                                    const BlitCorners *scissor)
+{
+    std::vector<T> result = dst;
+
+    const GLint minX = std::max(std::min(blit.dst.x0, blit.dst.x1), 0);
+    const GLint maxX = std::min(std::max(blit.dst.x0, blit.dst.x1), dstWidth);
+    const GLint minY = std::max(std::min(blit.dst.y0, blit.dst.y1), 0);
+    const GLint maxY = std::min(std::max(blit.dst.y0, blit.dst.y1), dstHeight);
+
+    for (GLint y = minY; y < maxY; ++y)
+    {
+        for (GLint x = minX; x < maxX; ++x)
+        {
+            if (scissor &&
+                (x < scissor->x0 || x >= scissor->x1 || y < scissor->y0 || y >= scissor->y1))
+            {
+                continue;
+            }
+            const GLint srcX =
+                NearestBlitSourcePixel(x, blit.src.x0, blit.src.x1, blit.dst.x0, blit.dst.x1);
+            const GLint srcY =
+                NearestBlitSourcePixel(y, blit.src.y0, blit.src.y1, blit.dst.y0, blit.dst.y1);
+            if (srcX < 0 || srcX >= srcWidth || srcY < 0 || srcY >= srcHeight)
+            {
+                continue;
+            }
+            result[y * dstWidth + x] = src[srcY * srcWidth + srcX];
+        }
+    }
+
+    return result;
+}
+
+std::ostream &operator<<(std::ostream &ostream, const BlitCorners &corners)
+{
+    return ostream << "(" << corners.x0 << ", " << corners.y0 << ")-(" << corners.x1 << ", "
+                   << corners.y1 << ")";
+}
+
+std::ostream &operator<<(std::ostream &ostream, const BlitCase &blit)
+{
+    return ostream << "blit " << blit.src << " to " << blit.dst;
+}
+
+std::string BlitPixelToString(const GLColor &color)
+{
+    std::stringstream result;
+    result << color;
+    return result.str();
+}
+
+template <typename T>
+std::string BlitPixelToString(const GLColorT<T> &color)
+{
+    std::stringstream result;
+    result << "(" << color.R << ", " << color.G << ", " << color.B << ", " << color.A << ")";
+    return result.str();
+}
+
+template <typename T>
+void ExpectBlitPixelsEqual(const std::vector<T> &expected,
+                           const std::vector<T> &actual,
+                           GLsizei width,
+                           const std::string &label)
+{
+    ASSERT_EQ(expected.size(), actual.size());
+    size_t mismatches = 0;
+    for (size_t i = 0; i < expected.size(); ++i)
+    {
+        if (!(expected[i] == actual[i]))
+        {
+            if (mismatches < 4)
+            {
+                ADD_FAILURE() << label << ": pixel (" << i % width << ", " << i / width << ") is "
+                              << BlitPixelToString(actual[i]) << ", expected "
+                              << BlitPixelToString(expected[i]);
+            }
+            ++mismatches;
+        }
+    }
+    EXPECT_EQ(0u, mismatches) << label;
+}
+
+GLColor MakeBlitPatternColor(GLint x, GLint y)
+{
+    return MakeGLColor(x * 20 + 10, y * 25 + 5, (x * 7 + y * 13) % 256, 255);
+}
+
+std::vector<GLColor> MakeBlitPattern(GLsizei width, GLsizei height)
+{
+    std::vector<GLColor> pattern(width * height);
+    for (GLint y = 0; y < height; ++y)
+    {
+        for (GLint x = 0; x < width; ++x)
+        {
+            pattern[y * width + x] = MakeBlitPatternColor(x, y);
+        }
+    }
+    return pattern;
+}
+
+std::vector<GLColor> ReadBlitPixels(GLsizei width, GLsizei height)
+{
+    std::vector<GLColor> pixels(width * height);
+    glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    return pixels;
+}
+
+// Attaches a texture with the given contents to the framebuffer bound to GL_FRAMEBUFFER.
+void AttachBlitPatternTexture(GLuint texture,
+                              GLenum internalFormat,
+                              GLenum format,
+                              GLenum type,
+                              GLsizei width,
+                              GLsizei height,
+                              const void *data)
+{
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, internalFormat, width, height);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, type, data);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+}
+
+// Test scaled and flipped blits whose source or destination is partly outside the framebuffers, to
+// a user and to the default framebuffer, with and without the scissor test. Destination pixels
+// whose source pixel is outside the read framebuffer must not be written.
+TEST_P(BlitFramebufferTest, ScaledBlitsClipToFramebuffers)
+{
+    const std::vector<GLColor> pattern = MakeBlitPattern(kBlitPatternWidth, kBlitPatternHeight);
+
+    GLFramebuffer srcFBO;
+    GLTexture srcTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    AttachBlitPatternTexture(srcTexture, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, kBlitPatternWidth,
+                             kBlitPatternHeight, pattern.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLFramebuffer dstFBO;
+    GLRenderbuffer dstRBO;
+    initColorFBO(&dstFBO, &dstRBO, GL_RGBA8, kBlitTargetWidth, kBlitTargetHeight);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    const GLColor clearColor(0x11, 0x22, 0x33, 0xFF);
+    constexpr BlitCorners kScissor = {6, 4, 25, 11};
+    std::vector<BlitCase> cases(std::begin(kScaledBlitCases), std::end(kScaledBlitCases));
+    cases.insert(cases.end(), std::begin(kClippedBlitCases), std::end(kClippedBlitCases));
+
+    for (bool toDefaultFramebuffer : {false, true})
+    {
+        const GLuint dstFramebuffer = toDefaultFramebuffer ? 0 : dstFBO.get();
+        const GLsizei dstWidth      = toDefaultFramebuffer ? getWindowWidth() : kBlitTargetWidth;
+        const GLsizei dstHeight     = toDefaultFramebuffer ? getWindowHeight() : kBlitTargetHeight;
+        const std::vector<GLColor> cleared(dstWidth * dstHeight, clearColor);
+
+        for (GLenum filter : {GL_NEAREST, GL_LINEAR})
+        {
+            for (bool scissored : {false, true})
+            {
+                for (const BlitCase &blit : cases)
+                {
+                    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+                    glDisable(GL_SCISSOR_TEST);
+                    glClearColor(clearColor.R / 255.0f, clearColor.G / 255.0f,
+                                 clearColor.B / 255.0f, 1.0f);
+                    glClear(GL_COLOR_BUFFER_BIT);
+
+                    if (scissored)
+                    {
+                        glEnable(GL_SCISSOR_TEST);
+                        glScissor(kScissor.x0, kScissor.y0, kScissor.x1 - kScissor.x0,
+                                  kScissor.y1 - kScissor.y0);
+                    }
+                    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+                    glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1,
+                                      blit.dst.x0, blit.dst.y0, blit.dst.x1, blit.dst.y1,
+                                      GL_COLOR_BUFFER_BIT, filter);
+                    glDisable(GL_SCISSOR_TEST);
+                    ASSERT_GL_NO_ERROR();
+
+                    glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFramebuffer);
+                    const std::vector<GLColor> expected = ReferenceNearestBlit(
+                        pattern, kBlitPatternWidth, kBlitPatternHeight, cleared, dstWidth,
+                        dstHeight, blit, scissored ? &kScissor : nullptr);
+                    const std::vector<GLColor> actual = ReadBlitPixels(dstWidth, dstHeight);
+                    std::stringstream label;
+                    label << blit << (toDefaultFramebuffer ? " to the default framebuffer" : "")
+                          << (scissored ? " with scissor" : "")
+                          << (filter == GL_LINEAR ? " with GL_LINEAR" : "");
+                    if (filter == GL_NEAREST)
+                    {
+                        ExpectBlitPixelsEqual(expected, actual, dstWidth, label.str());
+                        continue;
+                    }
+                    // With GL_LINEAR, check only which pixels are written.
+                    size_t mismatches = 0;
+                    for (size_t i = 0; i < expected.size(); ++i)
+                    {
+                        if ((expected[i] == clearColor) != (actual[i] == clearColor) &&
+                            mismatches++ < 4)
+                        {
+                            ADD_FAILURE() << label.str() << ": pixel (" << i % dstWidth << ", "
+                                          << i / dstWidth << ") is " << actual[i] << ", expected "
+                                          << expected[i];
+                        }
+                    }
+                    EXPECT_EQ(0u, mismatches) << label.str();
+                }
+            }
+        }
+    }
+}
+
+// Test scaled, flipped and clipped blits between integer formats of different sizes.
+TEST_P(BlitFramebufferTest, ScaledBlitsBetweenIntegerFormats)
+{
+    std::vector<GLColor32UI> patternUI(kBlitPatternWidth * kBlitPatternHeight);
+    std::vector<GLColor32I> patternI(kBlitPatternWidth * kBlitPatternHeight);
+    std::vector<GLubyte> patternUIData;
+    std::vector<GLshort> patternIData;
+    for (GLint y = 0; y < kBlitPatternHeight; ++y)
+    {
+        for (GLint x = 0; x < kBlitPatternWidth; ++x)
+        {
+            const GLColor color                  = MakeBlitPatternColor(x, y);
+            patternUI[y * kBlitPatternWidth + x] = GLColor32UI(color.R, color.G, color.B, color.A);
+            patternI[y * kBlitPatternWidth + x] =
+                GLColor32I(-color.R, color.G - 128, color.B, -1000 - x - y);
+            patternUIData.insert(patternUIData.end(), {color.R, color.G, color.B, color.A});
+            const GLColor32I &colorI = patternI[y * kBlitPatternWidth + x];
+            patternIData.insert(patternIData.end(),
+                                {static_cast<GLshort>(colorI.R), static_cast<GLshort>(colorI.G),
+                                 static_cast<GLshort>(colorI.B), static_cast<GLshort>(colorI.A)});
+        }
+    }
+
+    GLFramebuffer srcUIFBO;
+    GLTexture srcUITexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcUIFBO);
+    AttachBlitPatternTexture(srcUITexture, GL_RGBA8UI, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE,
+                             kBlitPatternWidth, kBlitPatternHeight, patternUIData.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLFramebuffer srcIFBO;
+    GLTexture srcITexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcIFBO);
+    AttachBlitPatternTexture(srcITexture, GL_RGBA16I, GL_RGBA_INTEGER, GL_SHORT, kBlitPatternWidth,
+                             kBlitPatternHeight, patternIData.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // The destinations are initialized with uploads.
+    const std::vector<GLColor32UI> clearedUI(kBlitTargetWidth * kBlitTargetHeight,
+                                             GLColor32UI(7, 8, 9, 10));
+    const std::vector<GLColor32I> clearedI(kBlitTargetWidth * kBlitTargetHeight,
+                                           GLColor32I(-7, -8, -9, -10));
+
+    GLFramebuffer dstUIFBO;
+    GLTexture dstUITexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstUIFBO);
+    glBindTexture(GL_TEXTURE_2D, dstUITexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32UI, kBlitTargetWidth, kBlitTargetHeight);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstUITexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLFramebuffer dstIFBO;
+    GLTexture dstITexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstIFBO);
+    glBindTexture(GL_TEXTURE_2D, dstITexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32I, kBlitTargetWidth, kBlitTargetHeight);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstITexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    std::vector<BlitCase> cases(std::begin(kScaledBlitCases), std::end(kScaledBlitCases));
+    cases.insert(cases.end(), std::begin(kClippedBlitCases), std::end(kClippedBlitCases));
+    for (const BlitCase &blit : cases)
+    {
+        std::stringstream label;
+        label << blit;
+
+        glBindTexture(GL_TEXTURE_2D, dstUITexture);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kBlitTargetWidth, kBlitTargetHeight,
+                        GL_RGBA_INTEGER, GL_UNSIGNED_INT, clearedUI.data());
+        glBindFramebuffer(GL_FRAMEBUFFER, dstUIFBO);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, srcUIFBO);
+        glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                          blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, dstUIFBO);
+        std::vector<GLColor32UI> actualUI(kBlitTargetWidth * kBlitTargetHeight);
+        glReadPixels(0, 0, kBlitTargetWidth, kBlitTargetHeight, GL_RGBA_INTEGER, GL_UNSIGNED_INT,
+                     actualUI.data());
+        ExpectBlitPixelsEqual(
+            ReferenceNearestBlit(patternUI, kBlitPatternWidth, kBlitPatternHeight, clearedUI,
+                                 kBlitTargetWidth, kBlitTargetHeight, blit, nullptr),
+            actualUI, kBlitTargetWidth, label.str() + " RGBA8UI to RGBA32UI");
+
+        glBindTexture(GL_TEXTURE_2D, dstITexture);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kBlitTargetWidth, kBlitTargetHeight,
+                        GL_RGBA_INTEGER, GL_INT, clearedI.data());
+        glBindFramebuffer(GL_FRAMEBUFFER, dstIFBO);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, srcIFBO);
+        glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                          blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, dstIFBO);
+        std::vector<GLColor32I> actualI(kBlitTargetWidth * kBlitTargetHeight);
+        glReadPixels(0, 0, kBlitTargetWidth, kBlitTargetHeight, GL_RGBA_INTEGER, GL_INT,
+                     actualI.data());
+        ExpectBlitPixelsEqual(
+            ReferenceNearestBlit(patternI, kBlitPatternWidth, kBlitPatternHeight, clearedI,
+                                 kBlitTargetWidth, kBlitTargetHeight, blit, nullptr),
+            actualI, kBlitTargetWidth, label.str() + " RGBA16I to RGBA32I");
+    }
+}
+
+// Test GL_NEAREST blits whose destination pixel centers map exactly to edges between source
+// texels, such as 2:1 minification, where GL_NEAREST takes the texel after the edge, and blits with
+// scales that aren't representable as floats. The sources are a texture and the default
+// framebuffer, whose rows are stored flipped.
+TEST_P(BlitFramebufferTest, NearestBlitsAtTexelEdges)
+{
+    constexpr GLsizei kPatternSize     = 16;
+    constexpr GLsizei kTargetSize      = 48;
+    const std::vector<GLColor> pattern = MakeBlitPattern(kPatternSize, kPatternSize);
+
+    GLFramebuffer srcFBO;
+    GLTexture srcTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    AttachBlitPatternTexture(srcTexture, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, kPatternSize,
+                             kPatternSize, pattern.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLFramebuffer dstFBO;
+    GLRenderbuffer dstRBO;
+    initColorFBO(&dstFBO, &dstRBO, GL_RGBA8, kTargetSize, kTargetSize);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr BlitCase kCases[] = {
+        // Minify by 2.
+        {{0, 0, 12, 8}, {3, 2, 9, 6}},
+        // Minify by 2 from an odd offset, flipped.
+        {{1, 1, 11, 9}, {28, 20, 23, 16}},
+        // Minify by 4 in x and 2 in y.
+        {{0, 0, 12, 8}, {20, 10, 23, 14}},
+        // Magnify by 2.
+        {{2, 1, 8, 7}, {4, 4, 16, 16}},
+        // Magnify by 37/6.
+        {{0, 0, 6, 6}, {1, 2, 38, 39}},
+        // Magnify by 37/6, flipped.
+        {{0, 0, 6, 6}, {38, 39, 1, 2}},
+        // Magnify by 23/14, from an offset.
+        {{1, 2, 15, 16}, {3, 1, 26, 24}},
+    };
+
+    const GLColor clearColor(0x11, 0x22, 0x33, 0xFF);
+    glClearColor(clearColor.R / 255.0f, clearColor.G / 255.0f, clearColor.B / 255.0f, 1.0f);
+    for (bool fromDefaultFramebuffer : {false, true})
+    {
+        if (fromDefaultFramebuffer)
+        {
+            // Copy the pattern to the default framebuffer.
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+            glBlitFramebuffer(0, 0, kPatternSize, kPatternSize, 0, 0, kPatternSize, kPatternSize,
+                              GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+            ASSERT_EQ(pattern, ReadBlitPixels(kPatternSize, kPatternSize));
+        }
+
+        for (bool toDefaultFramebuffer : {false, true})
+        {
+            if (fromDefaultFramebuffer && toDefaultFramebuffer)
+            {
+                continue;
+            }
+            const GLuint srcFramebuffer = fromDefaultFramebuffer ? 0 : srcFBO.get();
+            const GLuint dstFramebuffer = toDefaultFramebuffer ? 0 : dstFBO.get();
+            const GLsizei dstWidth      = toDefaultFramebuffer ? getWindowWidth() : kTargetSize;
+            const GLsizei dstHeight     = toDefaultFramebuffer ? getWindowHeight() : kTargetSize;
+            const std::vector<GLColor> cleared(dstWidth * dstHeight, clearColor);
+
+            for (const BlitCase &blit : kCases)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFramebuffer);
+                glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                                  blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT,
+                                  GL_NEAREST);
+                ASSERT_GL_NO_ERROR();
+
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFramebuffer);
+                std::stringstream label;
+                label << blit << (fromDefaultFramebuffer ? " from the default framebuffer" : "")
+                      << (toDefaultFramebuffer ? " to the default framebuffer" : "");
+                ExpectBlitPixelsEqual(
+                    ReferenceNearestBlit(pattern, kPatternSize, kPatternSize, cleared, dstWidth,
+                                         dstHeight, blit, nullptr),
+                    ReadBlitPixels(dstWidth, dstHeight), dstWidth, label.str());
+            }
+        }
+    }
+}
+
+// Test blits whose source is partly outside the read framebuffer, where the sample point of a
+// destination pixel is exactly on the edge of the read framebuffer: the pixel is written when the
+// sample point is on the first edge, and not when it is on the last edge.
+TEST_P(BlitFramebufferTest, BlitsWithHalfPixelClipEdges)
+{
+    constexpr GLsizei kSrcWidth        = 13;
+    constexpr GLsizei kSrcHeight       = 11;
+    constexpr GLsizei kDstWidth        = 40;
+    constexpr GLsizei kDstHeight       = 36;
+    const std::vector<GLColor> pattern = MakeBlitPattern(kSrcWidth, kSrcHeight);
+
+    GLFramebuffer srcFBO;
+    GLTexture srcTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    AttachBlitPatternTexture(srcTexture, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, kSrcWidth, kSrcHeight,
+                             pattern.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLFramebuffer dstFBO;
+    GLRenderbuffer dstRBO;
+    initColorFBO(&dstFBO, &dstRBO, GL_RGBA8, kDstWidth, kDstHeight);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr BlitCase kCases[] = {
+        // Minify by 2 in x: the sample point of the first pixel is the left edge.
+        {{-1, 0, 15, 8}, {0, 0, 8, 4}},
+        // Flipped in both, minify by 4/12 in x and 4/7 in y: a sample point is the top edge.
+        {{4, 13, 0, 9}, {7, 8, -5, 1}},
+        // Minify by 2 in x: the sample point of the last pixel is the right edge.
+        {{-2, -1, 14, 11}, {1, 2, 9, 7}},
+        // Magnify by 3/2, flipped in x: a sample point is the left edge.
+        {{-1, 1, 5, 5}, {9, 2, 0, 8}},
+        // Minify by 2 in y: the sample point of a pixel is the bottom edge.
+        {{0, -3, 4, 13}, {2, 0, 6, 8}},
+        // Minify by 2 in y: the sample point of a pixel is the top edge.
+        {{0, 0, 4, 14}, {2, 0, 4, 7}},
+    };
+
+    const GLColor clearColor(0x11, 0x22, 0x33, 0xFF);
+    glClearColor(clearColor.R / 255.0f, clearColor.G / 255.0f, clearColor.B / 255.0f, 1.0f);
+    for (GLenum filter : {GL_NEAREST, GL_LINEAR})
+    {
+        for (bool toDefaultFramebuffer : {false, true})
+        {
+            const GLuint dstFramebuffer = toDefaultFramebuffer ? 0 : dstFBO.get();
+            const GLsizei dstWidth      = toDefaultFramebuffer ? getWindowWidth() : kDstWidth;
+            const GLsizei dstHeight     = toDefaultFramebuffer ? getWindowHeight() : kDstHeight;
+            const std::vector<GLColor> cleared(dstWidth * dstHeight, clearColor);
+
+            for (const BlitCase &blit : kCases)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+                glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                                  blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT,
+                                  filter);
+                ASSERT_GL_NO_ERROR();
+
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFramebuffer);
+                const std::vector<GLColor> expected = ReferenceNearestBlit(
+                    pattern, kSrcWidth, kSrcHeight, cleared, dstWidth, dstHeight, blit, nullptr);
+                const std::vector<GLColor> actual = ReadBlitPixels(dstWidth, dstHeight);
+                std::stringstream label;
+                label << blit << (toDefaultFramebuffer ? " to the default framebuffer" : "")
+                      << (filter == GL_LINEAR ? " with GL_LINEAR" : "");
+                if (filter == GL_NEAREST)
+                {
+                    ExpectBlitPixelsEqual(expected, actual, dstWidth, label.str());
+                    continue;
+                }
+                // With GL_LINEAR, check only which pixels are written.
+                size_t mismatches = 0;
+                for (size_t i = 0; i < expected.size(); ++i)
+                {
+                    if ((expected[i] == clearColor) != (actual[i] == clearColor) &&
+                        mismatches++ < 4)
+                    {
+                        ADD_FAILURE()
+                            << label.str() << ": pixel (" << i % dstWidth << ", " << i / dstWidth
+                            << ") is " << actual[i] << ", expected " << expected[i];
+                    }
+                }
+                EXPECT_EQ(0u, mismatches) << label.str();
+            }
+        }
+    }
+}
+
+// Test that blits to formats without alpha write an alpha of one, whether or not they scale.
+TEST_P(BlitFramebufferTest, BlitToFormatsWithoutAlpha)
+{
+    constexpr GLsizei kSize = 8;
+    std::vector<GLColor> pattern(kSize * kSize);
+    for (GLint i = 0; i < kSize * kSize; ++i)
+    {
+        pattern[i] = MakeGLColor(i % kSize * 32, i / kSize * 32, 0x80, 0x80);
+    }
+
+    GLFramebuffer srcFBO;
+    GLTexture srcTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    AttachBlitPatternTexture(srcTexture, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, kSize, kSize,
+                             pattern.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    for (GLenum dstFormat : {GL_RGB8, GL_RGB565})
+    {
+        for (GLsizei dstSize : {kSize, 2 * kSize})
+        {
+            GLFramebuffer dstFBO;
+            GLRenderbuffer dstRBO;
+            initColorFBO(&dstFBO, &dstRBO, dstFormat, dstSize, dstSize);
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+            glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, dstSize, dstSize, GL_COLOR_BUFFER_BIT,
+                              GL_NEAREST);
+            ASSERT_GL_NO_ERROR();
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFBO);
+            const std::vector<GLColor> actual = ReadBlitPixels(dstSize, dstSize);
+            const GLint scale                 = dstSize / kSize;
+            for (GLint y = 0; y < dstSize; ++y)
+            {
+                for (GLint x = 0; x < dstSize; ++x)
+                {
+                    GLColor expected = pattern[y / scale * kSize + x / scale];
+                    expected.A       = 255;
+                    EXPECT_NEAR(expected.R, actual[y * dstSize + x].R, 8);
+                    EXPECT_NEAR(expected.G, actual[y * dstSize + x].G, 8);
+                    EXPECT_NEAR(expected.B, actual[y * dstSize + x].B, 8);
+                    EXPECT_EQ(expected.A, actual[y * dstSize + x].A)
+                        << "format " << dstFormat << " size " << dstSize << " pixel (" << x << ", "
+                        << y << ")";
+                }
+            }
+        }
+    }
+}
+
+// Test that blits from a format without alpha read an alpha of one, whether or not they scale.
+TEST_P(BlitFramebufferTest, BlitFromFormatWithoutAlpha)
+{
+    constexpr GLsizei kSize = 8;
+
+    GLFramebuffer srcFBO;
+    GLRenderbuffer srcRBO;
+    initColorFBO(&srcFBO, &srcRBO, GL_RGB8, kSize, kSize);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw with an alpha that the framebuffer does not store.
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorLoc = glGetUniformLocation(drawColor, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLoc);
+    glUniform4f(colorLoc, 0.0f, 1.0f, 0.0f, 0.5f);
+    glViewport(0, 0, kSize, kSize);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer dstFBO;
+    GLRenderbuffer dstRBO;
+    initColorFBO(&dstFBO, &dstRBO, GL_RGBA8, 3 * kSize, 3 * kSize);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+    // Same size.
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    // Scaled.
+    glBlitFramebuffer(0, 0, kSize, kSize, kSize, kSize, 3 * kSize, 3 * kSize, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kSize, kSize, 2 * kSize, 2 * kSize, GLColor::green);
+}
+
+// Test that a same-size blit between formats without alpha stores an alpha of one, also when the
+// source's storage has another alpha. Sampling the destination shows its stored alpha.
+TEST_P(BlitFramebufferTest, SameSizeBlitBetweenFormatsWithoutAlpha)
+{
+    constexpr GLsizei kSize = 8;
+
+    GLFramebuffer srcFBO;
+    GLRenderbuffer srcRBO;
+    initColorFBO(&srcFBO, &srcRBO, GL_RGB8, kSize, kSize);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw with an alpha that the framebuffer does not store.
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorLoc = glGetUniformLocation(drawColor, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLoc);
+    glUniform4f(colorLoc, 0.0f, 1.0f, 0.0f, 0.5f);
+    glViewport(0, 0, kSize, kSize);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer dstFBO;
+    GLTexture dstTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+    glBindTexture(GL_TEXTURE_2D, dstTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, kSize, kSize);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+    glBlitFramebuffer(0, 0, kSize, kSize, 0, 0, kSize, kSize, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Sample the destination into a framebuffer with alpha.
+    GLFramebuffer sampledFBO;
+    GLRenderbuffer sampledRBO;
+    initColorFBO(&sampledFBO, &sampledRBO, GL_RGBA8, kSize, kSize);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glBindTexture(GL_TEXTURE_2D, dstTexture);
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+}
+
+// Packs integer pixels with the given number of channels and type for glTexSubImage2D.
+std::vector<uint8_t> PackBlitIntegerPixels(const std::vector<GLColor32I> &pixels,
+                                           GLuint channels,
+                                           GLenum type)
+{
+    std::vector<uint8_t> data;
+    for (const GLColor32I &pixel : pixels)
+    {
+        const GLint values[4] = {pixel.R, pixel.G, pixel.B, pixel.A};
+        for (GLuint c = 0; c < channels; ++c)
+        {
+            uint8_t bytes[4] = {};
+            size_t size      = 0;
+            switch (type)
+            {
+                case GL_UNSIGNED_BYTE:
+                    bytes[0] = static_cast<uint8_t>(values[c]);
+                    size     = 1;
+                    break;
+                case GL_SHORT:
+                {
+                    const GLshort value = static_cast<GLshort>(values[c]);
+                    memcpy(bytes, &value, sizeof(value));
+                    size = sizeof(value);
+                    break;
+                }
+                default:
+                    memcpy(bytes, &values[c], sizeof(GLint));
+                    size = sizeof(GLint);
+                    break;
+            }
+            data.insert(data.end(), bytes, bytes + size);
+        }
+    }
+    return data;
+}
+
+// Returns what reading a pixel of a format with the given number of channels gives: missing color
+// channels read as 0 and missing alpha as 1.
+GLColor32I ReadAsBlitChannels(const GLColor32I &pixel, GLuint channels)
+{
+    return GLColor32I(pixel.R, channels > 1 ? pixel.G : 0, channels > 2 ? pixel.B : 0,
+                      channels > 3 ? pixel.A : 1);
+}
+
+// Test scaled, flipped and clipped blits between integer formats where the source or the
+// destination has no alpha, which reads as one.
+TEST_P(BlitFramebufferTest, ScaledBlitsBetweenIntegerFormatsWithoutAlpha)
+{
+    struct IntegerFormat
+    {
+        GLenum internalFormat;
+        GLenum format;
+        GLenum type;
+        GLuint channels;
+    };
+    struct FormatPair
+    {
+        IntegerFormat src;
+        IntegerFormat dst;
+        bool isSigned;
+    };
+    constexpr FormatPair kPairs[] = {
+        {{GL_RGBA8UI, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, 4},
+         {GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 1},
+         false},
+        {{GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 1},
+         {GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT, 4},
+         false},
+        {{GL_RGBA16I, GL_RGBA_INTEGER, GL_SHORT, 4}, {GL_RG16I, GL_RG_INTEGER, GL_SHORT, 2}, true},
+    };
+
+    std::vector<BlitCase> cases(std::begin(kScaledBlitCases), std::end(kScaledBlitCases));
+    cases.insert(cases.end(), std::begin(kClippedBlitCases), std::end(kClippedBlitCases));
+
+    for (const FormatPair &pair : kPairs)
+    {
+        std::vector<GLColor32I> pattern(kBlitPatternWidth * kBlitPatternHeight);
+        for (GLint y = 0; y < kBlitPatternHeight; ++y)
+        {
+            for (GLint x = 0; x < kBlitPatternWidth; ++x)
+            {
+                const GLColor color = MakeBlitPatternColor(x, y);
+                pattern[y * kBlitPatternWidth + x] =
+                    pair.isSigned ? GLColor32I(-color.R, color.G - 128, color.B, -1000 - x - y)
+                                  : GLColor32I(color.R, color.G, color.B, color.A);
+            }
+        }
+        const std::vector<GLColor32I> initial(kBlitTargetWidth * kBlitTargetHeight,
+                                              GLColor32I(7, 8, 9, 10));
+
+        GLFramebuffer srcFBO;
+        GLTexture srcTexture;
+        glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+        const std::vector<uint8_t> srcData =
+            PackBlitIntegerPixels(pattern, pair.src.channels, pair.src.type);
+        AttachBlitPatternTexture(srcTexture, pair.src.internalFormat, pair.src.format,
+                                 pair.src.type, kBlitPatternWidth, kBlitPatternHeight,
+                                 srcData.data());
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        GLFramebuffer dstFBO;
+        GLTexture dstTexture;
+        glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+        glBindTexture(GL_TEXTURE_2D, dstTexture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, pair.dst.internalFormat, kBlitTargetWidth,
+                       kBlitTargetHeight);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        const std::vector<uint8_t> initialData =
+            PackBlitIntegerPixels(initial, pair.dst.channels, pair.dst.type);
+
+        // What the source and the initial destination read as through the destination format.
+        std::vector<GLColor32I> expectedSource(pattern.size());
+        for (size_t i = 0; i < pattern.size(); ++i)
+        {
+            expectedSource[i] = ReadAsBlitChannels(
+                ReadAsBlitChannels(pattern[i], pair.src.channels), pair.dst.channels);
+        }
+        std::vector<GLColor32I> expectedInitial(initial.size());
+        for (size_t i = 0; i < initial.size(); ++i)
+        {
+            expectedInitial[i] = ReadAsBlitChannels(initial[i], pair.dst.channels);
+        }
+
+        for (const BlitCase &blit : cases)
+        {
+            glBindTexture(GL_TEXTURE_2D, dstTexture);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kBlitTargetWidth, kBlitTargetHeight,
+                            pair.dst.format, pair.dst.type, initialData.data());
+            glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+            glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                              blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT,
+                              GL_NEAREST);
+            ASSERT_GL_NO_ERROR();
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFBO);
+            std::vector<GLColor32I> actual(kBlitTargetWidth * kBlitTargetHeight);
+            glReadPixels(0, 0, kBlitTargetWidth, kBlitTargetHeight, GL_RGBA_INTEGER,
+                         pair.isSigned ? GL_INT : GL_UNSIGNED_INT, actual.data());
+            ASSERT_GL_NO_ERROR();
+            std::stringstream label;
+            label << blit << " from format " << pair.src.internalFormat << " to format "
+                  << pair.dst.internalFormat;
+            ExpectBlitPixelsEqual(
+                ReferenceNearestBlit(expectedSource, kBlitPatternWidth, kBlitPatternHeight,
+                                     expectedInitial, kBlitTargetWidth, kBlitTargetHeight, blit,
+                                     nullptr),
+                actual, kBlitTargetWidth, label.str());
+        }
+    }
+}
+
+// Test scaled, flipped, clipped and same-size blits between normalized formats, to several draw
+// buffers at once.
+TEST_P(BlitFramebufferTest, ScaledBlitsToDrawBuffersOfDifferentFormats)
+{
+    // Channel values that all the formats below store exactly.
+    constexpr GLubyte kValues[] = {0x00, 0x55, 0xAA, 0xFF};
+    std::vector<GLColor> pattern(kBlitPatternWidth * kBlitPatternHeight);
+    for (GLint y = 0; y < kBlitPatternHeight; ++y)
+    {
+        for (GLint x = 0; x < kBlitPatternWidth; ++x)
+        {
+            pattern[y * kBlitPatternWidth + x] = GLColor(
+                kValues[x % 4], kValues[y % 4], kValues[(x + y) % 4], kValues[(x / 4 + y) % 4]);
+        }
+    }
+
+    GLFramebuffer srcFBO;
+    GLTexture srcTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    AttachBlitPatternTexture(srcTexture, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, kBlitPatternWidth,
+                             kBlitPatternHeight, pattern.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    struct DrawBufferFormat
+    {
+        GLenum format;
+        // Which channels the format stores; the others read as 0, and alpha as 255.
+        bool hasGreen;
+        bool hasBlue;
+        bool hasAlpha;
+    };
+    constexpr DrawBufferFormat kFormats[] = {
+        {GL_RGB10_A2, true, true, true},
+        {GL_RGB8, true, true, false},
+        {GL_RG8, true, false, false},
+        {GL_R8, false, false, false},
+    };
+    constexpr GLsizei kFormatCount = static_cast<GLsizei>(ArraySize(kFormats));
+
+    GLint maxDrawBuffers = 0;
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+    ANGLE_SKIP_TEST_IF(maxDrawBuffers < kFormatCount);
+
+    GLFramebuffer dstFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+    std::array<GLRenderbuffer, kFormatCount> dstRBOs;
+    std::array<GLenum, kFormatCount> drawBuffers;
+    for (GLsizei i = 0; i < kFormatCount; ++i)
+    {
+        glBindRenderbuffer(GL_RENDERBUFFER, dstRBOs[i]);
+        glRenderbufferStorage(GL_RENDERBUFFER, kFormats[i].format, kBlitTargetWidth,
+                              kBlitTargetHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER,
+                                  dstRBOs[i]);
+        drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+    }
+    glDrawBuffers(kFormatCount, drawBuffers.data());
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    std::vector<BlitCase> cases(std::begin(kScaledBlitCases), std::end(kScaledBlitCases));
+    cases.insert(cases.end(), std::begin(kClippedBlitCases), std::end(kClippedBlitCases));
+    // Same size.
+    cases.push_back({{0, 0, kBlitPatternWidth, kBlitPatternHeight},
+                     {3, 2, 3 + kBlitPatternWidth, 2 + kBlitPatternHeight}});
+    for (const BlitCase &blit : cases)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+        glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                          blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFBO);
+        for (GLsizei i = 0; i < kFormatCount; ++i)
+        {
+            const DrawBufferFormat &format = kFormats[i];
+            std::vector<GLColor> formatPattern(pattern);
+            for (GLColor &color : formatPattern)
+            {
+                color.G = format.hasGreen ? color.G : 0;
+                color.B = format.hasBlue ? color.B : 0;
+                color.A = format.hasAlpha ? color.A : 255;
+            }
+            const std::vector<GLColor> cleared(kBlitTargetWidth * kBlitTargetHeight,
+                                               GLColor(0, 0, 0, format.hasAlpha ? 0 : 255));
+
+            glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+            std::stringstream label;
+            label << blit << " to draw buffer " << i << " of format " << format.format;
+            ExpectBlitPixelsEqual(
+                ReferenceNearestBlit(formatPattern, kBlitPatternWidth, kBlitPatternHeight, cleared,
+                                     kBlitTargetWidth, kBlitTargetHeight, blit, nullptr),
+                ReadBlitPixels(kBlitTargetWidth, kBlitTargetHeight), kBlitTargetWidth, label.str());
+        }
+    }
+}
+
+// Computes the result of a GL_LINEAR blit on the CPU, as ReferenceNearestBlit.
+std::vector<GLColor> ReferenceLinearBlit(const std::vector<GLColor> &src,
+                                         GLsizei srcWidth,
+                                         GLsizei srcHeight,
+                                         const std::vector<GLColor> &dst,
+                                         GLsizei dstWidth,
+                                         GLsizei dstHeight,
+                                         const BlitCase &blit)
+{
+    // The nearest blit decides which pixels are written.
+    std::vector<GLColor> result =
+        ReferenceNearestBlit(src, srcWidth, srcHeight, dst, dstWidth, dstHeight, blit, nullptr);
+    const double scaleX =
+        static_cast<double>(blit.src.x1 - blit.src.x0) / (blit.dst.x1 - blit.dst.x0);
+    const double scaleY =
+        static_cast<double>(blit.src.y1 - blit.src.y0) / (blit.dst.y1 - blit.dst.y0);
+    auto texel = [&](GLint x, GLint y) {
+        return src[std::clamp(y, 0, srcHeight - 1) * srcWidth + std::clamp(x, 0, srcWidth - 1)];
+    };
+
+    for (GLint y = 0; y < dstHeight; ++y)
+    {
+        for (GLint x = 0; x < dstWidth; ++x)
+        {
+            if (result[y * dstWidth + x] == dst[y * dstWidth + x])
+            {
+                continue;
+            }
+            const double u  = blit.src.x0 + (x + 0.5 - blit.dst.x0) * scaleX - 0.5;
+            const double v  = blit.src.y0 + (y + 0.5 - blit.dst.y0) * scaleY - 0.5;
+            const GLint u0  = static_cast<GLint>(std::floor(u));
+            const GLint v0  = static_cast<GLint>(std::floor(v));
+            const double fu = u - u0;
+            const double fv = v - v0;
+            GLColor color;
+            for (size_t c = 0; c < 4; ++c)
+            {
+                const double top = texel(u0, v0)[c] * (1 - fu) + texel(u0 + 1, v0)[c] * fu;
+                const double bottom =
+                    texel(u0, v0 + 1)[c] * (1 - fu) + texel(u0 + 1, v0 + 1)[c] * fu;
+                color[c] = static_cast<GLubyte>(std::round(top * (1 - fv) + bottom * fv));
+            }
+            result[y * dstWidth + x] = color;
+        }
+    }
+    return result;
+}
+
+// Test scaled and flipped blits from float formats, including 32-bit ones, which WebGPU can't
+// filter without an optional feature.
+TEST_P(BlitFramebufferTest, ScaledBlitsFromFloatFormats)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_color_buffer_float"));
+
+    const std::vector<GLColor> pattern = MakeBlitPattern(kBlitPatternWidth, kBlitPatternHeight);
+    std::vector<GLfloat> patternData;
+    std::vector<GLushort> halfPatternData;
+    std::vector<GLfloat> redPatternData;
+    for (const GLColor &color : pattern)
+    {
+        for (size_t c = 0; c < 4; ++c)
+        {
+            patternData.push_back(color[c] / 255.0f);
+            halfPatternData.push_back(gl::float32ToFloat16(color[c] / 255.0f));
+        }
+        redPatternData.push_back(color.R / 255.0f);
+    }
+
+    GLFramebuffer dstFBO;
+    GLRenderbuffer dstRBO;
+    initColorFBO(&dstFBO, &dstRBO, GL_RGBA8, kBlitTargetWidth, kBlitTargetHeight);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    const GLColor clearColor(0x11, 0x22, 0x33, 0xFF);
+    const std::vector<GLColor> cleared(kBlitTargetWidth * kBlitTargetHeight, clearColor);
+
+    for (GLenum srcFormat : {GL_RGBA32F, GL_RGBA16F, GL_R32F})
+    {
+        GLFramebuffer srcFBO;
+        GLTexture srcTexture;
+        glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+        glBindTexture(GL_TEXTURE_2D, srcTexture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, srcFormat, kBlitPatternWidth, kBlitPatternHeight);
+        if (srcFormat == GL_RGBA16F)
+        {
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kBlitPatternWidth, kBlitPatternHeight, GL_RGBA,
+                            GL_HALF_FLOAT, halfPatternData.data());
+        }
+        else
+        {
+            const bool isRed = srcFormat == GL_R32F;
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kBlitPatternWidth, kBlitPatternHeight,
+                            isRed ? GL_RED : GL_RGBA, GL_FLOAT,
+                            isRed ? redPatternData.data() : patternData.data());
+        }
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcTexture, 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GL_NO_ERROR();
+
+        // R32F reads as (r, 0, 0, 1).
+        std::vector<GLColor> formatPattern(pattern);
+        if (srcFormat == GL_R32F)
+        {
+            for (GLColor &color : formatPattern)
+            {
+                color = GLColor(color.R, 0, 0, 255);
+            }
+        }
+
+        for (GLenum filter : {GL_NEAREST, GL_LINEAR})
+        {
+            for (const BlitCase &blit : kScaledBlitCases)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+                glClearColor(clearColor.R / 255.0f, clearColor.G / 255.0f, clearColor.B / 255.0f,
+                             1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+                glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                                  blit.dst.y0, blit.dst.x1, blit.dst.y1, GL_COLOR_BUFFER_BIT,
+                                  filter);
+                ASSERT_GL_NO_ERROR();
+
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFBO);
+                const std::vector<GLColor> actual =
+                    ReadBlitPixels(kBlitTargetWidth, kBlitTargetHeight);
+                std::stringstream label;
+                label << blit << " from format " << srcFormat
+                      << (filter == GL_LINEAR ? " with GL_LINEAR" : "");
+                if (filter == GL_NEAREST)
+                {
+                    ExpectBlitPixelsEqual(
+                        ReferenceNearestBlit(formatPattern, kBlitPatternWidth, kBlitPatternHeight,
+                                             cleared, kBlitTargetWidth, kBlitTargetHeight, blit,
+                                             nullptr),
+                        actual, kBlitTargetWidth, label.str());
+                    continue;
+                }
+                const std::vector<GLColor> expected =
+                    ReferenceLinearBlit(formatPattern, kBlitPatternWidth, kBlitPatternHeight,
+                                        cleared, kBlitTargetWidth, kBlitTargetHeight, blit);
+                size_t mismatches = 0;
+                for (size_t i = 0; i < expected.size(); ++i)
+                {
+                    if (!actual[i].ExpectNear(expected[i], GLColor(2, 2, 2, 2)) && mismatches++ < 4)
+                    {
+                        ADD_FAILURE() << label.str() << ": pixel (" << i % kBlitTargetWidth << ", "
+                                      << i / kBlitTargetWidth << ") is " << actual[i]
+                                      << ", expected " << expected[i];
+                    }
+                }
+                EXPECT_EQ(0u, mismatches) << label.str();
+            }
+        }
+    }
+}
+
+// Writes per-pixel stencil values and depths into the bound framebuffer: the stencil value of a
+// pixel is |stencilOf(x, y)| unless !|hasStencil|, and its depth is |depthOf(x, y)| in normalized
+// device coordinates. |drawQuadAt(z)| draws a quad that covers the framebuffer at depth z.
+template <typename DrawQuadAt, typename StencilOf, typename DepthOf>
+void DrawBlitDepthStencilPattern(DrawQuadAt drawQuadAt,
+                                 GLsizei width,
+                                 GLsizei height,
+                                 bool hasStencil,
+                                 StencilOf stencilOf,
+                                 DepthOf depthOf)
+{
+    glEnable(GL_SCISSOR_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    if (hasStencil)
+    {
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilMask(0xFF);
+    }
+    for (GLint y = 0; y < height; ++y)
+    {
+        for (GLint x = 0; x < width; ++x)
+        {
+            glScissor(x, y, 1, 1);
+            glStencilFunc(GL_ALWAYS, stencilOf(x, y), 0xFF);
+            drawQuadAt(depthOf(x, y));
+        }
+    }
+    glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);
+}
+
+// Reads the stencil values of the bound framebuffer through its color buffer: one additive draw
+// per stencil bit puts the stencil value in the red channel. Without |hasStencil|, the red channel
+// is 0.
+//
+// The depth is read into the green channel. With |exactDepths|, one draw per depth in it, with the
+// GL_EQUAL depth test, adds the index of the depth plus 1, so that the green channel is 0 for a
+// depth that isn't in |exactDepths|. Without it, the green channel is 0 for a depth of at most 0.5,
+// 1 for at most 0.9 and 2 above that.
+//
+// |drawQuadAt| is as above, with |program|, whose color is the uniform at |colorLoc|.
+template <typename DrawQuadAt>
+std::vector<GLColor> ReadBlitDepthStencilAsColor(DrawQuadAt drawQuadAt,
+                                                 GLuint program,
+                                                 GLint colorLoc,
+                                                 bool hasStencil,
+                                                 const std::vector<float> *exactDepths,
+                                                 GLsizei width,
+                                                 GLsizei height)
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glUseProgram(program);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    for (GLuint bit = 0; hasStencil && bit < 8; ++bit)
+    {
+        glStencilFunc(GL_EQUAL, 1u << bit, 1u << bit);
+        glUniform4f(colorLoc, (1u << bit) / 255.0f, 0.0f, 0.0f, 0.0f);
+        drawQuadAt(0.0f);
+    }
+    glDisable(GL_STENCIL_TEST);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    if (exactDepths)
+    {
+        glDepthFunc(GL_EQUAL);
+        for (size_t i = 0; i < exactDepths->size(); ++i)
+        {
+            glUniform4f(colorLoc, 0.0f, (i + 1) / 255.0f, 0.0f, 0.0f);
+            drawQuadAt((*exactDepths)[i]);
+        }
+    }
+    else
+    {
+        glDepthFunc(GL_LESS);
+        glUniform4f(colorLoc, 0.0f, 1.0f / 255.0f, 0.0f, 0.0f);
+        // Window depths 0.5 and 0.9.
+        drawQuadAt(0.0f);
+        drawQuadAt(0.8f);
+    }
+    glDepthMask(GL_TRUE);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+    return ReadBlitPixels(width, height);
+}
+
+// Test scaled, flipped, clipped and scissored depth and stencil blits pixel by pixel. Every source
+// pixel has another depth, and the destination depths must equal them exactly.
+TEST_P(BlitFramebufferTest, ScaledDepthStencilBlitsPixelByPixel)
+{
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLoc = glGetUniformLocation(drawColor, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLoc);
+    auto drawQuadAt = [&](float z) { drawQuad(drawColor, essl1_shaders::PositionAttrib(), z); };
+
+    constexpr GLsizei kPixelCount = kBlitPatternWidth * kBlitPatternHeight;
+    std::vector<float> depths(kPixelCount);
+    for (GLsizei i = 0; i < kPixelCount; ++i)
+    {
+        depths[i] = -0.9f + 1.8f * i / (kPixelCount - 1);
+    }
+    auto stencilOf = [](GLint x, GLint y) { return (x * kBlitPatternHeight + y + 1) & 0xFF; };
+    auto depthOf   = [&](GLint x, GLint y) { return depths[y * kBlitPatternWidth + x]; };
+
+    struct Format
+    {
+        GLenum format;
+        GLenum attachment;
+        bool hasStencil;
+    };
+    constexpr Format kFormats[] = {
+        {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, true},
+        {GL_DEPTH_COMPONENT32F, GL_DEPTH_ATTACHMENT, false},
+    };
+
+    for (const Format &format : kFormats)
+    {
+        GLFramebuffer srcFBO;
+        GLRenderbuffer srcColor, srcDepthStencil;
+        glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, srcColor);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kBlitPatternWidth, kBlitPatternHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, srcColor);
+        glBindRenderbuffer(GL_RENDERBUFFER, srcDepthStencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, format.format, kBlitPatternWidth,
+                              kBlitPatternHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, format.attachment, GL_RENDERBUFFER,
+                                  srcDepthStencil);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        glViewport(0, 0, kBlitPatternWidth, kBlitPatternHeight);
+        glUseProgram(drawColor);
+        DrawBlitDepthStencilPattern(drawQuadAt, kBlitPatternWidth, kBlitPatternHeight,
+                                    format.hasStencil, stencilOf, depthOf);
+        ASSERT_GL_NO_ERROR();
+
+        // The expected result of reading the source with ReadBlitDepthStencilAsColor.
+        std::vector<GLColor> pattern(kPixelCount);
+        for (GLint y = 0; y < kBlitPatternHeight; ++y)
+        {
+            for (GLint x = 0; x < kBlitPatternWidth; ++x)
+            {
+                pattern[y * kBlitPatternWidth + x] = MakeGLColor(
+                    format.hasStencil ? stencilOf(x, y) : 0, y * kBlitPatternWidth + x + 1, 0, 0);
+            }
+        }
+
+        GLFramebuffer dstFBO;
+        GLRenderbuffer dstColor, dstDepthStencil;
+        glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, dstColor);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kBlitTargetWidth, kBlitTargetHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, dstColor);
+        glBindRenderbuffer(GL_RENDERBUFFER, dstDepthStencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, format.format, kBlitTargetWidth, kBlitTargetHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, format.attachment, GL_RENDERBUFFER,
+                                  dstDepthStencil);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Cleared to stencil 200 and depth 1.0, which isn't any of the source depths.
+        const std::vector<GLColor> cleared(kBlitTargetWidth * kBlitTargetHeight,
+                                           GLColor(format.hasStencil ? 200 : 0, 0, 0, 0));
+        constexpr BlitCorners kScissor = {6, 4, 25, 11};
+        const GLbitfield mask =
+            GL_DEPTH_BUFFER_BIT | (format.hasStencil ? GL_STENCIL_BUFFER_BIT : 0);
+
+        std::vector<BlitCase> cases(std::begin(kScaledBlitCases), std::end(kScaledBlitCases));
+        cases.insert(cases.end(), std::begin(kClippedBlitCases), std::end(kClippedBlitCases));
+        for (bool scissored : {false, true})
+        {
+            for (const BlitCase &blit : cases)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+                glViewport(0, 0, kBlitTargetWidth, kBlitTargetHeight);
+                glClearDepthf(1.0f);
+                glClearStencil(200);
+                glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+                if (scissored)
+                {
+                    glEnable(GL_SCISSOR_TEST);
+                    glScissor(kScissor.x0, kScissor.y0, kScissor.x1 - kScissor.x0,
+                              kScissor.y1 - kScissor.y0);
+                }
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+                glBlitFramebuffer(blit.src.x0, blit.src.y0, blit.src.x1, blit.src.y1, blit.dst.x0,
+                                  blit.dst.y0, blit.dst.x1, blit.dst.y1, mask, GL_NEAREST);
+                glDisable(GL_SCISSOR_TEST);
+                ASSERT_GL_NO_ERROR();
+
+                glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+                std::stringstream label;
+                label << blit << (scissored ? " with scissor" : "") << ", format " << format.format;
+                ExpectBlitPixelsEqual(
+                    ReferenceNearestBlit(pattern, kBlitPatternWidth, kBlitPatternHeight, cleared,
+                                         kBlitTargetWidth, kBlitTargetHeight, blit,
+                                         scissored ? &kScissor : nullptr),
+                    ReadBlitDepthStencilAsColor(drawQuadAt, drawColor, colorLoc, format.hasStencil,
+                                                &depths, kBlitTargetWidth, kBlitTargetHeight),
+                    kBlitTargetWidth, label.str());
+            }
+        }
+    }
+}
+
+// Test that a depth blit keeps the stencil values and a stencil blit keeps the depth values, and
+// that blits of part of a depth-only buffer work.
+TEST_P(BlitFramebufferTest, PartialDepthOrStencilBlits)
+{
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLoc = glGetUniformLocation(drawColor, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLoc);
+    auto drawQuadAt = [&](float z) { drawQuad(drawColor, essl1_shaders::PositionAttrib(), z); };
+
+    constexpr GLsizei kSize = 16;
+    struct Format
+    {
+        GLenum format;
+        GLenum attachment;
+        bool hasStencil;
+    };
+    constexpr Format kFormats[] = {
+        {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, true},
+        {GL_DEPTH_COMPONENT16, GL_DEPTH_ATTACHMENT, false},
+        {GL_DEPTH_COMPONENT24, GL_DEPTH_ATTACHMENT, false},
+        {GL_DEPTH_COMPONENT32F, GL_DEPTH_ATTACHMENT, false},
+    };
+
+    for (const Format &format : kFormats)
+    {
+        GLFramebuffer fbos[2];
+        GLRenderbuffer colors[2], depthStencils[2];
+        for (int i = 0; i < 2; ++i)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
+            glBindRenderbuffer(GL_RENDERBUFFER, colors[i]);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                      colors[i]);
+            glBindRenderbuffer(GL_RENDERBUFFER, depthStencils[i]);
+            glRenderbufferStorage(GL_RENDERBUFFER, format.format, kSize, kSize);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, format.attachment, GL_RENDERBUFFER,
+                                      depthStencils[i]);
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+            // The source has depth 0.25 and stencil 0x5A, the destination depth 1.0 and stencil
+            // 200.
+            glClearDepthf(i == 0 ? 0.25f : 1.0f);
+            glClearStencil(i == 0 ? 0x5A : 200);
+            glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        }
+        glViewport(0, 0, kSize, kSize);
+
+        auto expectDepthStencil = [&](GLint x, GLint stencil, GLint depthLevel, const char *what) {
+            const std::vector<GLColor> actual = ReadBlitDepthStencilAsColor(
+                drawQuadAt, drawColor, colorLoc, format.hasStencil, nullptr, kSize, kSize);
+            for (GLint y = 0; y < kSize; ++y)
+            {
+                const GLColor &pixel = actual[y * kSize + x];
+                EXPECT_EQ(format.hasStencil ? stencil : 0, pixel.R)
+                    << what << ", format " << format.format << " pixel (" << x << ", " << y << ")";
+                EXPECT_EQ(depthLevel, pixel.G)
+                    << what << ", format " << format.format << " pixel (" << x << ", " << y << ")";
+            }
+        };
+
+        // Blit the depth of the left half to the right half.
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbos[0]);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[1]);
+        glBlitFramebuffer(0, 0, kSize / 2, kSize, kSize / 2, 0, kSize, kSize, GL_DEPTH_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[1]);
+        expectDepthStencil(kSize / 2 - 1, 200, 2, "left of the depth blit");
+        expectDepthStencil(kSize / 2, 200, 0, "right of the depth blit");
+
+        if (!format.hasStencil)
+        {
+            continue;
+        }
+
+        // Blit the stencil of the right half to the left half.
+        glClearDepthf(1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbos[0]);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbos[1]);
+        glBlitFramebuffer(kSize / 2, 0, kSize, kSize, 0, 0, kSize / 2, kSize, GL_STENCIL_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[1]);
+        expectDepthStencil(kSize / 2 - 1, 0x5A, 2, "left of the stencil blit");
+        expectDepthStencil(kSize / 2, 200, 2, "right of the stencil blit");
+    }
 }
 
 // Test that glBlitFramebuffer works when the framebuffer attachment level is not zero.  At the same
