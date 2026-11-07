@@ -807,7 +807,9 @@ set_target_properties(WebKitSwift PROPERTIES
     PREFIX "lib"
     SUFFIX ".dylib"
     Swift_MODULE_NAME WebKitSwift
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    # Build into WebKit.framework/Versions/A/Frameworks. Only this exact path
+    # relative to WebKit.framework is allowed in the sandbox.
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Frameworks"
     # INSTALL_NAME_DIR of Configurations/WebKitSwift.xcconfig.
     MACOSX_RPATH OFF
     BUILD_WITH_INSTALL_NAME_DIR ON
@@ -977,9 +979,10 @@ target_link_libraries(WebKitSwift PRIVATE
 )
 add_dependencies(WebKitSwift WebKit)
 
-# WebKit.framework's own signature does not cover this file: the
-# Frameworks/libWebKitSwift.dylib inside the bundle is a symlink to it.
 WEBKIT_LIBRARY(WebKitSwift)
+
+# Re-sign WebKit.framework whenever the dylib inside it changes.
+list(APPEND WebKit_CODE_SIGN_INPUTS $<TARGET_FILE:WebKitSwift>)
 
 WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(WebKit)
 WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(WebKitSwift)
@@ -1018,6 +1021,10 @@ function(WEBKIT_DEFINE_AUXILIARY_PROCESSES)
         WEBKIT_DEFINE_IOS_RESOURCES()
     endif ()
     WEBKIT_DEFINE_DAEMONS()
+
+    # libWebKitSwift.dylib is built into WebKit.framework, so like the XPC
+    # services it must finish signing before the framework bundle signs.
+    add_dependencies(WebKit_CodeSign WebKitSwift_CodeSign)
 endfunction()
 
 function(WEBKIT_DEFINE_XPC_SERVICES)
@@ -1967,20 +1974,14 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Resources
         COMMAND ${CMAKE_COMMAND} -E rm -rf
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions
-        COMMAND ${CMAKE_COMMAND} -E rm -rf
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks
-        COMMAND ${CMAKE_COMMAND} -E create_symlink ../../libWebKitSwift.dylib
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks/libWebKitSwift.dylib
         ${_xpc_service_symlinks}
         COMMAND codesign --force --sign - ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework
         COMMENT "Installing WebKit.framework resources and codesigning")
 
-    # Note: the XPC service and Frameworks/libWebKitSwift.dylib symlinks MUST be
-    # created in the same POST_BUILD chain as codesign above. A separate
-    # add_custom_command modifies the framework after the seal, which breaks
-    # codesign verification at sim runtime.
+    # Note: the XPC service symlinks MUST be created in the same POST_BUILD
+    # chain as codesign above. A separate add_custom_command modifies the
+    # framework after the seal, which breaks codesign verification at sim
+    # runtime.
 
     set(_sb_profiles_dir "${WEBKIT_DIR}/Resources/SandboxProfiles/ios")
     set(_sb_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework")
@@ -2489,8 +2490,6 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
     add_dependencies(WebKit WebKit_CopyLocalizedResources)
 
     file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Frameworks)
-    file(CREATE_LINK ../../../../libWebKitSwift.dylib
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Frameworks/libWebKitSwift.dylib SYMBOLIC)
     file(CREATE_LINK Versions/Current/Frameworks
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks SYMBOLIC)
 endfunction()
