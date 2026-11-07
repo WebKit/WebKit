@@ -55,7 +55,7 @@ WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatch
 
     trackingStart(timestamp)
     {
-        WI.timelineManager.animationTrackingStarted(timestamp);
+        WI.timelineManager.animationTrackingStarted(this._target, timestamp);
     }
 
     trackingUpdate(timestamp, event)
@@ -65,6 +65,6 @@ WI.AnimationObserver = class AnimationObserver extends InspectorBackend.Dispatch
 
     trackingComplete(timestamp)
     {
-        WI.timelineManager.animationTrackingCompleted(timestamp);
+        WI.timelineManager.animationTrackingCompleted(this._target, timestamp);
     }
 };
