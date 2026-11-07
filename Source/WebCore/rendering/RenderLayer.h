@@ -1630,7 +1630,7 @@ public:
     {
         m_layer.setLayerListMutationAllowed(false);
     }
-    
+
     ~LayerListMutationDetector()
     {
         m_layer.setLayerListMutationAllowed(m_previousMutationAllowedState);
@@ -1639,6 +1639,18 @@ public:
 private:
     RenderLayer& m_layer;
     bool m_previousMutationAllowedState;
+};
+
+// Detects illegal dirtying of descendant-dependent flags after they've been flushed.
+// Instantiated in updateLayerListsIfNeeded() to cover both the flush and the subsequent
+// z-order list collection, catching mutations at the call site with a full stack trace.
+class DescendantDependentFlagsMutationDetector {
+public:
+    DescendantDependentFlagsMutationDetector() { ++s_scopeCount; }
+    ~DescendantDependentFlagsMutationDetector() { --s_scopeCount; }
+    static bool isMutationAllowed() { return !s_scopeCount; }
+private:
+    WEBCORE_EXPORT static unsigned s_scopeCount;
 };
 #endif // ASSERT_ENABLED
 

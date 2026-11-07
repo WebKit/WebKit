@@ -189,6 +189,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+#if ASSERT_ENABLED
+unsigned DescendantDependentFlagsMutationDetector::s_scopeCount = 0;
+#endif
+
 class ClipRects : public RefCounted<ClipRects> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ClipRects);
 public:
@@ -1026,6 +1030,11 @@ void RenderLayer::setAncestorsHaveCompositingDirtyFlag(Compositing flag)
 void RenderLayer::updateLayerListsIfNeeded()
 {
     updateDescendantDependentFlags();
+
+#if ASSERT_ENABLED
+    DescendantDependentFlagsMutationDetector flagsMutationDetector;
+#endif
+
     updateZOrderLists();
     updateNormalFlowList();
 
@@ -1484,19 +1493,18 @@ void RenderLayer::setAncestorChainHasSelfPaintingLayerDescendant()
     for (RenderLayer* layer = this; layer; layer = layer->parent()) {
         if (layer->renderer().shouldApplyPaintContainment()) {
             layer->m_hasSelfPaintingLayerDescendant = true;
-            layer->m_hasSelfPaintingLayerDescendantDirty = false;
             break;
         }
         if (!layer->m_hasSelfPaintingLayerDescendantDirty && layer->hasSelfPaintingLayerDescendant())
             break;
 
-        layer->m_hasSelfPaintingLayerDescendantDirty = false;
         layer->m_hasSelfPaintingLayerDescendant = true;
     }
 }
 
 void RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus()
 {
+    ASSERT(DescendantDependentFlagsMutationDetector::isMutationAllowed());
     for (RenderLayer* layer = this; layer; layer = layer->parent()) {
         if (layer->m_hasSelfPaintingLayerDescendantDirty)
             break;
@@ -1513,12 +1521,12 @@ void RenderLayer::setAncestorChainHasViewportConstrainedDescendant()
             break;
 
         layer->m_hasViewportConstrainedDescendant = true;
-        layer->m_hasViewportConstrainedDescendantStatusDirty = false;
     }
 }
 
 void RenderLayer::dirtyAncestorChainHasViewportConstrainedDescendantStatus()
 {
+    ASSERT(DescendantDependentFlagsMutationDetector::isMutationAllowed());
     for (auto* layer = this; layer; layer = layer->parent()) {
         if (layer->m_hasViewportConstrainedDescendantStatusDirty)
             break;
@@ -1726,10 +1734,11 @@ void RenderLayer::updateAncestorChainHasBlendingDescendants()
 
 void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
 {
+    ASSERT(DescendantDependentFlagsMutationDetector::isMutationAllowed());
     for (auto* layer = this; layer; layer = layer->parent()) {
         if (layer->hasNotIsolatedBlendingDescendantsStatusDirty())
             break;
-        
+
         layer->m_hasNotIsolatedBlendingDescendantsStatusDirty = true;
         layer->setNeedsPositionUpdate();
     }
@@ -1761,12 +1770,12 @@ void RenderLayer::updateAncestorChainHasAlwaysIncludedInZOrderListsDescendants()
         if (!layer->m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty && layer->m_hasAlwaysIncludedInZOrderListsDescendants)
             break;
         layer->m_hasAlwaysIncludedInZOrderListsDescendants = true;
-        layer->m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty = false;
     }
 }
 
 void RenderLayer::dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants()
 {
+    ASSERT(DescendantDependentFlagsMutationDetector::isMutationAllowed());
     for (auto* layer = this; layer; layer = layer->parent()) {
         if (layer->m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty)
             break;
@@ -2005,8 +2014,9 @@ void RenderLayer::setHasVisibleContent()
         parent()->dirtyAncestorChainVisibleDescendantStatus();
 }
 
-void RenderLayer::dirtyVisibleContentStatus() 
-{ 
+void RenderLayer::dirtyVisibleContentStatus()
+{
+    ASSERT(DescendantDependentFlagsMutationDetector::isMutationAllowed());
     m_visibleContentStatusDirty = true;
     setNeedsPositionUpdate();
     if (parent())
@@ -2032,6 +2042,7 @@ void RenderLayer::dirtyVisibleContentStatusIncludingAncestors()
 
 void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 {
+    ASSERT(DescendantDependentFlagsMutationDetector::isMutationAllowed());
     setNeedsPositionUpdate();
     for (auto* layer = this; layer; layer = layer->parent()) {
         if (layer->m_visibleDescendantStatusDirty)
@@ -2066,17 +2077,29 @@ void RenderLayer::updateAncestorDependentState()
 
 void RenderLayer::updateDescendantDependentFlags()
 {
-    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty() || m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty || m_hasViewportConstrainedDescendantStatusDirty) {
+    if (!descendantDependentFlagsAreDirty())
+        return;
+
+    // We need the parent to know if we have skipped content or content-visibility root.
+    // Defer visible content computation until parent is available.
+    if (m_visibleContentStatusDirty && renderer().style().isSkippedRootOrSkippedContent() && !renderer().parent()) {
+        if (!m_visibleDescendantStatusDirty && !m_hasSelfPaintingLayerDescendantDirty && !m_hasNotIsolatedBlendingDescendantsStatusDirty && !m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty && !m_hasViewportConstrainedDescendantStatusDirty)
+            return;
+    }
+
+    // Phase 1: Perform computation work, including recursive child updates and side effects
+    // that may re-dirty flags on this layer (e.g. updateSelfPaintingLayer can dirty
+    // m_hasSelfPaintingLayerDescendantDirty on ancestors).
+
+    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || m_hasNotIsolatedBlendingDescendantsStatusDirty || m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty || m_hasViewportConstrainedDescendantStatusDirty) {
+        if (m_hasNotIsolatedBlendingDescendantsStatusDirty)
+            updateSelfPaintingLayer();
+
         bool hasVisibleDescendant = false;
         bool hasSelfPaintingLayerDescendant = false;
         bool hasNotIsolatedBlendingDescendants = false;
         bool hasAlwaysIncludedInZOrderListsDescendants = false;
         bool hasViewportConstrainedDescendant = false;
-
-        if (m_hasNotIsolatedBlendingDescendantsStatusDirty) {
-            m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
-            updateSelfPaintingLayer();
-        }
 
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
             child->updateDescendantDependentFlags();
@@ -2088,26 +2111,19 @@ void RenderLayer::updateDescendantDependentFlags()
             hasViewportConstrainedDescendant |= child->m_hasViewportConstrainedDescendant || child->isViewportConstrained();
         }
 
+        // Apply computed descendant values and trigger side effects (which may dirty ancestors).
         if (hasVisibleDescendant != m_hasVisibleDescendant) {
             m_hasVisibleDescendant = hasVisibleDescendant;
             if (!isNormalFlowOnly())
                 dirtyHiddenStackingContextAncestorZOrderLists();
         }
-        m_visibleDescendantStatusDirty = false;
         m_hasSelfPaintingLayerDescendant = hasSelfPaintingLayerDescendant;
-        m_hasSelfPaintingLayerDescendantDirty = false;
-        m_hasAlwaysIncludedInZOrderListsDescendants = hasAlwaysIncludedInZOrderListsDescendants;
-        m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty = false;
-        m_hasViewportConstrainedDescendant = hasViewportConstrainedDescendant;
-        m_hasViewportConstrainedDescendantStatusDirty = false;
-
         m_hasNotIsolatedBlendingDescendants = hasNotIsolatedBlendingDescendants;
+        m_hasAlwaysIncludedInZOrderListsDescendants = hasAlwaysIncludedInZOrderListsDescendants;
+        m_hasViewportConstrainedDescendant = hasViewportConstrainedDescendant;
     }
 
-    if (m_visibleContentStatusDirty) {
-        //  We need the parent to know if we have skipped content or content-visibility root.
-        if (renderer().style().isSkippedRootOrSkippedContent() && !renderer().parent())
-            return;
+    if (m_visibleContentStatusDirty && !(renderer().style().isSkippedRootOrSkippedContent() && !renderer().parent())) {
         bool hasVisibleContent = computeHasVisibleContent();
         if (hasVisibleContent != m_hasVisibleContent) {
             m_hasVisibleContent = hasVisibleContent;
@@ -2118,10 +2134,19 @@ void RenderLayer::updateDescendantDependentFlags()
                 dirtyHiddenStackingContextAncestorZOrderLists();
             }
         }
-        m_visibleContentStatusDirty = false;
     }
 
-    ASSERT(!descendantDependentFlagsAreDirty());
+    // Phase 2: Clear all dirty bits last. This ensures that any re-dirtying caused by
+    // side effects above (e.g. child processing dirtying ancestor flags) is properly absorbed.
+    m_visibleDescendantStatusDirty = false;
+    m_hasSelfPaintingLayerDescendantDirty = false;
+    m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
+    m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty = false;
+    m_hasViewportConstrainedDescendantStatusDirty = false;
+    if (!(renderer().style().isSkippedRootOrSkippedContent() && !renderer().parent()))
+        m_visibleContentStatusDirty = false;
+
+    ASSERT(!descendantDependentFlagsAreDirty() || (m_visibleContentStatusDirty && renderer().style().isSkippedRootOrSkippedContent() && !renderer().parent()));
 }
 
 bool RenderLayer::computeHasVisibleContent() const
