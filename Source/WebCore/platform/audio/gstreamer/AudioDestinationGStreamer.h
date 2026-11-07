@@ -37,6 +37,8 @@ public:
     WEBCORE_EXPORT void start(Function<void(Function<void()>&&)>&& dispatchToRenderThread, CompletionHandler<void(bool)>&&) final;
     WEBCORE_EXPORT void stop(CompletionHandler<void(bool)>&&) final;
 
+    void setSinkId(const String& persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&&) final;
+
     bool isPlaying() override { return m_isPlaying; }
     unsigned framesPerBuffer() const final;
 
@@ -57,9 +59,9 @@ private:
     const RefPtr<AudioBus> m_renderBus;
 
     bool m_isPlaying { false };
-    bool m_audioSinkAvailable { false };
     GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstElement> m_src;
+    GRefPtr<GstElement> m_audioSink;
     CompletionHandler<void(bool)> m_startupCompletionHandler;
     CompletionHandler<void(bool)> m_stopCompletionHandler;
 };

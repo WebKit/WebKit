@@ -130,7 +130,7 @@ public:
     bool isEnabled() const;
 
     GstElement* createAudioSink();
-    GstElement* createWebAudioSink();
+    GstElement* createWebAudioSink(const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
     void configureElement(GstElement*, OptionSet<ElementRuntimeCharacteristics>&&);
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) const;
     GstElementFactoryListType audioVideoDecoderFactoryListType() const;

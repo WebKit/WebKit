@@ -64,6 +64,8 @@ struct _WebKitWebAudioSrcPrivate {
     size_t framesToPull;
     guint bufferSize;
 
+    std::atomic<bool> isSilent { false };
+
     GRefPtr<GstTask> task;
     GRecMutex mutex;
 
@@ -228,7 +230,7 @@ static GRefPtr<GstBuffer> webKitWebAudioSrcAllocateBuffer(WebKitWebAudioSrc* src
     gst_buffer_add_audio_meta(buffer.get(), &priv->info, priv->framesToPull, nullptr);
 
     {
-        GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_READ);
+        GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_WRITE);
         ASSERT(mappedBuffer);
         const auto& bus = destination->renderBus();
         for (unsigned channelIndex = 0; channelIndex < bus->numberOfChannels(); channelIndex++)
@@ -281,6 +283,14 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
 
     GST_BUFFER_TIMESTAMP(buffer.get()) = timestamp;
     GST_BUFFER_DURATION(buffer.get()) = duration;
+
+    // Keep processing the graph the exact same way but output silence if the
+    // sinkId is `{ type: "none" }`.
+    if (priv->isSilent.load()) {
+        GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_WRITE);
+        if (mappedBuffer)
+            zeroSpan(mappedBuffer.mutableSpan<uint8_t>());
+    }
 
     if (priv->runningTimeReset) {
         priv->runningTimeReset = false;
@@ -414,6 +424,11 @@ void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc* sr
 {
     Locker locker { src->priv->dispatchToRenderThreadLock };
     src->priv->dispatchToRenderThreadFunction = WTF::move(function);
+}
+
+void webkitWebAudioSourceSetSilent(WebKitWebAudioSrc* src, bool isSilent)
+{
+    src->priv->isSilent.store(isSilent);
 }
 
 #undef GST_CAT_DEFAULT
