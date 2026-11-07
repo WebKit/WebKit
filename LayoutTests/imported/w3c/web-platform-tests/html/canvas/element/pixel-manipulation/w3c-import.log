@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create.and.resize.html
@@ -30,6 +28,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.this.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.createImageBitmap.p3.rgba.unorm8.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.createImageBitmap.srgb.rgba.float16.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.createImageBitmap.srgb.rgba.unorm8.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.get.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.get.clamp.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.get.double.html
@@ -54,6 +55,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.array.bounds.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.array.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.basics.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.pixelFormat.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.size.bounds.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.ctor.size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.object.nan.html
@@ -66,6 +68,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.alpha.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.basic.rgba.float16.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.clip.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.created.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.cross.html
@@ -81,3 +84,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.unaffected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.unchanged.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.put.wrongtype.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation/WEB_FEATURES.yml
