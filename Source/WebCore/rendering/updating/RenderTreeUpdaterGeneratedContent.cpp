@@ -423,18 +423,6 @@ static StringImpl* stringForQuoteCharacter(char16_t character)
     return StringImpl::empty();
 }
 
-static inline StringImpl* quotationMarkString()
-{
-    static NeverDestroyed<Ref<StringImpl>> quotationMarkString { *stringForQuoteCharacter(quotationMark) };
-    return quotationMarkString->ptr();
-}
-
-static inline StringImpl* apostropheString()
-{
-    static NeverDestroyed<Ref<StringImpl>> apostropheString { *stringForQuoteCharacter(apostrophe) };
-    return apostropheString->ptr();
-}
-
 // css-content-3: "If the depth is 0, the first pair is used, if the depth is 1, the second pair is used, etc."
 static String quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::ComputedStyle& style)
 {
@@ -442,11 +430,12 @@ static String quoteMark(QuoteType quoteType, unsigned quoteDepth, const Style::C
     bool isOpenQuote = quoteType == QuoteType::OpenQuote;
     if (!style.quotes().isAuto())
         return isOpenQuote ? style.quotes().openQuote(quoteDepth) : style.quotes().closeQuote(quoteDepth);
-    if (const auto* quotes = quotesForLanguage(Style::toPlatform(style.usedLocale())))
-        return stringForQuoteCharacter(isOpenQuote ? (quoteDepth ? quotes->open2 : quotes->open1) : (quoteDepth ? quotes->close2 : quotes->close1));
-    // FIXME: Should the default be the quotes for "en" rather than straight quotes?
-    // (According to https://html.spec.whatwg.org/multipage/rendering.html#quotes, the answer is "yes".)
-    return quoteDepth ? apostropheString() : quotationMarkString();
+    auto* quotes = quotesForLanguage(Style::toPlatform(style.usedLocale()));
+    if (!quotes) {
+        quotes = quotesForLanguage("en"_s);
+        ASSERT(quotes);
+    }
+    return stringForQuoteCharacter(isOpenQuote ? (quoteDepth ? quotes->open2 : quotes->open1) : (quoteDepth ? quotes->close2 : quotes->close1));
 }
 
 // css-content-3: the quote depth is "the number of occurrences of open-quote in all generated text before the current
