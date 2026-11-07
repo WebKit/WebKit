@@ -623,6 +623,7 @@ GI_INTROSPECT(WebKit${WEBKITGTK_API_INFIX} ${WEBKITGTK_API_VERSION} webkit${WEBK
     SOURCES
         ${WebKitGTK_INSTALLED_HEADERS}
         ${WEBKITGTK_SOURCES_FOR_INTROSPECTION}
+    FILTER_TARGET_SOURCE_LISTS
         Shared/API/glib
         UIProcess/API/glib
 )
@@ -671,6 +672,7 @@ GI_INTROSPECT(${WEBKITGTK_WEB_PROCESS_EXTENSION_API_NAME} ${WEBKITGTK_API_VERSIO
         Shared/API/glib/WebKitUserMessage.cpp
         Shared/API/glib/WebKitURIRequest.cpp
         Shared/API/glib/WebKitURIResponse.cpp
+    FILTER_TARGET_SOURCE_LISTS
         WebProcess/InjectedBundle/API/glib
 )
 

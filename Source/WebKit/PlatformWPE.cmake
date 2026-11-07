@@ -659,7 +659,7 @@ install(FILES ${WPE_API_INSTALLED_HEADERS}
         COMPONENT "Development"
 )
 
-# XXX: Using ${JavaScriptCore_INSTALLED_HEADERS} here expands to nothing.
+# XXX: Using ${JavaScriptCore_{INSTALLED_HEADERS,SOURCES}} here expands to nothing.
 GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
     TARGET WebKit
     PACKAGE wpe-javascriptcore
@@ -679,7 +679,16 @@ GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
         ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVirtualMachine.h
         ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCWeakValue.h
         ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/jsc.h
-        ${JAVASCRIPTCORE_DIR}/API/glib
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCCallbackFunction.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCClass.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCContext.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCException.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCOptions.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCValue.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCVersion.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCVirtualMachine.cpp
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCWeakValue.cpp
+
 )
 GI_DOCGEN(WPEJavaScriptCore "${JAVASCRIPTCORE_DIR}/API/glib/docs/jsc.toml.in")
 
@@ -727,9 +736,10 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
     SOURCES
         ${WPE_API_INSTALLED_HEADERS}
         ${WPE_SOURCES_FOR_INTROSPECTION}
+        UIProcess/API/wpe/WebKitImageWPE.cpp
+    FILTER_TARGET_SOURCE_LISTS
         Shared/API/glib
         UIProcess/API/glib
-        UIProcess/API/wpe/WebKitImageWPE.cpp
 )
 GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in
     CONTENT_TEMPLATES
@@ -766,6 +776,7 @@ GI_INTROSPECT(WPEWebProcessExtension ${WPE_API_VERSION} wpe/webkit-web-process-e
         Shared/API/glib/WebKitUserMessage.cpp
         Shared/API/glib/WebKitURIRequest.cpp
         Shared/API/glib/WebKitURIResponse.cpp
+    FILTER_TARGET_SOURCE_LISTS
         WebProcess/InjectedBundle/API/glib
 )
 GI_DOCGEN(WPEWebProcessExtension wpe/wpe-web-process-extension.toml.in)

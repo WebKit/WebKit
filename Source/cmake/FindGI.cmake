@@ -52,6 +52,8 @@ command. The following variables will also be set:
 if (NOT ENABLE_INTROSPECTION)
     function(GI_INTROSPECT)
     endfunction()
+    function(GI_EXTRACT_SOURCES)
+    endfunction()
     return ()
 endif ()
 
@@ -151,6 +153,88 @@ define_property(TARGET
     FULL_DOCS "Name of the pkg-config package for the target"
 )
 
+function(GI_EXTRACT_SOURCES target output_variable)
+    cmake_parse_arguments(PARSE_ARGV 1 opt
+        "APPEND"
+        ""
+        "SOURCE_LISTS;FILTER_PATHS"
+    )
+    if (NOT TARGET ${target})
+        message(FATAL_ERROR "Target '${target}' was not defined")
+    endif ()
+    get_property(target_srcdir TARGET ${target} PROPERTY SOURCE_DIR)
+    if (target_srcdir)
+        cmake_path(ABSOLUTE_PATH target_srcdir
+            BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+            NORMALIZE OUTPUT_VARIABLE target_srcdir)
+    else ()
+        cmake_path(SET target_srcdir NORMALIZE "${CMAKE_CURRENT_SOURCE_DIR}")
+    endif ()
+
+    set(source_list_files "")
+    foreach (filepath IN LISTS ${target}_UNIFIED_SOURCE_LIST_FILES opt_SOURCE_LISTS)
+        cmake_path(ABSOLUTE_PATH filepath
+            BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+            NORMALIZE OUTPUT_VARIABLE absfilepath)
+        if (EXISTS "${absfilepath}")
+            list(APPEND source_list_files "${absfilepath}")
+            set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${absfilepath}")
+        else ()
+            message(AUTHOR_WARNING "Missing source list for target '${target}': ${filepath}")
+        endif ()
+    endforeach ()
+
+    set(gusb_output "")
+    if (source_list_files)
+        cmake_path(SET dummy_derived_sources_dir "${CMAKE_BINARY_DIR}/GIGenerated/${target}/DummyDerivedSources")
+        execute_process(COMMAND ${Python_EXECUTABLE}
+                ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.py
+                -d ${dummy_derived_sources_dir}
+                -s ${target_srcdir}
+                --print-all-sources
+                ${source_list_files}
+            RESULT_VARIABLE gusb_result
+            OUTPUT_VARIABLE gusb_output)
+    endif ()
+
+    # Normalize paths used for filtering, to use cmake_path(IS_PREFIX) below.
+    set(temp_FILTER_PATHS "")
+    foreach (filepath IN LISTS opt_FILTER_PATHS)
+        cmake_path(ABSOLUTE_PATH filepath BASE_DIRECTORY "${target_srcdir}"
+            NORMALIZE OUTPUT_VARIABLE filepath)
+        list(APPEND temp_FILTER_PATHS "${filepath}")
+    endforeach ()
+    if (NOT opt_FILTER_PATHS)
+        set(opt_FILTER_PATHS /)
+    endif ()
+    set(opt_FILTER_PATHS ${temp_FILTER_PATHS})
+    unset(temp_FILTER_PATHS)
+
+    set(source_files "")
+    foreach (filepath IN LISTS gusb_output ${target}_SOURCES)
+        cmake_path(ABSOLUTE_PATH filepath BASE_DIRECTORY "${target_srcdir}"
+            NORMALIZE OUTPUT_VARIABLE absfilepath)
+        if (EXISTS "${absfilepath}")
+            if (opt_FILTER_PATHS)
+                foreach (filterpath IN LISTS opt_FILTER_PATHS)
+                    cmake_path(IS_PREFIX filterpath "${absfilepath}" file_in_prefix)
+                    if (file_in_prefix)
+                        list(APPEND source_files "${absfilepath}")
+                        break ()
+                    endif ()
+                endforeach ()
+            else ()
+                # No filtering
+                list(APPEND source_files "${absfilepath}")
+            endif ()
+        endif ()
+    endforeach ()
+
+    if (opt_APPEND)
+        list(APPEND source_files "${${output_variable}}")
+    endif ()
+    set(${output_variable} "${source_files}" PARENT_SCOPE)
+endfunction()
 
 #[=======================================================================[.rst:
 
@@ -164,7 +248,8 @@ define_property(TARGET
                   [IDENTIFIER_PREFIX <string>]
                   [PACKAGE <pkgname>]
                   [DEPENDENCIES <dependency>...]
-                  SOURCES <file>...)
+                  [FILTER_TARGET_SOURCE_LISTS <path-prefix>...]
+                  [SOURCES <file>...])
 
   Enables generating introspection data for a library ``<target>``, which
   will make the introspected API available in the ``<namespace>-<nsversion>``
@@ -201,8 +286,15 @@ define_property(TARGET
     will add its ``.gir`` as an uninstalled dependency and ensure that
     dependencies are built beforehand.
 
-  ``SOURCES`` specifies which sources to scan for introspection
-  documentation comments.
+  ``FILTER_TARGET_SOURCE_LISTS`` takes a list of path prefixes, relative to
+  the directory where the ``<target>`` has been defined. Files from the
+  source lists for the target (i.e. ``Sources*.txt`` files and the
+  ``<target>_SOURCES`` variable) will be added to the set of sources to
+  scan for documentation comments if they are contained within one of
+  the ``<path-prefix>`` directories.
+
+  ``SOURCES`` can be used to directly list sources to scan for
+  introspection documentation comments.
 
   The command creates a target named ``gir-<namespace>`` to build the
   ``.gir`` file, with two properties: ``GI_GIR_PATH`` contains the path
@@ -221,7 +313,7 @@ function(GI_INTROSPECT namespace nsversion header)
     cmake_parse_arguments(PARSE_ARGV 2 opt
         ""
         "IDENTIFIER_PREFIX;PACKAGE;SYMBOL_PREFIX;TARGET"
-        "DEPENDENCIES;SOURCES;OPTIONS"
+        "DEPENDENCIES;SOURCES;OPTIONS;FILTER_TARGET_SOURCE_LISTS"
     )
     if (NOT opt_PACKAGE)
         string(TOLOWER "${namespace}" opt_PACKAGE)
@@ -300,24 +392,24 @@ function(GI_INTROSPECT namespace nsversion header)
             get_filename_component(src "${src}" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
         endif ()
         if (IS_DIRECTORY "${src}")
-            if (EXISTS "${src}")
-                file(GLOB src_files LIST_DIRECTORIES FALSE "${src}/*.c" "${src}/*.cpp")
-                if (src_files)
-                    list(APPEND gir_srcs ${src_files})
-                else ()
-                    message(AUTHOR_WARNING "Directory '${src}' specified as source, but contains no source files")
-                endif ()
-            else ()
-                message(AUTHOR_WARNING "Directory '${src}' specified as source, but it does not exist")
-            endif ()
+            message(FATAL_ERROR "Directory listed in SOURCES: ${src}")
         else ()
             list(APPEND gir_srcs "${src}")
         endif ()
     endforeach ()
 
+    if (opt_FILTER_TARGET_SOURCE_LISTS)
+        GI_EXTRACT_SOURCES(${opt_TARGET} gir_srcs APPEND FILTER_PATHS ${opt_FILTER_TARGET_SOURCE_LISTS})
+    endif ()
+
     if (NOT gir_srcs)
         message(FATAL_ERROR "No sources to scan specified")
     endif ()
+
+    # The introspection scanner will try to re-scan files specified multiple
+    # times in the command line, and report warnings for all the definitions
+    # as being already defined. Sidestep the issue by removing duplicates.
+    list(REMOVE_DUPLICATES gir_srcs)
 
     # Generate .gir
     set(target_def "$<TARGET_PROPERTY:${opt_TARGET},COMPILE_DEFINITIONS>")
