@@ -26,8 +26,11 @@
 #include "ParserContentPolicy.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedSVGDocument);
 
 CachedSVGDocument::CachedSVGDocument(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, const Settings& settings)
     : CachedResource(WTF::move(request), Type::SVGDocumentResource, sessionID, cookieJar)

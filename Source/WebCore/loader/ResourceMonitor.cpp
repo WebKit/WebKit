@@ -41,10 +41,13 @@
 #include "Page.h"
 #include "ResourceMonitorChecker.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 #if ENABLE(CONTENT_EXTENSIONS)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceMonitor);
 
 #define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG_IF(m_frame, ResourceMonitoring, "ResourceMonitor(frame %" PRIu64 ")::" fmt, m_frame->frameID().toUInt64(), ##__VA_ARGS__)
 

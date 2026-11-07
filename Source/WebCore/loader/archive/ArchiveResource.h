@@ -30,10 +30,12 @@
 
 #include <WebCore/ArchiveError.h>
 #include <WebCore/SubstituteResource.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ArchiveResource : public SubstituteResource {
+    WTF_MAKE_TZONE_ALLOCATED(ArchiveResource);
 public:
     static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, const ResourceResponse&);
     WEBCORE_EXPORT static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& = ResourceResponse(), const String& fileName = { });

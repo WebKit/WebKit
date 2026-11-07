@@ -33,6 +33,7 @@
 #include <WebCore/ResourceLoader.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
  
 namespace WebCore {
@@ -44,6 +45,7 @@ class ResourceRequest;
 class SecurityOrigin;
 
 class SubresourceLoader final : public ResourceLoader {
+    WTF_MAKE_TZONE_ALLOCATED(SubresourceLoader);
 public:
     WEBCORE_EXPORT static void create(LocalFrame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&);
 

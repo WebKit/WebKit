@@ -31,8 +31,11 @@
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameMemoryMonitor);
 
 Ref<FrameMemoryMonitor> FrameMemoryMonitor::create(const LocalFrame& frame)
 {

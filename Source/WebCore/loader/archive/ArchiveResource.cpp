@@ -32,8 +32,11 @@
 #include "HTTPParsers.h"
 #include "SharedBuffer.h"
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ArchiveResource);
 
 inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& relativeFilePath)
     : SubstituteResource(URL { url }, ResourceResponse { response }, WTF::move(data))

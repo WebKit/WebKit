@@ -27,6 +27,7 @@
 
 #include <wtf/CompletionHandler.h>
 #include <wtf/ContinuousApproximateTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -36,6 +37,7 @@ namespace WebCore {
 class ResourceMonitorThrottler;
 
 class ResourceMonitorThrottlerHolder final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ResourceMonitorThrottlerHolder, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(ResourceMonitorThrottlerHolder);
 public:
     WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create();
     WEBCORE_EXPORT static Ref<ResourceMonitorThrottlerHolder> create(size_t count, Seconds duration, size_t maxHosts);

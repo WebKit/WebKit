@@ -29,10 +29,12 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/CachedResourceHandle.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class KeepaliveRequestTracker final : public CachedRawResourceClient, public RefCounted<KeepaliveRequestTracker> {
+    WTF_MAKE_TZONE_ALLOCATED(KeepaliveRequestTracker);
 public:
     static Ref<KeepaliveRequestTracker> create();
     ~KeepaliveRequestTracker();

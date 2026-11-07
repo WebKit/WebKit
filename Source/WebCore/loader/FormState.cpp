@@ -33,8 +33,11 @@
 #include "Document.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormState);
 
 inline FormState::FormState(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger, HTMLFormControlElement* submitter)
     : FrameDestructionObserver(protect(sourceDocument.frame()))

@@ -32,10 +32,13 @@
 #include "CachedResourceLoader.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedTextTrack);
 
 CachedTextTrack::CachedTextTrack(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTF::move(request), Type::TextTrackResource, sessionID, cookieJar)

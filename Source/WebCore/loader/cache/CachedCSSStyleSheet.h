@@ -24,6 +24,7 @@
 
 #include "CachedResource.h"
 #include "FrameLoaderTypes.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class TextResourceDecoder;
 struct CSSParserContext;
 
 class CachedCSSStyleSheet final : public CachedResource {
+    WTF_MAKE_TZONE_ALLOCATED(CachedCSSStyleSheet);
 public:
     CachedCSSStyleSheet(CachedResourceRequest&&, PAL::SessionID, const CookieJar*);
     virtual ~CachedCSSStyleSheet();

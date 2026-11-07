@@ -44,12 +44,15 @@
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(LOCALHOST_TIED_TO_LOOPBACK)
 #include "SecurityOrigin.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieJar);
 
 Ref<CookieJar> CookieJar::create(Ref<StorageSessionProvider>&& storageSessionProvider)
 {

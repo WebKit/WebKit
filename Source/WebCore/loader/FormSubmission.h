@@ -34,6 +34,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -45,6 +46,7 @@ class FrameLoadRequest;
 class HTMLFormControlElement;
 
 class FormSubmission : public RefCountedAndCanMakeWeakPtr<FormSubmission> {
+    WTF_MAKE_TZONE_ALLOCATED(FormSubmission);
 public:
     enum class Method : uint8_t { Get, Post, Dialog };
 

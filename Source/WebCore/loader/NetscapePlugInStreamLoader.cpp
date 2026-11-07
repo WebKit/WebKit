@@ -35,12 +35,15 @@
 #include <WebCore/HTTPStatusCodes.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ResourceLoadInfo.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetscapePlugInStreamLoader);
 
 static ResourceLoaderOptions plugInStreamLoaderOptions(FetchOptions::Destination destination)
 {

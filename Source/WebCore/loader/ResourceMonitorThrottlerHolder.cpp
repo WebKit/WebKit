@@ -33,10 +33,13 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceMonitorThrottlerHolder);
 
 Ref<WorkQueue> ResourceMonitorThrottlerHolder::sharedWorkQueueSingleton()
 {
