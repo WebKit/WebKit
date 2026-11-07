@@ -118,8 +118,8 @@ void ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace(const std:
         unsigned* row = reinterpret_cast_ptr<unsigned*>(dataSrc + stride * y);
         for (int x = 0; x < size.width(); x++) {
             unsigned* pixel = row + x;
-            auto pixelComponents = unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel })).resolved();
-            auto transformedPixelComponents = SRGBA<uint8_t> { lookUpTable[pixelComponents.red], lookUpTable[pixelComponents.green], lookUpTable[pixelComponents.blue], pixelComponents.alpha };
+            auto [r, g, b, a] = unpremultiplied(Premultiplied { asSRGBA(PackedColor::ARGB { *pixel }).resolved() });
+            auto transformedPixelComponents = SRGBA<uint8_t> { lookUpTable[r], lookUpTable[g], lookUpTable[b], a };
             *pixel = PackedColor::ARGB { premultipliedCeiling(transformedPixelComponents) }.value;
         }
     }

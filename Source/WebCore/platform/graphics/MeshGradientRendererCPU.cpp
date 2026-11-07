@@ -36,10 +36,10 @@ namespace WebCore {
 
 static constexpr unsigned bytesPerPixel = 4;
 
-static void writePixel(const PixelBufferConversionView& destination, int x, int y, SRGBA<uint8_t> color)
+static void writePixel(const PixelBufferConversionView& destination, int x, int y, ResolvedPremultiplied<SRGBA<uint8_t>> color)
 {
     auto pixel = destination.rows.subspan(static_cast<size_t>(y) * destination.bytesPerRow + static_cast<size_t>(x) * bytesPerPixel, bytesPerPixel);
-    auto [red, green, blue, alpha] = color.resolved();
+    auto [red, green, blue, alpha] = color;
     pixel[0] = red;
     pixel[1] = green;
     pixel[2] = blue;
@@ -69,9 +69,9 @@ static void drawTriangle(const PixelBufferConversionView& destination, const Int
     if (!area || !std::isfinite(area))
         return;
 
-    auto colorA = asColorComponents(a.color.resolved());
-    auto colorB = asColorComponents(b.color.resolved());
-    auto colorC = asColorComponents(c.color.resolved());
+    auto colorA = asColorComponents(a.color);
+    auto colorB = asColorComponents(b.color);
+    auto colorC = asColorComponents(c.color);
 
     // Only visit the pixels within the triangle's bounds, clipped to the destination.
     auto clamped = [](float value, int maximum) {
@@ -102,7 +102,7 @@ static void drawTriangle(const PixelBufferConversionView& destination, const Int
             color += colorB * weightB;
             color += colorC * weightC;
 
-            writePixel(destination, x, y, convertColor<SRGBA<uint8_t>>(makeFromComponentsClamping<SRGBA<float>>(color)));
+            writePixel(destination, x, y, convertComponentType<uint8_t>(Premultiplied { makeFromComponentsClamping<SRGBA<float>>(color).resolved() }));
         }
     }
 }
@@ -119,7 +119,7 @@ bool MeshGradientRendererCPU::render(const MeshGradient& gradient, const PixelBu
     if (destination.bytesPerRow < size.width() * bytesPerPixel || destination.rows.size() / destination.bytesPerRow < static_cast<size_t>(size.height()))
         return false;
 
-    auto background = convertColor<SRGBA<uint8_t>>(gradient.premultipliedSRGBBackgroundColor());
+    auto background = convertComponentType<uint8_t>(gradient.premultipliedSRGBBackgroundColor());
     for (int y = 0; y < size.height(); ++y) {
         for (int x = 0; x < size.width(); ++x)
             writePixel(destination, x, y, background);

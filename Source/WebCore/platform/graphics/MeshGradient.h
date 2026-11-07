@@ -57,7 +57,7 @@ public:
 
     struct Vertex {
         FloatPoint position;
-        SRGBA<float> color;
+        ResolvedPremultiplied<SRGBA<float>> color;
     };
 
     struct Triangle {
@@ -78,7 +78,7 @@ public:
     const Point& point(unsigned row, unsigned column) const LIFETIME_BOUND { return m_points[index(row, column)]; }
     const Color& backgroundColor() const LIFETIME_BOUND { return m_backgroundColor; }
 
-    WEBCORE_EXPORT SRGBA<float> premultipliedSRGBBackgroundColor() const;
+    WEBCORE_EXPORT ResolvedPremultiplied<SRGBA<float>> premultipliedSRGBBackgroundColor() const;
 
     WEBCORE_EXPORT Vector<Triangle> triangles(float scale) const;
 

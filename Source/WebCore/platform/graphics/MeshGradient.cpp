@@ -89,7 +89,7 @@ static ColorComponents<float, 4> toInterpolationComponents(const ColorInterpolat
     return components;
 }
 
-static SRGBA<float> toPremultipliedSRGB(const ColorInterpolationMethod& method, ColorComponents<float, 4> components)
+static ResolvedPremultiplied<SRGBA<float>> toPremultipliedSRGB(const ColorInterpolationMethod& method, ColorComponents<float, 4> components)
 {
     components[3] = clampedAlpha(components[3]);
 
@@ -110,7 +110,7 @@ static SRGBA<float> toPremultipliedSRGB(const ColorInterpolationMethod& method, 
         return convertColor<SRGBA<float>>(makeColorTypeByNormalizingComponents<typename MethodColorSpace::ColorType>(components).resolved());
     });
 
-    return premultiplied(makeFromComponentsClamping<SRGBA<float>>(asColorComponents(srgb.resolved())));
+    return premultiplied(srgb.resolved());
 }
 
 // MARK: - Bicubic Bézier patches
@@ -372,9 +372,9 @@ MeshGradient::~MeshGradient()
         observer->willDestroyMeshGradient(*this);
 }
 
-SRGBA<float> MeshGradient::premultipliedSRGBBackgroundColor() const
+ResolvedPremultiplied<SRGBA<float>> MeshGradient::premultipliedSRGBBackgroundColor() const
 {
-    return premultiplied(m_backgroundColor.toColorTypeLossy<SRGBA<float>>());
+    return premultiplied(m_backgroundColor.toColorTypeLossy<SRGBA<float>>().resolved());
 }
 
 RefPtr<NativeImage> MeshGradient::renderedImage(const IntSize& pixelSize, float scale) const
