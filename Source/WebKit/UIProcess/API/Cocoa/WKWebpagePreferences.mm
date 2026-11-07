@@ -887,13 +887,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return;
 
     switch (mode) {
+    // Leaving lockdownModeEnabled unset lets it fall through to lockdownModeEnabledBySystem().
     case WKSecurityRestrictionModeNone:
         _websitePolicies->setIsEnhancedSecurityEnabled(false);
-        _websitePolicies->setLockdownModeEnabled(false);
         break;
     case WKSecurityRestrictionModeMaximizeCompatibility:
         _websitePolicies->setIsEnhancedSecurityEnabled(true);
-        _websitePolicies->setLockdownModeEnabled(false);
         break;
     case WKSecurityRestrictionModeLockdown:
         _websitePolicies->setIsEnhancedSecurityEnabled(false);
