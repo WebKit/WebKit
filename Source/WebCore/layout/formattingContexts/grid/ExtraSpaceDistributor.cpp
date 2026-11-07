@@ -33,6 +33,15 @@
 namespace WebCore {
 namespace Layout {
 
+// https://drafts.csswg.org/css-grid-1/#extra-space
+// The result of one of steps 2.2–2.4 for a single item: the space left to distribute, and the
+// item-incurred increases after this step's distribution.
+struct ItemSpaceDistribution {
+    LayoutUnit remainingSpace;
+    // Keyed by track index.
+    Vector<LayoutUnit> itemIncurredIncreases;
+};
+
 // Used for space distribution.
 static Vector<size_t> indexesForUnfrozenAffectedTracks(const Vector<size_t>& spannedAffectedTracks,
     const UnsizedTracks& unsizedTracks, const Vector<LayoutUnit>& itemIncurredIncreases, ExtraSpaceDistributionTarget target, SpaceDistributionLimit limit)
@@ -48,11 +57,11 @@ static Vector<size_t> indexesForUnfrozenAffectedTracks(const Vector<size_t>& spa
 
 // Distributes space equally among trackIndexes in successive rounds, freezing tracks (per
 // spaceDistributedToTrack, below) as needed, until space is exhausted or no tracks remain unfrozen.
-static void distributeSpaceEquallyAmongTracks(LayoutUnit& space, const Vector<size_t>& trackIndexes,
-    const UnsizedTracks& unsizedTracks, Vector<LayoutUnit>& itemIncurredIncreases, ExtraSpaceDistributionTarget target, SpaceDistributionLimit limit)
+static ItemSpaceDistribution distributeSpaceEquallyAmongTracks(LayoutUnit spaceToDistribute, const Vector<size_t>& trackIndexes,
+    const UnsizedTracks& unsizedTracks, Vector<LayoutUnit>&& itemIncurredIncreases, ExtraSpaceDistributionTarget target, SpaceDistributionLimit limit)
 {
     auto unfrozenTrackIndexes = indexesForUnfrozenAffectedTracks(trackIndexes, unsizedTracks, itemIncurredIncreases, target, limit);
-    while (!unfrozenTrackIndexes.isEmpty() && space > 0) {
+    while (!unfrozenTrackIndexes.isEmpty() && spaceToDistribute > 0) {
         auto tracksRemainingForDistributionCount = unfrozenTrackIndexes.size();
 
         // https://drafts.csswg.org/css-grid-1/#extra-space
@@ -64,7 +73,7 @@ static void distributeSpaceEquallyAmongTracks(LayoutUnit& space, const Vector<si
         // space remains at this point, unfreeze and continue to distribute space to the item-incurred
         // increase of…"
         auto spaceDistributedToTrack = [&](size_t trackIndex) {
-            auto spaceDistributed = space / tracksRemainingForDistributionCount;
+            auto spaceDistributed = spaceToDistribute / tracksRemainingForDistributionCount;
             auto& track = unsizedTracks[trackIndex];
             auto spaceRemainingUntilLimit = track.freezeLimit(target, limit) - (track.affectedSize(target) + itemIncurredIncreases[trackIndex]);
             return std::min(spaceDistributed, spaceRemainingUntilLimit);
@@ -73,20 +82,21 @@ static void distributeSpaceEquallyAmongTracks(LayoutUnit& space, const Vector<si
         for (auto trackIndex : unfrozenTrackIndexes) {
             auto spaceDistributed = spaceDistributedToTrack(trackIndex);
             itemIncurredIncreases[trackIndex] += spaceDistributed;
-            space -= spaceDistributed;
+            spaceToDistribute -= spaceDistributed;
             --tracksRemainingForDistributionCount;
         }
 
         unfrozenTrackIndexes = indexesForUnfrozenAffectedTracks(trackIndexes, unsizedTracks, itemIncurredIncreases, target, limit);
     }
+    return { spaceToDistribute, WTF::move(itemIncurredIncreases) };
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-flex-items
-static void distributeSpaceAmongFlexibleTracks(LayoutUnit& spaceToDistribute, const TrackIndexes& spannedAffectedTracks,
-    const UnsizedTracks& unsizedTracks, Vector<LayoutUnit>& itemIncurredIncreases)
+static ItemSpaceDistribution distributeSpaceAmongFlexibleTracks(LayoutUnit spaceToDistribute, const TrackIndexes& spannedAffectedTracks,
+    const UnsizedTracks& unsizedTracks, Vector<LayoutUnit>&& itemIncurredIncreases)
 {
     if (spannedAffectedTracks.isEmpty())
-        return;
+        return { spaceToDistribute, WTF::move(itemIncurredIncreases) };
 
     auto flexFactor = [&](size_t trackIndex) {
         // Only flexible tracks are affected in this phase, per isTrackAffectedForSpaceDistributionInPhase.
@@ -133,6 +143,7 @@ static void distributeSpaceAmongFlexibleTracks(LayoutUnit& spaceToDistribute, co
     }
     // All space should be distributed to flexible tracks as they do not have growth limits.
     ASSERT(spaceToDistribute < LayoutUnit::epsilon());
+    return { spaceToDistribute, WTF::move(itemIncurredIncreases) };
 }
 
 // https://drafts.csswg.org/css-grid-1/#extra-space
@@ -225,40 +236,41 @@ TrackIndexes ExtraSpaceDistributor::distributeExtraSpace(ExtraSpaceDistributionT
         for (size_t trackIndex = itemSpan.begin(); trackIndex < itemSpan.end(); ++trackIndex)
             spannedSizes += unsizedTracks[trackIndex].affectedSize(spaceDistributionTarget);
         auto spannedGutters = GridLayoutUtils::totalGuttersSize(itemSpan.distance(), { }, gapSize);
-        auto spaceToDistribute = std::max(0_lu, sizeContributions[contributionIndex] - spannedSizes - spannedGutters);
-        if (!spaceToDistribute)
+        auto initialSpaceToDistribute = std::max(0_lu, sizeContributions[contributionIndex] - spannedSizes - spannedGutters);
+        if (!initialSpaceToDistribute)
             continue;
 
         // 2.2. Distribute space up to limits:
-        Vector<LayoutUnit> itemIncurredIncreases(unsizedTracks.size());
-        if (phase == ResolveIntrinsicTrackSizesPhase::FlexibleTracks)
-            distributeSpaceAmongFlexibleTracks(spaceToDistribute, spannedAffectedTracks, unsizedTracks, itemIncurredIncreases);
-        else
-            distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedAffectedTracks, unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
+        auto spaceDistributionUpToLimits = [&] {
+            if (phase == ResolveIntrinsicTrackSizesPhase::FlexibleTracks)
+                return distributeSpaceAmongFlexibleTracks(initialSpaceToDistribute, spannedAffectedTracks, unsizedTracks, Vector<LayoutUnit>(unsizedTracks.size()));
+            return distributeSpaceEquallyAmongTracks(initialSpaceToDistribute, spannedAffectedTracks, unsizedTracks, Vector<LayoutUnit>(unsizedTracks.size()), spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
+        };
+        auto distribution = spaceDistributionUpToLimits();
 
         // https://drafts.csswg.org/css-grid-1/#extra-space
         // 2.3. "Distribute space to non-affected tracks: If extra space remains at this point, and
         // the item spans both affected tracks and non-affected tracks, distribute space as for the
         // previous step, but into the non-affected tracks instead."
-        if (spaceToDistribute > 0 && !spannedAffectedTracks.isEmpty() && !spannedNonAffectedTracks.isEmpty()) {
-            distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedNonAffectedTracks, unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
+        if (distribution.remainingSpace > 0 && !spannedAffectedTracks.isEmpty() && !spannedNonAffectedTracks.isEmpty()) {
+            distribution = distributeSpaceEquallyAmongTracks(distribution.remainingSpace, spannedNonAffectedTracks, unsizedTracks, WTF::move(distribution.itemIncurredIncreases), spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
             // Several items can span the same non-affected track, so only record it once.
             for (auto trackIndex : spannedNonAffectedTracks) {
-                if (itemIncurredIncreases[trackIndex])
+                if (distribution.itemIncurredIncreases[trackIndex])
                     nonAffectedTracksIndexes.appendIfNotContains(trackIndex);
             }
         }
 
         // 2.4. Distribute space beyond limits: if extra space still remains, unfreeze and continue
         // distributing it to the item-incurred increases.
-        if (spaceToDistribute > 0)
-            distributeSpaceEquallyAmongTracks(spaceToDistribute, tracksToGrowBeyondGrowthLimits(spannedAffectedTracks, unsizedTracks, affectedTrackSizingFunction, spaceDistributionTarget), unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::BeyondGrowthLimit);
+        if (distribution.remainingSpace > 0)
+            distribution = distributeSpaceEquallyAmongTracks(distribution.remainingSpace, tracksToGrowBeyondGrowthLimits(spannedAffectedTracks, unsizedTracks, affectedTrackSizingFunction, spaceDistributionTarget), unsizedTracks, WTF::move(distribution.itemIncurredIncreases), spaceDistributionTarget, SpaceDistributionLimit::BeyondGrowthLimit);
 
         // 2.5. For each affected track, if its item-incurred increase is larger than its planned
         // increase, set the planned increase to that value. This covers every spanned track, since
         // non-affected tracks can also have received space in 2.3.
         for (size_t trackIndex = itemSpan.begin(); trackIndex < itemSpan.end(); ++trackIndex)
-            plannedIncreases[trackIndex] = std::max(plannedIncreases[trackIndex], itemIncurredIncreases[trackIndex]);
+            plannedIncreases[trackIndex] = std::max(plannedIncreases[trackIndex], distribution.itemIncurredIncreases[trackIndex]);
     }
 
     // 3. "Update the tracks' affected sizes by adding in the planned increase [...] (If the affected
