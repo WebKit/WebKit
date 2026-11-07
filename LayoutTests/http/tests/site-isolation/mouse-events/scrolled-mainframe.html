@@ -15,7 +15,7 @@ function onLoad() {
     window.scrollTo(50, 50);
     
     async function checkScrollPosition() {
-        if (window.scrollX === 50 && window.scrollY === 95) {
+        if (window.scrollX === 50 && window.scrollY === 50) {
             await eventSender.asyncMouseMoveTo(100, 100);
             await eventSender.asyncMouseDown();
             await eventSender.asyncMouseUp();

@@ -1,5 +1,5 @@
+PASS Correct mouse coordinates
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS Correct mouse coordinates
 

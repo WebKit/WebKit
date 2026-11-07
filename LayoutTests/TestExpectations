@@ -6147,9 +6147,6 @@ webkit.org/b/311465 webanimations/simultaneous-animations-removed-separately.htm
 
 webkit.org/b/311466 webanimations/transform-accelerated-animation-finishes-before-removal.html [ Failure Pass ]
 
-# affected by scroll anchoring.
-http/tests/site-isolation/mouse-events/scrolled-mainframe.html [ Skip ]
-
 # compute-kind-widget-generated failures (webkit.org/b/243899)
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-button-border-block-end-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-button-border-block-end-style-001.html [ ImageOnlyFailure ]
