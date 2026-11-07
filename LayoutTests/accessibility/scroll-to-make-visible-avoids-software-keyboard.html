@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+body {
+    margin: 0;
+    height: 3000px;
+}
+input {
+    position: absolute;
+    left: 10px;
+    height: 20px;
+}
+</style>
+</head>
+<body>
+
+<button id="fence" onclick="fenceCount++">Fence</button>
+<input id="above" type="text" aria-label="Above the keyboard">
+<input id="behind" type="text" aria-label="Behind the keyboard">
+
+<script>
+var output = "Tests that scrolling to make an element visible keeps it above a software keyboard covering the bottom of the view.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    window.keyboardHeight = 200;
+    window.above = document.getElementById("above");
+    window.behind = document.getElementById("behind");
+    // Both fields start out within the viewport; only the second one is behind the keyboard.
+    above.style.top = `${window.innerHeight - keyboardHeight - 60}px`;
+    behind.style.top = `${window.innerHeight - keyboardHeight + 40}px`;
+
+    // Accessibility actions can be performed asynchronously, in order. Pressing this button after an action and
+    // waiting for its click handler guarantees that the earlier action has finished, even if it didn't scroll.
+    window.fenceCount = 0;
+    var fenceObject;
+    async function waitForEarlierActions() {
+        const expectedCount = fenceCount + 1;
+        fenceObject.press();
+        await waitFor(() => fenceCount == expectedCount);
+    }
+
+    setTimeout(async function() {
+        fenceObject = accessibilityController.accessibleElementById("fence");
+        var aboveObject = accessibilityController.accessibleElementById("above");
+        var behindObject = accessibilityController.accessibleElementById("behind");
+
+        internals.setSoftwareKeyboardHeight(keyboardHeight);
+
+        aboveObject.scrollToMakeVisible();
+        await waitForEarlierActions();
+        output += expect("window.pageYOffset", "0");
+
+        behindObject.scrollToMakeVisible();
+        output += await expectAsync("behind.getBoundingClientRect().bottom <= window.innerHeight - keyboardHeight", "true");
+
+        // Without a keyboard, the field is visible where it is.
+        internals.setSoftwareKeyboardHeight(0);
+        window.scrollTo(0, 0);
+        await waitFor(() => window.pageYOffset == 0);
+        behindObject.scrollToMakeVisible();
+        await waitForEarlierActions();
+        output += expect("window.pageYOffset", "0");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

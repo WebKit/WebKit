@@ -1997,6 +1997,24 @@ void LocalFrameView::setVisualViewportOverrideRect(std::optional<LayoutRect> rec
     m_visualViewportOverrideRect = rect;
 }
 
+std::optional<LayoutUnit> LocalFrameView::heightAboveSoftwareKeyboard() const
+{
+    if (m_softwareKeyboardHeightForTesting)
+        return std::max(LayoutUnit { unobscuredContentRect().height() } - *m_softwareKeyboardHeightForTesting, 0_lu);
+#if PLATFORM(IOS_FAMILY)
+    // The visual viewport override ends at the top of the software keyboard and form accessory bar. Its origin
+    // can be stale after a scroll initiated by the web process, so only its height is used.
+    if (m_visualViewportOverrideRect)
+        return m_visualViewportOverrideRect->height();
+#endif
+    return std::nullopt;
+}
+
+void LocalFrameView::setSoftwareKeyboardHeightForTesting(std::optional<LayoutUnit> height)
+{
+    m_softwareKeyboardHeightForTesting = height;
+}
+
 LayoutSize LocalFrameView::baseLayoutViewportSize() const
 {
     return renderView() ? renderView()->borderBoxSize() : size();
@@ -3729,7 +3747,7 @@ void LocalFrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absolut
     auto maxScrollPosition = maximumScrollPosition();
 
 #if !PLATFORM(IOS_FAMILY)
-    auto viewRect = visibleContentRect();
+    LayoutRect viewRect = visibleContentRect();
 #else
     // FIXME: ContentInsets should be taken care of in UI process side. webkit.org/b/199682
     // To do that, getRectToExposeForScrollIntoView needs to return the additional scrolling to do beyond content rect.
@@ -3742,6 +3760,15 @@ void LocalFrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absolut
     minScrollPosition.move(-contentInsets.left(), -contentInsets.top());
     maxScrollPosition.move(contentInsets.right(), contentInsets.bottom());
 #endif
+
+    // Keep the revealed rect above a software keyboard covering the bottom of the view. On iOS, viewRect is the visual
+    // viewport, which already ends at the top of the keyboard, expanded by whatever part of the scroll view's content
+    // insets is scrolled into view. The bottom inset is scrolled into view whenever the document doesn't reach the
+    // bottom of the view, such as when it's scrolled to the end or when the page scrolls inside a container. While
+    // the keyboard is up, that inset is behind the keyboard and form accessory bar, so it has to come back off.
+    if (auto height = heightAboveSoftwareKeyboard())
+        viewRect.shiftMaxYEdgeTo(std::min(viewRect.maxY(), LayoutUnit { scrollPosition().y() } + *height));
+
     // Move the target rect into "scrollView contents" coordinates. The header isn't zoomed, so it needs
     // scaling down to match when the page scale is applied above the contents. A no-op otherwise.
     auto targetRect = absoluteRect;
