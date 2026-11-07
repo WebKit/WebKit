@@ -48,6 +48,7 @@
 #include "RenderEmbeddedObject.h"
 #include "StyleSheetContents.h"
 #include "UserScriptTypes.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
@@ -60,6 +61,7 @@ using namespace HTMLNames;
 
 // FIXME: Share more code with MediaDocumentParser.
 class PluginDocumentParser final : public RawDataDocumentParser {
+    WTF_MAKE_TZONE_ALLOCATED(PluginDocumentParser);
 public:
     static Ref<PluginDocumentParser> create(PluginDocument& document)
     {
@@ -78,6 +80,8 @@ private:
 
     WeakPtr<HTMLEmbedElement, WeakPtrImplWithEventTargetData> m_embedElement;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PluginDocumentParser);
 
 Ref<HTMLStyleElement> PluginDocumentParser::createStyleElement(Document& document)
 {

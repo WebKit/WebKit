@@ -29,10 +29,12 @@
 
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class WebKitMediaKeyError : public RefCounted<WebKitMediaKeyError> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitMediaKeyError);
 public:
     enum {
         MEDIA_KEYERR_UNKNOWN = 1,

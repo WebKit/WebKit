@@ -27,9 +27,12 @@
 
 #include "DOMURL.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(URLSearchParams);
 
 URLSearchParams::URLSearchParams(const String& init, DOMURL* associatedURL)
     : m_associatedURL(associatedURL)

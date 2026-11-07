@@ -65,6 +65,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CustomElementConstructionData);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTreeBuilder);
 
 using namespace ElementNames;

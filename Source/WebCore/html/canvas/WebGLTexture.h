@@ -28,11 +28,13 @@
 #if ENABLE(WEBGL)
 
 #include <WebCore/WebGLObject.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class WebGLTexture : public WebGLObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebGLTexture);
 public:
 
     virtual ~WebGLTexture();
