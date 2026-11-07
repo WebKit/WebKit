@@ -854,8 +854,9 @@ Vector<std::pair<size_t, size_t>> LineBuilder::collectShapeRanges(const LineCand
                 auto shouldCheckLogicalStart = style.writingMode().bidiDirection() == TextDirection::LTR ? inlineItem.type() == InlineItem::Type::InlineBoxEnd : inlineItem.type() == InlineItem::Type::InlineBoxStart;
                 return shouldCheckLogicalStart ? boxGeometry.marginStart() || boxGeometry.borderStart() || boxGeometry.paddingStart() : boxGeometry.marginEnd() || boxGeometry.borderEnd() || boxGeometry.paddingEnd();
             };
-            auto hasBidiIsolation = isIsolated(style.unicodeBidi());
-            type = hasDecoration() || hasBidiIsolation ? ShapingType::Break : ShapingType::Keep;
+            // Embeddings, overrides and isolates all start a new bidi run, which visual reordering may separate from the adjacent content.
+            auto startsNewBidiRun = style.unicodeBidi() != UnicodeBidi::Normal;
+            type = hasDecoration() || startsNewBidiRun ? ShapingType::Break : ShapingType::Keep;
             break;
         }
         case InlineItem::Type::HardLineBreak:
