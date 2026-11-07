@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#aspect-ratio-size-transfers">
+<link rel="match" href="grid-auto-repeat-aspect-ratio-005-ref.html">
+<meta name="assert" content="Checks that the content box minimum size transferred through the aspect-ratio of a border-box grid container with padding is used for determining auto repeat tracks.">
+<p>Test passes if there is a filled green square.</p>
+<div style="width: min-content; height: 100px;">
+  <div style="height: 100%;">
+    <div style="display: grid; box-sizing: border-box; padding: 10px; background: green; aspect-ratio: 1/1; min-height: 80%; grid-template-columns: repeat(auto-fill, 50px);"><div></div></div>
+  </div>
+</div>

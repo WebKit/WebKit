@@ -208,6 +208,11 @@ static std::optional<LayoutUnit> inlineAxisContainingBlockSize(const RenderGrid&
     return gridContainerRenderer.containingBlockLogicalWidthForContent();
 }
 
+std::pair<LayoutUnit, LayoutUnit> GridLayout::transferredInlineAxisMinMaxSizes(const RenderGrid& gridContainerRenderer)
+{
+    return gridContainerRenderer.computeMinMaxLogicalWidthFromAspectRatio();
+}
+
 // The grid container's content box minimum and maximum size in the inline axis.
 // https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing
 // RenderBox resolves percentages, stretch and -webkit-fill-available of the used width against the containing block (against its
@@ -236,10 +241,34 @@ static MinMaxSizeConstraints inlineAxisMinMaxSizeConstraints(const RenderGrid& g
     };
     // Without a known size a percentage in a minimum size resolves against zero, and one in a maximum size is no constraint.
     auto minimumPercentageBasis = containingBlockSize.value_or(0_lu);
-    return {
-        minWidthStyle.isStretch() ? (containingBlockSize ? std::optional { stretchedContentBoxWidth(minWidthStyle) } : std::nullopt) : minimumSizeConstraint(minWidthStyle, minimumPercentageBasis, boxSizing, borderAndPaddingWidth, gridContainerZoom),
-        maxWidthStyle.isStretch() ? (containingBlockSize ? std::optional { stretchedContentBoxWidth(maxWidthStyle) } : std::nullopt) : maximumSizeConstraint(maxWidthStyle, containingBlockSize, boxSizing, borderAndPaddingWidth, gridContainerZoom)
-    };
+    auto minWidth = minWidthStyle.isStretch() ? (containingBlockSize ? std::optional { stretchedContentBoxWidth(minWidthStyle) } : std::nullopt) : minimumSizeConstraint(minWidthStyle, minimumPercentageBasis, boxSizing, borderAndPaddingWidth, gridContainerZoom);
+    auto maxWidth = maxWidthStyle.isStretch() ? (containingBlockSize ? std::optional { stretchedContentBoxWidth(maxWidthStyle) } : std::nullopt) : maximumSizeConstraint(maxWidthStyle, containingBlockSize, boxSizing, borderAndPaddingWidth, gridContainerZoom);
+
+    // https://drafts.csswg.org/css-sizing-4/#aspect-ratio-size-transfers
+    // A minimum or maximum size in the block axis is transferred through the preferred aspect ratio to the inline axis when the
+    // inline size is automatic, unless the inline axis has its own minimum or maximum. The auto-repeat track count must use the same
+    // sizes RenderBox::constrainLogicalMinMaxSizesByAspectRatio clamps the used width with. Other engines may disagree: Chrome uses
+    // the transferred sizes for the track count only when the width is auto, and also when min-width or max-width is specified.
+    if (gridContainerStyle->aspectRatio().hasRatio() && !gridContainerStyle->logicalWidth().isSpecified()) {
+        auto transferredMinWidthApplies = !minWidthStyle.isSpecified();
+        auto transferredMaxWidthApplies = !maxWidthStyle.isSpecified();
+        auto [ transferredBorderBoxMinWidth, transferredBorderBoxMaxWidth ] = GridLayout::transferredInlineAxisMinMaxSizes(gridContainerRenderer);
+        auto transferredMinWidth = std::max(0_lu, transferredBorderBoxMinWidth - borderAndPaddingWidth);
+        auto transferredMaxWidth = transferredBorderBoxMaxWidth == LayoutUnit::max() ? LayoutUnit::max() : std::max(0_lu, transferredBorderBoxMaxWidth - borderAndPaddingWidth);
+        if (transferredMaxWidthApplies && transferredMaxWidth != LayoutUnit::max()) {
+            // The transferred maximum size is floored by the definite minimum size.
+            if (!transferredMinWidthApplies)
+                transferredMaxWidth = std::max(transferredMaxWidth, minWidth.value_or(0_lu));
+            maxWidth = std::min(maxWidth.value_or(LayoutUnit::max()), transferredMaxWidth);
+        }
+        if (transferredMinWidthApplies && transferredMinWidth > 0_lu) {
+            // The transferred minimum size is capped by the definite maximum size.
+            if (!transferredMaxWidthApplies && maxWidth)
+                transferredMinWidth = std::min(transferredMinWidth, *maxWidth);
+            minWidth = std::max(minWidth.value_or(0_lu), transferredMinWidth);
+        }
+    }
+    return { minWidth, maxWidth };
 }
 
 // The grid container's content box minimum and maximum size in the block axis, as RenderBox::computeContentLogicalHeight resolves

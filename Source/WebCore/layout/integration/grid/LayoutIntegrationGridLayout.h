@@ -58,6 +58,8 @@ public:
 
     static void resetStateOnLayoutPathChange(RenderGrid&);
     static void clearGridItemGridAreasLeftByGridFormattingContext(RenderGrid&);
+    // The grid container's border box minimum and maximum inline size transferred through its aspect-ratio, from RenderBox.
+    static std::pair<LayoutUnit, LayoutUnit> transferredInlineAxisMinMaxSizes(const RenderGrid&);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidths();
 
