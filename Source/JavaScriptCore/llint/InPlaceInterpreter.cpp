@@ -39,23 +39,13 @@
 
 namespace JSC { namespace IPInt {
 
+#define IPINT_UNTAGGED(ptr) ((char*)CodePtr<CFunctionPtrTag>::fromTaggedPtr(reinterpret_cast<void*>(ptr)).template untaggedPtr<>())
+
 #define VALIDATE_IPINT_OPCODE_FROM_BASE(dispatchBase, width, opcode, name) \
-do { \
-    void* base = reinterpret_cast<void*>(dispatchBase); \
-    void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
-    RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * width, #name); \
-} while (false);
+    RELEASE_ASSERT_WITH_MESSAGE(IPINT_UNTAGGED(ipint_ ## name ## _validate) - IPINT_UNTAGGED(dispatchBase) == opcode * width, #name);
 
 #define VALIDATE_IPINT_ATOMIC_OPCODE_FROM_BASE(dispatchBase, width, opcode, name) \
-do { \
-    void* base = reinterpret_cast<void*>(dispatchBase); \
-    void* ptr = reinterpret_cast<void*>(ipint_ ## name ## _atomic_validate); \
-    void* untaggedBase = CodePtr<CFunctionPtrTag>::fromTaggedPtr(base).template untaggedPtr<>(); \
-    void* untaggedPtr = CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>(); \
-    RELEASE_ASSERT_WITH_MESSAGE((char*)(untaggedPtr) - (char*)(untaggedBase) == opcode * width, #name); \
-} while (false);
+    RELEASE_ASSERT_WITH_MESSAGE(IPINT_UNTAGGED(ipint_ ## name ## _atomic_validate) - IPINT_UNTAGGED(dispatchBase) == opcode * width, #name);
 
 #define VALIDATE_IPINT_OPCODE(opcode, name) VALIDATE_IPINT_OPCODE_FROM_BASE(ipint_unreachable_validate, alignIPInt, opcode, name)
 #define VALIDATE_IPINT_GC_OPCODE(opcode, name) VALIDATE_IPINT_OPCODE_FROM_BASE(ipint_struct_new_validate, alignIPInt, opcode, name)
