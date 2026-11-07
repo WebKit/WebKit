@@ -226,7 +226,7 @@ class GitHubEWS(GitHub):
                           ['merge', 'vision-sim', 'mac-intel-wk2', 'api-gtk', ''],
                           ['unsafe-merge', 'vision-wk2', 'mac-safer-cpp', 'playstation', ''],
                           ['', 'tv', 'mac-site-isolation', '', ''],
-                          ['', 'tv-sim', '', '', ''],
+                          ['', 'tv-sim', 'mac-webdriver', '', ''],
                           ['', 'watch', '', '', ''],
                           ['', 'watch-sim', '', '', '']]
     approved_user_list_for_apple_internal_builds = []

@@ -223,6 +223,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Golden-Gate-Debug-WebDriver-Tests-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
