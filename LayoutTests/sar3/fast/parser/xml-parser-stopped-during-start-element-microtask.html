@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+onload = function () {
+    setTimeout(function () {
+        document.getElementById("result").textContent = "PASS if no crash";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+};
+</script>
+<p>Tests that the XML parser handles a microtask run from XMLDocumentParser::startElementNs()
+detaching the frame and stopping the parser.</p>
+<p id="result">FAIL</p>
+<iframe id="frame" src="resources/xml-parser-stopped-during-start-element-microtask-frame.xhtml"></iframe>
