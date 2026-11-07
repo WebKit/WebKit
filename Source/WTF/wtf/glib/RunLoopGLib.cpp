@@ -204,7 +204,7 @@ void RunLoop::drainDispatchMainQueue()
 }
 #endif
 
-void RunLoop::runGLibMainLoopIteration(MayBlock mayBlock)
+void RunLoop::runGLibMainLoopIteration(Seconds maximumWait)
 {
     gint maxPriority = 0;
     g_main_context_prepare(m_mainContext.get(), &maxPriority);
@@ -216,8 +216,11 @@ void RunLoop::runGLibMainLoopIteration(MayBlock mayBlock)
     while ((numFDs = g_main_context_query(m_mainContext.get(), maxPriority, &timeoutInMilliseconds, m_pollFDs.mutableSpan().data(), m_pollFDs.size())) > static_cast<int>(m_pollFDs.size()))
         m_pollFDs.grow(numFDs);
 
-    if (mayBlock == MayBlock::No)
-        timeoutInMilliseconds = 0;
+    if (maximumWait.isFinite()) {
+        auto maximumWaitInMilliseconds = std::max(maximumWait.millisecondsAs<gint>(), 0);
+        if (timeoutInMilliseconds < 0 || timeoutInMilliseconds > maximumWaitInMilliseconds)
+            timeoutInMilliseconds = maximumWaitInMilliseconds;
+    }
 
     notifyActivity(Activity::BeforeWaiting);
 
@@ -239,7 +242,7 @@ void RunLoop::runGLibMainLoop()
     notifyActivity(Activity::Entry);
 
     while (!m_shouldStop)
-        runGLibMainLoopIteration(MayBlock::Yes);
+        runGLibMainLoopIteration();
 
     notifyActivity(Activity::Exit);
     g_main_context_pop_thread_default(m_mainContext.get());
@@ -270,10 +273,10 @@ void RunLoop::wakeUp()
     g_source_set_ready_time(m_source.get(), 0);
 }
 
-RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
+RunLoop::CycleResult RunLoop::cycle(RunLoopMode, Seconds maximumWait)
 {
     Ref runLoop = RunLoop::currentSingleton();
-    runLoop->runGLibMainLoopIteration(MayBlock::No);
+    runLoop->runGLibMainLoopIteration(maximumWait);
     return CycleResult::Continue;
 }
 
