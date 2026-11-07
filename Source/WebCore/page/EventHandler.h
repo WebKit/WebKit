@@ -724,6 +724,7 @@ private:
     RefPtr<Element> m_lastElementUnderMouse;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_mouseMoveTargetOverride;
     Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>, 31> m_ancestorsOfLastElementUnderMouse;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_connectedAncestorOfRemovedLastElementUnderMouse;
     RefPtr<LocalFrame> m_lastMouseMoveEventSubframe;
     bool m_lastMouseMoveWasPassedToRemoteSubframe { false };
 #if PLATFORM(MAC)
