@@ -1,3 +1,5 @@
 
 PASS insertDTMF with duration greater than 6000 should be clamped to 6000
+PASS insertDTMF with interToneGap greater than 6000 should be clamped to 6000
+PASS insertDTMF should wait duration + interToneGap between tones, not interToneGap twice
 
