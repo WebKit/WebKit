@@ -42,7 +42,7 @@ class InlineContent;
 // by the root's own LineLayout or GridLayout. This clears what a formatting context stored on its boxes.
 class BoxTreeUpdater {
 public:
-    NODELETE BoxTreeUpdater(RenderBlock&);
+    BoxTreeUpdater(RenderBlock&);
     NODELETE ~BoxTreeUpdater();
 
     // Clears what the formatting context stored on its boxes. Text content that waited for the inline items goes in.
@@ -72,7 +72,7 @@ public:
 private:
     Layout::ElementBox& rootLayoutBox();
 
-    RenderBlock& m_rootRenderer;
+    const CheckedRef<RenderBlock> m_rootRenderer;
 };
 
 inline bool BoxTreeUpdater::isInLiveFormattingContext(const RenderObject& renderer)

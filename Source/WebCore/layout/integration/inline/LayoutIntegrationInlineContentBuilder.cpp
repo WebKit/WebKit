@@ -220,8 +220,9 @@ void InlineContentBuilder::updateInkOverflowForBoxes(InlineContent& inlineConten
     // group the boxes by the line index they carry.
     auto& displayContent = inlineContent.displayContent();
     auto boxes = displayContent.boxes.mutableSpan();
-    CheckedRef root = m_blockFlow.layoutBox();
-    auto initialContainingBlockSize = ceiledIntSize(LayoutSize { m_blockFlow.view().contentBoxWidth(), m_blockFlow.view().contentBoxHeight() });
+    CheckedRef root = m_blockFlow->layoutBox();
+    CheckedRef view = m_blockFlow->view();
+    auto initialContainingBlockSize = ceiledIntSize(LayoutSize { view->contentBoxWidth(), view->contentBoxHeight() });
 
     size_t firstBoxIndex = 0;
     while (firstBoxIndex < boxes.size() && boxes[firstBoxIndex].lineIndex() < startIndex)
@@ -358,7 +359,7 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
     auto& boxes = inlineContent.displayContent().boxes;
 
     size_t boxIndex = !startIndex ? 0 : lines[startIndex - 1].lastBoxIndex() + 1;
-    CheckedRef rootBoxStyle = m_blockFlow.style();
+    CheckedRef rootBoxStyle = m_blockFlow->style();
     auto isLeftToRightInlineDirection = rootBoxStyle->writingMode().deprecatedIsLeftToRightDirection();
     auto isHorizontalWritingMode = rootBoxStyle->writingMode().isHorizontal();
 
@@ -456,7 +457,7 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
                     lineInkOverflowRect.unite(box.inkOverflow());
 
                 if (line.hasBlockLevelBox()) {
-                    if (hasSelfPaintingLayer || !box.layoutBox().style().opacity().isOpaque() || box.layoutBox().style().hasOutline()) {
+                    if (hasSelfPaintingLayer || !box.layoutBox().style().opacity().isOpaque() || protect(box.layoutBox().style())->hasOutline()) {
                         // See if the inline box has properties that affect block-in-inline painting.
                         inlineContent.setHasPaintedInlineLevelBoxes();
                     }
@@ -499,7 +500,7 @@ void InlineContentBuilder::adjustInkOverflowForPercentageTextDecorationInsets(In
     // of that box and so is only known once all the lines are built.
     auto& lines = inlineContent.displayContent().lines;
     auto& boxes = inlineContent.displayContent().boxes;
-    auto isHorizontalWritingMode = m_blockFlow.writingMode().isHorizontal();
+    auto isHorizontalWritingMode = m_blockFlow->writingMode().isHorizontal();
 
     auto inlineSizeForEachDecoratingBox = [&] {
         auto inlineSizes = HashMap<CheckedRef<const Layout::Box>, float> { };

@@ -48,8 +48,8 @@ public:
     LayoutIterator& traverseNextSibling();
 
 private:
-    const ElementBox* m_root;
-    const T* m_current;
+    CheckedPtr<const ElementBox> m_root;
+    CheckedPtr<const T> m_current;
 };
 
 namespace LayoutBoxTraversal {

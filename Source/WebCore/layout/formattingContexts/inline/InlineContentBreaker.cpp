@@ -140,7 +140,8 @@ static inline bool canBreakBefore(char32_t character, LineBreak lineBreak)
 static inline InlineContentBreaker::PartialRun firstCharacterBreakRespectingLineStartProhibitions(const InlineTextItem& inlineTextItem, const InlineContentBreaker::ContinuousContent::Run& textRun, InlineLayoutUnit contentLogicalRight)
 {
     auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextItem);
-    auto firstCharacterWidth = TextUtil::width(inlineTextItem, textRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + firstCharacterLength, contentLogicalRight);
+    CheckedRef fontCascade = textRun.style->fontCascade();
+    auto firstCharacterWidth = TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.start() + firstCharacterLength, contentLogicalRight);
     if (inlineTextItem.inlineTextBox().content().is8Bit())
         return { firstCharacterLength, firstCharacterWidth };
 
@@ -148,11 +149,11 @@ static inline InlineContentBreaker::PartialRun firstCharacterBreakRespectingLine
     auto breakWidth = firstCharacterWidth;
     auto text = inlineTextItem.inlineTextBox().content();
     while (inlineTextItem.start() + breakPosition < inlineTextItem.end()) {
-        if (canBreakBefore(text[inlineTextItem.start() + breakPosition], textRun.style.lineBreak()))
+        if (canBreakBefore(text[inlineTextItem.start() + breakPosition], textRun.style->lineBreak()))
             break;
         auto nextPosition = inlineTextItem.start() + breakPosition;
         U16_FWD_1(text, nextPosition, inlineTextItem.end());
-        breakWidth = TextUtil::width(inlineTextItem, textRun.style.fontCascade(), inlineTextItem.start(), nextPosition, contentLogicalRight);
+        breakWidth = TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), nextPosition, contentLogicalRight);
         breakPosition = nextPosition - inlineTextItem.start();
     }
     return { breakPosition, breakWidth };
@@ -348,7 +349,7 @@ std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMini
             auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(leadingInlineTextItem);
             if (leadingInlineTextItem.length() <= firstCharacterLength)
                 return Result { Result::Action::Keep, IsEndOfLine::Yes };
-            auto firstCharacterWidth = TextUtil::width(leadingInlineTextItem, style->fontCascade(), leadingInlineTextItem.start(), leadingInlineTextItem.start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+            auto firstCharacterWidth = TextUtil::width(leadingInlineTextItem, protect(style->fontCascade()), leadingInlineTextItem.start(), leadingInlineTextItem.start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
             return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { { }, PartialRun { firstCharacterLength, firstCharacterWidth }, { } } };
         }
         return { };
@@ -434,7 +435,7 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
     auto& textRun = runs[textRunIndex];
     auto& inlineTextItem = downcast<InlineTextItem>(textRun.inlineItem);
     ASSERT(inlineTextItem.length());
-    auto lineBreak = textRun.style.lineBreak();
+    auto lineBreak = textRun.style->lineBreak();
 
     auto lastValidBreakingPositionInsideTextRun = [&]() -> std::optional<size_t> {
         // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
@@ -472,15 +473,16 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
 
 static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBreaker::ContinuousContent::Run& textRun, InlineLayoutUnit runLogicalLeft, InlineLayoutUnit availableWidth)
 {
-    ASSERT(textRun.style.wordBreak() == WordBreak::BreakAll);
+    ASSERT(textRun.style->wordBreak() == WordBreak::BreakAll);
     auto& inlineTextItem = downcast<InlineTextItem>(textRun.inlineItem);
 
-    auto wordBreak = TextUtil::breakWord(inlineTextItem, textRun.style.fontCascade(), textRun.spaceRequired(), availableWidth, runLogicalLeft);
+    CheckedRef fontCascade = textRun.style->fontCascade();
+    auto wordBreak = TextUtil::breakWord(inlineTextItem, fontCascade, textRun.spaceRequired(), availableWidth, runLogicalLeft);
     if (!wordBreak.length || wordBreak.length == inlineTextItem.length())
         return { };
 
     // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
-    auto lineBreak = textRun.style.lineBreak();
+    auto lineBreak = textRun.style->lineBreak();
     auto text = inlineTextItem.inlineTextBox().content();
     if (canBreakBefore(text[inlineTextItem.start() + wordBreak.length], lineBreak))
         return wordBreak;
@@ -494,7 +496,7 @@ static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBr
     }
     if (left == right)
         return { };
-    return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, textRun.style.fontCascade(), left, right, runLogicalLeft) };
+    return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, fontCascade, left, right, runLogicalLeft) };
 }
 
 NODELETE static size_t limitBeforeValue(const Style::ComputedStyle& style)
@@ -625,7 +627,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                             if (canBreakBefore(text[right], style->lineBreak())) {
                                 if (right == inlineTextItem.end())
                                     return { };
-                                return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, style->fontCascade(), left, right, candidateTextRun.logicalLeft) };
+                                return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, fontCascade, left, right, candidateTextRun.logicalLeft) };
                             }
                         }
                         return { };
