@@ -142,6 +142,7 @@ const TestFeatures& TestOptions::defaults()
 #if ENABLE(UNIFIED_PDF)
             { "UnifiedPDFEnabled", unifiedPDFEnabledValue },
 #endif
+            { "UnloadEventEnabled", true },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
 #if ENABLE(WEBGL)

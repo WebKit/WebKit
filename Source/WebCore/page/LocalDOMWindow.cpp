@@ -351,7 +351,8 @@ void LocalDOMWindow::dispatchAllPendingUnloadEvents()
         RefPtr document = window->document();
         if (document)
             document->dispatchPagehideEvent(PageshowEventPersistence::NotPersisted);
-        window->dispatchEvent(Event::create(eventNames.unloadEvent, Event::CanBubble::No, Event::IsCancelable::No), document.get());
+        if (!document || document->settings().unloadEventEnabled())
+            window->dispatchEvent(Event::create(eventNames.unloadEvent, Event::CanBubble::No, Event::IsCancelable::No), document.get());
 
         window->enableSuddenTermination();
     }

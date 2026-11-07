@@ -154,6 +154,7 @@ enum class SDKAlignedBehavior {
     DeprecatedSystemColorsUseCSSColor4Mappings,
     CheckPageLocationDuringHardPocketEligibilityCheck,
     HideScrollPocketSeparatorAtTopOfPage,
+    NoUnloadEvent,
 
     NumberOfBehaviors
 };

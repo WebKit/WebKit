@@ -165,6 +165,7 @@ bool defaultShouldDropNearSuspendedAssertionAfterDelay();
 bool defaultShouldTakeNearSuspendedAssertion();
 bool defaultShowModalDialogEnabled();
 NODELETE bool defaultLinearMediaPlayerEnabled();
+bool defaultUnloadEventEnabled();
 
 NODELETE bool defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();
