@@ -10284,15 +10284,6 @@ imported/w3c/web-platform-tests/FileAPI/unicode.any.html [ Pass Crash ] # rdar:/
 # rdar://130246390 (REGRESSION (279416@main): imported/w3c/web-platform-tests/fetch/redirect-navigate/302-found-post.html is constantly failing on iOS 18 and later when run after a certain test.)
 imported/w3c/web-platform-tests/fetch/redirect-navigate/302-found-post.html [ Pass Failure ]
 
-# rdar://146976297 (REGRESSION (iOS 26): 7 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-*link-decoration*.html are constant failures.)
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Failure ]
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-short-deletion.html [ Failure ]
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-before-short-deletion.html [ Failure ]
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-after-short-deletion.html [ Failure ]
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-before-short-deletion.html [ Failure ]
-http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-without-link-decoration.html [ Failure ]
-
 # rdar://175824217 (New Test (312034@main): imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2.html is a constant IMAGE failure on iOS 26 and later.)
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2.html [ ImageOnlyFailure ]
 
