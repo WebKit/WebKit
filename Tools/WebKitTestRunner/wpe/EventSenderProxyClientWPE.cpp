@@ -146,13 +146,13 @@ void EventSenderProxyClientWPE::mouseDown(unsigned button, double time, WKEventM
     wpe_event_unref(event);
 }
 
-void EventSenderProxyClientWPE::mouseUp(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, unsigned& mouseButtonsCurrentlyDown)
+void EventSenderProxyClientWPE::mouseUp(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, int clickCount, unsigned& mouseButtonsCurrentlyDown)
 {
     auto wpeButton = eventSenderButtonToWPEButton(button);
     mouseButtonsCurrentlyDown &= ~modifierForButton(wpeButton);
     auto modifiers = static_cast<WPEModifiers>(wkEventModifiersToWPE(wkModifiers) | mouseButtonsCurrentlyDown);
     auto* view = WKViewGetView(m_testController.targetView()->platformView());
-    auto* event = wpe_event_pointer_button_new(WPE_EVENT_POINTER_UP, view, WPE_INPUT_SOURCE_MOUSE, secToMsTimestamp(time), modifiers, wpeButton, x, y, 0);
+    auto* event = wpe_event_pointer_button_new(WPE_EVENT_POINTER_UP, view, WPE_INPUT_SOURCE_MOUSE, secToMsTimestamp(time), modifiers, wpeButton, x, y, clickCount);
     wpe_view_event(view, event);
     wpe_event_unref(event);
 }
@@ -160,8 +160,15 @@ void EventSenderProxyClientWPE::mouseUp(unsigned button, double time, WKEventMod
 void EventSenderProxyClientWPE::mouseMoveTo(double x, double y, double time, WKEventMouseButton, unsigned mouseButtonsCurrentlyDown)
 {
     auto* view = WKViewGetView(m_testController.targetView()->platformView());
+    double deltaX = 0;
+    double deltaY = 0;
+    if (m_lastMotionPosition) {
+        deltaX = x - m_lastMotionPosition->first;
+        deltaY = y - m_lastMotionPosition->second;
+    }
+    m_lastMotionPosition = { x, y };
     auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_MOVE, view, WPE_INPUT_SOURCE_MOUSE, secToMsTimestamp(time),
-        static_cast<WPEModifiers>(mouseButtonsCurrentlyDown), x, y, 0, 0);
+        static_cast<WPEModifiers>(mouseButtonsCurrentlyDown), x, y, deltaX, deltaY);
     wpe_view_event(view, event);
     wpe_event_unref(event);
 }

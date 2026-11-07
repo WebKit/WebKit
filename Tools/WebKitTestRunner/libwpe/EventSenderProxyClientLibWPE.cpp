@@ -136,7 +136,7 @@ void EventSenderProxyClientLibWPE::mouseDown(unsigned button, double time, WKEve
     wpe_view_backend_dispatch_pointer_event(viewBackend(m_testController), &event);
 }
 
-void EventSenderProxyClientLibWPE::mouseUp(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, unsigned& mouseButtonsCurrentlyDown)
+void EventSenderProxyClientLibWPE::mouseUp(unsigned button, double time, WKEventModifiers wkModifiers, double x, double y, int, unsigned& mouseButtonsCurrentlyDown)
 {
     m_buttonState = ButtonReleased;
     auto wpeButton = senderButtonToWPEButton(button);

@@ -310,12 +310,14 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-1.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-2.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 
-# Pointer Lock API not implemented
-webkit.org/b/204001 pointer-lock/ [ Skip ]
-webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
-webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
-webkit.org/b/204001 imported/w3c/web-platform-tests/pointerlock/ [ Skip ]
-webkit.org/b/204001 inspector/page/overrideSetting-PointerLockEnabled.html [ Skip ]
+# WebKitTestRunner does not implement the testRunner pointer lock API.
+webkit.org/b/99036 pointer-lock/pointerlockchange-event-on-lock-lost.html [ Timeout ]
+webkit.org/b/99036 pointer-lock/pointerlockelement-null-when-pending.html [ Timeout ]
+webkit.org/b/99036 pointer-lock/locked-element-iframe-removed-from-dom.html [ Failure ]
+webkit.org/b/304279 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
+
+# unadjustedMovement is not supported.
+imported/w3c/web-platform-tests/pointerlock/pointerlock_unadjustedMovement.html [ Failure ]
 
 webkit.org/b/206454 fast/events/mouse-cursor-change.html [ Failure ]
 webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
@@ -531,8 +533,6 @@ http/tests/inspector/network/xhr-response-body.html [ Failure ]
 Bug(WPE) fast/text/woff2-totalsfntsize.html [ Pass ]
 Bug(WPE) fast/text/woff2.html [ Pass ]
 
-http/tests/pointer-lock [ Skip ]
-
 http/tests/security/contentSecurityPolicy/report-blocked-file-uri.py [ Failure ]
 http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 http/tests/security/frame-loading-via-document-write-async-delegates.html [ Failure ]
@@ -556,8 +556,6 @@ imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouseevent_key
 imported/w3c/web-platform-tests/pointerevents/persistentDeviceId/get-persistendeviceid-from-pointer-mouse-event.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html?pen [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_movementxy.html?mouse [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_getCoalescedEvents_when_pointerlocked.https.html [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerrawupdate_in_pointerlock.https.html [ Skip ]
 
 # Crash.
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-right [ Skip ]
