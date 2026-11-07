@@ -3523,6 +3523,229 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
     noResult(node);
 }
 
+void SpeculativeJIT::boxInt64AsHeapBigInt(Node* node, GPRReg bitsGPR, GPRReg resultGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, bool isSigned)
+{
+    ASSERT(bitsGPR != resultGPR);
+    ASSERT(scratchGPR1 != bitsGPR && scratchGPR1 != resultGPR);
+    ASSERT(scratchGPR2 != bitsGPR && scratchGPR2 != resultGPR);
+    ASSERT(scratchGPR1 != scratchGPR2);
+
+    JumpList slowCases;
+    emitAllocateJSBigInt64(vm(), resultGPR, bitsGPR, scratchGPR1, scratchGPR2, TrustedImmPtr(m_graph.registerStructure(vm().bigIntStructure.get())), isSigned, slowCases);
+    if (isSigned) {
+        addSlowPathGenerator(slowPathCall(
+            slowCases, this, operationInt64ToBigInt,
+            resultGPR, LinkableConstant::globalObject(*this, node), bitsGPR));
+    } else {
+        addSlowPathGenerator(slowPathCall(
+            slowCases, this, operationUInt64ToBigInt,
+            resultGPR, LinkableConstant::globalObject(*this, node), bitsGPR));
+    }
+}
+
+void SpeculativeJIT::compileGetByValOnBigIntTypedArray(Node* node, TypedArrayType type, NOESCAPE const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix)
+{
+    ASSERT(isBigInt(type));
+
+    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+    SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
+    StorageOperand storage(this, m_graph.varArgChild(node, 2));
+    GPRTemporary bits(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg propertyGPR = property.gpr();
+    GPRReg storageGPR = storage.gpr();
+    GPRReg bitsGPR = bits.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+
+    constexpr bool needsFlush = false;
+    GPRReg resultGPR = InvalidGPRReg;
+    std::tie(resultGPR, std::ignore) = prefix(DataFormatJS, needsFlush);
+
+    if (node->arrayMode().isOutOfBounds())
+        moveTrustedValue(jsUndefined(), resultGPR);
+
+    Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseGPR, propertyGPR, scratch1GPR, scratch2GPR);
+    if (outOfBounds.isSet() && !node->arrayMode().isOutOfBounds()) {
+        speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
+        outOfBounds = Jump();
+    }
+
+    load64(BaseIndex(storageGPR, propertyGPR, TimesEight), bitsGPR);
+    boxInt64AsHeapBigInt(node, bitsGPR, resultGPR, scratch1GPR, scratch2GPR, JSC::isSigned(type));
+
+    if (outOfBounds.isSet())
+        outOfBounds.link(this);
+
+    jsValueResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compilePutByValForBigIntTypedArray(Node* node, TypedArrayType type)
+{
+    ASSERT(isBigInt(type));
+    UNUSED_PARAM(type);
+
+    Edge child1 = m_graph.varArgChild(node, 0);
+    Edge child2 = m_graph.varArgChild(node, 1);
+    Edge child3 = m_graph.varArgChild(node, 2);
+    Edge child4 = m_graph.varArgChild(node, 3);
+
+    SpeculateCellOperand base(this, child1);
+    SpeculateStrictInt32Operand property(this, child2);
+    SpeculateCellOperand value(this, child3);
+    speculateHeapBigInt(child3, value.gpr());
+    StorageOperand storage(this, child4);
+    GPRTemporary bits(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    toBigInt64(value.gpr(), bits.gpr());
+
+    Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, base.gpr(), property.gpr(), scratch1.gpr(), scratch2.gpr());
+    store64(bits.gpr(), BaseIndex(storage.gpr(), property.gpr(), TimesEight));
+
+    if (outOfBounds.isSet()) {
+        if (node->arrayMode().isInBounds())
+            speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
+        else if (node->op() == PutByValDirect)
+            speculationCheck(Uncountable, JSValueSource(), nullptr, outOfBounds);
+        else
+            outOfBounds.link(this);
+    }
+
+    noResult(node);
+}
+
+void SpeculativeJIT::compileAtomicsOnBigIntTypedArray(Node* node, TypedArrayType type)
+{
+    ASSERT(isBigInt(type));
+
+    unsigned numExtraArgs = numExtraAtomicsArgs(node->op());
+    Edge baseEdge = m_graph.child(node, 0);
+    Edge indexEdge = m_graph.child(node, 1);
+    Edge argEdges[maxNumExtraAtomicsArgs];
+    for (unsigned i = 0; i < numExtraArgs; ++i)
+        argEdges[i] = m_graph.child(node, 2 + i);
+    Edge storageEdge = m_graph.child(node, 2 + numExtraArgs);
+    RELEASE_ASSERT(storageEdge);
+
+    SpeculateCellOperand base(this, baseEdge);
+    SpeculateStrictInt32Operand index(this, indexEdge);
+    StorageOperand storage(this, storageEdge);
+    // Bounds-check scratches, then the CAS expected/desired pair. x86-64 has 10 GPRs;
+    // compareExchange cannot also keep both BigInt cells live, so those are unboxed first.
+    GPRTemporary oldValue(this);
+    GPRTemporary newValue(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg indexGPR = index.gpr();
+    GPRReg storageGPR = storage.gpr();
+    GPRReg oldValueGPR = oldValue.gpr();
+    GPRReg newValueGPR = newValue.gpr();
+
+    Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseGPR, indexGPR, oldValueGPR, newValueGPR);
+    if (outOfBounds.isSet())
+        speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
+
+    std::optional<GPRTemporary> operandBits0;
+    std::optional<GPRTemporary> operandBits1;
+    std::optional<SpeculateCellOperand> storedValue;
+    {
+        std::optional<SpeculateCellOperand> operandCell0;
+        std::optional<SpeculateCellOperand> operandCell1;
+        if (node->op() == AtomicsStore)
+            storedValue.emplace(this, argEdges[0]);
+        else if (numExtraArgs >= 1)
+            operandCell0.emplace(this, argEdges[0]);
+        if (numExtraArgs == 2)
+            operandCell1.emplace(this, argEdges[1]);
+        if (numExtraArgs >= 1)
+            operandBits0.emplace(this);
+        if (numExtraArgs == 2)
+            operandBits1.emplace(this);
+
+        if (storedValue) {
+            speculateHeapBigInt(argEdges[0], storedValue->gpr());
+            toBigInt64(storedValue->gpr(), operandBits0->gpr());
+        } else if (operandCell0) {
+            speculateHeapBigInt(argEdges[0], operandCell0->gpr());
+            toBigInt64(operandCell0->gpr(), operandBits0->gpr());
+        }
+        if (operandCell1) {
+            speculateHeapBigInt(argEdges[1], operandCell1->gpr());
+            toBigInt64(operandCell1->gpr(), operandBits1->gpr());
+        }
+    }
+
+    GPRTemporary resultBits(this);
+    std::optional<GPRTemporary> result;
+    if (node->op() != AtomicsStore)
+        result.emplace(this);
+
+    GPRReg operand0GPR = operandBits0 ? operandBits0->gpr() : InvalidGPRReg;
+    GPRReg operand1GPR = operandBits1 ? operandBits1->gpr() : InvalidGPRReg;
+    GPRReg resultBitsGPR = resultBits.gpr();
+    GPRReg resultGPR = result ? result->gpr() : InvalidGPRReg;
+    GPRReg storedValueGPR = storedValue ? storedValue->gpr() : InvalidGPRReg;
+
+    Label loop = label();
+    load64(BaseIndex(storageGPR, indexGPR, TimesEight), oldValueGPR);
+    move(oldValueGPR, newValueGPR);
+    move(oldValueGPR, resultBitsGPR);
+
+    switch (node->op()) {
+    case AtomicsAdd:
+        add64(operand0GPR, newValueGPR);
+        break;
+    case AtomicsAnd:
+        and64(operand0GPR, newValueGPR);
+        break;
+    case AtomicsCompareExchange: {
+        Jump fail = branch64(NotEqual, oldValueGPR, operand0GPR);
+        move(operand1GPR, newValueGPR);
+        fail.link(this);
+        break;
+    }
+    case AtomicsExchange:
+        move(operand0GPR, newValueGPR);
+        break;
+    case AtomicsLoad:
+        break;
+    case AtomicsOr:
+        or64(operand0GPR, newValueGPR);
+        break;
+    case AtomicsStore:
+        move(operand0GPR, newValueGPR);
+        break;
+    case AtomicsSub:
+        sub64(operand0GPR, newValueGPR);
+        break;
+    case AtomicsXor:
+        xor64(operand0GPR, newValueGPR);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    JumpList success;
+    success.append(branchAtomicWeakCAS64(Success, oldValueGPR, newValueGPR, BaseIndex(storageGPR, indexGPR, TimesEight)));
+    jump().linkTo(loop, this);
+    success.link(this);
+
+    if (node->op() == AtomicsStore) {
+        move(storedValueGPR, resultBitsGPR);
+        cellResult(resultBitsGPR, node);
+        return;
+    }
+
+    boxInt64AsHeapBigInt(node, resultBitsGPR, resultGPR, oldValueGPR, newValueGPR, JSC::isSigned(type));
+    jsValueResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType type, NOESCAPE const ScopedLambda<std::tuple<GPRReg, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix)
 {
     ASSERT(isFloat(type));

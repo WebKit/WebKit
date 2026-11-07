@@ -1101,8 +1101,6 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
             return;
             
         case Array::Generic:
-        case Array::BigInt64Array:
-        case Array::BigUint64Array:
             clobberTop();
             return;
             
@@ -1196,6 +1194,8 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
         case Array::Float16Array:
         case Array::Float32Array:
         case Array::Float64Array:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             // Even if we hit out-of-bounds, this is fine. TypedArray does not propagate access to its [[Prototype]] when out-of-bounds access happens.
             read(TypedArrayProperties);
             read(MiscFields);
@@ -1317,8 +1317,6 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
             return;
             
         case Array::Generic:
-        case Array::BigInt64Array:
-        case Array::BigUint64Array:
             clobberTop();
             return;
             
@@ -1402,6 +1400,8 @@ void clobberize(Graph& graph, Node* node, NOESCAPE const ReadFunctor& read, NOES
         case Array::Float16Array:
         case Array::Float32Array:
         case Array::Float64Array:
+        case Array::BigInt64Array:
+        case Array::BigUint64Array:
             if (mode.mayBeResizableOrGrowableSharedTypedArray()) {
                 read(TypedArrayProperties);
                 read(MiscFields);
