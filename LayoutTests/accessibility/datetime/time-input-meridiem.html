@@ -14,13 +14,12 @@ var output = "This test ensures that time input meridiem fields can be controlle
 function isValidTextValue(string) { return string.includes("AM") || string.includes("PM"); }
 function isValidIntValue(int) { return int == 0 || int == 1; }
 
-const meridiemElement = internals.shadowRoot(document.getElementById("time")).firstChild.firstChild.lastChild;
 var axMeridiemSpinbutton;
-let lastValueDescription = meridiemElement.ariaValueText;
-let lastIntValue = meridiemElement.ariaValueNow;
+let lastValueDescription;
+let lastIntValue;
 async function verifyAfterChange() {
     output += await expectAsync("axMeridiemSpinbutton.valueDescription !== lastValueDescription", "true");
-    output += await expectAsync("axMeridiemSpinbutton.ariaValueNow !== lastIntValue", "true");
+    output += await expectAsync("axMeridiemSpinbutton.intValue !== lastIntValue", "true");
     lastValueDescription = axMeridiemSpinbutton.valueDescription;
     lastIntValue = axMeridiemSpinbutton.intValue;
     output += expect("isValidTextValue(lastValueDescription)", "true");
@@ -42,6 +41,8 @@ if (window.accessibilityController) {
     }
     output += expect("axMeridiemSpinbutton.role", "'AXRole: AXIncrementor'");
     output += expect("isValidTextValue(axMeridiemSpinbutton.valueDescription)", "true");
+    lastValueDescription = axMeridiemSpinbutton.valueDescription;
+    lastIntValue = axMeridiemSpinbutton.intValue;
 
     document.getElementById("time").focus();
     eventSender.keyDown("\t");
