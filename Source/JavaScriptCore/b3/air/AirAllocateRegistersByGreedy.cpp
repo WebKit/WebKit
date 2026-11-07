@@ -2377,9 +2377,7 @@ private:
     void doStageTryAllocate(Tmp tmp, TmpData& tmpData)
     {
         ASSERT(tmpData.stage == Stage::TryAllocate || tmpData.stage == Stage::Unspillable);
-        if (tryAllocate<bank>(tmp, tmpData))
-            return;
-        if (tryEvict<bank>(tmp, tmpData))
+        if (tryAllocateOrEvict<bank>(tmp, tmpData))
             return;
         RELEASE_ASSERT(tmpData.stage == Stage::TryAllocate); // Unspillable must have succeeded
         // If we couldn't allocate tmp, allow it to split next time.
@@ -2405,9 +2403,7 @@ private:
     void doStageSpill(Tmp tmp, TmpData& tmpData)
     {
         ASSERT(tmpData.stage == Stage::Spill);
-        if (tryAllocate<bank>(tmp, tmpData))
-            return;
-        if (tryEvict<bank>(tmp, tmpData))
+        if (tryAllocateOrEvict<bank>(tmp, tmpData))
             return;
         ASSERT(queueContainsOnlySpills());
         spill(tmp, tmpData);
@@ -2445,10 +2441,11 @@ private:
     }
 
     template <Bank bank>
-    bool tryEvict(Tmp tmp, TmpData& tmpData)
+    bool tryAllocateOrEvict(Tmp tmp, TmpData& tmpData)
     {
         ASSERT(&m_map.get<bank>(tmp) == &tmpData);
         ASSERT(tmp.bank() == bank);
+        ASSERT(!assignedReg(tmp));
 
         auto failOutOfRegisters = [this](Tmp tmp) {
             insertFixupCode(); // So that the log shows the fixup code too
@@ -2471,16 +2468,24 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
         };
 
+        LiveRange& liveRange = tmpData.liveRange;
+        Width width = widthForConflicts<bank>(tmp);
+
+        if (tmpData.preferredReg && !m_regRanges[tmpData.preferredReg].hasConflict(liveRange, width)) {
+            assign(tmp, tmpData, tmpData.preferredReg);
+            return true;
+        }
+
         Reg bestEvictReg;
         SpillCost minSpillCost = tmpData.spillCost();
         m_visited.resize(m_code.numTmps(bank));
-        LiveRange& liveRange = tmpData.liveRange;
-        Width width = widthForConflicts<bank>(tmp);
         for (Reg r : m_allowedRegistersInPriorityOrder[bank]) {
             SpillCost conflictsSpillCost(0);
+            bool anyConflict = false;
             m_visited.clear();
             m_regRanges[r].forEachConflict(liveRange, width,
                 [&](auto& conflict) -> IterationStatus {
+                    anyConflict = true;
                     if (conflict.tmp.isReg()) {
                         // Conflicts with a fixed register use/def, cannot evict.
                         conflictsSpillCost = unspillableCost;
@@ -2501,6 +2506,10 @@ private:
                         conflictsSpillCost += cost;
                     return conflictsSpillCost >= minSpillCost ? IterationStatus::Done : IterationStatus::Continue;
             });
+            if (!anyConflict) {
+                assign(tmp, tmpData, r);
+                return true;
+            }
             if (conflictsSpillCost < minSpillCost) {
                 minSpillCost = conflictsSpillCost;
                 bestEvictReg = r;
