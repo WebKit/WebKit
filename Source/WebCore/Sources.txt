@@ -358,7 +358,6 @@ Modules/permissions/PermissionController.cpp
 Modules/permissions/PermissionStatus.cpp
 Modules/permissions/Permissions.cpp
 Modules/permissions/WorkerNavigatorPermissions.cpp
-Modules/phonenumberpossession/AggregatorResponseData.cpp
 Modules/phonenumberpossession/PhoneNumberPossessionCoordinator.cpp
 Modules/phonenumberpossession/PhoneNumberPossessionCredential.cpp
 Modules/phonenumberpossession/PhoneNumberPossessionRequest.cpp

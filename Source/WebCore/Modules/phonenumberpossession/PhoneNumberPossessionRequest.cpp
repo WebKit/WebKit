@@ -37,7 +37,7 @@ namespace WebCore {
 static constexpr size_t maximumChallengeLength = 1024;
 static constexpr unsigned maximumPhoneNumberSuffixHintLength = 15;
 static constexpr size_t maximumPNPISuffixHintLength = 32;
-static constexpr size_t maximumCarrierPubKeyLength = 1024;
+static constexpr unsigned maximumPinnedCarrierLength = 253;
 
 std::optional<Exception> validatePhoneNumberPossessionRequest(const PhoneNumberPossessionRequest& request)
 {
@@ -53,8 +53,8 @@ std::optional<Exception> validatePhoneNumberPossessionRequest(const PhoneNumberP
     if (request.pnpiSuffixHint && (!request.pnpiSuffixHint->byteLength() || request.pnpiSuffixHint->byteLength() > maximumPNPISuffixHintLength))
         return Exception { ExceptionCode::TypeError, makeString("The pnpiSuffixHint must be between 1 and "_s, maximumPNPISuffixHintLength, " bytes long."_s) };
 
-    if (request.knownCarrierPubKey && (!request.knownCarrierPubKey->byteLength() || request.knownCarrierPubKey->byteLength() > maximumCarrierPubKeyLength))
-        return Exception { ExceptionCode::TypeError, makeString("The knownCarrierPubKey must be between 1 and "_s, maximumCarrierPubKeyLength, " bytes long."_s) };
+    if (auto& pinnedCarrier = request.pinnedCarrier; !pinnedCarrier.isNull() && (pinnedCarrier.isEmpty() || pinnedCarrier.length() > maximumPinnedCarrierLength))
+        return Exception { ExceptionCode::TypeError, makeString("The pinnedCarrier must contain between 1 and "_s, maximumPinnedCarrierLength, " characters."_s) };
 
     return std::nullopt;
 }

@@ -42,7 +42,7 @@ struct PhoneNumberPossessionRequest {
     PhoneNumberPossessionResponseType desiredResponseType { PhoneNumberPossessionResponseType::PossessionIdentifier };
     String phoneNumberSuffixHint;
     std::optional<BufferSource> pnpiSuffixHint;
-    std::optional<BufferSource> knownCarrierPubKey;
+    String pinnedCarrier;
 };
 
 WEBCORE_EXPORT std::optional<Exception> validatePhoneNumberPossessionRequest(const PhoneNumberPossessionRequest&);

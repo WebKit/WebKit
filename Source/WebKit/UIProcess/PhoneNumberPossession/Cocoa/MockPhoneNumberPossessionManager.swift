@@ -92,44 +92,42 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
             rpId: request.pointee.relyingPartyIdentifier.description
         )
 
+        let phoneNumberRequested = request.pointee.desiredResponseType == .PossessionIdentifierAndPhoneNumber
+
         // A real one is encrypted.
-        let pnpiWithProof = PNPIWithProof(
+        let result = EncryptedResult(
             pnpi: Data(repeating: 0x01, count: 32).base64EncodedString(options: [.base64URLAlphabet, .omitPaddingCharacter]),
-            zkProof: Data(repeating: 0x02, count: 64).base64EncodedString(options: [.base64URLAlphabet, .omitPaddingCharacter])
+            zkProof: Data(repeating: 0x02, count: 64).base64EncodedString(options: [.base64URLAlphabet, .omitPaddingCharacter]),
+            msisdn: phoneNumberRequested
+                ? Data(repeating: 0x07, count: 16).base64EncodedString(options: [.base64URLAlphabet, .omitPaddingCharacter]) : nil
         )
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
 
-        let pnpiWithProofJSON: Data
+        let resultJSON: Data
         let clientDataJSON: Data
+        let decryptionKeyJSON: Data
         do {
-            pnpiWithProofJSON = try encoder.encode(pnpiWithProof)
+            resultJSON = try encoder.encode(result)
             clientDataJSON = try encoder.encode(clientData)
+            decryptionKeyJSON = try encoder.encode(DecryptionKeyOrError(decryptionKey: Array(repeating: 0x04, count: 32)))
         } catch {
             throw CxxUnexpected(error: .Failed)
         }
 
         var response = WebCore.PhoneNumberPossessionResponse(
-            encryptedPNPIWithProof: JSC.ArrayBuffer.createFromSpan(pnpiWithProofJSON.span),
-            aggregatorData: .init(),
-            carrierPubKey: .init(),
-            encryptedMSISDN: .init(),
+            encryptedResult: JSC.ArrayBuffer.createFromSpan(resultJSON.span),
+            carrierDomain: WTF.String("carrier.example" as CFString),
+            carrierConfigurationID: 1,
+            encryptedDecryptionKeyOrError: .init(),
             clientDataJSON: JSC.ArrayBuffer.createFromSpan(clientDataJSON.span),
             portingZKP: .init()
         )
 
         if configuration.includesOptionalFields {
-            var aggregatorData = WebCore.AggregatorResponseDataFields()
-            aggregatorData.encryptedProviderErrorInfo = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x03, count: 16).span).get())
-            aggregatorData.encryptedZKPEncryptionKey = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x04, count: 32).span).get())
-            response.aggregatorData = .init(aggregatorData)
-            response.carrierPubKey = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x05, count: 65).span).get())
+            response.encryptedDecryptionKeyOrError = .init(JSC.ArrayBuffer.createFromSpan(decryptionKeyJSON.span).get())
             response.portingZKP = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x09, count: 32).span).get())
-        }
-
-        if request.pointee.desiredResponseType == .PossessionIdentifierAndPhoneNumber {
-            response.encryptedMSISDN = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x07, count: 16).span).get())
         }
 
         return response
@@ -142,9 +140,14 @@ private struct ClientData: Encodable {
     let rpId: String
 }
 
-private struct PNPIWithProof: Encodable {
+private struct EncryptedResult: Encodable {
     let pnpi: String
     let zkProof: String
+    let msisdn: String?
+}
+
+private struct DecryptionKeyOrError: Encodable {
+    let decryptionKey: [UInt8]
 }
 
 #if compiler(<6.5)
