@@ -167,7 +167,9 @@ private:
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
     BlockLayoutResult layoutContent(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
     void resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState);
-    void placePendingFloats(LayoutUnit borderBoxLogicalTop);
+    void placePendingFloats(LayoutUnit borderBoxLogicalTop, const RenderBox* blockContainer = nullptr);
+    std::optional<ContainingBlockState::Clearance> clearanceAtBlockStart(const RenderBox&) const;
+    void placeCollapsedThroughBoxWithClearance(const RenderBox&, ContainingBlockState&&, BlockLayoutResult&);
     LayoutSize borderBoxOffsetInRoot(const ContainingBlockState&);
     void addFloats(PlacedFloats::List&&, const ContainingBlockState&);
     void addInlineContentFloats(const PlacedFloats::List&);
