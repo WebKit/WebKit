@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<canvas id="canvas" width="600" height="400"></canvas>
+<script>
+let context = document.getElementById("canvas").getContext("2d");
+context.fillStyle = "green";
+context.globalAlpha = 0.5;
+context.shadowColor = "red";
+context.shadowOffsetY = 150;
+context.fillRect(20, 20, 200, 100);
+context.shadowOffsetY = 250;
+context.fillRect(300, 20, 200, 100);
+</script>

@@ -1254,9 +1254,8 @@ void GraphicsContextCG::setCGDropShadow(const std::optional<GraphicsDropShadow>&
     const RetainPtr<CGContextRef>& context = contextForDraw();
     auto [offset, blurRadius] = baseSpaceDropShadow(*shadow, getUserToBaseCTM(context), shadowsIgnoreTransforms);
 
-    CGContextSetAlpha(context, shadow->opacity);
-
-    auto style = adoptCF(CGStyleCreateShadow2(offset, blurRadius, cachedCGColorInDestinationStandardRange(shadow->color, colorSpace()).get()));
+    // Apply the opacity to the shadow color. Setting it as the context alpha would override the alpha of the drawing.
+    RetainPtr style = adoptCF(CGStyleCreateShadow2(offset, blurRadius, cachedCGColorInDestinationStandardRange(shadow->color.colorWithAlphaMultipliedBy(shadow->opacity), colorSpace()).get()));
     CGContextSetStyle(context, style.get());
 }
 

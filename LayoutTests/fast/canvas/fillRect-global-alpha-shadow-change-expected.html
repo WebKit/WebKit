@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<canvas id="canvas" width="600" height="400"></canvas>
+<script>
+let context = document.getElementById("canvas").getContext("2d");
+context.globalAlpha = 0.5;
+context.fillStyle = "green";
+context.fillRect(20, 20, 200, 100);
+context.fillRect(300, 20, 200, 100);
+context.fillStyle = "red";
+context.fillRect(20, 170, 200, 100);
+context.fillRect(300, 270, 200, 100);
+</script>
