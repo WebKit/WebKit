@@ -367,7 +367,7 @@ void testBmallocLargeObjectDelegation(BmallocHeapVariant variant)
     // untagged config, so only check them there.
     if (!tagged) {
         // The compact primitive heap delegates like any other heap: compactness only requires that
-        // the address carry no MTE tag, and this config has allow_mte_tagging false, so
+        // the address carry no MTE tag, and this config's memory flavor is plain, so
         // delegated_allocate_impl asks the system malloc for canonically-tagged memory.
         for (auto size : delegatedSizes) {
             void* mem = bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size);

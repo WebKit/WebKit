@@ -86,7 +86,6 @@ PAS_API void tagged_bmalloc_heap_config_activate(void);
     .pgm_enabled = true, \
     .delegate_large_user_allocations = false, \
     .large_map_variant = pas_default_large_map_variant, \
-    .allow_mte_tagging = true, \
     .memory_flavor = pas_memory_flavor_mte)
 
 PAS_API extern const pas_heap_config tagged_bmalloc_heap_config;

@@ -815,8 +815,9 @@ extern struct __pas_heap bmalloc_common_primitive_heap;
     } while (false)
 
 // Used to set up per-allocator state needed by tagging. Taggability itself is
-// fixed per heap config (via the page config's allow_mte_tagging; only the
-// tagged_bmalloc heap sets it), so the tag decision is made at the allocation
+// fixed per heap config (via the page config's allow_mte_tagging, which is set
+// for the small/medium page configs of heaps whose memory flavor is mte), so
+// the tag decision is made at the allocation
 // site from the config rather than a runtime flag. We still record is_small
 // here because the tag mechanics (granule stride) need the small/medium split.
 #define PAS_MTE_HANDLE_SET_UP_LOCAL_ALLOCATOR(page_config, segregated_heap, allocator) do { \
@@ -829,11 +830,11 @@ extern struct __pas_heap bmalloc_common_primitive_heap;
 // The local-bump-allocation site is reached only for small or medium
 // segregated objects (large allocations never go through a segregated local
 // allocator), so PAS_MTE_CAN_TAG_SIZE_CATEGORY is statically satisfied here and
-// the heap config's compile-time allow_mte_tagging is a sufficient and
+// the heap config's compile-time memory flavor is a sufficient and
 // equivalent gate. We only have the heap config (not a page config) at this
 // point, and keying off it lets the whole tag path fold away for untagged heaps.
 #define PAS_MTE_HANDLE_LOCAL_BUMP_ALLOCATION(heap_config, allocator, ptr, size) do { \
-        if (PAS_USE_MTE && (heap_config).allow_mte_tagging) \
+        if (PAS_USE_MTE && pas_heap_config_allows_mte_tagging(heap_config)) \
             ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)size, pas_mte_homogeneous_allocator, pas_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_BUMP(allocator)); \
     } while (false)
 

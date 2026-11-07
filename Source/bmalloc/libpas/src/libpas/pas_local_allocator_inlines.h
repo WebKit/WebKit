@@ -1246,7 +1246,7 @@ pas_local_allocator_try_allocate(pas_local_allocator* allocator,
     }
 
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config.kind)))
-        return result_filter(pas_system_heap_allocate(size, alignment, config.allow_mte_tagging));
+        return result_filter(pas_system_heap_allocate(size, alignment, pas_heap_config_allows_mte_tagging(config)));
 
 
     if (config.small_segregated_config.base.is_enabled &&

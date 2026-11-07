@@ -164,7 +164,7 @@ pas_try_allocate_common_impl_slow(
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config.kind))) {
         if (verbose)
             pas_log("System heap enabled, asking system heap.\n");
-        result = pas_system_heap_allocate(size, alignment, config.allow_mte_tagging);
+        result = pas_system_heap_allocate(size, alignment, pas_heap_config_allows_mte_tagging(config));
         if (verbose)
             pas_log("Got result.ptr = %p, did_succeed = %d\n", (void*)result.begin, result.did_succeed);
         return result;

@@ -186,7 +186,7 @@ static pas_allocation_result delegated_allocate_impl(size_t size,
     /* Only a heap that tags its own memory can accept MTE-tagged memory back from the
        system allocator. Everyone else has to ask for canonically-tagged memory, since
        their callers may store the result somewhere that cannot carry a tag. */
-    return pas_system_heap_allocate(size, alignment, heap_config->allow_mte_tagging);
+    return pas_system_heap_allocate(size, alignment, pas_heap_config_allows_mte_tagging(*heap_config));
 }
 
 static bool should_delegate_user_allocation_to_system_malloc(pas_large_heap* heap,
