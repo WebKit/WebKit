@@ -44,7 +44,13 @@ class JS_EXPORT_PRIVATE InspectorTargetAgent final : public InspectorAgentBase, 
 public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
+    class DebuggerPauseSessionClient : public AbstractCanMakeCheckedPtr {
+    public:
+        virtual ~DebuggerPauseSessionClient() = default;
+        virtual Protocol::ErrorStringOr<void> setGlobalDebuggerPauseEnabled(bool) = 0;
+    };
+
+    InspectorTargetAgent(FrontendRouter&, BackendDispatcher&, DebuggerPauseSessionClient* = nullptr);
     ~InspectorTargetAgent() final;
 
     // InspectorAgentBase
@@ -54,6 +60,7 @@ public:
     // TargetBackendDispatcherHandler
     Protocol::ErrorStringOr<void> setPauseOnStart(bool) final;
     Protocol::ErrorStringOr<void> resume(const String& targetId) final;
+    Protocol::ErrorStringOr<void> setGlobalDebuggerPauseEnabled(bool) final;
     Protocol::ErrorStringOr<void> sendMessageToTarget(const String& targetId, const String& message) final;
 
     // Target lifecycle.
@@ -76,6 +83,7 @@ private:
     const UniqueRef<TargetFrontendDispatcher> m_frontendDispatcher;
     const Ref<TargetBackendDispatcher> m_backendDispatcher;
     UncheckedKeyHashMap<String, InspectorTarget*> m_targets;
+    const CheckedPtr<DebuggerPauseSessionClient> m_debuggerPauseSessionClient;
     bool m_isConnected { false };
     bool m_shouldPauseOnStart { false };
 };

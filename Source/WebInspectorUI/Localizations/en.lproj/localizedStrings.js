@@ -1311,6 +1311,8 @@ localizedStrings["Passive"] = "Passive";
 localizedStrings["Path"] = "Path";
 localizedStrings["Pause Processing"] = "Pause Processing";
 localizedStrings["Pause Reason"] = "Pause Reason";
+/* Settings tab checkbox label for whether pausing one frame also pauses frames of the page in other processes */
+localizedStrings["Pause frames in other processes while paused @ Settings Sources Pane"] = "Pause frames in other processes while paused";
 localizedStrings["Pause script execution (%s or %s)"] = "Pause script execution (%s or %s)";
 /* Tooltip for a time range bar that represents when the playback of a audio/video element is paused */
 localizedStrings["Paused"] = "Paused";
