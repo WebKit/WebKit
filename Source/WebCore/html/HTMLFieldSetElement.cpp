@@ -105,12 +105,34 @@ void HTMLFieldSetElement::attributeChanged(const QualifiedName& name, const Atom
 
     HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (hasDisabledAttribute() != oldHasDisabledAttribute) {
-        if (hasDisabledAttribute())
-            document().addDisabledFieldsetElement();
-        else
-            document().removeDisabledFieldsetElement();
+    if (hasDisabledAttribute() == oldHasDisabledAttribute)
+        return;
+
+    if (hasDisabledAttribute()) {
+        document().addDisabledFieldsetElement();
+        if (isConnected())
+            document().addConnectedDisabledFieldsetElement();
+        return;
     }
+
+    document().removeDisabledFieldsetElement();
+    if (isConnected())
+        document().removeConnectedDisabledFieldsetElement();
+}
+
+Node::NeedsPostConnectionSteps HTMLFieldSetElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    auto result = HTMLFormControlElement::insertionSteps(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument && hasDisabledAttribute())
+        document().addConnectedDisabledFieldsetElement();
+    return result;
+}
+
+void HTMLFieldSetElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    HTMLFormControlElement::removingSteps(removalType, oldParentOfRemovedTree);
+    if (removalType.disconnectedFromDocument && hasDisabledAttribute())
+        document().removeConnectedDisabledFieldsetElement();
 }
 
 void HTMLFieldSetElement::disabledStateChanged()

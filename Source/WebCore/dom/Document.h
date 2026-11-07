@@ -1723,6 +1723,9 @@ public:
     bool hasDisabledFieldsetElement() const { return m_disabledFieldsetElementsCount; }
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
     void removeDisabledFieldsetElement() { ASSERT(m_disabledFieldsetElementsCount); m_disabledFieldsetElementsCount--; }
+    bool hasConnectedDisabledFieldsetElement() const { return m_connectedDisabledFieldsetElementsCount; }
+    void addConnectedDisabledFieldsetElement() { m_connectedDisabledFieldsetElementsCount++; }
+    void removeConnectedDisabledFieldsetElement() { ASSERT(m_connectedDisabledFieldsetElementsCount); m_connectedDisabledFieldsetElementsCount--; }
 
     bool hasDataListElements() const { return m_dataListElementCount; }
     void incrementDataListElementCount() { ++m_dataListElementCount; }
@@ -2791,6 +2794,7 @@ private:
     unsigned m_parserYieldTokenCount { 0 };
 
     unsigned m_disabledFieldsetElementsCount { 0 };
+    unsigned m_connectedDisabledFieldsetElementsCount { 0 };
     unsigned m_dataListElementCount { 0 };
     unsigned m_deferredLifecycleEventCount { 0 };
 

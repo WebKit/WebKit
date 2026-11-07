@@ -1,0 +1,23 @@
+Tests that a form control inserted into the document is disabled only when it has a disabled fieldset ancestor, while disabled fieldsets outside the document exist.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A disabled fieldset removed from the document does not disable inputs inserted elsewhere.
+PASS controlState(emailInput) is "enabled"
+An input inserted into a disabled fieldset in the document is disabled.
+PASS controlState(streetInput) is "disabled"
+Moving a disabled fieldset to another document.
+PASS controlState(otherInput) is "disabled"
+Disabling a fieldset that is in the document.
+PASS controlState(cardInput) is "disabled"
+Enabling a fieldset while it is outside the document, then disabling it again in the document.
+PASS controlState(expiryInput) is "disabled"
+Moving a disabled fieldset with moveBefore().
+PASS controlState(postcodeInput) is "disabled"
+Upgrading a form-associated custom element inside a disabled fieldset.
+PASS controlState(billingFieldset.firstElementChild) is "disabled"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
