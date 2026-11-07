@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<meta charset="utf-8">
+<title>The option clones in the selectedcontent of a select with the multiple attribute omit script, frame, iframe, embed, and object elements</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script>
+window.runs = 0;
+</script>
+
+<div id="container">
+<select multiple size="1">
+  <button><selectedcontent></selectedcontent></button>
+  <option selected><span>one</span><iframe></iframe><script>runs++</script></option>
+  <option><span>two</span><embed><object></object></option>
+</select>
+</div>
+
+<script>
+add_completion_callback(() => document.getElementById("container").remove());
+
+test(() => {
+  const select = document.querySelector("select");
+  const selectedcontent = document.querySelector("selectedcontent");
+  assert_equals(selectedcontent.querySelectorAll("option").length, select.options.length,
+                "Every option should be cloned");
+  assert_equals(selectedcontent.querySelectorAll("span").length, 2,
+                "The rest of each option should be cloned");
+  assert_equals(selectedcontent.querySelectorAll("script, frame, iframe, embed, object").length, 0,
+                "No script, frame, iframe, embed, or object element should be cloned");
+  assert_equals(runs, 1, "The script should run once");
+}, "Option clones in selectedcontent omit script, frame, iframe, embed, and object elements");
+</script>

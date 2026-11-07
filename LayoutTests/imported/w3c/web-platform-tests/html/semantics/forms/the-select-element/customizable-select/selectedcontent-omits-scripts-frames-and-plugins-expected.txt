@@ -1,0 +1,5 @@
+
+
+PASS Cloning a selected option into selectedcontent omits script, frame, iframe, embed, and object elements
+PASS Selecting an option does not clone its frame and iframe elements into selectedcontent
+

@@ -1,0 +1,4 @@
+
+
+PASS A parser-inserted script in a selected option isn't cloned into selectedcontent before it runs
+

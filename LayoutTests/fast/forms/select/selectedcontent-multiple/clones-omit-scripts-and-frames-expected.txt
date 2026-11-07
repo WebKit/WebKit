@@ -1,0 +1,3 @@
+
+PASS Option clones in selectedcontent omit script, frame, iframe, embed, and object elements
+
