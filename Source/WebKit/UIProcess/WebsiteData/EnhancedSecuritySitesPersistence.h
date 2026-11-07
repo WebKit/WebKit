@@ -29,12 +29,13 @@
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <wtf/ContinuousApproximateTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class EnhancedSecuritySitesPersistence final {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EnhancedSecuritySitesPersistence);
+    WTF_MAKE_TZONE_ALLOCATED(EnhancedSecuritySitesPersistence);
 public:
     explicit EnhancedSecuritySitesPersistence(const String&);
     ~EnhancedSecuritySitesPersistence();

@@ -38,6 +38,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/Vector.h>
@@ -72,6 +73,7 @@ struct HTTPBody {
 };
 
 class FrameState : public RefCounted<FrameState> {
+    WTF_MAKE_TZONE_ALLOCATED(FrameState);
 public:
     template<typename... Args>
     static Ref<FrameState> create(Args&&... args)

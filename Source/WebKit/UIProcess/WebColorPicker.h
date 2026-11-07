@@ -29,6 +29,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class Color;
@@ -51,6 +52,7 @@ protected:
 };
 
 class WebColorPicker : public RefCountedAndCanMakeWeakPtr<WebColorPicker> {
+    WTF_MAKE_TZONE_ALLOCATED(WebColorPicker);
 public:
     using Client = WebColorPickerClient;
 

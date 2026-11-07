@@ -31,6 +31,7 @@
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <WebCore/SpeechRecognitionConnectionClientIdentifier.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -48,6 +49,7 @@ namespace WebKit {
 class SpeechRecognitionRemoteRealtimeMediaSourceManager;
     
 class SpeechRecognitionRemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionRemoteRealtimeMediaSource);
 public:
     static Ref<WebCore::RealtimeMediaSource> create(SpeechRecognitionRemoteRealtimeMediaSourceManager&, const WebCore::CaptureDevice&, WebCore::PageIdentifier, WebCore::SpeechRecognitionConnectionClientIdentifier);
     ~SpeechRecognitionRemoteRealtimeMediaSource();

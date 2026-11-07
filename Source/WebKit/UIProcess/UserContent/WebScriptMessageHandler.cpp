@@ -27,8 +27,11 @@
 #include "WebScriptMessageHandler.h"
 
 #include "APIContentWorld.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebScriptMessageHandler);
 
 Ref<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name, API::ContentWorld& world)
 {

@@ -29,6 +29,7 @@
 #include "WebBackForwardList.h"
 #include "WebPageProxy.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 static const size_t maximumSnapshotCacheSize = 50 * (1024 * 1024);
@@ -37,6 +38,8 @@ static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewSnapshot);
 using namespace WebCore;
 
 ViewSnapshotStore::ViewSnapshotStore() = default;

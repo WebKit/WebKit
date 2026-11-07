@@ -36,6 +36,8 @@
 #import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HidConnection);
 using namespace fido;
 
 #if HAVE(SECURITY_KEY_API)

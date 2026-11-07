@@ -35,6 +35,7 @@
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ namespace WebKit {
 // The messages are found from generated LogStream.messages.in in build directory,
 // DerivedSources/WebKit/LogStream.messages.in.
 class LogClient final : public WebCore::LogClient, public Identified<LogStreamIdentifier> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LogClient);
+    WTF_MAKE_TZONE_ALLOCATED(LogClient);
 public:
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     using ConnectionType = IPC::StreamClientConnection;

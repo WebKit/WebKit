@@ -29,6 +29,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ContinuousApproximateTime.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
@@ -38,6 +39,7 @@ namespace WebKit {
 class EnhancedSecuritySitesPersistence;
 
 class EnhancedSecuritySitesHolder final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EnhancedSecuritySitesHolder, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(EnhancedSecuritySitesHolder);
 public:
     static Ref<EnhancedSecuritySitesHolder> create(const String& databaseDirectoryPath);
 

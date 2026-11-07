@@ -35,12 +35,15 @@
 #include <wtf/PageBlock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageDiskStore);
 
 static constexpr auto saltFileName = "salt"_s;
 static constexpr auto versionDirectoryPrefix = "Version "_s;

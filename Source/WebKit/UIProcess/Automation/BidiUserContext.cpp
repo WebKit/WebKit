@@ -32,9 +32,12 @@
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiUserContext);
 
 #if USE(GLIB)
 BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitWebContext>&& context)

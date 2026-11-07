@@ -32,6 +32,7 @@
 #include <WebCore/AudioSourceProviderClient.h>
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProviderProxy : public ThreadSafeRefCounted<RemoteAudioSourceProviderProxy>
     , public WebCore::AudioSourceProviderClient {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSourceProviderProxy);
 public:
     static Ref<RemoteAudioSourceProviderProxy> create(WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::AudioSourceProviderAVFObjC&);
     ~RemoteAudioSourceProviderProxy();

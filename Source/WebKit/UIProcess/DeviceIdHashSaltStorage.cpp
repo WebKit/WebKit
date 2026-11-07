@@ -35,10 +35,13 @@
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceIdHashSaltStorage);
 using namespace WebCore;
 
 static constexpr unsigned deviceIdHashSaltStorageVersion { 1 };

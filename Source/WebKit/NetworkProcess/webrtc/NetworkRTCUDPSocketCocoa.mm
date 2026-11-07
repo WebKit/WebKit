@@ -55,6 +55,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkRTCUDPSocketCocoa);
 
 class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NetworkRTCUDPSocketCocoaConnections> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(NetworkRTCUDPSocketCocoaConnections);
 public:
     static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const webrtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, RTCSocketCreationFlags flags, const WebCore::RegistrableDomain& domain) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTF::move(connection), WTF::move(attributedBundleIdentifier), flags, domain)); }
 
@@ -65,6 +66,7 @@ public:
     void sendTo(std::span<const uint8_t>, const webrtc::SocketAddress&, const webrtc::AsyncSocketPacketOptions&);
 
     class ConnectionStateTracker : public ThreadSafeRefCounted<ConnectionStateTracker> {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(ConnectionStateTracker);
     public:
         NODELETE static Ref<ConnectionStateTracker> create() { return adoptRef(*new ConnectionStateTracker()); }
         NODELETE void markAsStopped() { m_isStopped = true; }

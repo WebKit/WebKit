@@ -165,6 +165,7 @@ enum class RecordType : uint8_t {
 const AtomString& recordTypeName(RecordType);
 
 class Cache : public RefCountedAndCanMakeWeakPtr<Cache> {
+    WTF_MAKE_TZONE_ALLOCATED(Cache);
 public:
     ~Cache();
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);

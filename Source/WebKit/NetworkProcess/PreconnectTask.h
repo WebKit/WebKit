@@ -30,6 +30,7 @@
 #include "NetworkLoadClient.h"
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -41,7 +42,7 @@ class NetworkSession;
 struct NetworkLoadParameters;
 
 class PreconnectTask final : public RefCounted<PreconnectTask>, public NetworkLoadClient {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PreconnectTask);
+    WTF_MAKE_TZONE_ALLOCATED(PreconnectTask);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PreconnectTask);
 public:
     static Ref<PreconnectTask> create(NetworkSession&, NetworkLoadParameters&&);

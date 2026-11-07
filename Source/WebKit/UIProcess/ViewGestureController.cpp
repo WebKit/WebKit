@@ -61,6 +61,8 @@
 #include "WebKit-Swift.h"
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewGestureController::SnapshotRemovalTracker);
 using namespace WebCore;
 
 static const Seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration { 3_s };

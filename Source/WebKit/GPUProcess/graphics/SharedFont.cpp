@@ -26,7 +26,11 @@
 #include "config.h"
 #include "SharedFont.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedFont);
 using namespace WebCore;
 
 Ref<SharedFont> SharedFont::create(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, IsSmallCapsFace smallCapsFace, std::optional<RenderingResourceIdentifier> identifier)

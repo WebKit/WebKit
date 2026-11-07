@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class HidConnection : public RefCountedAndCanMakeWeakPtr<HidConnection> {
+    WTF_MAKE_TZONE_ALLOCATED(HidConnection);
     WTF_MAKE_NONCOPYABLE(HidConnection);
 public:
     enum class DataSent : bool { No, Yes };

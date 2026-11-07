@@ -28,6 +28,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
@@ -44,6 +45,7 @@ class NetworkStorageManager;
 struct BackgroundFetchState;
 
 class BackgroundFetchStoreImpl :  public WebCore::BackgroundFetchStore {
+    WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchStoreImpl);
 public:
     static Ref<BackgroundFetchStoreImpl> create(ThreadSafeWeakPtr<NetworkStorageManager>&& manager, WeakPtr<WebCore::SWServer>&& server) { return adoptRef(*new BackgroundFetchStoreImpl(WTF::move(manager), WTF::move(server))); }
     ~BackgroundFetchStoreImpl();

@@ -17210,6 +17210,7 @@ NODELETE static WebCore::MediaStreamRequest toUserMediaRequest(WebCore::MediaPro
 }
 
 class ValidateCaptureStateUpdateCallbackHandler final : public RefCounted<ValidateCaptureStateUpdateCallbackHandler> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ValidateCaptureStateUpdateCallbackHandler);
 public:
     using Callback = Function<void(bool)>;
     static Ref<ValidateCaptureStateUpdateCallbackHandler> create(Callback&& callback) { return adoptRef(*new ValidateCaptureStateUpdateCallbackHandler(WTF::move(callback))); }

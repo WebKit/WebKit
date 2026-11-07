@@ -31,8 +31,11 @@
 #include "WebFullScreenManagerProxy.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebProcessProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageFullscreenManagerProxy);
 
 Ref<RemotePageFullscreenManagerProxy> RemotePageFullscreenManagerProxy::create(WebCore::PageIdentifier identifier, WebFullScreenManagerProxy* manager, WebProcessProxy& process)
 {

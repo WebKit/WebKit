@@ -31,8 +31,11 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/Borrow.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameState);
 
 FrameState::~FrameState()
 {

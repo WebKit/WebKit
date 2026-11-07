@@ -55,6 +55,8 @@
 #import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionManagerProxy);
 using namespace WebCore;
 
 #pragma mark - PlaybackSessionModelContext

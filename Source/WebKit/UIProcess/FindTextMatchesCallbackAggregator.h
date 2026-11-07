@@ -28,6 +28,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -38,6 +39,7 @@ struct WebFoundTextRange;
 enum class FindOptions : uint16_t;
 
 class FindTextMatchCallbackAggregator : public RefCounted<FindTextMatchCallbackAggregator> {
+    WTF_MAKE_TZONE_ALLOCATED(FindTextMatchCallbackAggregator);
 public:
     static Ref<FindTextMatchCallbackAggregator> create(WebPageProxy&, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
     void foundMatches(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&);

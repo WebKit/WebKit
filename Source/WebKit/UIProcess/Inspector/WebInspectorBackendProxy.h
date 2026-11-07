@@ -29,6 +29,7 @@
 #include "WebInspectorUIProxy.h"
 #include <WebCore/InspectorBackendClient.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
@@ -38,6 +39,7 @@ class WebInspectorUIProxy;
 class WebInspectorBackendProxy
 : public RefCounted<WebInspectorBackendProxy>
 , public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebInspectorBackendProxy);
 public:
     explicit WebInspectorBackendProxy(WebInspectorUIProxy& proxy)
     : m_proxy(proxy) { }

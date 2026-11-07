@@ -39,6 +39,7 @@
 #include <WebCore/SharedMemory.h>
 #include <atomic>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 #endif
@@ -54,6 +55,7 @@ struct TestParameter;
 
 // Main test interface for initiating various IPC test activities.
 class IPCTester final : public IPC::MessageReceiver, public RefCounted<IPCTester> {
+    WTF_MAKE_TZONE_ALLOCATED(IPCTester);
 public:
     static Ref<IPCTester> create();
     ~IPCTester();

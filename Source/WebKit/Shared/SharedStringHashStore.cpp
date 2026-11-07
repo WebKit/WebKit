@@ -32,8 +32,11 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedStringHashStore);
 
 using namespace WebCore;
 

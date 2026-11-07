@@ -48,6 +48,7 @@
 #include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 // The tester API.
@@ -98,6 +99,8 @@ static int sendTestMessage(std::span<const uint8_t> buffer, void* context)
 }
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IPCTester);
 
 static WKMessageTestDriverFunc messageTestDriver(String&& driverName)
 {
@@ -416,6 +419,7 @@ void IPCTester::sendSwiftTypesMessagesToReceiver(IPC::Connection& connection, Co
 // Connection::addMessageReceiver() refs its receiver on the connection's queue, but IPCTesterReceiver's
 // message receiver is only RefCounted, so is registered through this, which forwards on the main thread.
 class MainThreadMessageReceiver final : public IPC::MessageReceiver, public ThreadSafeRefCounted<MainThreadMessageReceiver, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MainThreadMessageReceiver);
 public:
     static Ref<MainThreadMessageReceiver> create(Ref<IPC::MessageReceiver>&& receiver)
     {

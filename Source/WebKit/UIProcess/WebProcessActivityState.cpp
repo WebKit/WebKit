@@ -33,8 +33,11 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <wtf/NumberOfCores.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcessActivityState);
 
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
 

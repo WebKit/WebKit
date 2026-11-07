@@ -33,8 +33,11 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EnhancedSecuritySitesHolder);
 
 WorkQueue& EnhancedSecuritySitesHolder::sharedWorkQueueSingleton()
 {

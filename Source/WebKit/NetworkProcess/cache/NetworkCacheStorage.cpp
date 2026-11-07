@@ -51,6 +51,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Storage);
+
 static constexpr auto saltFileName = "salt"_s;
 static constexpr auto versionDirectoryPrefix = "Version "_s;
 static constexpr auto recordsDirectoryName = "Records"_s;
@@ -243,6 +245,7 @@ void Storage::WriteOperation::invokeMappedBodyHandler(const Data& data)
 }
 
 class TraverseOperation final : public ThreadSafeRefCounted<TraverseOperation, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TraverseOperation);
 public:
     static Ref<TraverseOperation> create(Storage::TraverseHandler&& handler)
     {

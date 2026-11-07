@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -36,6 +37,7 @@ class WebAuthenticatorCoordinatorProxy;
 class WebProcessProxy;
 
 class RemotePageWebAuthenticatorCoordinatorProxy : public IPC::MessageReceiver, public RefCounted<RemotePageWebAuthenticatorCoordinatorProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(RemotePageWebAuthenticatorCoordinatorProxy);
 public:
     static Ref<RemotePageWebAuthenticatorCoordinatorProxy> create(WebCore::PageIdentifier, WebAuthenticatorCoordinatorProxy*, WebProcessProxy&);
 

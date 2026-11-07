@@ -30,8 +30,11 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "CtapDriver.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoAuthenticator);
 
 FidoAuthenticator::FidoAuthenticator(Ref<CtapDriver>&& driver)
     : m_driver(WTF::move(driver))

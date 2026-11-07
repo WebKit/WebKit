@@ -32,8 +32,11 @@
 #include "RemoteGraphicsContextMessages.h"
 #include "RemoteSnapshot.h"
 #include "RemoteSnapshotRecorderMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSnapshotRecorder);
 using namespace WebCore;
 
 Ref<RemoteSnapshotRecorder> RemoteSnapshotRecorder::create(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshot& snapshot, RemoteRenderingBackend& renderingBackend)

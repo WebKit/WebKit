@@ -49,9 +49,12 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkDataTaskBlob);
 using namespace WebCore;
 
 static const unsigned bufferSize = 512 * 1024;

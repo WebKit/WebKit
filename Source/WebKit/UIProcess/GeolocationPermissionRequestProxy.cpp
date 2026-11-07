@@ -28,8 +28,11 @@
 #include "WebProcessProxy.h"
 
 #include "GeolocationPermissionRequestManagerProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GeolocationPermissionRequestProxy);
 
 GeolocationPermissionRequestProxy::GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy& manager, GeolocationIdentifier geolocationID, WebProcessProxy& process, WebCore::RegistrableDomain&& registrableDomain)
     : m_manager(manager)

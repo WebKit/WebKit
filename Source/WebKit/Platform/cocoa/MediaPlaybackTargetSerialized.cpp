@@ -26,9 +26,13 @@
 #include "config.h"
 #include "MediaPlaybackTargetSerialized.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlaybackTargetSerialized);
 
 Ref<MediaPlaybackTargetSerialized> MediaPlaybackTargetSerialized::create(MediaPlaybackTargetContextSerialized&& context)
 {

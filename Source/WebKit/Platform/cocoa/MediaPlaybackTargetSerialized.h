@@ -29,10 +29,12 @@
 
 #include "MediaPlaybackTargetContextSerialized.h"
 #include <WebCore/MediaPlaybackTarget.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class MediaPlaybackTargetSerialized final : public WebCore::MediaPlaybackTarget {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlaybackTargetSerialized);
 public:
     static Ref<MediaPlaybackTargetSerialized> create(MediaPlaybackTargetContextSerialized&&);
 
