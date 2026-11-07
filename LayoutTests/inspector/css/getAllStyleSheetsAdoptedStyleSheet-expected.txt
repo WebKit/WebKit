@@ -1,0 +1,13 @@
+Test that constructed stylesheets applied via document.adoptedStyleSheets are enumerated by CSS.getAllStyleSheets, labeled as constructed rather than attributed to the document, and each given a distinct display name. Bug 320092.
+
+PASS: There should be two constructed stylesheets.
+PASS: Constructed stylesheet should have no URL, since it has no source file.
+PASS: Constructed stylesheet should have Author origin.
+PASS: Constructed stylesheet should be anonymous, so it is grouped with the other style sheets that have no URL.
+PASS: Constructed stylesheet should have no URL, since it has no source file.
+PASS: Constructed stylesheet should have Author origin.
+PASS: Constructed stylesheet should be anonymous, so it is grouped with the other style sheets that have no URL.
+PASS: Each constructed stylesheet should have its own display name.
+DISPLAY NAME: Constructed Style Sheet 1
+DISPLAY NAME: Constructed Style Sheet 2
+

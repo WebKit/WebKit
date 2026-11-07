@@ -47,8 +47,10 @@ async function test()
         }
 
         ProtocolTest.expectThat(!!adoptedRule, "Should have a rule matching \"div#target\".");
-        if (adoptedRule)
+        if (adoptedRule) {
             ProtocolTest.expectEqual(adoptedRule.origin, "author", "Adopted stylesheet rule should have \"author\" origin, not \"user-agent\".");
+            ProtocolTest.expectNull(adoptedRule.sourceURL, "Adopted stylesheet rule should have no sourceURL, since a constructed stylesheet has no source file.");
+        }
     } catch (error) {
         ProtocolTest.log(error);
     } finally {
@@ -58,7 +60,7 @@ async function test()
 </script>
 </head>
 <body onLoad="runTest()">
-<p>Testing that rules from a constructable CSSStyleSheet attached via document.adoptedStyleSheets are reported with Author origin (not User Agent), so they appear editable in the Web Inspector. <a href="https://bugs.webkit.org/show_bug.cgi?id=277893">Tracking bug</a>.</p>
+<p>Testing that rules from a constructable CSSStyleSheet attached via document.adoptedStyleSheets are reported with Author origin (not User Agent), so they appear editable in the Web Inspector, and are not attributed to the document's URL. <a href="https://bugs.webkit.org/show_bug.cgi?id=277893">Bug 277893</a> and <a href="https://bugs.webkit.org/show_bug.cgi?id=320092">bug 320092</a>.</p>
 <div id="target"></div>
 </body>
 </html>
