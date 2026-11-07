@@ -662,7 +662,7 @@ PASS [["forwarddelete",""]] "<p><span>[abc]</span><br></p>" queryCommandState("f
 PASS [["forwarddelete",""]] "<p><span>[abc]</span><br></p>" queryCommandValue("forwarddelete") after
 PASS [["forwarddelete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>": execCommand("forwarddelete", false, "") return value
 PASS [["forwarddelete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" checks for modifications to non-editable content
-FAIL [["forwarddelete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<p contenteditable=\"false\"><span contenteditable=\"true\"></span></p>" but got "<p contenteditable=\"false\"><span contenteditable=\"true\"><br></span></p>"
+PASS [["forwarddelete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" compare innerHTML
 PASS [["forwarddelete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" queryCommandIndeterm("forwarddelete") before
 PASS [["forwarddelete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" queryCommandState("forwarddelete") before
 PASS [["forwarddelete",""]] "<p contenteditable=false><span contenteditable=true>[abc]</span></p>" queryCommandValue("forwarddelete") before
@@ -860,7 +860,7 @@ PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element conte
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>a[b]c</unknown-element></p>" queryCommandValue("forwarddelete") after
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>": execCommand("forwarddelete", false, "") return value
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" checks for modifications to non-editable content
-FAIL [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<p contenteditable=\"false\"><span contenteditable=\"\"></span></p>" but got "<p contenteditable=\"false\"><span contenteditable=\"\"><br></span></p>"
+PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" compare innerHTML
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" queryCommandIndeterm("forwarddelete") before
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" queryCommandState("forwarddelete") before
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>[abc]</span></p>" queryCommandValue("forwarddelete") before
@@ -878,7 +878,7 @@ PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><span contenteditable>a[bc<br>de]f</span></p>" queryCommandValue("forwarddelete") after
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>": execCommand("forwarddelete", false, "") return value
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" checks for modifications to non-editable content
-FAIL [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<p contenteditable=\"false\"><unknown-element contenteditable=\"\"></unknown-element></p>" but got "<p contenteditable=\"false\"><unknown-element contenteditable=\"\"><br></unknown-element></p>"
+PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" compare innerHTML
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" queryCommandIndeterm("forwarddelete") before
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" queryCommandState("forwarddelete") before
 PASS [["forwarddelete",""]] "<p contenteditable=\"false\"><unknown-element contenteditable>[abc]</unknown-element></p>" queryCommandValue("forwarddelete") before
