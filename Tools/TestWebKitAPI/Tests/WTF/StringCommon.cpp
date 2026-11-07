@@ -505,6 +505,32 @@ TEST(WTF_StringCommon, CharactersAreAllLatin1)
         checkSize(size);
 }
 
+TEST(WTF_StringCommon, CopyElements8To16)
+{
+    constexpr unsigned guard = 0xa55a;
+
+    for (size_t length = 0; length <= 160; ++length) {
+        for (size_t sourceOffset = 0; sourceOffset < 9; ++sourceOffset) {
+            for (size_t destinationOffset = 0; destinationOffset < 9; ++destinationOffset) {
+                Vector<Latin1Character> source(sourceOffset + length);
+                for (size_t i = 0; i < source.size(); ++i)
+                    source[i] = static_cast<Latin1Character>(0xff - 7 * i);
+
+                Vector<char16_t> destination(FillWith { }, destinationOffset + length + 64, static_cast<char16_t>(guard));
+
+                WTF::copyElements(destination.mutableSpan().subspan(destinationOffset), source.span().subspan(sourceOffset));
+
+                for (size_t i = 0; i < destination.size(); ++i) {
+                    bool isCopied = i >= destinationOffset && i < destinationOffset + length;
+                    unsigned expected = isCopied ? static_cast<unsigned>(source[sourceOffset + i - destinationOffset]) : guard;
+                    ASSERT_EQ(static_cast<unsigned>(destination[i]), expected)
+                        << "length=" << length << " sourceOffset=" << sourceOffset << " destinationOffset=" << destinationOffset << " i=" << i;
+                }
+            }
+        }
+    }
+}
+
 TEST(WTF_StringCommon, CopyElements64To8)
 {
     Vector<uint8_t> destination;
