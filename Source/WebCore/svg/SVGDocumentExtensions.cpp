@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  *
@@ -147,12 +147,12 @@ void SVGDocumentExtensions::reportError(const String& message)
 
 void SVGDocumentExtensions::addElementToRebuild(SVGElement& element)
 {
-    m_rebuildElements.append(element);
+    m_rebuildElements.add(element);
 }
 
 void SVGDocumentExtensions::removeElementToRebuild(SVGElement& element)
 {
-    m_rebuildElements.removeFirstMatching([&](auto& item) { return item.ptr() == &element; });
+    m_rebuildElements.remove(Ref { element });
 }
 
 void SVGDocumentExtensions::rebuildElements()
@@ -165,7 +165,7 @@ void SVGDocumentExtensions::rebuildElements()
 void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElement)
 {
     for (Ref element : referencedElement.referencingElements()) {
-        m_rebuildElements.append(element.get());
+        m_rebuildElements.add(element.get());
         element->callClearTarget();
     }
 }
