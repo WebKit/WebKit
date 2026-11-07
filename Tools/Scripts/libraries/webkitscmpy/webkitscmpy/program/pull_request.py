@@ -24,6 +24,7 @@ import argparse
 import os
 import re
 import sys
+import tempfile
 import time
 
 from .command import Command
@@ -45,6 +46,9 @@ class PullRequest(Command):
     SKIP_EWS_LABEL = 'skip-ews'
     MERGE_LABELS = ['merge-queue']
     UNSAFE_MERGE_LABELS = ['unsafe-merge-queue']
+    TITLE_PLACEHOLDER = 'Need a short description (OOPS!).'
+    BUG_PLACEHOLDER = 'Need the bug URL (OOPS!).'
+    RADAR_PLACEHOLDER = 'Include a Radar link (OOPS!).'
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -190,6 +194,16 @@ class PullRequest(Command):
         if not modified and not will_amend:
             sys.stderr.write('No modified files\n')
             return 1
+
+        if not modified and will_amend and getattr(args, '_bug_urls', None):
+            urls = args._bug_urls if isinstance(args._bug_urls, (list, tuple)) else args._bug_urls.splitlines()
+            message = cls.message_with_bug_urls(
+                repository.commit(include_log=True, include_identifier=False).message or '',
+                getattr(args, '_title', None), urls,
+            )
+            if message:
+                return cls.amend_message(repository, message)
+
         log.info('Amending commit...' if will_amend else 'Creating commit...')
         env = os.environ
         if getattr(args, '_title', None):
@@ -204,6 +218,37 @@ class PullRequest(Command):
             sys.stderr.write('Failed to generate commit\n')
             return 1
 
+        return 0
+
+    @classmethod
+    def message_with_bug_urls(cls, message, title, bug_urls):
+        lines = message.splitlines()
+        if cls.BUG_PLACEHOLDER not in lines:
+            return None
+        urls = [url for url in bug_urls if url not in message]
+        index = lines.index(cls.BUG_PLACEHOLDER)
+        lines[index:index + 1] = urls
+        if cls.RADAR_PLACEHOLDER in lines and any(regex.match(url) for url in urls for regex in radar.Tracker.RES):
+            lines.remove(cls.RADAR_PLACEHOLDER)
+        if title and lines[0] == cls.TITLE_PLACEHOLDER:
+            lines[0] = title
+        return '\n'.join(lines) + '\n'
+
+    @classmethod
+    def amend_message(cls, repository, message):
+        log.info('Amending commit with bug URL...')
+        handle, path = tempfile.mkstemp(suffix='.txt')
+        try:
+            with os.fdopen(handle, 'w') as file:
+                file.write(message)
+            if run(
+                [repository.executable(), 'commit', '--date=now', '--amend', '--edit', '-F', path],
+                cwd=repository.root_path,
+            ).returncode:
+                sys.stderr.write('Failed to amend commit\n')
+                return 1
+        finally:
+            os.remove(path)
         return 0
 
     @classmethod
