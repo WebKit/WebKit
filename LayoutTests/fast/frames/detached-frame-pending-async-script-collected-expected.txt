@@ -1,0 +1,4 @@
+Tests that a detached frame kept alive only by a pending user agent script is destroyed safely when the script's promise is garbage collected. The test passes if it doesn't crash.
+
+PASS: Did not crash.
+
