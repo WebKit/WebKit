@@ -60,7 +60,8 @@ public:
 
     void subresourcesAreFinished(Document*, CompletionHandler<void()>&&) final;
 
-    void updateRendering();
+    void updateRendering() final;
+    void scheduleRenderingUpdate();
 
     bool hasSomethingToDraw() const final;
     bool renderingTaintsOrigin() const final;
@@ -109,8 +110,12 @@ private:
     ImageDrawResult drawImage(GraphicsContext&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) final;
     std::optional<PatternTile> currentPatternTile(GraphicsContext&, const ImageDrawDescriptor&) final;
 
+    class DrawScope;
+    void scheduleRenderingUpdateIfNeeded();
+
     const UniqueRef<SVGImageInstanceCache> m_instances;
     Timer m_startAnimationTimer;
+    bool m_needsRenderingUpdate { false };
 };
 
 bool isInSVGImage(const Element*);

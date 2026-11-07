@@ -57,6 +57,28 @@
 
 namespace WebCore {
 
+class SVGImage::DrawScope {
+    WTF_FORBID_HEAP_ALLOCATION;
+    WTF_MAKE_NONCOPYABLE(DrawScope);
+public:
+    explicit DrawScope(SVGImage& image)
+        : m_image(image)
+        , m_observer(image.imageObserver())
+    {
+        image.setImageObserver(nullptr);
+    }
+
+    ~DrawScope()
+    {
+        m_image->setImageObserver(m_observer.copyRef());
+        m_image->scheduleRenderingUpdateIfNeeded();
+    }
+
+private:
+    const Ref<SVGImage> m_image;
+    const RefPtr<ImageObserver> m_observer;
+};
+
 SVGImage::SVGImage(ImageObserver* observer)
     : Image(observer)
     , m_instances(makeUniqueRef<SVGImageInstanceCache>())
@@ -80,16 +102,31 @@ RefPtr<SVGSVGElement> SVGImage::defaultInstanceRootElement() const
 
 RefPtr<SVGSVGElement> SVGImage::rootElement(const ImageDrawDescriptor& descriptor)
 {
-    ImageObserverDisableScope imageObserverDisabler(*this);
+    DrawScope drawScope(*this);
     RefPtr instance = instanceForDraw(descriptor);
     return instance ? instance->rootElement() : nullptr;
 }
 
 void SVGImage::updateRendering()
 {
+    m_needsRenderingUpdate = false;
     m_instances->forEach([](auto& instance) {
         instance.updateRendering();
     });
+}
+
+void SVGImage::scheduleRenderingUpdate()
+{
+    m_needsRenderingUpdate = true;
+    scheduleRenderingUpdateIfNeeded();
+}
+
+void SVGImage::scheduleRenderingUpdateIfNeeded()
+{
+    if (!m_needsRenderingUpdate)
+        return;
+    if (RefPtr observer = imageObserver())
+        observer->scheduleRenderingUpdate(*this);
 }
 
 bool SVGImage::renderingTaintsOrigin() const
@@ -144,7 +181,7 @@ RefPtr<NativeImage> SVGImage::nativeImage(const ImageDrawDescriptor& descriptor,
     if (!imageBuffer)
         return nullptr;
 
-    ImageObserverDisableScope imageObserverDisabler(*this);
+    DrawScope drawScope(*this);
 
     draw(imageBuffer->context(), ImageDrawDescriptor { ConcreteObjectSize::fixed(size), descriptor.rendition });
 
@@ -192,8 +229,7 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, const ImageDrawDes
     if (concreteSize.isEmpty())
         return ImageDrawResult::DidNothing;
 
-    // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
-    ImageObserverDisableScope imageObserverDisabler(*this);
+    DrawScope drawScope(*this);
 
     RefPtr instance = instanceForDraw(descriptor);
     if (!instance || !instance->frameView())
@@ -285,9 +321,10 @@ void SVGImage::startAnimation()
     bool animationsArePaused = m_instances->anyOf([](auto& instance) {
         return instance.isAnimationPaused();
     });
-    if (!animationsArePaused)
-        return;
-    m_startAnimationTimer.startOneShot(0_s);
+    if (animationsArePaused)
+        m_startAnimationTimer.startOneShot(0_s);
+
+    scheduleRenderingUpdateIfNeeded();
 }
 
 void SVGImage::startAnimationTimerFired()

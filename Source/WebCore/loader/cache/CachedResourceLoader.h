@@ -40,6 +40,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -62,7 +63,6 @@ class DocumentLoader;
 class ImageLoader;
 class LocalFrame;
 class Page;
-class SVGImage;
 class Settings;
 
 template <typename T>
@@ -132,8 +132,8 @@ public:
 
     URL urlWithRequestedFragmentIdentifier(const CachedResource&) const;
 
-    void notifyFinished(const CachedResource&);
-    Vector<Ref<SVGImage>> allCachedSVGImages() const;
+    void scheduleRenderingUpdateForImage(CachedImage&);
+    void updateRenderingOfImages();
 
     bool autoLoadImages() const { return m_autoLoadImages; }
     void setAutoLoadImages(bool);
@@ -217,7 +217,7 @@ private:
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
 
     MemoryCompactRobinHoodHashSet<URL> m_validatedURLs;
-    MemoryCompactRobinHoodHashSet<URL> m_cachedSVGImagesURLs;
+    WeakHashSet<CachedImage> m_imagesNeedingRenderingUpdate;
     mutable DocumentResourceMap m_documentResources;
     HashMap<String, String> m_documentResourceFragmentIdentifiers;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;

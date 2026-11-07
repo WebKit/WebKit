@@ -407,6 +407,8 @@ public:
 
     bool addReferencedSVGResourceIfNeeded(SVGElement&, const AtomString&);
 
+    void scheduleRenderingUpdateForImage(CachedImage&) final;
+
 protected:
     RenderElement(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderElement(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -492,7 +494,6 @@ private:
     VisibleInViewportState imageVisibleInViewport(const Document&) const final;
     void didRemoveCachedImageClient(CachedImage&) final;
     void imageContentChanged(CachedImage&) final;
-    void scheduleRenderingUpdateForImage(CachedImage&) final;
 
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;

@@ -135,6 +135,7 @@ private:
     void setImageCompleteAndMaybeUpdateRenderer();
 
     VisibleInViewportState imageVisibleInViewport(const Document&) const override;
+    void scheduleRenderingUpdateForImage(CachedImage&) final;
 
     WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
     CachedResourceHandle<CachedImage> m_image;

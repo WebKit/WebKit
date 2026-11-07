@@ -136,6 +136,10 @@ public:
     NODELETE WEBCORE_EXPORT bool animationPending() const;
     ImageAnimationOverride animationOverride() const { return m_animationOverride; }
     void setAnimationOverride(ImageAnimationOverride animationOverride) { m_animationOverride = animationOverride; }
+
+    // Brings the image up to date for a rendering update it asked for through ImageObserver::scheduleRenderingUpdate().
+    virtual void updateRendering() { }
+
     static bool systemAllowsAnimationControls() { return gSystemAllowsAnimationControls; }
     NODELETE WEBCORE_EXPORT static void setSystemAllowsAnimationControls(bool allowsControls);
 

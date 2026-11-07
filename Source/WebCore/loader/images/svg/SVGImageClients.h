@@ -85,11 +85,8 @@ private:
 
     bool scheduleRenderingUpdate() final
     {
-        RefPtr image { m_image.get() };
-        if (!image)
-            return true;
-        if (RefPtr imageObserver = image->imageObserver())
-            imageObserver->scheduleRenderingUpdate(*image);
+        if (RefPtr image = m_image)
+            image->scheduleRenderingUpdate();
         return true;
     }
 

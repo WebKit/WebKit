@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+// The animation must start in this test.
+if (window.internals)
+    internals.clearMemoryCache();
+
+function waitForAnimation() {
+    return new Promise(resolve => setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(resolve)), 300));
+}
+
+window.onload = async () => {
+    await waitForAnimation();
+
+    // FIXME: feImage does not repaint for a new frame of its image.
+    document.querySelector("feImage").setAttribute("preserveAspectRatio", "none");
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+<style>
+  svg { display: block; }
+</style>
+<svg width="100" height="100">
+    <filter id="image" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feImage href="resources/css-animation-turns-green.svg"/>
+    </filter>
+    <rect width="100" height="100" filter="url(#image)"/>
+</svg>

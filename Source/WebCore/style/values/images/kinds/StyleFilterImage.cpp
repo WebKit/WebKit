@@ -267,5 +267,13 @@ void FilterImage::imageChanged(WebCore::CachedImage*, const IntRect*)
     }
 }
 
+void FilterImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedImage)
+{
+    for (auto entry : clients()) {
+        CheckedRef client = entry.key;
+        client->scheduleRenderingUpdateForImage(cachedImage);
+    }
+}
+
 } // namespace Style
 } // namespace WebCore

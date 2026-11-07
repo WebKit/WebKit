@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+// The animation must start in this test.
+if (window.internals)
+    internals.clearMemoryCache();
+
+function waitForAnimation() {
+    return new Promise(resolve => setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(resolve)), 300));
+}
+
+window.onload = async () => {
+    await waitForAnimation();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+<style>
+  div { width: 100px; height: 100px; background-image: -webkit-cross-fade(url(resources/css-animation-turns-green.svg), url(resources/css-animation-turns-green.svg), 50%); }
+</style>
+<div></div>

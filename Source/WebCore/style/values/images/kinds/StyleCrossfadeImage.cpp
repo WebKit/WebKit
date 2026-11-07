@@ -466,5 +466,13 @@ void CrossfadeImage::imageChanged(WebCore::CachedImage*, const IntRect*)
     }
 }
 
+void CrossfadeImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedImage)
+{
+    for (auto entry : clients()) {
+        CheckedRef client = entry.key;
+        client->scheduleRenderingUpdateForImage(cachedImage);
+    }
+}
+
 } // namespace Style
 } // namespace WebCore

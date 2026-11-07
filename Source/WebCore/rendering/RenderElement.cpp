@@ -28,6 +28,7 @@
 #include "AXObjectCache.h"
 #include "AnchorPositionEvaluator.h"
 #include "BorderShape.h"
+#include "CachedResourceLoader.h"
 #include "ContainerNodeInlines.h"
 #include "ContentVisibilityDocumentState.h"
 #include "DocumentPage.h"
@@ -1922,8 +1923,6 @@ void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMe
 {
     if (auto* cachedImage = dynamicDowncast<CachedImage>(resource))
         imageContentChanged(*cachedImage);
-
-    protect(protect(document())->cachedResourceLoader())->notifyFinished(resource);
 }
 
 bool RenderElement::allowsAnimation() const
@@ -1973,10 +1972,9 @@ void RenderElement::imageContentChanged(CachedImage& cachedImage)
 #endif
 }
 
-void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
+void RenderElement::scheduleRenderingUpdateForImage(CachedImage& cachedImage)
 {
-    if (RefPtr page = document().page())
-        page->scheduleRenderingUpdate(RenderingUpdateStep::Images);
+    protect(protect(document())->cachedResourceLoader())->scheduleRenderingUpdateForImage(cachedImage);
 }
 
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect)

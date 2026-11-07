@@ -25,6 +25,7 @@
 #include "ArchiveResource.h"
 #include "BitmapImage.h"
 #include "CachedImage.h"
+#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -786,6 +787,11 @@ void ImageLoader::resetLazyImageLoading(Document& document)
     if (isDeferred())
         LazyLoadElementObserver::unobserveIfLazyLoadOnly(protect(element()), document);
     m_lazyImageLoadState = LazyImageLoadState::None;
+}
+
+void ImageLoader::scheduleRenderingUpdateForImage(CachedImage& cachedImage)
+{
+    protect(protect(element().document())->cachedResourceLoader())->scheduleRenderingUpdateForImage(cachedImage);
 }
 
 VisibleInViewportState ImageLoader::imageVisibleInViewport(const Document& document) const

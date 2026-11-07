@@ -84,7 +84,6 @@
 #include "ResourceLoadInfo.h"
 #include "ResourceTiming.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGImage.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -1159,18 +1158,6 @@ NODELETE static FetchOptions::Destination destinationForType(CachedResource::Typ
     return FetchOptions::Destination::EmptyString;
 }
 
-static inline bool isSVGImageCachedResource(const CachedResource* resource)
-{
-    auto* cachedImage = dynamicDowncast<CachedImage>(resource);
-    return cachedImage && is<SVGImage>(cachedImage->image());
-}
-
-static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
-{
-    auto* cachedImage = dynamicDowncast<CachedImage>(resource);
-    return cachedImage ? dynamicDowncast<SVGImage>(cachedImage->image()) : nullptr;
-}
-
 NODELETE static bool computeMayAddToMemoryCache(const CachedResourceRequest& newRequest, const CachedResource* existingResource)
 {
     return !existingResource || !existingResource->isPreloaded() || newRequest.options().serviceWorkersMode != ServiceWorkersMode::None || existingResource->options().serviceWorkersMode == ServiceWorkersMode::None;
@@ -1946,23 +1933,20 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
     ASSERT(m_requestCount > -1);
 }
 
-void CachedResourceLoader::notifyFinished(const CachedResource& resource)
+void CachedResourceLoader::scheduleRenderingUpdateForImage(CachedImage& cachedImage)
 {
-    if (isSVGImageCachedResource(&resource))
-        m_cachedSVGImagesURLs.add(resource.url());
+    RefPtr page = m_document ? m_document->page() : nullptr;
+    if (!page)
+        return;
+
+    m_imagesNeedingRenderingUpdate.add(cachedImage);
+    page->scheduleRenderingUpdate(RenderingUpdateStep::Images);
 }
 
-Vector<Ref<SVGImage>> CachedResourceLoader::allCachedSVGImages() const
+void CachedResourceLoader::updateRenderingOfImages()
 {
-    Vector<Ref<SVGImage>> allCachedSVGImages;
-
-    for (auto& cachedSVGImageURL : m_cachedSVGImagesURLs) {
-        RefPtr resource = cachedResource(cachedSVGImageURL);
-        if (RefPtr image = cachedResourceSVGImage(resource.get()))
-            allCachedSVGImages.append(image.releaseNonNull());
-    }
-        
-    return allCachedSVGImages;
+    for (Ref cachedImage : copyToVectorOf<Ref<CachedImage>>(std::exchange(m_imagesNeedingRenderingUpdate, { })))
+        protect(cachedImage->image())->updateRendering();
 }
 
 ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest&& request)
