@@ -188,6 +188,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case GetTypedArrayByteOffset:
     case GetTypedArrayByteOffsetAsInt52:
     case GetPrototypeOf:
+    case GetTypedArrayBuffer:
     case GetWebAssemblyInstanceExports:
     case NotifyWrite:
     case StoreBarrier:

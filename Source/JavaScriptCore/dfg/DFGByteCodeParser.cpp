@@ -6254,6 +6254,13 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         return true;
     }
 
+    case TypedArrayBufferIntrinsic: {
+        insertChecks();
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), thisNode);
+        set(result, addToGraph(GetTypedArrayBuffer, Edge(thisNode, KnownCellUse)));
+        return true;
+    }
+
     case UnderscoreProtoIntrinsic: {
         insertChecks();
 
