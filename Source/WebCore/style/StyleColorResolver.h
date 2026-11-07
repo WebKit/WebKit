@@ -121,17 +121,7 @@ public:
 template<typename ColorTraits>
 WebCore::Color ColorPropertyResolver<ColorTraits>::resolveColor(StyleColorOptionsPurpose purpose) const
 {
-    if constexpr (std::same_as<ColorTraits, ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::Color>>>) {
-        switch (purpose) {
-        case StyleColorOptionsPurpose::ComputedStyle:
-            return m_style->color();
-        case StyleColorOptionsPurpose::Rendering:
-            return m_style->usedColor();
-        }
-
-        ASSERT_NOT_REACHED();
-        return m_style->color();
-    } else if constexpr (ImplementsResolveColor<ColorTraits>)
+    if constexpr (ImplementsResolveColor<ColorTraits>)
         return ColorTraits::resolveColor(m_style, purpose);
     else
         return ColorTraits::color(m_style).resolveColor(ResolvedColors::fromStyle(m_style, purpose));
@@ -155,17 +145,7 @@ template<typename ColorTraits>
 WebCore::Color ColorPropertyResolver<ColorTraits>::resolveVisitedLinkColor(StyleColorOptionsPurpose purpose) const
     requires (ImplementsVisitedLinkColor<ColorTraits>)
 {
-    if constexpr (std::same_as<ColorTraits, ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::Color>>>) {
-        switch (purpose) {
-        case StyleColorOptionsPurpose::ComputedStyle:
-            return m_style->visitedLinkColor();
-        case StyleColorOptionsPurpose::Rendering:
-            return m_style->usedVisitedLinkColor();
-        }
-
-        ASSERT_NOT_REACHED();
-        return m_style->visitedLinkColor();
-    } else if constexpr (ImplementsResolveVisitedLinkColor<ColorTraits>)
+    if constexpr (ImplementsResolveVisitedLinkColor<ColorTraits>)
         return ColorTraits::resolveVisitedLinkColor(m_style, purpose);
     else
         return ColorTraits::visitedLinkColor(m_style).resolveColor(ResolvedColors::fromVisitedLinkStyle(m_style, purpose));
