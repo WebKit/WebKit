@@ -574,9 +574,21 @@ void RtpTransceiver::CreateChannel(
   }
 
   network_tasks.AddWithFinalizer(
+#if WEBRTC_WEBKIT_BUILD
+      [this, flag = network_thread_safety_, receptive = receptive_,
+       transport_lookup = std::move(transport_lookup)]() mutable
+#else
       [this, transport_lookup = std::move(transport_lookup)]() mutable
+#endif
           -> RTCErrorOr<ScopedOperationsBatcher::FinalizerTask> {
         RTC_DCHECK_RUN_ON(context()->network_thread());
+#if WEBRTC_WEBKIT_BUILD
+        // GetClearChannelNetworkTask() marks the flag as not alive, we revive it now that the channel is recreated.
+        // We resync the network thread state since set_receptive() updates posted while the flag was not alive were dropped.
+        flag->SetAlive();
+        receptive_n_ = receptive;
+        packet_notified_after_receptive_ = false;
+#endif
         auto result = InitializeOnNetworkThread(std::move(transport_lookup));
         if (!result.ok()) {
           return result.MoveError();
