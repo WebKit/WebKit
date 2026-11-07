@@ -30,6 +30,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -127,14 +128,9 @@ static NSURL *exampleURL()
     return [NSURL URLWithString:@"https://example.com/"];
 }
 
-static RetainPtr<_WKWebsiteDataStoreConfiguration> temporaryDataStoreConfiguration()
-{
-    return adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:[NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:YES]]);
-}
-
 static RetainPtr<WKWebViewConfiguration> configurationWithoutUsingDaemon()
 {
-    RetainPtr dataStoreConfiguration = temporaryDataStoreConfiguration();
+    RetainPtr dataStoreConfiguration = Util::temporaryDataStoreConfiguration();
     dataStoreConfiguration.get().pcmMachServiceName = nil;
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
@@ -460,14 +456,14 @@ TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
 TEST(PrivateClickMeasurement, DatabaseLocation)
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:YES];
+    NSURL *tempDir = [Util::temporaryDirectory() URLByAppendingPathComponent:@"ResourceLoadStatistics" isDirectory:YES];
 
     RetainPtr webViewToKeepNetworkProcessAlive = adoptNS([TestWKWebView new]);
     [webViewToKeepNetworkProcessAlive synchronouslyLoadHTMLString:@"start network process"];
 
     pid_t originalNetworkProcessPid = 0;
     @autoreleasepool {
-        RetainPtr dataStoreConfiguration = temporaryDataStoreConfiguration();
+        RetainPtr dataStoreConfiguration = Util::temporaryDataStoreConfiguration();
         dataStoreConfiguration.get()._resourceLoadStatisticsDirectory = tempDir;
         dataStoreConfiguration.get().pcmMachServiceName = nil;
         RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
@@ -540,7 +536,7 @@ static std::pair<NSURL *, WKWebViewConfiguration *> setUpDaemon(WKWebViewConfigu
 
     registerPlistWithLaunchD(testDaemonPList(tempDir), tempDir);
 
-    RetainPtr dataStoreConfiguration = temporaryDataStoreConfiguration();
+    RetainPtr dataStoreConfiguration = Util::temporaryDataStoreConfiguration();
     dataStoreConfiguration.get().pcmMachServiceName = @"org.webkit.pcmtestdaemon.service";
     viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
 

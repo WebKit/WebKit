@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
@@ -58,13 +59,14 @@
 TEST(WKWebView, LocalStorageFetchDataRecords)
 {
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     readyToContinue = false;
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr uiDelegate = adoptNS([[LocalStorageUIDelegate alloc] init]);
     webView.get().UIDelegate = uiDelegate.get();
@@ -73,7 +75,7 @@ TEST(WKWebView, LocalStorageFetchDataRecords)
     TestWebKitAPI::Util::run(&readyToContinue);
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         readyToContinue = true;
         ASSERT_EQ(1u, dataRecords.count);
         auto origins = [[dataRecords objectAtIndex:0] _originsStrings];
@@ -86,12 +88,13 @@ TEST(WKWebView, LocalStorageFetchDataRecords)
 TEST(WKWebView, LocalStorageNoRecordAfterGetItem)
 {
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr uiDelegate = adoptNS([[LocalStorageUIDelegate alloc] init]);
     webView.get().UIDelegate = uiDelegate.get();
@@ -101,7 +104,7 @@ TEST(WKWebView, LocalStorageNoRecordAfterGetItem)
     TestWebKitAPI::Util::run(&readyToContinue);
 
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
         EXPECT_EQ(0u, dataRecords.count);
         readyToContinue = true;
     }];

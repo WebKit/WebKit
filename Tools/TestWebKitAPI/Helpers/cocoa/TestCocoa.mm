@@ -87,16 +87,32 @@ bool operator==(const CGRect& a, const CGRect& b)
 
 #endif
 
+static NSString *processTemporaryDirectory()
+{
+    static NeverDestroyed<RetainPtr<NSString>> directory = [] {
+        atexit([] {
+            [NSFileManager.defaultManager removeItemAtPath:processTemporaryDirectory() error:nil];
+        });
+        return RetainPtr { FileSystem::createTemporaryDirectory(@"WebsiteData") };
+    }();
+    return directory.get().get();
+}
+
+NSURL *TestWebKitAPI::Util::temporaryDirectory()
+{
+    NSURL *directory = [NSURL fileURLWithPath:[processTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString] isDirectory:YES];
+    [NSFileManager.defaultManager createDirectoryAtURL:directory withIntermediateDirectories:NO attributes:nil error:nil];
+    return directory;
+}
+
+RetainPtr<_WKWebsiteDataStoreConfiguration> TestWebKitAPI::Util::temporaryDataStoreConfiguration()
+{
+    return adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:temporaryDirectory()]);
+}
+
 WKWebsiteDataStore *TestWebKitAPI::Util::temporaryPersistentDataStore()
 {
-    static NeverDestroyed<RetainPtr<WKWebsiteDataStore>> dataStore = [] {
-        static NeverDestroyed<RetainPtr<NSString>> directory = FileSystem::createTemporaryDirectory(@"WebsiteData");
-        atexit([] {
-            [NSFileManager.defaultManager removeItemAtPath:directory.get().get() error:nil];
-        });
-        RetainPtr configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:[NSURL fileURLWithPath:directory.get().get() isDirectory:YES]]);
-        return adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:configuration.get()]);
-    }();
+    static NeverDestroyed<RetainPtr<WKWebsiteDataStore>> dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:temporaryDataStoreConfiguration().get()]);
     return dataStore.get().get();
 }
 
