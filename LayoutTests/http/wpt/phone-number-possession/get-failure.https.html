@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: platform failures</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="./resources/util.js"></script>
+<body>
+<script>
+promise_test(async t => {
+    setMockConfiguration({ outcome: "user-cancelled" });
+    await promiseRejects(t, "NotAllowedError", getWithActivation(makeOptions()), "The request was not allowed.");
+}, "A request the user cancels rejects with NotAllowedError.");
+
+promise_test(async t => {
+    setMockConfiguration({ outcome: "failure" });
+    await promiseRejects(t, "NotAllowedError", getWithActivation(makeOptions()), "The request was not allowed.");
+}, "A request the platform fails rejects with NotAllowedError.");
+
+promise_test(async t => {
+    setMockConfiguration({ isAvailable: false });
+    await promiseRejects(t, "NotSupportedError", getWithActivation(makeOptions()), "Phone number possession is not available.");
+}, "A request on a device that can't provide a phone number possession rejects with NotSupportedError.");
+</script>
+</body>

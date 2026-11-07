@@ -33,6 +33,7 @@
 #include <WebCore/IdentityCredentialRequestOptions.h>
 #include <WebCore/MediationRequirement.h>
 #include <WebCore/OTPCredentialRequestOptions.h>
+#include <WebCore/PhoneNumberPossessionRequest.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <wtf/RefCounted.h>
 
@@ -51,6 +52,9 @@ struct CredentialRequestOptions {
     std::optional<PublicKeyCredentialRequestOptions> publicKey;
 #if ENABLE(WEB_AUTHN)
     std::optional<DigitalCredentialRequestOptions> digital;
+#endif
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    std::optional<PhoneNumberPossessionRequest> phoneNumberPossessionIdentifier;
 #endif
 };
 

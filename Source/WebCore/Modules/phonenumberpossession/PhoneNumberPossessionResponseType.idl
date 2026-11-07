@@ -23,33 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(PHONE_NUMBER_POSSESSION)
-
-#include <WebCore/AggregatorResponseDataFields.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TZoneMalloc.h>
-
-namespace WebCore {
-
-class AggregatorResponseData final : public RefCounted<AggregatorResponseData> {
-    WTF_MAKE_TZONE_ALLOCATED(AggregatorResponseData);
-public:
-    static Ref<AggregatorResponseData> create(AggregatorResponseDataFields&& data) { return adoptRef(*new AggregatorResponseData(WTF::move(data))); }
-
-    RefPtr<ArrayBuffer> encryptedProviderErrorInfo() const { return m_data.encryptedProviderErrorInfo; }
-    RefPtr<ArrayBuffer> encryptedZKPEncryptionKey() const { return m_data.encryptedZKPEncryptionKey; }
-
-private:
-    explicit AggregatorResponseData(AggregatorResponseDataFields&& data)
-        : m_data(WTF::move(data))
-    {
-    }
-
-    const AggregatorResponseDataFields m_data;
+[
+    Conditional=PHONE_NUMBER_POSSESSION,
+] enum PhoneNumberPossessionResponseType {
+    "possession-identifier",
+    "possession-identifier-and-phone-number"
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(PHONE_NUMBER_POSSESSION)

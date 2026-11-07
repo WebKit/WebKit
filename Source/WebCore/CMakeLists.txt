@@ -667,6 +667,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/permissions/PermissionStatus.idl
     Modules/permissions/Permissions.idl
 
+    Modules/phonenumberpossession/PhoneNumberPossessionCredential.idl
+    Modules/phonenumberpossession/PhoneNumberPossessionRequestOptions.idl
+    Modules/phonenumberpossession/PhoneNumberPossessionResponseType.idl
+
     Modules/pictureinpicture/PictureInPictureEvent.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
 

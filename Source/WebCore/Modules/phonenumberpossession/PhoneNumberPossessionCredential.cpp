@@ -28,14 +28,11 @@
 
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include "AbortSignal.h"
 #include "DocumentPage.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
-#include "MediationRequirement.h"
 #include "Page.h"
 #include "PhoneNumberPossessionCoordinator.h"
-#include "PhoneNumberPossessionRequest.h"
 #include "PhoneNumberPossessionResponse.h"
 #include <wtf/UUID.h>
 
@@ -48,26 +45,16 @@ Ref<PhoneNumberPossessionCredential> PhoneNumberPossessionCredential::create(Pho
 
 PhoneNumberPossessionCredential::PhoneNumberPossessionCredential(PhoneNumberPossessionResponse&& response)
     : BasicCredential(createVersion4UUIDString(), Type::PhoneNumberPossession, Discovery::Remote)
-    , m_encryptedPNPIWithProof(WTF::move(response.encryptedPNPIWithProof))
-    , m_aggregatorData(response.aggregatorData ? RefPtr { AggregatorResponseData::create(WTF::move(*response.aggregatorData)) } : nullptr)
-    , m_carrierPubKey(WTF::move(response.carrierPubKey))
-    , m_encryptedMSISDN(WTF::move(response.encryptedMSISDN))
+    , m_encryptedResult(WTF::move(response.encryptedResult))
+    , m_carrierDomain(WTF::move(response.carrierDomain))
+    , m_carrierConfigurationID(response.carrierConfigurationID)
+    , m_encryptedDecryptionKeyOrError(WTF::move(response.encryptedDecryptionKeyOrError))
     , m_clientDataJSON(WTF::move(response.clientDataJSON))
     , m_portingZKP(WTF::move(response.portingZKP))
 {
 }
 
 PhoneNumberPossessionCredential::~PhoneNumberPossessionCredential() = default;
-
-void PhoneNumberPossessionCredential::discoverFromExternalSource(const Document& document, PhoneNumberPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
-{
-    RefPtr page = document.page();
-    if (!page) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s });
-        return;
-    }
-    page->phoneNumberPossessionCoordinator().discoverFromExternalSource(document, WTF::move(request), mediation, WTF::move(signal), WTF::move(promise));
-}
 
 void PhoneNumberPossessionCredential::isAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {

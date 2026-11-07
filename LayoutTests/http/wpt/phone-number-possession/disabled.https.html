@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ PhoneNumberPossessionEnabled=false ] -->
+<meta charset="utf-8">
+<title>Phone Number Possession: feature disabled</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+test(() => {
+    assert_false("PhoneNumberPossessionCredential" in window);
+}, "PhoneNumberPossessionCredential isn't exposed when the feature is disabled.");
+
+promise_test(async t => {
+    const options = { phoneNumberPossessionIdentifier: { challenge: new Uint8Array([1, 2, 3, 4]), desiredResponseType: "possession-identifier" } };
+    await promise_rejects_dom(t, "NotSupportedError", navigator.credentials.get(options));
+}, "get() ignores phoneNumberPossessionIdentifier when the feature is disabled.");
+</script>
+</body>

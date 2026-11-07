@@ -27,34 +27,29 @@
 
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include "AggregatorResponseData.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/BasicCredential.h>
 #include <WebCore/IDLTypes.h>
 
 namespace WebCore {
 
-class AbortSignal;
 class Document;
-enum class MediationRequirement : uint8_t;
-struct PhoneNumberPossessionRequest;
 struct PhoneNumberPossessionResponse;
 template<typename IDLType> class DOMPromiseDeferred;
 
-using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
 class PhoneNumberPossessionCredential final : public BasicCredential {
 public:
     NODELETE static Ref<PhoneNumberPossessionCredential> create(PhoneNumberPossessionResponse&&);
     virtual ~PhoneNumberPossessionCredential();
 
-    static void discoverFromExternalSource(const Document&, PhoneNumberPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
     static void isAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
     static void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 
-    Ref<ArrayBuffer> encryptedPNPIWithProof() const { return m_encryptedPNPIWithProof; }
-    RefPtr<AggregatorResponseData> aggregatorData() const { return m_aggregatorData; }
-    RefPtr<ArrayBuffer> carrierPubKey() const { return m_carrierPubKey; }
-    RefPtr<ArrayBuffer> encryptedMSISDN() const { return m_encryptedMSISDN; }
+    Ref<ArrayBuffer> encryptedResult() const { return m_encryptedResult; }
+    const String& carrierDomain() const { return m_carrierDomain; }
+    uint16_t carrierConfigurationID() const { return m_carrierConfigurationID; }
+    RefPtr<ArrayBuffer> encryptedDecryptionKeyOrError() const { return m_encryptedDecryptionKeyOrError; }
     Ref<ArrayBuffer> clientDataJSON() const { return m_clientDataJSON; }
     RefPtr<ArrayBuffer> portingZKP() const { return m_portingZKP; }
 
@@ -63,10 +58,10 @@ private:
 
     Type credentialType() const final { return Type::PhoneNumberPossession; }
 
-    const Ref<ArrayBuffer> m_encryptedPNPIWithProof;
-    const RefPtr<AggregatorResponseData> m_aggregatorData;
-    const RefPtr<ArrayBuffer> m_carrierPubKey;
-    const RefPtr<ArrayBuffer> m_encryptedMSISDN;
+    const Ref<ArrayBuffer> m_encryptedResult;
+    const String m_carrierDomain;
+    const uint16_t m_carrierConfigurationID;
+    const RefPtr<ArrayBuffer> m_encryptedDecryptionKeyOrError;
     const Ref<ArrayBuffer> m_clientDataJSON;
     const RefPtr<ArrayBuffer> m_portingZKP;
 };
