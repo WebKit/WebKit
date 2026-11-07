@@ -393,6 +393,8 @@ void BrowsingContextGroup::removePage(WebPageProxy& page, ShouldSendCloseMessage
 
 void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page, ShouldSendCloseMessage shouldSendCloseMessage)
 {
+    // This closes the page's RemotePageProxy in the shared process too, so a later addPage() must make a new one.
+    m_pagesInSharedProcess.remove(page);
     for (auto& remotePage : m_remotePages.take(page))
         protect(remotePage)->disconnect(shouldSendCloseMessage);
 }
