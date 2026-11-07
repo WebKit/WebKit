@@ -2620,7 +2620,6 @@
 42267100 WGPU : GLSLTest.NestedStructEquality/* = SKIP
 42267100 WGPU : GLSLTest.FragDataPassedToFunctionNoDrawBuffers/* = SKIP
 42267100 WGPU : GLSLTest.FragDataPassedToFunctionOutNoDrawBuffers/* = SKIP
-42267100 WGPU : GLSLValidationTest.VectorScalarArithmeticWithSideEffectInLoop/* = SKIP
 42267100 WGPU : GLSLTestNoValidation.DepthRangeUniforms/* = SKIP
 42266907 WGPU : IncompleteTextureTest.IncompleteTexture2D/* = SKIP
 42266907 WGPU : IncompleteTextureTest.UpdateTexture/* = SKIP
