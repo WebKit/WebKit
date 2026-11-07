@@ -31,6 +31,7 @@ from webkitbugspy import Tracker, bugzilla, github, radar
 from webkitbugspy import mocks as bmocks
 from webkitbugspy.mocks.radar import RadarModel
 from webkitcorepy import OutputCapture, testing
+from webkitcorepy import mocks as wcmocks
 from webkitcorepy.mocks import Environment
 from webkitcorepy.mocks import Terminal as MockTerminal
 
@@ -568,6 +569,40 @@ No pre-PR checks to run""")
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
+
+    def test_github_update_rejected(self):
+        class RejectingGitHub(mocks.remote.GitHub):
+            def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
+                stripped = url.split('?')[0].rstrip('/')
+                if method == 'POST' and '/pulls/' in stripped and stripped.split('/')[-1].isdigit():
+                    return wcmocks.Response.fromJson(dict(
+                        message='Validation Failed',
+                        errors=[dict(resource='PullRequest', field='base', code='invalid')],
+                    ), url=url, status_code=422)
+                return super(RejectingGitHub, self).request(
+                    method, url, data=data, params=params, auth=auth, json=json, **kwargs)
+
+        with RejectingGitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(1, program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                ))
+
+        self.assertNotIn("Updated '", captured.stdout.getvalue())
+        self.assertIn('Validation Failed', captured.stderr.getvalue())
+        self.assertIn("Failed to update pull-request 'PR 1 | [Testing] Creating commits'", captured.stderr.getvalue())
 
     def test_github_update_no_update_title(self):
         """Test that --no-update-title preserves the original PR title"""
