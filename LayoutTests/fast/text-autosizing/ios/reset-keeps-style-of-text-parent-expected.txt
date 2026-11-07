@@ -1,0 +1,5 @@
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.
+
+PASS Resetting text autosizing keeps the style of the text's parent
+

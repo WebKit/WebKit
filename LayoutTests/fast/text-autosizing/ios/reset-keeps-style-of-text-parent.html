@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true TextAutosizingEnabled=true TextAutosizingUsesIdempotentMode=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=1024">
+<script>
+if (window.internals)
+    internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+</script>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<!-- Text autosizing only adjusts text when at least two text nodes share a style. -->
+<div id="first">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</div>
+<div id="second">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</div>
+<script>
+promise_test(async () => {
+    const first = document.getElementById("first");
+    await UIHelper.ensurePresentationUpdate();
+    assert_greater_than(parseFloat(getComputedStyle(first).fontSize), 16, "before changing the layout size");
+    const widthBeforeReset = first.getBoundingClientRect().width;
+
+    // Changing the layout size resets text autosizing.
+    document.querySelector("meta[name=viewport]").content = "width=800";
+    await UIHelper.ensurePresentationUpdate();
+
+    assert_equals(getComputedStyle(first).display, "block");
+    assert_equals(first.getBoundingClientRect().width, document.body.getBoundingClientRect().width);
+    assert_not_equals(first.getBoundingClientRect().width, widthBeforeReset, "the div should fill the new layout width");
+}, "Resetting text autosizing keeps the style of the text's parent");
+</script>
+</body>
+</html>
