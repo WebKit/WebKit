@@ -27,6 +27,7 @@
 #include "DisplayListItems.h"
 
 #include "DisplayList.h"
+#include "FEImage.h"
 #include "Filter.h"
 #include "FilterResults.h"
 #include "FontCascade.h"
@@ -134,6 +135,17 @@ SetState::SetState(const GraphicsContextState& state)
 {
 }
 
+static bool hasUnresolvedPattern(const SourceBrush& brush)
+{
+    RefPtr pattern = brush.pattern();
+    return pattern && !pattern->tileImage().isResolved();
+}
+
+bool SetState::isResolved() const
+{
+    return !hasUnresolvedPattern(m_state.fillBrush()) && !hasUnresolvedPattern(m_state.strokeBrush());
+}
+
 void SetState::apply(GraphicsContext& context) const
 {
     context.mergeLastChanges(m_state);
@@ -227,13 +239,15 @@ void ClipOutRoundedRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 
 void ClipToImageBuffer::apply(GraphicsContext& context) const
 {
-    context.clipToImageBuffer(m_imageBuffer, m_destinationRect);
+    context.clipToImageBuffer(imageBuffer(), m_destinationRect);
 }
 
 void ClipToImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
-    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-buffer-identifier"_s, m_imageBuffer->renderingResourceIdentifier());
+    if (!isResolved())
+        ts.dumpProperty("image-index"_s, imageIndex());
+    else if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("image-buffer-identifier"_s, imageBuffer().renderingResourceIdentifier());
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
 
@@ -275,17 +289,39 @@ void ResetClip::apply(GraphicsContext& context) const
     context.resetClip();
 }
 
+void DrawFilteredImageBuffer::setEffectImages(Vector<SourceImage>&& images)
+{
+    auto effects = m_filter->effectsOfType(FilterFunction::Type::FEImage);
+    RELEASE_ASSERT(effects.size() == images.size());
+    for (size_t i = 0; i < effects.size(); ++i) {
+        Ref feImage = downcast<FEImage>(effects[i]);
+        feImage->setImageSource(WTF::move(images[i]));
+    }
+    m_effectImageIndices = { };
+}
+
+bool DrawFilteredImageBuffer::isResolved() const
+{
+    if (sourceImageIndex() || !m_effectImageIndices.isEmpty())
+        return false;
+    return std::ranges::all_of(m_filter->effectsOfType(FilterFunction::Type::FEImage), [](auto& effect) {
+        return downcast<FEImage>(effect).sourceImage().isResolved();
+    });
+}
+
 void DrawFilteredImageBuffer::apply(GraphicsContext& context) const
 {
     FilterResults results;
-    context.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, m_filter, results);
+    context.drawFilteredImageBuffer(sourceImage(), m_sourceImageRect, m_filter, results);
 }
 
 void DrawFilteredImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
-    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers)) {
-        if (m_sourceImage)
-            ts.dumpProperty("source-image-identifier"_s, m_sourceImage->renderingResourceIdentifier());
+    if (auto index = sourceImageIndex())
+        ts.dumpProperty("source-image-index"_s, *index);
+    else if (flags.contains(AsTextFlag::IncludeResourceIdentifiers)) {
+        if (RefPtr sourceImage = this->sourceImage())
+            ts.dumpProperty("source-image-identifier"_s, sourceImage->renderingResourceIdentifier());
     }
     ts.dumpProperty("source-image-rect"_s, sourceImageRect());
 }
@@ -379,26 +415,30 @@ void DrawPlaceholder::dump(TextStream&, OptionSet<AsTextFlag>) const
 
 void DrawImageBuffer::apply(GraphicsContext& context) const
 {
-    context.drawImageBuffer(m_imageBuffer, m_destinationRect, m_srcRect, m_options);
+    context.drawImageBuffer(imageBuffer(), m_destinationRect, m_srcRect, m_options);
 }
 
 void DrawImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
-    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-buffer-identifier"_s, m_imageBuffer->renderingResourceIdentifier());
+    if (!isResolved())
+        ts.dumpProperty("image-index"_s, imageIndex());
+    else if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("image-buffer-identifier"_s, imageBuffer().renderingResourceIdentifier());
     ts.dumpProperty("source-rect"_s, source());
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
 
 void DrawNativeImage::apply(GraphicsContext& context) const
 {
-    context.drawNativeImage(m_image, m_destinationRect, m_srcRect, m_options);
+    context.drawNativeImage(nativeImage(), m_destinationRect, m_srcRect, m_options);
 }
 
 void DrawNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
-    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-identifier"_s, m_image->renderingResourceIdentifier());
+    if (!isResolved())
+        ts.dumpProperty("image-index"_s, imageIndex());
+    else if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("image-identifier"_s, nativeImage().renderingResourceIdentifier());
     ts.dumpProperty("source-rect"_s, source());
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
@@ -416,13 +456,15 @@ void DrawSystemImage::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 
 void DrawPatternNativeImage::apply(GraphicsContext& context) const
 {
-    context.drawPattern(m_image, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+    context.drawPattern(nativeImage(), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
 }
 
 void DrawPatternNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
-    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-identifier"_s, m_image->renderingResourceIdentifier());
+    if (!isResolved())
+        ts.dumpProperty("image-index"_s, imageIndex());
+    else if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("image-identifier"_s, nativeImage().renderingResourceIdentifier());
     ts.dumpProperty("pattern-transform"_s, patternTransform());
     ts.dumpProperty("tile-rect"_s, tileRect());
     ts.dumpProperty("dest-rect"_s, destRect());
@@ -432,13 +474,15 @@ void DrawPatternNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) c
 
 void DrawPatternImageBuffer::apply(GraphicsContext& context) const
 {
-    context.drawPattern(m_imageBuffer, m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
+    context.drawPattern(imageBuffer(), m_destination, m_tileRect, m_patternTransform, m_phase, m_spacing, m_options);
 }
 
 void DrawPatternImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 {
-    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
-        ts.dumpProperty("image-identifier"_s, m_imageBuffer->renderingResourceIdentifier());
+    if (!isResolved())
+        ts.dumpProperty("image-index"_s, imageIndex());
+    else if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("image-identifier"_s, imageBuffer().renderingResourceIdentifier());
     ts.dumpProperty("pattern-transform"_s, patternTransform());
     ts.dumpProperty("tile-rect"_s, tileRect());
     ts.dumpProperty("dest-rect"_s, destRect());

@@ -45,7 +45,7 @@ SourceImage::~SourceImage() = default;
 
 bool SourceImage::operator==(const SourceImage& other) const
 {
-    return imageIdentifier() == other.imageIdentifier();
+    return imageReference() == other.imageReference();
 }
 
 NODELETE static inline NativeImage* nativeImageOf(const SourceImage::ImageVariant& imageVariant)
@@ -112,17 +112,32 @@ ImageBuffer* SourceImage::imageBuffer() const
     return imageBufferOf(*m_transformedImageVariant);
 }
 
-RenderingResourceIdentifier SourceImage::imageIdentifier() const
+bool SourceImage::isResolved() const
+{
+    return !std::holds_alternative<ImageReference>(m_imageVariant);
+}
+
+std::optional<uint64_t> SourceImage::imageIndex() const
+{
+    auto* imageReference = std::get_if<ImageReference>(&m_imageVariant);
+    if (!imageReference)
+        return std::nullopt;
+    if (auto* index = std::get_if<uint64_t>(imageReference))
+        return *index;
+    return std::nullopt;
+}
+
+auto SourceImage::imageReference() const -> ImageReference
 {
     return WTF::switchOn(m_imageVariant,
-        [&] (const Ref<NativeImage>& nativeImage) {
+        [&](const Ref<NativeImage>& nativeImage) -> ImageReference {
             return nativeImage->renderingResourceIdentifier();
         },
-        [&] (const Ref<ImageBuffer>& imageBuffer) {
+        [&](const Ref<ImageBuffer>& imageBuffer) -> ImageReference {
             return imageBuffer->renderingResourceIdentifier();
         },
-        [&] (RenderingResourceIdentifier renderingResourceIdentifier) {
-            return renderingResourceIdentifier;
+        [&](const ImageReference& imageReference) {
+            return imageReference;
         }
     );
 }
@@ -130,13 +145,13 @@ RenderingResourceIdentifier SourceImage::imageIdentifier() const
 IntSize SourceImage::size() const
 {
     return WTF::switchOn(m_imageVariant,
-        [&] (const Ref<NativeImage>& nativeImage) {
+        [&](const Ref<NativeImage>& nativeImage) {
             return nativeImage->size();
         },
-        [&] (const Ref<ImageBuffer>& imageBuffer) {
+        [&](const Ref<ImageBuffer>& imageBuffer) {
             return imageBuffer->backendSize();
         },
-        [&] (RenderingResourceIdentifier) -> IntSize {
+        [&](const ImageReference&) -> IntSize {
             ASSERT_NOT_REACHED();
             return { };
         }

@@ -4242,7 +4242,7 @@ enum class WebCore::IFrameUnloadReason : bool;
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceImage {
-    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::SourceImage::ImageReference imageReference();
 }
 
 enum class WebCore::LinkIconType : uint8_t {

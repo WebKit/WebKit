@@ -231,6 +231,8 @@ public:
     GraphicsContextState& state() LIFETIME_BOUND { return m_state; }
     const GraphicsContextState& state() const LIFETIME_BOUND { return m_state; }
 
+    bool isResolved() const;
+
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
@@ -395,14 +397,33 @@ public:
     {
     }
 
-    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
+    ClipToImageBuffer(uint64_t imageIndex, const FloatRect& destinationRect)
+        : m_imageBuffer(imageIndex)
+        , m_destinationRect(destinationRect)
+    {
+    }
+
+    ImageBuffer& imageBuffer() const
+    {
+        RELEASE_ASSERT(isResolved());
+        return std::get<Ref<ImageBuffer>>(m_imageBuffer);
+    }
+    void setImageBuffer(Ref<ImageBuffer>&& imageBuffer) { m_imageBuffer = WTF::move(imageBuffer); }
+    bool isResolved() const { return std::holds_alternative<Ref<ImageBuffer>>(m_imageBuffer); }
+
+    uint64_t imageIndex() const
+    {
+        RELEASE_ASSERT(!isResolved());
+        return std::get<uint64_t>(m_imageBuffer);
+    }
+
     FloatRect destinationRect() const { return m_destinationRect; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<ImageBuffer> m_imageBuffer;
+    Variant<Ref<ImageBuffer>, uint64_t> m_imageBuffer;
     FloatRect m_destinationRect;
 };
 
@@ -510,13 +531,33 @@ public:
     {
     }
 
-    DrawFilteredImageBuffer(const FloatRect& sourceImageRect, Ref<Filter>&& filter)
+    DrawFilteredImageBuffer(std::optional<uint64_t> sourceImageIndex, const FloatRect& sourceImageRect, Ref<Filter>&& filter, Vector<uint64_t>&& effectImageIndices)
         : m_sourceImageRect(sourceImageRect)
         , m_filter(WTF::move(filter))
+        , m_effectImageIndices(WTF::move(effectImageIndices))
     {
+        if (sourceImageIndex)
+            m_sourceImage = *sourceImageIndex;
     }
 
-    ImageBuffer* sourceImage() const { return m_sourceImage.get(); }
+    ImageBuffer* sourceImage() const
+    {
+        RELEASE_ASSERT(!std::holds_alternative<uint64_t>(m_sourceImage));
+        return std::get<RefPtr<ImageBuffer>>(m_sourceImage).get();
+    }
+    void setSourceImage(Ref<ImageBuffer>&& sourceImage) { m_sourceImage = RefPtr { WTF::move(sourceImage) }; }
+
+    std::optional<uint64_t> sourceImageIndex() const
+    {
+        if (auto* index = std::get_if<uint64_t>(&m_sourceImage))
+            return *index;
+        return std::nullopt;
+    }
+
+    const Vector<uint64_t>& effectImageIndices() const LIFETIME_BOUND { return m_effectImageIndices; }
+    void setEffectImages(Vector<SourceImage>&&);
+    bool isResolved() const;
+
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
     Filter& filter() const { return m_filter; }
 
@@ -526,9 +567,10 @@ public:
 private:
     friend struct IPC::ArgumentCoder<DrawFilteredImageBuffer>;
 
-    const RefPtr<ImageBuffer> m_sourceImage;
+    Variant<RefPtr<ImageBuffer>, uint64_t> m_sourceImage;
     FloatRect m_sourceImageRect;
     const Ref<Filter> m_filter;
+    Vector<uint64_t> m_effectImageIndices;
 };
 
 class DrawGlyphs {
@@ -674,14 +716,35 @@ public:
     static constexpr ASCIILiteral name = "draw-image-buffer"_s;
 
     DrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
-        : m_imageBuffer(imageBuffer)
+        : m_imageBuffer(Ref { imageBuffer })
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
         , m_options(options)
     {
     }
 
-    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
+    DrawImageBuffer(uint64_t imageIndex, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
+        : m_imageBuffer(imageIndex)
+        , m_destinationRect(destRect)
+        , m_srcRect(srcRect)
+        , m_options(options)
+    {
+    }
+
+    ImageBuffer& imageBuffer() const
+    {
+        RELEASE_ASSERT(isResolved());
+        return std::get<Ref<ImageBuffer>>(m_imageBuffer);
+    }
+    void setImageBuffer(Ref<ImageBuffer>&& imageBuffer) { m_imageBuffer = WTF::move(imageBuffer); }
+    bool isResolved() const { return std::holds_alternative<Ref<ImageBuffer>>(m_imageBuffer); }
+
+    uint64_t imageIndex() const
+    {
+        RELEASE_ASSERT(!isResolved());
+        return std::get<uint64_t>(m_imageBuffer);
+    }
+
     FloatRect source() const { return m_srcRect; }
     FloatRect destinationRect() const { return m_destinationRect; }
     RasterDrawingOptions options() const { return m_options; }
@@ -690,7 +753,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<ImageBuffer> m_imageBuffer;
+    Variant<Ref<ImageBuffer>, uint64_t> m_imageBuffer;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     RasterDrawingOptions m_options;
@@ -701,14 +764,35 @@ public:
     static constexpr ASCIILiteral name = "draw-native-image"_s;
 
     DrawNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
-        : m_image(image)
+        : m_image(Ref { image })
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
         , m_options(options)
     {
     }
 
-    const NativeImage& nativeImage() const { return m_image; }
+    DrawNativeImage(uint64_t imageIndex, const FloatRect& destRect, const FloatRect& srcRect, RasterDrawingOptions options)
+        : m_image(imageIndex)
+        , m_destinationRect(destRect)
+        , m_srcRect(srcRect)
+        , m_options(options)
+    {
+    }
+
+    const NativeImage& nativeImage() const
+    {
+        RELEASE_ASSERT(isResolved());
+        return std::get<Ref<const NativeImage>>(m_image);
+    }
+    void setNativeImage(Ref<const NativeImage>&& image) { m_image = WTF::move(image); }
+    bool isResolved() const { return std::holds_alternative<Ref<const NativeImage>>(m_image); }
+
+    uint64_t imageIndex() const
+    {
+        RELEASE_ASSERT(!isResolved());
+        return std::get<uint64_t>(m_image);
+    }
+
     const FloatRect& destinationRect() const LIFETIME_BOUND { return m_destinationRect; }
     const FloatRect& source() const LIFETIME_BOUND { return m_srcRect; }
     RasterDrawingOptions options() const { return m_options; }
@@ -717,7 +801,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<const NativeImage> m_image;
+    Variant<Ref<const NativeImage>, uint64_t> m_image;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     RasterDrawingOptions m_options;
@@ -749,7 +833,7 @@ public:
     static constexpr ASCIILiteral name = "draw-pattern-nativeimage"_s;
 
     DrawPatternNativeImage(const NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
-        : m_image(image)
+        : m_image(Ref { image })
         , m_destination(destRect)
         , m_tileRect(tileRect)
         , m_patternTransform(patternTransform)
@@ -758,7 +842,32 @@ public:
         , m_options(options)
     {
     }
-    const NativeImage& nativeImage() const { return m_image; }
+
+    DrawPatternNativeImage(uint64_t imageIndex, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
+        : m_image(imageIndex)
+        , m_destination(destRect)
+        , m_tileRect(tileRect)
+        , m_patternTransform(patternTransform)
+        , m_phase(phase)
+        , m_spacing(spacing)
+        , m_options(options)
+    {
+    }
+
+    const NativeImage& nativeImage() const
+    {
+        RELEASE_ASSERT(isResolved());
+        return std::get<Ref<const NativeImage>>(m_image);
+    }
+    void setNativeImage(Ref<const NativeImage>&& image) { m_image = WTF::move(image); }
+    bool isResolved() const { return std::holds_alternative<Ref<const NativeImage>>(m_image); }
+
+    uint64_t imageIndex() const
+    {
+        RELEASE_ASSERT(!isResolved());
+        return std::get<uint64_t>(m_image);
+    }
+
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
     const AffineTransform& patternTransform() const LIFETIME_BOUND { return m_patternTransform; }
@@ -770,7 +879,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<const NativeImage> m_image;
+    Variant<Ref<const NativeImage>, uint64_t> m_image;
     FloatRect m_destination;
     FloatRect m_tileRect;
     AffineTransform m_patternTransform;
@@ -784,7 +893,7 @@ public:
     static constexpr ASCIILiteral name = "draw-pattern-imagebuffer"_s;
 
     DrawPatternImageBuffer(ImageBuffer& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
-        : m_imageBuffer(image)
+        : m_imageBuffer(Ref { image })
         , m_destination(destRect)
         , m_tileRect(tileRect)
         , m_patternTransform(patternTransform)
@@ -793,7 +902,32 @@ public:
         , m_options(options)
     {
     }
-    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
+
+    DrawPatternImageBuffer(uint64_t imageIndex, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions options)
+        : m_imageBuffer(imageIndex)
+        , m_destination(destRect)
+        , m_tileRect(tileRect)
+        , m_patternTransform(patternTransform)
+        , m_phase(phase)
+        , m_spacing(spacing)
+        , m_options(options)
+    {
+    }
+
+    ImageBuffer& imageBuffer() const
+    {
+        RELEASE_ASSERT(isResolved());
+        return std::get<Ref<ImageBuffer>>(m_imageBuffer);
+    }
+    void setImageBuffer(Ref<ImageBuffer>&& imageBuffer) { m_imageBuffer = WTF::move(imageBuffer); }
+    bool isResolved() const { return std::holds_alternative<Ref<ImageBuffer>>(m_imageBuffer); }
+
+    uint64_t imageIndex() const
+    {
+        RELEASE_ASSERT(!isResolved());
+        return std::get<uint64_t>(m_imageBuffer);
+    }
+
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
     const AffineTransform& patternTransform() const LIFETIME_BOUND { return m_patternTransform; }
@@ -805,7 +939,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<ImageBuffer> m_imageBuffer;
+    Variant<Ref<ImageBuffer>, uint64_t> m_imageBuffer;
     FloatRect m_destination;
     FloatRect m_tileRect;
     AffineTransform m_patternTransform;
@@ -929,8 +1063,8 @@ class DrawMeshGradient {
 public:
     static constexpr ASCIILiteral name = "draw-mesh-gradient"_s;
 
-    DrawMeshGradient(MeshGradient& gradient, const FloatRect& destination)
-        : m_gradient(gradient)
+    DrawMeshGradient(Ref<MeshGradient>&& gradient, const FloatRect& destination)
+        : m_gradient(WTF::move(gradient))
         , m_destination(destination)
     {
     }
@@ -942,6 +1076,8 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
+    friend struct IPC::ArgumentCoder<DrawMeshGradient>;
+
     const Ref<MeshGradient> m_gradient;
     FloatRect m_destination;
 };

@@ -35,10 +35,11 @@ class NativeImage;
 
 class WEBCORE_EXPORT SourceImage {
 public:
+    using ImageReference = Variant<RenderingResourceIdentifier, uint64_t>;
     using ImageVariant = Variant<
         Ref<NativeImage>,
         Ref<ImageBuffer>,
-        RenderingResourceIdentifier
+        ImageReference
     >;
 
     SourceImage(ImageVariant&&);
@@ -57,7 +58,9 @@ public:
     NODELETE ImageBuffer* imageBufferIfExists() const;
     ImageBuffer* imageBuffer() const;
 
-    RenderingResourceIdentifier imageIdentifier() const;
+    bool isResolved() const;
+    std::optional<uint64_t> imageIndex() const;
+    ImageReference imageReference() const;
     IntSize size() const;
 
 private:
