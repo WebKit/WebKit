@@ -1531,6 +1531,8 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/Scripts/webkit-sysprof', re.IGNORECASE),
         re.compile(rb'Source/WebKit/Scripts', re.IGNORECASE),
         re.compile(rb'metadata/contributors.json', re.IGNORECASE),
+        # Rendered by webkitpy.common.download_built_product, which has unit tests that check it.
+        re.compile(rb'Tools/CISupport/build-webkit-org/config-template.yaml', re.IGNORECASE),
     ]
 
     safer_cpp_path_regexes = [
