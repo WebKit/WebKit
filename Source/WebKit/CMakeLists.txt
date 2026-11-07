@@ -1111,8 +1111,10 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
 
     list(APPEND ${_output_source}
         ${WebKit_DERIVED_SOURCES_DIR}/MessageArgumentDescriptions.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp
     )
+    if (NOT WebKit_USE_PLATFORM_SUBTARGET)
+        list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp)
+    endif ()
 
     set(_messages_stage_dir ${WebKit_DERIVED_SOURCES_DIR}/.messages-stage)
     # copy_if_different (rather than copy_directory_if_different, which is unavailable on
