@@ -49,7 +49,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDispl
 {
     static const char* forceTimer = getenv("WEBKIT_FORCE_VBLANK_TIMER");
     if (!displayID || (forceTimer && strcmp(forceTimer, "0")))
-        return DisplayVBlankMonitorTimer::create();
+        return DisplayVBlankMonitorTimer::create(displayID);
 
 #if ENABLE(WPE_PLATFORM)
     if (WKWPE::isUsingWPEPlatformAPI()) {
@@ -57,7 +57,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDispl
             return monitor;
 
         RELEASE_LOG_FAULT(DisplayLink, "Failed to create WPE vblank monitor, falling back to timer");
-        return DisplayVBlankMonitorTimer::create();
+        return DisplayVBlankMonitorTimer::create(displayID);
     }
 #endif
 
@@ -67,7 +67,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDispl
     RELEASE_LOG_FAULT(DisplayLink, "Failed to create DRM vblank monitor, falling back to timer");
 #endif
 
-    return DisplayVBlankMonitorTimer::create();
+    return DisplayVBlankMonitorTimer::create(displayID);
 }
 IGNORE_CLANG_WARNINGS_END
 

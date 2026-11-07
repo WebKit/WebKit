@@ -27,16 +27,20 @@
 
 #include "DisplayVBlankMonitorThreaded.h"
 
+#include <chrono>
+
 namespace WebKit {
 
 class DisplayVBlankMonitorTimer final : public DisplayVBlankMonitorThreaded {
 public:
-    static std::unique_ptr<DisplayVBlankMonitor> create();
-    explicit DisplayVBlankMonitorTimer();
+    static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
+    explicit DisplayVBlankMonitorTimer(unsigned refreshRate);
 
 private:
     Type type() const override { return Type::Timer; }
     bool waitForVBlank() const override;
+
+    mutable std::chrono::steady_clock::time_point m_nextTick;
 };
 
 } // namespace WebKit
