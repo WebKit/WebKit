@@ -83,6 +83,7 @@
 #include "Logging.h"
 #include "NVShaderNoperspectiveInterpolation.h"
 #include "NativeImage.h"
+#include "Navigator.h"
 #include "NavigatorWebXR.h"
 #include "NotImplemented.h"
 #include "OESDrawBuffersIndexed.h"
@@ -3036,14 +3037,14 @@ bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(We
 void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promise)
 {
     // Returning an exception in these two checks is not part of the spec.
-    auto* canvas = htmlCanvas();
+    RefPtr canvas = htmlCanvas();
     if (!canvas) {
         m_attributes.xrCompatible = false;
         promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
-    auto* window = canvas->document().window();
+    RefPtr window = canvas->document().window();
     if (!window) {
         m_attributes.xrCompatible = false;
         promise.reject(Exception { ExceptionCode::InvalidStateError });
@@ -3052,7 +3053,7 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
 
     // 1. If the requesting document’s origin is not allowed to use the "xr-spatial-tracking"
     // permissions policy, resolve promise and return it.
-    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::XRSpatialTracking, canvas->document())) {
+    if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::XRSpatialTracking, protect(canvas->document()).get())) {
         promise.resolve();
         return;
     }
@@ -3060,17 +3061,17 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
     // 2. Let promise be a new Promise.
     // 3. Let context be the target WebGLRenderingContextBase object.
     // 4. Ensure an immersive XR device is selected.
-    auto& xrSystem = NavigatorWebXR::xr(window->navigator());
-    xrSystem.ensureImmersiveXRDeviceIsSelected([this, protectedThis = protect(*this), promise = WTF::move(promise), protectedXrSystem = protect(xrSystem)]() mutable {
+    Ref xrSystem = NavigatorWebXR::xr(protect(window->navigator()).get());
+    xrSystem->ensureImmersiveXRDeviceIsSelected([protectedThis = protect(*this), promise = WTF::move(promise), protectedXrSystem = xrSystem] mutable {
         auto rejectPromiseWithInvalidStateError = makeScopeExit([&]() {
-            m_attributes.xrCompatible = false;
+            protectedThis->m_attributes.xrCompatible = false;
             promise.reject(Exception { ExceptionCode::InvalidStateError });
         });
 
         // 4. Set context’s XR compatible boolean as follows:
         //    If context’s WebGL context lost flag is set
         //      Set context’s XR compatible boolean to false and reject promise with an InvalidStateError.
-        if (isContextLost())
+        if (protectedThis->isContextLost())
             return;
 
         // If the immersive XR device is null
@@ -3083,9 +3084,9 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
         //  Set context’s XR compatible boolean to true and resolve promise.
         // Otherwise: Queue a task on the WebGL task source to perform the following steps:
         // FIXME: add a way to verify that we're using a compatible graphics adapter.
-        if (!m_context->enableRequiredWebXRExtensions())
+        if (!protect(protectedThis->m_context)->enableRequiredWebXRExtensions())
             return;
-        m_attributes.xrCompatible = true;
+        protectedThis->m_attributes.xrCompatible = true;
         promise.resolve();
         rejectPromiseWithInvalidStateError.release();
     });

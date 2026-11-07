@@ -113,7 +113,7 @@ void PlatformXRSystem::ensureImmersiveSessionActivity()
     if (siteIsolationEnabled) {
         if (std::holds_alternative<Ref<ProcessActivityGroup>>(m_immersiveSessionActivity))
             return;
-        m_immersiveSessionActivity = page->activityGroupContext().foregroundProcessActivityGroup(activityName);
+        m_immersiveSessionActivity = protect(page->activityGroupContext())->foregroundProcessActivityGroup(activityName);
         return;
     }
 
@@ -187,23 +187,23 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& conne
         return;
     }
 
-    MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::Idle || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromWebContent, connection, completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::Idle || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromWebContent || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem, connection, completionHandler({ }));
     setImmersiveSessionState(ImmersiveSessionState::RequestingPermissions, [](bool) mutable { });
     m_immersiveSessionGrantedFeatures = std::nullopt;
 
     xrCoordinator->requestPermissionOnSessionFeatures(*page, securityOriginData, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested, [weakThis = WeakPtr { *this }, mode, securityOriginData, consentRequired, completionHandler = WTF::move(completionHandler)](std::optional<PlatformXR::Device::FeatureList>&& grantedFeatures) mutable {
         ASSERT(RunLoop::isMain());
-        auto* rawThis = weakThis.get();
-        if (rawThis && PlatformXR::isImmersive(mode)) {
+        RefPtr protectedThis = weakThis;
+        if (protectedThis && PlatformXR::isImmersive(mode)) {
             if (checkFeaturesConsent(consentRequired, grantedFeatures)) {
-                rawThis->m_immersiveSessionMode = mode;
-                rawThis->m_immersiveSessionGrantedFeatures = grantedFeatures;
-                rawThis->m_immersiveSessionSecurityOriginData = securityOriginData;
-                rawThis->setImmersiveSessionState(ImmersiveSessionState::PermissionsGranted, [grantedFeatures = WTF::move(grantedFeatures), completionHandler = WTF::move(completionHandler)](bool) mutable {
+                protectedThis->m_immersiveSessionMode = mode;
+                protectedThis->m_immersiveSessionGrantedFeatures = grantedFeatures;
+                protectedThis->m_immersiveSessionSecurityOriginData = securityOriginData;
+                protectedThis->setImmersiveSessionState(ImmersiveSessionState::PermissionsGranted, [grantedFeatures = WTF::move(grantedFeatures), completionHandler = WTF::move(completionHandler)](bool) mutable {
                     completionHandler(WTF::move(grantedFeatures));
                 });
             } else {
-                rawThis->invalidateImmersiveSessionState();
+                protectedThis->invalidateImmersiveSessionState();
                 completionHandler(WTF::move(grantedFeatures));
             }
         } else
@@ -246,7 +246,16 @@ void PlatformXRSystem::initializeTrackingAndRendering(IPC::Connection& connectio
 void PlatformXRSystem::shutDownTrackingAndRendering(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
-    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionRunning, connection);
+    if (m_immersiveSessionState != ImmersiveSessionState::SessionRunning) {
+        // The page can end the session while the system is ending it. This then crosses SessionDidEnd, which the
+        // web process won't answer with didCompleteShutdownTriggeredBySystem, so this is its answer.
+        RefPtr process = m_processCompletingShutdownTriggeredBySystem;
+        MESSAGE_CHECK(process && process->hasConnection(connection), connection);
+        m_processCompletingShutdownTriggeredBySystem = nullptr;
+        if (m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem)
+            setImmersiveSessionState(ImmersiveSessionState::Idle, [](bool) mutable { });
+        return;
+    }
 
     RefPtr page = m_page.get();
     if (!page)
@@ -254,6 +263,9 @@ void PlatformXRSystem::shutDownTrackingAndRendering(IPC::Connection& connection)
 
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
         xrCoordinator->endSessionIfExists(*page);
+    // A coordinator can end the session synchronously and send SessionDidEnd, which this process won't answer.
+    if (RefPtr process = m_processCompletingShutdownTriggeredBySystem; process && process->hasConnection(connection))
+        m_processCompletingShutdownTriggeredBySystem = nullptr;
     setImmersiveSessionState(ImmersiveSessionState::SessionEndingFromWebContent, [](bool) mutable { });
 }
 
@@ -385,7 +397,13 @@ void PlatformXRSystem::deleteTransientInputHitTestSource(PlatformXR::TransientIn
 void PlatformXRSystem::didCompleteShutdownTriggeredBySystem(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
-    MESSAGE_CHECK(m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem, connection);
+    // This answers the SessionDidEnd sent by sessionDidEnd(), so only the process it was sent to can send it, once.
+    RefPtr process = m_processCompletingShutdownTriggeredBySystem;
+    MESSAGE_CHECK(process && process->hasConnection(connection), connection);
+    m_processCompletingShutdownTriggeredBySystem = nullptr;
+    // The page can request a new session before this arrives, which moves the state on.
+    if (m_immersiveSessionState != ImmersiveSessionState::SessionEndingFromSystem)
+        return;
     setImmersiveSessionState(ImmersiveSessionState::Idle, [](bool) mutable { });
 }
 
@@ -401,6 +419,9 @@ void PlatformXRSystem::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
             return;
 
         protectedThis->sendToImmersiveSessionProcess(Messages::PlatformXRSystemProxy::SessionDidEnd(deviceIdentifier));
+        // Unless the web process ended the session itself, it answers with didCompleteShutdownTriggeredBySystem.
+        if (protectedThis->m_immersiveSessionProcess && protectedThis->m_immersiveSessionState != ImmersiveSessionState::SessionEndingFromWebContent)
+            protectedThis->m_processCompletingShutdownTriggeredBySystem = protectedThis->m_immersiveSessionProcess;
         protectedThis->m_immersiveSessionActivity = { };
         // If this is called when the session is running, the ending of the session is triggered by the system side
         // and we should set the state to SessionEndingFromSystem. We expect the web process to send a
@@ -469,8 +490,10 @@ void PlatformXRSystem::setImmersiveSessionState(ImmersiveSessionState state, Com
     case ImmersiveSessionState::Idle:
     case ImmersiveSessionState::RequestingPermissions:
         break;
-    case ImmersiveSessionState::PermissionsGranted:
-        return GPUProcessProxy::getOrCreate()->webXRPromptAccepted(page->ensureRunningProcess().processIdentity(), WTF::move(completion));
+    case ImmersiveSessionState::PermissionsGranted: {
+        Ref gpuProcess = GPUProcessProxy::getOrCreate();
+        return gpuProcess->webXRPromptAccepted(protect(page->ensureRunningProcess())->processIdentity(), WTF::move(completion));
+    }
     case ImmersiveSessionState::SessionRunning:
     case ImmersiveSessionState::SessionEndingFromWebContent:
     case ImmersiveSessionState::SessionEndingFromSystem:
