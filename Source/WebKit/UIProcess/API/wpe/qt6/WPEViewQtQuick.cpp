@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Igalia S.L.
+ * Copyright (C) 2026 Savoir-faire Linux, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +41,7 @@
 #include <QSGTexture>
 #include <QCursor>
 
+#include <QHash>
 #include <string_view>
 
 /**
@@ -58,6 +60,8 @@ struct _WPEViewQtQuickPrivate {
     // Event handling
     bool isHovering;
     std::optional<QPointF> lastMousePosition;
+    QHash<int, QPointF> activeTouchPoints;
+    QHash<int, QPointF> activeTouchpadPoints;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewQtQuick, wpe_view_qtquick, WPE_TYPE_VIEW, WPEView)
 
@@ -413,28 +417,91 @@ void wpe_view_dispatch_key_release_event(WPEViewQtQuick *view, QKeyEvent *event)
 // Touch events
 void wpe_view_dispatch_touch_event(WPEViewQtQuick *view, QTouchEvent *event)
 {
-    WPEEventType eventType = WPE_EVENT_NONE;
-    switch (event->type()) {
-    case QEvent::TouchBegin:
-        eventType = WPE_EVENT_TOUCH_DOWN;
-        break;
-    case QEvent::TouchUpdate:
-        eventType = WPE_EVENT_TOUCH_MOVE;
-        break;
-    case QEvent::TouchEnd:
-        eventType = WPE_EVENT_TOUCH_UP;
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
+    auto* device = event->device();
+    if (!device)
+        return;
 
     auto modifiers = static_cast<WPEModifiers>(keyboardModifiersFromEvent(event));
-    for (auto& point : event->points()) {
+    if (device->type() == QInputDevice::DeviceType::TouchPad) {
+        if (event->type() == QEvent::TouchCancel) {
+            for (auto it = view->priv->activeTouchpadPoints.cbegin(); it != view->priv->activeTouchpadPoints.cend(); ++it) {
+                auto position = it.value();
+                auto* wpeEvent = wpe_event_touch_new(WPE_EVENT_TOUCH_CANCEL, WPE_VIEW(view), WPE_INPUT_SOURCE_TOUCHPAD, event->timestamp(), modifiers, it.key(), position.x(), position.y());
+                wpe_view_event(WPE_VIEW(view), wpeEvent);
+                wpe_event_unref(wpeEvent);
+            }
+            view->priv->activeTouchpadPoints.clear();
+            return;
+        }
+
+        for (const auto& point : event->points()) {
+            WPEEventType eventType = WPE_EVENT_NONE;
+            switch (point.state()) {
+            case QEventPoint::State::Pressed:
+                eventType = WPE_EVENT_TOUCH_DOWN;
+                break;
+            case QEventPoint::State::Updated:
+                eventType = WPE_EVENT_TOUCH_MOVE;
+                break;
+            case QEventPoint::State::Released:
+                eventType = WPE_EVENT_TOUCH_UP;
+                break;
+            default:
+                continue;
+            }
+
+            auto position = point.position();
+            auto* wpeEvent = wpe_event_touch_new(eventType, WPE_VIEW(view), WPE_INPUT_SOURCE_TOUCHPAD, event->timestamp(), modifiers, point.id(), position.x(), position.y());
+            wpe_view_event(WPE_VIEW(view), wpeEvent);
+            wpe_event_unref(wpeEvent);
+
+            if (point.state() == QEventPoint::State::Released)
+                view->priv->activeTouchpadPoints.remove(point.id());
+            else
+                view->priv->activeTouchpadPoints.insert(point.id(), position);
+        }
+        return;
+    }
+
+    if (device->type() != QInputDevice::DeviceType::TouchScreen)
+        return;
+
+    // TouchCancel has no points, so handle it before checking for points.
+    if (event->type() == QEvent::TouchCancel) {
+        for (auto it = view->priv->activeTouchPoints.cbegin(); it != view->priv->activeTouchPoints.cend(); ++it) {
+            auto position = it.value();
+            auto* wpeEvent = wpe_event_touch_new(WPE_EVENT_TOUCH_CANCEL, WPE_VIEW(view), WPE_INPUT_SOURCE_TOUCHSCREEN, event->timestamp(), modifiers, it.key(), position.x(), position.y());
+            wpe_view_event(WPE_VIEW(view), wpeEvent);
+            wpe_event_unref(wpeEvent);
+        }
+        view->priv->activeTouchPoints.clear();
+        return;
+    }
+
+    for (const auto& point : event->points()) {
+        WPEEventType eventType = WPE_EVENT_NONE;
+        switch (point.state()) {
+        case QEventPoint::State::Pressed:
+            eventType = WPE_EVENT_TOUCH_DOWN;
+            break;
+        case QEventPoint::State::Updated:
+            eventType = WPE_EVENT_TOUCH_MOVE;
+            break;
+        case QEventPoint::State::Released:
+            eventType = WPE_EVENT_TOUCH_UP;
+            break;
+        default:
+            continue;
+        }
+
         auto position = point.position();
-        auto* wpeEvent = wpe_event_touch_new(eventType, WPE_VIEW(view), WPE_INPUT_SOURCE_TOUCHPAD, event->timestamp(),
-            modifiers, point.id(), position.x(), position.y());
+        auto* wpeEvent = wpe_event_touch_new(eventType, WPE_VIEW(view), WPE_INPUT_SOURCE_TOUCHSCREEN, event->timestamp(), modifiers, point.id(), position.x(), position.y());
         wpe_view_event(WPE_VIEW(view), wpeEvent);
         wpe_event_unref(wpeEvent);
-    }
+
+        if (point.state() == QEventPoint::State::Released)
+            view->priv->activeTouchPoints.remove(point.id());
+        else
+            view->priv->activeTouchPoints.insert(point.id(), position);
+     }
 }
