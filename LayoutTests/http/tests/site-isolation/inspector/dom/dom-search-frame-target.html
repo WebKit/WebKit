@@ -11,7 +11,10 @@ function test() {
     // Assembled at runtime so this script's own text never matches. Never log it: test output is
     // appended to this page's DOM, which the page target searches.
     const needle = ["global", "search", "needle"].join("-");
-    const expectedMatchCount = 6;
+    const expectedMatchCount = 8;
+    const unloadedOwnerFrameSubstring = "//localhost:8000/site-isolation/inspector/dom/resources/dom-search-unloaded-owner-frame.html";
+    const chainOuterFrameSubstring = "//localhost:8000/site-isolation/inspector/dom/resources/dom-search-chain-outer-frame.html";
+    const chainInnerFrameSubstring = "//127.0.0.1:8000/site-isolation/inspector/dom/resources/dom-search-chain-inner-frame.html";
 
     // Same polling as frame-document-splicing-frame-target.html, plus an execution context, which the
     // deduplication in WI.DOMManager.performSearch keys on.
@@ -48,6 +51,9 @@ function test() {
                 ["cross-origin frame", "//localhost:8000/site-isolation/inspector/dom/resources/dom-search-cross-origin-frame.html"],
                 ["same-site nested frame", "//localhost:8000/site-isolation/inspector/dom/resources/dom-search-nested-frame.html"],
                 ["main-site nested frame", "//127.0.0.1:8000/site-isolation/inspector/dom/resources/dom-search-nested-frame.html"],
+                ["unloaded-owner frame", unloadedOwnerFrameSubstring],
+                ["chain outer frame", chainOuterFrameSubstring],
+                ["chain inner frame", chainInnerFrameSubstring],
             ])
                 InspectorTest.expectNotNull(await frameTargetWhenReady(substring), `Should find the ${label} target.`);
         }
@@ -60,6 +66,74 @@ function test() {
             let nodes = await WI.domManager.performSearch(needle);
             InspectorTest.expectEqual(nodes.length, expectedMatchCount, "Should find every match.");
             logMatches(nodes);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.Root",
+        description: "With a root, as for a DOM tree outline, every match should be under it and in tree order. Frame documents whose owner elements were never loaded should be spliced in by the search, also when the owner is in another such frame document that has no match.",
+        async test() {
+            let pageDocument = await WI.domManager.requestDocument();
+            let frameDocumentForURL = async (substring) => WI.domManager.frameTargetDocumentForTarget(await frameTargetWhenReady(substring));
+            let unloadedOwnerDocument = await frameDocumentForURL(unloadedOwnerFrameSubstring);
+            let chainOuterDocument = await frameDocumentForURL(chainOuterFrameSubstring);
+            let chainInnerDocument = await frameDocumentForURL(chainInnerFrameSubstring);
+            InspectorTest.expectFalse(pageDocument.isAncestor(unloadedOwnerDocument), "The unloaded-owner frame document should not be in the page tree before the search.");
+            InspectorTest.expectFalse(pageDocument.isAncestor(chainOuterDocument), "The chain outer frame document should not be in the page tree before the search.");
+            InspectorTest.expectFalse(pageDocument.isAncestor(chainInnerDocument), "The chain inner frame document should not be in the page tree before the search.");
+
+            let nodes = await WI.domManager.performSearch(needle, {root: pageDocument});
+            InspectorTest.expectEqual(nodes.length, expectedMatchCount, "Should find every match.");
+            InspectorTest.expectThat(nodes.every((node) => pageDocument.isAncestor(node)), "Every match should be under the root.");
+            InspectorTest.expectThat(pageDocument.isAncestor(unloadedOwnerDocument), "The unloaded-owner frame document should be in the page tree after the search.");
+            InspectorTest.expectThat(pageDocument.isAncestor(chainInnerDocument), "The chain inner frame document should be in the page tree after the search.");
+
+            InspectorTest.log("Matches in tree order:");
+            for (let node of nodes)
+                InspectorTest.log(describeMatch(node));
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.RootSkipsUnsplicedFrameDocument",
+        description: "A tree outline cannot reveal a match in a frame document that is not spliced into its tree, so a search with a root should not count it.",
+        async test() {
+            let pageDocument = await WI.domManager.requestDocument();
+            let target = await frameTargetWhenReady(unloadedOwnerFrameSubstring);
+            let frameDocument = WI.domManager.frameTargetDocumentForTarget(target);
+
+            // Loads the owner element, so asking for it again later does not splice the document back.
+            await WI.domManager.performSearch(needle, {root: pageDocument});
+            InspectorTest.expectThat(pageDocument.isAncestor(frameDocument), "The frame document should be spliced after a search with a root.");
+
+            // Stands in for a frame document whose owner element never arrives.
+            WI.domManager._unspliceFrameDocument(frameDocument);
+            try {
+                let nodes = await WI.domManager.performSearch(needle, {root: pageDocument});
+                InspectorTest.expectEqual(nodes.length, expectedMatchCount - 1, "Should find every match except the one in the unspliced frame document.");
+                InspectorTest.expectFalse(nodes.some((node) => node.owningTarget === target), "Should not report a node of the unspliced frame document.");
+                InspectorTest.expectEqual((await WI.domManager.performSearch(needle)).length, expectedMatchCount, "A search without a root should still report it.");
+            } finally {
+                WI.domManager._trySpliceUnsplicedFrameDocuments();
+            }
+            InspectorTest.expectThat(pageDocument.isAncestor(frameDocument), "The frame document should be spliced again.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Search.IndependentOwners",
+        description: "A search should only replace an earlier search of the same owner, so that the Search tab and a DOM tree's find banner do not cancel each other.",
+        async test() {
+            let firstOwner = {};
+            let secondOwner = {};
+            let replacedSearch = WI.domManager.performSearch(needle, {owner: firstOwner});
+            let otherOwnerSearch = WI.domManager.performSearch(needle, {owner: secondOwner});
+            let newerSearch = WI.domManager.performSearch(needle, {owner: firstOwner});
+            InspectorTest.expectNull(await replacedSearch, "The replaced search should resolve to null.");
+            InspectorTest.expectEqual((await otherOwnerSearch)?.length, expectedMatchCount, "The search of the other owner should find every match.");
+            InspectorTest.expectEqual((await newerSearch)?.length, expectedMatchCount, "The newer search should find every match.");
+            WI.domManager.discardSearchResults(firstOwner);
+            WI.domManager.discardSearchResults(secondOwner);
         }
     });
 
@@ -101,9 +175,11 @@ function test() {
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests that WI.DOMManager.performSearch searches cross-origin frame targets under site isolation and reports each match once.</p>
+<p>Tests that WI.DOMManager.performSearch searches cross-origin frame targets under site isolation and reports each match once. With a root, it reports the matches a DOM tree outline can reveal, in tree order.</p>
 <div data-search="global-search-needle"></div>
 <iframe src="resources/dom-search-same-origin-frame.html"></iframe>
 <iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-search-cross-origin-frame.html"></iframe>
+<div><div><iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-search-unloaded-owner-frame.html"></iframe></div></div>
+<div><div><iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-search-chain-outer-frame.html"></iframe></div></div>
 </body>
 </html>
