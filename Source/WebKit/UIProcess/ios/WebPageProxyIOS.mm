@@ -283,7 +283,7 @@ void WebPageProxy::setDeviceOrientation(IntDegrees deviceOrientation)
     });
 
     // Update device orientation for all web processes
-    forEachWebContentProcess([deviceOrientation](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([deviceOrientation](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetDeviceOrientation(deviceOrientation), pageID);
     });
 }
@@ -1109,9 +1109,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
 {
     m_contentSizeCategory = contentSizeCategory;
-    if (RefPtr provisionalPage = m_provisionalPage)
-        provisionalPage->send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory));
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory), pageID);
     });
 }
@@ -1196,7 +1194,7 @@ void WebPageProxy::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState har
         pageClient->hardwareKeyboardAvailabilityChanged();
 
     updateCurrentModifierState();
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(hardwareKeyboardState), pageID);
     });
 }
@@ -1644,7 +1642,7 @@ void WebPageProxy::setScreenIsBeingCaptured(bool captured)
     if (!hasRunningProcess())
         return;
 
-    forEachWebContentProcess([&](auto& process, auto pageID) {
+    forEachWebContentProcessIncludingProvisionalPage([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetScreenIsBeingCaptured(captured), pageID);
     });
 }
