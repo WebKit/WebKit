@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +39,7 @@
 namespace WebCore {
 
 struct RTCIceCandidateInit;
+struct RTCLocalIceCandidateInit;
 template<typename> class ExceptionOr;
 
 class RTCIceCandidate final : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
@@ -45,7 +47,7 @@ class RTCIceCandidate final : public RefCounted<RTCIceCandidate>, public ScriptW
 public:
     using Fields = RTCIceCandidateFields;
 
-    static ExceptionOr<Ref<RTCIceCandidate>> create(const RTCIceCandidateInit&);
+    static ExceptionOr<Ref<RTCIceCandidate>> create(const RTCLocalIceCandidateInit&);
     static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
     static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Fields&& fields) { return adoptRef(*new RTCIceCandidate(candidate, sdpMid, { }, WTF::move(fields))); }
 
@@ -65,6 +67,8 @@ public:
     std::optional<unsigned short> relatedPort() const { return m_fields.relatedPort; }
 
     String usernameFragment() const { return m_fields.usernameFragment; }
+    std::optional<RTCIceServerTransportProtocol> relayProtocol() const { return m_fields.relayProtocol; }
+    String url() const { return m_fields.url; }
     RTCIceCandidateInit toJSON() const;
 
 private:
