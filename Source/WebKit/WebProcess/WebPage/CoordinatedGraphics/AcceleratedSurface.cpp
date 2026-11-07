@@ -205,6 +205,7 @@ AcceleratedSurface::RenderTargetShareableBuffer::~RenderTargetShareableBuffer()
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidDestroyBuffer(m_id), m_surface->surfaceID());
 }
 
+#if USE(GBM)
 void AcceleratedSurface::RenderTargetShareableBuffer::initializeColorBuffer(EGLImage image)
 {
     glGenRenderbuffers(1, &m_colorBuffer);
@@ -217,6 +218,7 @@ void AcceleratedSurface::RenderTargetShareableBuffer::initializeColorBuffer(EGLI
 
     createSkiaSurfaceForFramebuffer(m_fbo);
 }
+#endif
 
 void AcceleratedSurface::RenderTargetShareableBuffer::sendFrame(Vector<WebCore::IntRect, 1>&& damageRects)
 {
@@ -416,9 +418,11 @@ AcceleratedSurface::RenderTargetSHMImage::RenderTargetSHMImage(AcceleratedSurfac
     : RenderTargetShareableBuffer(surface, size)
     , m_bitmap(WTF::move(bitmap))
 {
-    if (m_surface->usesGL())
+    if (m_surface->usesGL()) {
+#if USE(GBM)
         initializeColorBuffer();
-    else
+#endif
+    } else
         m_skiaSurface = m_bitmap->createSurface();
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateSHMBuffer(m_id, WTF::move(bitmapHandle)), m_surface->surfaceID());

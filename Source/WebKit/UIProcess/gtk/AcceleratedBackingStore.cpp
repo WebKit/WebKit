@@ -414,8 +414,9 @@ void AcceleratedBackingStore::BufferDMABuf::release()
     m_texture = nullptr;
     didRelease();
 }
-#endif
+#endif // GTK_CHECK_VERSION(4, 13, 4)
 
+#if USE(GBM)
 RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferEGLImage::create(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes)
 {
     auto* glDisplay = Display::singleton().glDisplay();
@@ -448,10 +449,11 @@ AcceleratedBackingStore::BufferEGLImage::~BufferEGLImage()
         gdk_gl_context_make_current(m_gdkGLContext.get());
         glDeleteTextures(1, &m_textureID);
     }
-#endif
+#endif // !USE(GTK4)
 }
+#endif // USE(GBM)
 
-#if USE(GTK4)
+#if USE(GBM) && USE(GTK4)
 struct Texture {
     Texture()
         : context(gdk_gl_context_get_current())
@@ -474,19 +476,19 @@ struct Texture {
     unsigned id { 0 };
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(Texture)
+#endif
 
+#if USE(GBM)
 void AcceleratedBackingStore::BufferEGLImage::didUpdateContents(Buffer*, const Rects&)
 {
+#if USE(GTK4)
     auto* texture = createTexture();
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
 
     m_texture = adoptGRef(gdk_gl_texture_new(texture->context.get(), texture->id, m_size.width(), m_size.height(), [](gpointer userData) {
         destroyTexture(static_cast<Texture*>(userData));
     }, texture));
-}
 #else
-void AcceleratedBackingStore::BufferEGLImage::didUpdateContents(Buffer*, const Rects&)
-{
     if (m_textureID)
         return;
 
@@ -498,8 +500,8 @@ void AcceleratedBackingStore::BufferEGLImage::didUpdateContents(Buffer*, const R
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
-}
 #endif
+}
 
 RendererBufferDescription AcceleratedBackingStore::BufferEGLImage::description() const
 {
@@ -522,6 +524,7 @@ void AcceleratedBackingStore::BufferEGLImage::release()
 #endif
     didRelease();
 }
+#endif
 
 #if USE(GBM)
 RefPtr<AcceleratedBackingStore::Buffer> AcceleratedBackingStore::BufferGBM::create(WebPageProxy& webPage, RendererBufferIdentifier id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, uint32_t format, UnixFileDescriptor&& fd, uint32_t stride)
@@ -751,9 +754,9 @@ void AcceleratedBackingStore::didCreateDMABufBuffer(RendererBufferIdentifier id,
     if (!webPage)
         return;
 
+#if USE(GBM)
     auto size = dmaBufAttributes.size;
 
-#if USE(GBM)
     if (!Display::singleton().glDisplayIsSharedWithGtk()) {
         ASSERT(dmaBufAttributes.fds.size() == 1 && dmaBufAttributes.strides.size() == 1);
         if (RefPtr buffer = BufferGBM::create(*webPage, id, m_surfaceID, size, usage, dmaBufAttributes.fourcc.value, WTF::move(dmaBufAttributes.fds[0]), dmaBufAttributes.strides[0]))
@@ -769,8 +772,10 @@ void AcceleratedBackingStore::didCreateDMABufBuffer(RendererBufferIdentifier id,
     }
 #endif
 
+#if USE(GBM)
     if (RefPtr buffer = BufferEGLImage::create(*webPage, id, m_surfaceID, size, usage, WTF::move(dmaBufAttributes)))
         m_buffers.add(id, WTF::move(buffer));
+#endif
 }
 
 void AcceleratedBackingStore::didCreateSHMBuffer(RendererBufferIdentifier id, ShareableBitmap::Handle&& handle)
