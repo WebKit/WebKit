@@ -289,7 +289,7 @@ extension AppKitGesturesTests.SiteIsolation {
             try #require(events.contains("click") == expectsClick, "crossSite: \(crossSite), events in the iframe: \(events)")
 
             try await waitForCondition("The bounds of the element whose click was handled as hover are set") {
-                await page.hoverActivatedByClickBounds != .zero
+                page.hoverActivatedByClickBounds != .zero
             }
 
             let expectedBounds = elementRectInIframe.offsetBy(dx: iframeRect.minX, dy: iframeRect.minY + Self.topInset)

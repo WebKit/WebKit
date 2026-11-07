@@ -98,6 +98,7 @@ set(WEBKIT_SWIFT_FATAL_DIAGNOSTIC_FLAGS
     "-Werror ExistentialAny"
     "-Werror NoUsage"
     "-Werror NoUseUnstructuredThrowingTask"
+    "-Werror UnnecessaryEffectMarker"
     "-Werror UnusedImportAccess"
     "-Werror VariableNeverMutated"
     ${WEBKIT_SWIFT_MEMORY_SAFETY_ERROR_FLAGS}

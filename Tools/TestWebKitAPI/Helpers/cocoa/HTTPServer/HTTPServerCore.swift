@@ -303,7 +303,7 @@ extension HTTPServerCore {
         NWProtocolHTTP.Options()
         #else
         // swift-format-ignore: NeverForceUnwrap
-        unsafe NWProtocolOptions.__fromNW(nw_http_messaging_create_options())!
+        NWProtocolOptions.__fromNW(nw_http_messaging_create_options())!
         #endif
     }
     #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING

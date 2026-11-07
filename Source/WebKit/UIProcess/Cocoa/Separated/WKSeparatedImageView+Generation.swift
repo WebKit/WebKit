@@ -35,7 +35,7 @@ extension WKSeparatedImageView {
             self.spatial3DImage = cachedData.spatial3DImage
             self.desiredViewingModeSpatial = cachedData.desiredViewingModeSpatial
             return Task { [weak self] in
-                try self?.preparePortalEntity()
+                self?.preparePortalEntity()
             }
         }
 
