@@ -34,7 +34,7 @@ function test()
 
     suite.addTestCase({
         name: "Timeline.CrossOriginNavigation.ProvisionalPageTarget",
-        description: "Check that a capture records from the page target created by a cross-origin navigation, and stops after the previous page target is removed.",
+        description: "Check that a capture records from the page created by a cross-origin navigation, and stops after the previous page target is removed.",
         async test() {
             let previousPageTarget = WI.mainTarget;
 
@@ -62,12 +62,15 @@ function test()
             InspectorTest.expectEqual(WI.mainTarget, provisionalPageTarget, "The page target created by the navigation should be the main target.");
             InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Active, "Capturing should still be active after the previous page target is removed.");
 
+            // Under Site Isolation, records for the page's document come from its main frame target.
+            let mainFrameTarget = InspectorTest.mainFrameTarget;
+
             let scriptTimeline = WI.timelineManager.activeRecording.timelines.get(WI.TimelineRecord.Type.Script);
             await Promise.all([
-                awaitEventMatching(scriptTimeline, WI.Timeline.Event.RecordAdded, (event) => event.data.record.eventType === WI.ScriptTimelineRecord.EventType.TimerFired && event.data.record.target === provisionalPageTarget),
+                awaitEventMatching(scriptTimeline, WI.Timeline.Event.RecordAdded, (event) => event.data.record.eventType === WI.ScriptTimelineRecord.EventType.TimerFired && event.data.record.target === mainFrameTarget),
                 InspectorTest.evaluateInPage(`fireTimerInPage()`),
             ]);
-            InspectorTest.pass("Recorded a timer from the page target created by the navigation.");
+            InspectorTest.pass("Recorded a timer from the page created by the navigation.");
 
             let inactivePromise = awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
             WI.timelineManager.stopCapturing();

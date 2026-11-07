@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame(url)
+{
+    iframe = document.createElement("iframe");
+    iframe.src = url;
+    document.body.appendChild(iframe);
+}
+
+function removeIFrame()
+{
+    iframe.remove();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.ProvisionalFrameTargetRemovedDuringRecording");
+
+    let mainFrameTarget = InspectorTest.mainFrameTarget;
+
+    function awaitTargetEvent(eventType, predicate) {
+        return new Promise((resolve) => {
+            let listener = WI.targetManager.addEventListener(eventType, (event) => {
+                let {target} = event.data;
+                if (!predicate(target))
+                    return;
+
+                WI.targetManager.removeEventListener(eventType, listener);
+                resolve(target);
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.ProvisionalFrameTargetRemovedDuringRecording",
+        description: "Stopping a recording should finish when an iframe whose cross-origin load never commits is removed.",
+        async test() {
+            // Only the Timeline domain is recorded, so once the page target and the main frame target have stopped
+            // it, capturing can only be waiting for the provisional frame target.
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Layout];
+
+            await FrameTimelineTest.startCapturing([WI.mainTarget, mainFrameTarget]);
+
+            // The response is delayed for longer than this test runs, so the load stays provisional.
+            let provisionalTargetPromise = awaitTargetEvent(WI.TargetManager.Event.TargetAdded, (target) => target.type === WI.TargetType.Frame && target.isProvisional);
+            let url = "http://localhost:8000/site-isolation/resources/delayed-response.py?" + Math.random();
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, `addCrossOriginIFrame("${url}")`);
+            let provisionalTarget = await provisionalTargetPromise;
+            InspectorTest.pass("Added a provisional frame target for the cross-origin load.");
+
+            let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            WI.timelineManager.stopCapturing();
+            await Promise.all([WI.mainTarget, mainFrameTarget].map((target) => FrameTimelineTest.awaitTrackingEvent("capturingStopped", target)));
+            InspectorTest.expectEqual(WI.timelineManager.capturingState, WI.TimelineManager.CapturingState.Stopping, "Capturing should wait for the provisional frame target.");
+
+            let provisionalTargetRemovedPromise = awaitTargetEvent(WI.TargetManager.Event.TargetRemoved, (target) => target === provisionalTarget);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "removeIFrame()");
+            await provisionalTargetRemovedPromise;
+            InspectorTest.pass("The provisional frame target was removed.");
+
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, a Timeline recording can stop when it is waiting for a provisional frame target that is removed before it commits.</p>
+</body>

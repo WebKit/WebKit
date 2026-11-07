@@ -10,6 +10,8 @@ PASS: Page target should report that ScriptProfiler stopped before capturing sto
 PASS: Worker target should report that Timeline stopped before capturing stops.
 PASS: Worker target should report that ScriptProfiler stopped before capturing stops.
 PASS: Every domain that started tracking on a target that still exists should report that it stopped before capturing stops.
+PASS: The Script timeline should include the target of the page's records.
+PASS: The Script timeline should include the Worker target.
 
 -- Running test case: Timeline.MultipleTargets.WorkerCreatedDuringCapture
 PASS: Recorded a timer from the Worker created during the capture.

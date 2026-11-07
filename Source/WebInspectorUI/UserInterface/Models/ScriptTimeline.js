@@ -48,6 +48,16 @@ WI.ScriptTimeline = class ScriptTimeline extends WI.Timeline
         super.reset(suppressEvents);
     }
 
+    addRecord(record, options = {})
+    {
+        // Samples arrive only when the recording stops, and some targets have none, so add a target on its first
+        // record too.
+        if (!this._callingContextTreesForTarget.has(record.target))
+            this._addTarget(record.target);
+
+        super.addRecord(record, options);
+    }
+
     refresh()
     {
         this.dispatchEventToListeners(WI.Timeline.Event.Refresh);
@@ -64,11 +74,7 @@ WI.ScriptTimeline = class ScriptTimeline extends WI.Timeline
 
         let callingContextTrees = this._callingContextTreesForTarget.getOrInsertComputed(target, () => {
             targetAdded = true;
-
-            let callingContextTrees = {};
-            for (const type of Object.values(WI.CallingContextTree.Type))
-                callingContextTrees[type] = new WI.CallingContextTree(target, type);
-            return callingContextTrees;
+            return this._createCallingContextTrees(target);
         });
 
         for (let i = 0; i < stackTraces.length; i++) {
@@ -78,6 +84,24 @@ WI.ScriptTimeline = class ScriptTimeline extends WI.Timeline
 
         if (targetAdded)
             this.dispatchEventToListeners(WI.ScriptTimeline.Event.TargetAdded, {target});
+    }
+
+    // Private
+
+    _createCallingContextTrees(target)
+    {
+        let callingContextTrees = {};
+        for (const type of Object.values(WI.CallingContextTree.Type))
+            callingContextTrees[type] = new WI.CallingContextTree(target, type);
+        return callingContextTrees;
+    }
+
+    _addTarget(target)
+    {
+        console.assert(!this._callingContextTreesForTarget.has(target), target);
+
+        this._callingContextTreesForTarget.set(target, this._createCallingContextTrees(target));
+        this.dispatchEventToListeners(WI.ScriptTimeline.Event.TargetAdded, {target});
     }
 };
 

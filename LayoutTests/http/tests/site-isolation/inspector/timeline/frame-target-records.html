@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/timeline-events.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.FrameTargetRecords");
+
+    let mainFrameTarget;
+    let iframeTarget;
+
+    function targetDescription(target) {
+        if (target === mainFrameTarget)
+            return "main frame target";
+        if (target === iframeTarget)
+            return "cross-origin iframe target";
+        if (target === WI.mainTarget)
+            return "page target";
+        return "unknown target";
+    }
+
+    function expectRecordInRecording(record, startTime, endTime) {
+        let description = targetDescription(record.target);
+        InspectorTest.expectThat(record.startTime > 0, `Record from the ${description} should have a non-zero start time.`);
+        InspectorTest.expectThat(startTime <= record.startTime && record.endTime <= endTime, `Record from the ${description} should be within the recording.`);
+    }
+
+    function expectNoScriptRecordsFromPageTarget(recording) {
+        let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+        // Garbage collections are reported by the page target's Heap domain.
+        let pageTargetRecords = scriptTimeline.records.filter((record) => record.target === WI.mainTarget && record.eventType !== WI.ScriptTimelineRecord.EventType.GarbageCollected);
+        InspectorTest.expectEqual(pageTargetRecords.length, 0, "No script records other than garbage collections should come from the page target.");
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetRecords.Domain",
+        description: "Frame targets should have the Timeline domain, but not auto-capture.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("timeline-frame.html");
+            InspectorTest.expectNotNull(iframeTarget, "Should find the cross-origin iframe target.");
+            InspectorTest.expectNotEqual(iframeTarget, mainFrameTarget, "The cross-origin iframe target should not be the main frame target.");
+
+            for (let target of [mainFrameTarget, iframeTarget]) {
+                let description = targetDescription(target);
+                InspectorTest.expectThat(target.hasDomain("Timeline"), `The ${description} should have the Timeline domain.`);
+                InspectorTest.expectFalse(target.hasCommand("Timeline.setAutoCaptureEnabled"), `The ${description} should not have Timeline.setAutoCaptureEnabled.`);
+            }
+            InspectorTest.expectThat(WI.mainTarget.hasCommand("Timeline.setAutoCaptureEnabled"), "The page target should still have Timeline.setAutoCaptureEnabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetRecords.Timers",
+        description: "Timers in the main frame and the cross-origin iframe should be recorded by their own frame targets, and the recording should stop once both have stopped.",
+        async test() {
+            await FrameTimelineTest.startCapturing([mainFrameTarget, iframeTarget]);
+            InspectorTest.pass("Both frame targets started tracking.");
+
+            let recording = WI.timelineManager.activeRecording;
+            let mainFrameRecordPromise = FrameTimelineTest.awaitScriptRecord(mainFrameTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            let iframeRecordPromise = FrameTimelineTest.awaitScriptRecord(iframeTarget, WI.ScriptTimelineRecord.EventType.TimerFired);
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "fireTimer()");
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "fireTimer()");
+            let mainFrameRecord = await mainFrameRecordPromise;
+            InspectorTest.pass("Recorded a timer from the main frame target.");
+            let iframeRecord = await iframeRecordPromise;
+            InspectorTest.pass("Recorded a timer from the cross-origin iframe target.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            for (let target of [mainFrameTarget, iframeTarget])
+                InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", target), `The ${targetDescription(target)} should report that Timeline stopped.`);
+
+            expectRecordInRecording(mainFrameRecord, recording.startTime, recording.endTime);
+            expectRecordInRecording(iframeRecord, recording.startTime, recording.endTime);
+            expectNoScriptRecordsFromPageTarget(recording);
+
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            for (let target of [mainFrameTarget, iframeTarget])
+                InspectorTest.expectThat(scriptTimeline.targets.includes(target), `The Script timeline should include the ${targetDescription(target)}.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetRecords.EventDispatch",
+        description: "An event dispatched in the cross-origin iframe should be recorded by its frame target.",
+        async test() {
+            await FrameTimelineTest.startCapturing([iframeTarget]);
+
+            let recording = WI.timelineManager.activeRecording;
+            let recordPromise = FrameTimelineTest.awaitScriptRecord(iframeTarget, WI.ScriptTimelineRecord.EventType.EventDispatched);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "dispatchTestEvent()");
+            let record = await recordPromise;
+            InspectorTest.expectEqual(record.details, "test-event", "Recorded the dispatch of the test event from the cross-origin iframe target.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            expectRecordInRecording(record, recording.startTime, recording.endTime);
+            expectNoScriptRecordsFromPageTarget(recording);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetRecords.NoFallbackToPageTarget",
+        description: "While a frame target's Timeline domain is enabled but not tracking, its records should not go to the page target, even when the page target is tracking.",
+        async test() {
+            FrameTimelineTest.clearTrackingEvents();
+
+            let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+            await WI.mainTarget.TimelineAgent.start();
+            await activePromise;
+            InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStarted", mainFrameTarget), "The main frame target should not be tracking.");
+
+            let recording = WI.timelineManager.activeRecording;
+            await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "new Promise((resolve) => setTimeout(() => { timerFired(); resolve(); }))", objectGroup: "test", awaitPromise: true});
+            InspectorTest.pass("A timer fired in the main frame.");
+
+            // The page target sends any record before it reports that it stopped, so the check below sees them all.
+            let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+            await WI.mainTarget.TimelineAgent.stop();
+            await inactivePromise;
+            InspectorTest.pass("Capturing stopped.");
+
+            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
+            let timerRecords = scriptTimeline.records.filter((record) => record.eventType === WI.ScriptTimelineRecord.EventType.TimerFired);
+            InspectorTest.expectFalse(timerRecords.some((record) => record.target === WI.mainTarget), "The page target should not record the main frame's timer.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, Timeline records are reported by the frame target of the frame that did the work, including a cross-origin iframe.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/timeline/resources/timeline-frame.html"></iframe>
+</body>

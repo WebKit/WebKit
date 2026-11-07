@@ -48,15 +48,13 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         this._eventsPathComponent.nextSibling = this._profilePathComponent;
         this._profilePathComponent.previousSibling = this._eventsPathComponent;
 
-        let targets = this.representedObject.targets;
-
-        this._selectedTarget = null;
-        this._displayedTarget = (!this.representedObject.imported && targets.includes(WI.mainTarget)) ? WI.mainTarget : (targets.firstValue || WI.assumingMainTarget());
-
         this._pathComponentForTarget = new Map;
-        for (let target of targets)
+        for (let target of this.representedObject.targets)
             this._addPathComponentForTarget(target);
         this._sortTargetPathComponents();
+
+        this._selectedTarget = null;
+        this._displayedTarget = this._defaultTarget();
 
         this._contentViewsForTarget = new Map;
 
@@ -197,23 +195,42 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         this._pathComponentForTarget.set(target, pathComponent);
     }
 
-    _sortTargetPathComponents()
+    _sortedTargetPathComponents()
     {
         const rankFunctions = [
             (target) => target === WI.mainTarget,
             (target) => target.type === WI.TargetType.Page,
+            (target) => target.type === WI.TargetType.Frame,
             (target) => target.type === WI.TargetType.Worker,
             () => true, // Fallback for all other targets (which shouldn't be reached, but just to be safe).
         ];
-        let sortedComponents = Array.from(this._pathComponentForTarget.values()).sort((a, b) => {
+        return Array.from(this._pathComponentForTarget.values()).sort((a, b) => {
             let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a.representedObject));
             let bRank = rankFunctions.findIndex((rankFunction) => rankFunction(b.representedObject));
             return aRank - bRank || a.displayName.extendedLocaleCompare(b.displayName);
         });
+    }
+
+    _sortTargetPathComponents()
+    {
+        let sortedComponents = this._sortedTargetPathComponents();
         for (let [a, b] of sortedComponents.adjacencies()) {
             a.nextSibling = b;
             b.previousSibling = a;
         }
+    }
+
+    _defaultTarget()
+    {
+        let targets = this._sortedTargetPathComponents().map((pathComponent) => pathComponent.representedObject);
+        if (!targets.length)
+            return WI.assumingMainTarget();
+
+        // Under Site Isolation, frame targets report the script records, while the page target reports only
+        // page-level data, such as garbage collections and microtasks.
+        return targets.find((target) => target.type === WI.TargetType.Frame)
+            || targets.find((target) => !this.representedObject.imported && target === WI.mainTarget)
+            || targets[0];
     }
 
     _handleViewPathComponentSelected(event)
@@ -231,11 +248,12 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
         this._addPathComponentForTarget(target);
         this._sortTargetPathComponents();
 
-        console.assert(target === this._displayedTarget || !this._contentViewsForTarget.has(target), target, this);
+        // The main target can have content views from before any target was added.
+        console.assert(target === this._displayedTarget || target === WI.assumingMainTarget() || !this._contentViewsForTarget.has(target), target, this);
 
         if (!this._selectedTarget) {
             console.assert(this._pathComponentForTarget.size >= 1, this._pathComponentForTarget);
-            let displayedTarget = (!this.representedObject.imported && this._pathComponentForTarget.has(WI.mainTarget)) ? WI.mainTarget : this._pathComponentForTarget.firstKey;
+            let displayedTarget = this._defaultTarget();
             if (displayedTarget !== this._displayedTarget) {
                 this._displayedTarget = displayedTarget;
                 this._updateCurrentContentView();

@@ -6,7 +6,7 @@ Tests that a Timeline recording continues across a cross-origin navigation that 
 PASS: Capturing is active.
 PASS: The page target created by the navigation should be the main target.
 PASS: Capturing should still be active after the previous page target is removed.
-PASS: Recorded a timer from the page target created by the navigation.
+PASS: Recorded a timer from the page created by the navigation.
 PASS: Capturing stopped.
 PASS: The page target created by the navigation should report that Timeline stopped.
 PASS: The page target created by the navigation should report that ScriptProfiler stopped.
