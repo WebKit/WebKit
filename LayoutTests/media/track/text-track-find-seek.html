@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>text-track-find-seek</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+
+    async function runTest() {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'loadeddata');
+
+        consoleWrite('Test that seekToFindMatch seeks the media element directly when no "seekto" media session action handler is registered, and defers to the handler when one is.');
+
+        consoleWrite('<br>** With no "seekto" handler, seekToFindMatch seeks the element directly.');
+        run('video.currentTime = 0');
+        testExpected("video.currentTime", 0);
+        run('internals.seekMediaElementToFindMatch(video, 3)');
+        testExpected("video.currentTime", 3);
+        run('internals.seekMediaElementToFindMatch(video, 0)');
+        testExpected("video.currentTime", 0);
+
+        consoleWrite('<br>** With a "seekto" handler registered, seekToFindMatch invokes the handler instead of seeking.');
+        navigator.mediaSession.setActionHandler("seekto", actionDetails => {
+            consoleWrite(`ACTION: ${actionDetails.action}, seekTime: ${actionDetails.seekTime}`);
+        });
+        run('internals.seekMediaElementToFindMatch(video, 3)');
+        testExpected("video.currentTime", 0);
+
+        consoleWrite('<br>** After clearing the handler, seekToFindMatch seeks directly again.');
+        navigator.mediaSession.setActionHandler("seekto", null);
+        run('internals.seekMediaElementToFindMatch(video, 3)');
+        testExpected("video.currentTime", 3);
+
+        consoleWrite("");
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video controls preload='auto'></video>
+</body>
+</html>

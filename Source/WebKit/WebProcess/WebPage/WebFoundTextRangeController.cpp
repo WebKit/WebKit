@@ -306,7 +306,7 @@ void WebFoundTextRangeController::decorateTextRangeWithStyle(const WebFoundTextR
         if (auto* cueData = std::get_if<WebFoundTextRange::CueData>(&range.data)) {
             m_highlightedRange = range;
             if (RefPtr mediaElement = mediaElementForCueRange(range))
-                mediaElement->setCurrentTime(Seconds::fromMilliseconds(cueData->seekTimeMilliseconds).seconds());
+                mediaElement->seekToFindMatch(MediaTime(cueData->seekTimeMilliseconds, 1000));
         }
     }
 #endif
