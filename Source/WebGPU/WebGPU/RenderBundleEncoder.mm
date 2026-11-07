@@ -870,6 +870,22 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::encodeDrawIndexe
                 [renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
         } else if (indexBuffer.length) {
             // Record the command; its draw is encoded into this ICB slot on the GPU at executeBundles() time.
+            if (!isValidToUseWith(indirectBuffer, *this)) {
+                makeInvalid(@"drawIndexedIndirect: buffer was invalid");
+                return finalizeRenderCommand();
+            }
+
+            if (!(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset % 4)) {
+                makeInvalid(@"drawIndexedIndirect: validation failed");
+                return finalizeRenderCommand();
+            }
+
+            auto indirectOffsetSum = checkedSum<uint64_t>(indirectOffset, sizeof(MTLDrawIndexedPrimitivesIndirectArguments));
+            if (indirectOffsetSum.hasOverflowed() || indirectBuffer.initialSize() < indirectOffsetSum.value()) {
+                makeInvalid(@"drawIndexedIndirect: validation failed");
+                return finalizeRenderCommand();
+            }
+
             bool unusedWorkaround = false;
             auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(unusedWorkaround);
             m_indirectDrawsForSlot.set(m_currentCommandIndex, IndirectDrawData {
@@ -944,6 +960,22 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::encodeDrawIndire
                 [renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:clampedIndirectBuffer indirectBufferOffset:indirectOffset];
         } else {
             // Record the command; its draw is encoded into this ICB slot on the GPU at executeBundles() time.
+            if (!isValidToUseWith(indirectBuffer, *this)) {
+                makeInvalid(@"drawIndirect: buffer was invalid");
+                return finalizeRenderCommand();
+            }
+
+            if (!(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset % 4)) {
+                makeInvalid(@"drawIndirect: validation failed");
+                return finalizeRenderCommand();
+            }
+
+            auto indirectOffsetSum = checkedSum<uint64_t>(indirectOffset, sizeof(MTLDrawPrimitivesIndirectArguments));
+            if (indirectOffsetSum.hasOverflowed() || indirectBuffer.initialSize() < indirectOffsetSum.value()) {
+                makeInvalid(@"drawIndirect: validation failed");
+                return finalizeRenderCommand();
+            }
+
             bool unusedWorkaround = false;
             auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount(unusedWorkaround);
             m_indirectDrawsForSlot.set(m_currentCommandIndex, IndirectDrawData {
@@ -969,7 +1001,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::encodeDrawIndire
             return finalizeRenderCommand();
         }
 
-        if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
+        auto indirectOffsetSum = checkedSum<uint64_t>(indirectOffset, sizeof(MTLDrawPrimitivesIndirectArguments));
+        if (indirectOffsetSum.hasOverflowed() || indirectBuffer.initialSize() < indirectOffsetSum.value()) {
             makeInvalid(@"drawIndirect: validation failed");
             return finalizeRenderCommand();
         }
