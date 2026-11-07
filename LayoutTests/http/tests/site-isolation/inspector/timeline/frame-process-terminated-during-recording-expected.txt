@@ -1,0 +1,19 @@
+Test that under Site Isolation, the frame target of a cross-origin iframe is removed when its process exits, so that a Timeline recording that was waiting for it can stop.
+
+
+== Running test suite: SiteIsolation.Timeline.FrameProcessTerminatedDuringRecording
+-- Running test case: SiteIsolation.Timeline.FrameProcessTerminatedDuringRecording.Active
+PASS: Should find the cross-origin iframe target.
+PASS: Both frame targets started tracking.
+PASS: The frame target of the terminated process was removed.
+PASS: Capturing should still be active.
+PASS: Capturing stopped.
+PASS: A later recording stopped.
+
+-- Running test case: SiteIsolation.Timeline.FrameProcessTerminatedDuringRecording.Stopping
+PASS: Should find the cross-origin iframe target.
+PASS: Both frame targets started tracking.
+PASS: Capturing stopped.
+PASS: The frame target of the terminated process was removed.
+PASS: The frame target of the terminated process should not have reported that it stopped.
+

@@ -51,8 +51,12 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -449,6 +453,28 @@ void WebPageInspectorController::processDidTerminate(WebProcessProxy& process)
 {
     if (m_debuggerPauseCoordinator)
         CheckedPtr { m_debuggerPauseCoordinator }->processDidTerminate(process);
+
+    if (!shouldManageFrameTargets())
+        return;
+
+    // A frame can outlive its process, but its target in that process can never answer again. Compare process
+    // identifiers, because the process of a stale target may already be destroyed.
+    Vector<String> targetIDs;
+    for (auto& [targetID, target] : m_targets) {
+        if (CheckedPtr frameTarget = dynamicDowncast<FrameInspectorTargetProxy>(*target); frameTarget && frameTarget->processID() == process.coreProcessIdentifier())
+            targetIDs.append(targetID);
+    }
+    for (auto& targetID : targetIDs) {
+        if (CheckedPtr frameTarget = dynamicDowncast<FrameInspectorTargetProxy>(m_targets.get(targetID)); frameTarget && frameTarget->isPaused()) {
+            // A provisional frame's resume callback wraps a CompletionHandler, which must be called before destruction.
+            // A provisional page's main frame target is not resumed, because its callback uses the provisional page,
+            // which is already cleared.
+            RefPtr frame = WebFrameProxy::webFrame(frameTarget->frameID());
+            if (RefPtr provisionalFrame = frame ? frame->provisionalFrame() : nullptr; provisionalFrame && getTargetID(*provisionalFrame) == targetID)
+                frameTarget->resume();
+        }
+        removeTarget(targetID);
+    }
 }
 
 void WebPageInspectorController::didCreateFrame(WebFrameProxy& frame)
