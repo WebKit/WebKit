@@ -1742,6 +1742,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         updateLevel.add(UpdateLevel::AllDescendants);
 
     ScrollingTreeState scrollingStateForDescendants = scrollingTreeState;
+    ScrollingTreeState scrollingStateOutsideScrollContainer = scrollingTreeState;
     UpdateBackingTraversalState traversalStateForDescendants = traversalState.stateForDescendants();
     Vector<RenderLayer*> layersClippedByScrollers;
     Vector<RenderLayer*> compositedOverflowScrollLayers;
@@ -1794,7 +1795,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 
         // FIXME: do based on dirty flags. Need to do this for changes of geometry, configuration and hierarchy.
         // Need to be careful to do the right thing when a scroll-coordinated layer loses a scroll-coordinated ancestor.
-        scrollingStateForDescendants.parentNodeID = updateScrollCoordinationForLayer(layer, traversalState.compositingAncestor, scrollingTreeState, scrollingNodeChanges);
+        scrollingStateForDescendants.parentNodeID = updateScrollCoordinationForLayer(layer, traversalState.compositingAncestor, scrollingTreeState, scrollingNodeChanges, &scrollingStateOutsideScrollContainer);
         scrollingStateForDescendants.hasParent = true;
         scrollingStateForDescendants.nextChildIndex = 0;
         
@@ -1814,6 +1815,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
     // to the compositing child list of an enclosing layer.
     Vector<Ref<GraphicsLayer>> layerChildren;
     auto& childList = layerBacking ? layerChildren : childLayersOfEnclosingLayer;
+    Vector<Ref<GraphicsLayer>> layerChildrenOutsideScrollContainer;
 
     bool requireDescendantTraversal = layer.hasDescendantNeedingUpdateBackingOrHierarchyTraversal()
         || (layer.hasCompositingDescendant() && (!layerBacking || layer.needsCompositingLayerConnection() || !updateLevel.isEmpty()));
@@ -1860,8 +1862,26 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             appendSVGSegmentLayerIfNecessary(*renderLayer);
         }
 
+        bool hasDescendantsOutsideScrollContainer = false;
         for (CheckedPtr renderLayer : layer.positiveZOrderLayers()) {
-            updateBackingAndHierarchy(*renderLayer, childList, traversalStateForDescendants, scrollingStateForDescendants, updateLevel);
+            auto childUpdateLevel = updateLevel;
+            bool isOutsideScrollContainer = false;
+            if (layerBacking && renderLayer->isComposited()) {
+                isOutsideScrollContainer = layerBacking->parentsDescendantOutsideScrollContainer(*renderLayer);
+                RefPtr outsideScrollContainerLayer = layerBacking->descendantsOutsideScrollContainerLayer();
+                bool wasOutsideScrollContainer = outsideScrollContainerLayer && renderLayer->backing()->childForSuperlayers()->parent() == outsideScrollContainerLayer;
+                // Moving into or out of the scrolled contents changes the descendant's geometry and its parent scrolling node.
+                if (isOutsideScrollContainer != wasOutsideScrollContainer)
+                    childUpdateLevel.add(UpdateLevel::CompositedChildren);
+            }
+
+            if (isOutsideScrollContainer) {
+                updateBackingAndHierarchy(*renderLayer, layerChildrenOutsideScrollContainer, traversalStateForDescendants, scrollingStateOutsideScrollContainer, childUpdateLevel);
+                hasDescendantsOutsideScrollContainer = true;
+                continue;
+            }
+
+            updateBackingAndHierarchy(*renderLayer, childList, traversalStateForDescendants, scrollingStateForDescendants, childUpdateLevel);
             appendSVGSegmentLayerIfNecessary(*renderLayer);
         }
 
@@ -1869,6 +1889,12 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         scrollingTreeState.needSynchronousScrollingReasonsUpdate |= scrollingStateForDescendants.needSynchronousScrollingReasonsUpdate;
         if (scrollingTreeState.parentNodeID == scrollingStateForDescendants.parentNodeID)
             scrollingTreeState.nextChildIndex = scrollingStateForDescendants.nextChildIndex;
+
+        if (hasDescendantsOutsideScrollContainer) {
+            scrollingTreeState.needSynchronousScrollingReasonsUpdate |= scrollingStateOutsideScrollContainer.needSynchronousScrollingReasonsUpdate;
+            if (scrollingTreeState.parentNodeID == scrollingStateOutsideScrollContainer.parentNodeID)
+                scrollingTreeState.nextChildIndex = scrollingStateOutsideScrollContainer.nextChildIndex;
+        }
 
     } else if (requiresChildRebuild)
         appendForegroundLayerIfNecessary();
@@ -1891,6 +1917,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 
                 adjustOverflowScrollbarContainerLayers(layer, compositedOverflowScrollLayers, layersClippedByScrollers, layerChildren);
                 RefPtr { layerBacking->parentForSublayers() }->setChildren(WTF::move(layerChildren));
+                layerBacking->setDescendantsOutsideScrollContainer(WTF::move(layerChildrenOutsideScrollContainer));
             }
         }
 
@@ -5834,7 +5861,7 @@ OptionSet<ScrollCoordinationRole> RenderLayerCompositor::coordinatedScrollingRol
     return coordinationRoles;
 }
 
-std::optional<ScrollingNodeID> RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLayer& layer, const RenderLayer* compositingAncestor, ScrollingTreeState& treeState, OptionSet<ScrollingNodeChangeFlags> changes)
+std::optional<ScrollingNodeID> RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLayer& layer, const RenderLayer* compositingAncestor, ScrollingTreeState& treeState, OptionSet<ScrollingNodeChangeFlags> changes, ScrollingTreeState* stateOutsideScrolling)
 {
     auto roles = coordinatedScrollingRolesForLayer(layer, compositingAncestor);
 
@@ -5855,8 +5882,11 @@ std::optional<ScrollingNodeID> RenderLayerCompositor::updateScrollCoordinationFo
     // With no roles every branch below takes its detach path - short-cut and return the parent node ID.
     if (roles.isEmpty()) {
         auto* backing = layer.backing();
-        if (!backing || !backing->hasAnyScrollingNodeID())
+        if (!backing || !backing->hasAnyScrollingNodeID()) {
+            if (stateOutsideScrolling)
+                *stateOutsideScrolling = treeState;
             return treeState.parentNodeID;
+        }
     }
 
     auto newNodeID = treeState.parentNodeID;
@@ -5909,6 +5939,10 @@ std::optional<ScrollingNodeID> RenderLayerCompositor::updateScrollCoordinationFo
         newNodeID = updateScrollingNodeForPluginHostingRole(layer, *currentTreeState, changes);
     else
         detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::PluginHosting);
+
+    // Children which are not moved by our scrolling node are siblings of it.
+    if (stateOutsideScrolling)
+        *stateOutsideScrolling = *currentTreeState;
 
     return newNodeID;
 }

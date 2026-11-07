@@ -184,6 +184,12 @@ public:
     bool hasMaskLayer() const { return m_maskLayer; }
 
     NODELETE WEBCORE_EXPORT GraphicsLayer* parentForSublayers() const;
+    // Whether the composited descendant is parented in our scrolled contents, and so moves with composited scrolling.
+    bool parentsDescendantInScrolledContents(const RenderLayer& descendant) const;
+    // Whether the composited descendant is parented outside our scroll container, so it is neither clipped nor moved by our scrolling.
+    bool parentsDescendantOutsideScrollContainer(const RenderLayer& descendant) const;
+    GraphicsLayer* descendantsOutsideScrollContainerLayer() const { return m_descendantsOutsideScrollContainerLayer.get(); }
+    void setDescendantsOutsideScrollContainer(Vector<Ref<GraphicsLayer>>&&);
     GraphicsLayer* childForSuperlayers() const;
     GraphicsLayer* childForSuperlayersExcludingViewTransitions() const;
 
@@ -552,6 +558,7 @@ private:
 
     RefPtr<GraphicsLayer> m_scrollContainerLayer; // Only used if the layer is using composited scrolling.
     RefPtr<GraphicsLayer> m_scrolledContentsLayer; // Only used if the layer is using composited scrolling.
+    RefPtr<GraphicsLayer> m_descendantsOutsideScrollContainerLayer; // Only used if the layer is using composited scrolling and has descendants that escape the scroll container.
 
     LayoutRect m_compositedBounds;
     LayoutSize m_subpixelOffsetFromRenderer; // This is the subpixel distance between the primary graphics layer and the associated renderer's bounds.
