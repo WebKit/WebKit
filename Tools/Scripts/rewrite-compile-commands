@@ -59,7 +59,9 @@ try:
 except FileNotFoundError:
     last_hash = None
 
-if last_hash == input_hash and os.path.exists(args.output_file):
+output_is_symlink = os.path.islink(args.output_file)
+
+if last_hash == input_hash and os.path.exists(args.output_file) and not output_is_symlink:
     sys.exit(0)
 
 generated_compile_commands = []
@@ -114,15 +116,19 @@ if not os.path.isdir(output_directory):
     os.makedirs(output_directory)
 
 new_content = json.dumps(generated_compile_commands, indent=2)
-try:
-    with open(args.output_file) as f:
-        existing_content = f.read()
-except FileNotFoundError:
-    existing_content = None
+existing_content = None
+if not output_is_symlink:
+    try:
+        with open(args.output_file) as f:
+            existing_content = f.read()
+    except FileNotFoundError:
+        pass
 
 if new_content != existing_content:
-    with open(args.output_file, 'w') as f:
+    temporary_file = args.output_file + '.tmp'
+    with open(temporary_file, 'w') as f:
         f.write(new_content)
+    os.replace(temporary_file, args.output_file)
 
 with open(hash_sentinel, 'w') as f:
     f.write(input_hash)
