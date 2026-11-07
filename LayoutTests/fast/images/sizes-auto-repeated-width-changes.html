@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<img id="image" loading="lazy" sizes="auto" style="width: 50px; height: 50px"
+    srcset="resources/red-100x100.png 100w, resources/green-400x400.png 400w">
+<script>
+description("Many width changes of a lazy sizes=auto image before its source selection runs select the source for the last width.");
+jsTestIsAsync = true;
+
+function waitForTasks()
+{
+    return new Promise(resolve => setTimeout(resolve, 0)).then(() => new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0))));
+}
+
+function changeWidthRepeatedly(lastWidth)
+{
+    for (let i = 0; i < 200; ++i) {
+        image.style.width = (i % 2 ? 50 : 300) + "px";
+        image.offsetWidth;
+    }
+    image.style.width = lastWidth + "px";
+    image.offsetWidth;
+}
+
+onload = async () => {
+    if (!image.complete)
+        await new Promise(resolve => image.addEventListener("load", resolve, { once: true }));
+    changeWidthRepeatedly(300);
+    await waitForTasks();
+    shouldBeTrue("image.currentSrc.endsWith('green-400x400.png')");
+
+    // A width change after the pending selection ran schedules a new one.
+    image.style.width = "60px";
+    image.offsetWidth;
+    changeWidthRepeatedly(310);
+    await waitForTasks();
+    shouldBeTrue("image.currentSrc.endsWith('green-400x400.png')");
+
+    finishJSTest();
+};
+</script>
