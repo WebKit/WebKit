@@ -4224,7 +4224,7 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
     auto stitchableExcludedMarker = [&]() -> CheckedPtr<RenderListOutsideMarker> {
         // The marker's list item is this block flow itself when the item's own content makes the line, and an
         // ancestor of it when the line is in a descendant block of the item.
-        for (CheckedPtr<const RenderBlock> ancestor = renderBlockFlow.get(); ancestor; ancestor = ancestor->containingBlock()) {
+        for (CheckedPtr<const RenderBoxModelObject> ancestor = renderBlockFlow; ancestor; ancestor = ancestor->containingBlock()) {
             CheckedPtr listItem = dynamicDowncast<RenderListItem>(ancestor.get());
             CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
             if (!marker || !marker->isExcludedMarker() || marker->isDisclosureMarker())
