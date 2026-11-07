@@ -85,8 +85,10 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 "timeLog",
                 "timeStamp",
                 "trace",
+                "unwatch",
                 "values",
                 "warn",
+                "watch",
             ];
         }
         return JavaScriptRuntimeCompletionProvider.__cachedCommandLineAPIKeys;

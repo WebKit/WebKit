@@ -1,0 +1,9 @@
+Tests for Debugger.setPauseOnWatchedObject command.
+
+
+== Running test suite: Debugger.setPauseOnWatchedObject
+-- Running test case: Debugger.setPauseOnWatchedObject.Toggle
+PASS: Should not pause while disabled.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before an ordinary named property write while enabled.
+

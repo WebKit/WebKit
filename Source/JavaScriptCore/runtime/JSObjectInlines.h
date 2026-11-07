@@ -219,6 +219,9 @@ ALWAYS_INLINE bool JSObject::canPerformFastPutInlineExcludingProto()
 
 ALWAYS_INLINE bool JSObject::canPerformFastPutInline(VM& vm, PropertyName propertyName)
 {
+    if (structure()->isUncacheableDictionary())
+        return false;
+
     if (propertyName == vm.propertyNames->underscoreProto) [[unlikely]]
         return false;
     return canPerformFastPutInlineExcludingProto();

@@ -1,0 +1,8 @@
+Tests clearing watched objects after Eden garbage collection.
+
+
+== Running test suite: CommandLineAPI.watch.GarbageCollection
+-- Running test case: CommandLineAPI.watch.GarbageCollection.Eden
+PASS: The watched object should be collected by Eden GC.
+PASS: Disabling the Debugger should finish after its only watched object is collected.
+

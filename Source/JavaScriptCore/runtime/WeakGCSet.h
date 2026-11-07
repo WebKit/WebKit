@@ -55,6 +55,11 @@ public:
         m_set.clear();
     }
 
+    bool isEmpty() const
+    {
+        return m_set.isEmpty();
+    }
+
     AddResult add(ValueArg* value)
     {
         AddResult result = m_set.add(value);
@@ -72,6 +77,26 @@ public:
         auto result = m_set.template ensure<HashTranslator>(std::forward<T>(key), functor);
         markDirty(m_vm);
         return *result.iterator;
+    }
+
+    iterator find(ValueArg* key) const
+    {
+        return m_set.find(key);
+    }
+
+    bool contains(ValueArg* key) const
+    {
+        return m_set.contains(key);
+    }
+
+    bool remove(ValueArg* key)
+    {
+        return m_set.remove(find(key));
+    }
+
+    ValueArg* takeAny()
+    {
+        return m_set.takeAny();
     }
 
     // It's not safe to call into the VM or allocate an object while an iterator is open.

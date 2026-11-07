@@ -68,6 +68,12 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
         return InspectorBackend.hasCommand("Debugger.setPauseOnDebuggerStatements", parameter);
     }
 
+    static supportsWatchedObjectBreakpoint()
+    {
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): Debugger.setPauseOnWatchedObject did not exist yet.
+        return InspectorBackend.hasCommand("Debugger.setPauseOnWatchedObject");
+    }
+
     // Import / Export
 
     static fromJSON(json)
@@ -125,6 +131,9 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
 
         case WI.debuggerManager.allMicrotasksBreakpoint:
             return WI.repeatedUIString.allMicrotasks();
+
+        case WI.debuggerManager.watchedObjectBreakpoint:
+            return WI.repeatedUIString.watchedObjects();
         }
 
         return this._sourceCodeLocation.displayLocationString()
