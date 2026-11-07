@@ -51,7 +51,10 @@
 #include "RenderView.h"
 #include "RuleSet.h"
 #include "ScriptDisallowedScope.h"
+<<<<<<< HEAD
 #include "ScrollableArea.h"
+=======
+>>>>>>> 0581b0a7b477 (UAF in Style::Scope::createOrFindSharedShadowTreeResolver: then-getter rehash frees the pinned ensure bucket)
 #include "ShadowRoot.h"
 #include "StyleableInlines.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -85,6 +88,7 @@ void DocumentScope::createDocumentResolver()
     ASSERT(!m_shadowRoot);
 
     SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     m_resolver = Resolver::create(m_document, Resolver::ScopeType::Document);
 

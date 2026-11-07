@@ -127,16 +127,23 @@ void Scope::createOrFindSharedShadowTreeResolver()
 
     auto key = makeResolverSharingKey();
 
-    auto result = documentScope().m_sharedShadowTreeResolvers.ensure(WTF::move(key), [&] {
+    if (RefPtr existingResolver = documentScope().m_sharedShadowTreeResolvers.get(key)) {
+        m_resolver = WTF::move(existingResolver);
+        m_resolver->setSharedBetweenShadowTrees();
+        return;
+    }
+
+    {
         SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         m_resolver = Resolver::create(m_document, Resolver::ScopeType::ShadowTree);
 
         m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
         protect(m_resolver)->appendAuthorStyleSheets(m_activeStyleSheets);
+    }
 
-        return protect(*m_resolver);
-    });
+    auto result = documentScope().m_sharedShadowTreeResolvers.add(WTF::move(key), protect(*m_resolver));
 
     if (!result.isNewEntry) {
         m_resolver = result.iterator->value.ptr();
@@ -634,6 +641,7 @@ void Scope::updateResolver(std::span<const Ref<CSSStyleSheet>> activeStyleSheets
         unshareShadowTreeResolverBeforeMutation();
 
     SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     if (updateType == ResolverUpdateType::Reset) {
         customPropertyRegistry().clearRegisteredFromStylesheets();
