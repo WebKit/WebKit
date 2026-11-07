@@ -1,0 +1,8 @@
+
+PASS Initially anchored to the right edge of --a
+PASS Anchor removed from the document: fallback is used
+PASS Anchor inserted again: anchored again
+PASS Anchor's parent display: none: fallback is used
+PASS Anchor's parent displayed again: anchored again
+PASS Anchor moved, target style unchanged: target follows
+

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#anchor { anchor-name: --anchor; width: 300px; height: 50px; margin-left: 100px; }
+.fixed { position: fixed; top: 100px; width: 50px; height: 20px; }
+.hidden { display: none; }
+#anchored { left: calc(anchor(--anchor left) + 12px); }
+#notAnchored { left: 112px; top: 150px; }
+#unrelated { width: 100px; height: 100px; background-color: rgb(0, 0, 0); }
+</style>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="anchor"></div>
+<div id="notAnchored" class="fixed hidden"></div>
+<div id="anchored" class="fixed hidden"></div>
+<div id="unrelated"></div>
+<div id="console"></div>
+<script>
+description("Tests that a style change on an unrelated element does not trigger a layout because of an anchor-positioned element whose anchor did not change. https://bugs.webkit.org/show_bug.cgi?id=328203");
+
+let unrelated = document.getElementById("unrelated");
+let anchored = document.getElementById("anchored");
+let notAnchored = document.getElementById("notAnchored");
+let anchor = document.getElementById("anchor");
+let color = 0;
+
+// Changes a paint-only property on an element unrelated to the anchor, then counts the layouts
+// (including interleaved layouts during style resolution) needed to bring the document up to date.
+function layoutsForUnrelatedStyleChange()
+{
+    document.body.offsetTop;
+    internals.startTrackingLayoutUpdates();
+    color = (color + 50) % 256;
+    unrelated.style.backgroundColor = `rgb(0, 0, ${color})`;
+    document.body.offsetTop;
+    return internals.layoutUpdateCount();
+}
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    debug("No out-of-flow element.");
+    shouldBe("layoutsForUnrelatedStyleChange()", "0");
+
+    debug("");
+    debug("Fixed-position element without anchor().");
+    notAnchored.classList.remove("hidden");
+    shouldBe("layoutsForUnrelatedStyleChange()", "0");
+    notAnchored.classList.add("hidden");
+
+    debug("");
+    debug("Fixed-position element positioned with anchor(), anchor unchanged.");
+    anchored.classList.remove("hidden");
+    document.body.offsetTop;
+    shouldBe("anchored.getBoundingClientRect().left", "anchor.getBoundingClientRect().left + 12");
+    for (let i = 0; i < 3; ++i)
+        shouldBe("layoutsForUnrelatedStyleChange()", "0");
+    shouldBe("anchored.getBoundingClientRect().left", "anchor.getBoundingClientRect().left + 12");
+
+    debug("");
+    debug("Moving the anchor still repositions the anchor-positioned element.");
+    anchor.style.marginLeft = "200px";
+    document.body.offsetTop;
+    shouldBe("anchor.getBoundingClientRect().left", "208");
+    shouldBe("anchored.getBoundingClientRect().left", "anchor.getBoundingClientRect().left + 12");
+
+    debug("");
+    debug("Renaming the anchor still updates the anchor-positioned element.");
+    anchor.style.anchorName = "--other";
+    document.body.offsetTop;
+    // With no valid anchor, left computes to auto and the element falls back to its static position.
+    shouldBe("anchored.getBoundingClientRect().left", "8");
+    anchor.style.anchorName = "--anchor";
+    document.body.offsetTop;
+    shouldBe("anchored.getBoundingClientRect().left", "anchor.getBoundingClientRect().left + 12");
+    shouldBe("layoutsForUnrelatedStyleChange()", "0");
+}
+</script>
+</body>
+</html>

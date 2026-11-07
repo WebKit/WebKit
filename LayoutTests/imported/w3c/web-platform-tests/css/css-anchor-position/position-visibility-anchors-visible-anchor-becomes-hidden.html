@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>CSS Anchor Positioning Test: position-visibility: anchors-visible when the anchor becomes visibility: hidden</title>
+<link rel="help" href="https://drafts.csswg.org/css-anchor-position-1/#position-visibility">
+<link rel="match" href="position-visibility-anchors-visible-anchor-becomes-hidden-ref.html">
+<meta name="assert" content="An anchor-positioned element with position-visibility: anchors-visible is hidden when only the visibility of its anchor changes, after unrelated style changes.">
+<script src="/common/reftest-wait.js"></script>
+<script src="/common/rendering-utils.js"></script>
+<style>
+  #container { visibility: visible; }
+  #anchor { anchor-name: --a1; width: 100px; height: 100px; background: orange; }
+  #target {
+    position: absolute;
+    position-anchor: --a1;
+    position-visibility: anchors-visible;
+    left: anchor(left);
+    top: anchor(bottom);
+    width: 100px;
+    height: 100px;
+    background: red;
+  }
+  #unrelated { position: absolute; left: 300px; top: 0; width: 50px; height: 50px; background-color: rgb(0, 128, 0); }
+</style>
+<div id="container"><div id="anchor"></div></div>
+<div id="target"></div>
+<div id="unrelated"></div>
+<script>
+async function run() {
+  await waitForAtLeastOneFrame();
+  // Style changes that do not touch the anchor or the anchor-positioned element.
+  for (let i = 0; i < 3; ++i) {
+    unrelated.style.backgroundColor = i % 2 ? "rgb(0, 128, 0)" : "rgb(0, 100, 0)";
+    await waitForAtLeastOneFrame();
+  }
+  unrelated.style.backgroundColor = "rgb(0, 128, 0)";
+  // Only the visibility of the anchor's container changes. No geometry changes.
+  container.style.visibility = "hidden";
+  await waitForAtLeastOneFrame();
+  takeScreenshot();
+}
+run();
+</script>
+</html>
