@@ -1,0 +1,12 @@
+
+FAIL setHTML with benign context. context.setHTML is not a function. (In 'context.setHTML("abc")', 'context.setHTML' is undefined)
+FAIL setHTMLUnsafe with benign context. context.setHTML is not a function. (In 'context.setHTML("abc")', 'context.setHTML' is undefined)
+FAIL setHTML with script context. context.setHTML is not a function. (In 'context.setHTML("abc")', 'context.setHTML' is undefined)
+PASS setHTMLUnsafe with script context.
+FAIL setHTML with svg:script context. context.setHTML is not a function. (In 'context.setHTML("abc")', 'context.setHTML' is undefined)
+PASS setHTMLUnsafe with svg:script context.
+FAIL setHTML with script with prefix context. context.setHTML is not a function. (In 'context.setHTML("abc")', 'context.setHTML' is undefined)
+PASS setHTMLUnsafe with script with prefix context.
+FAIL setHTML with svg:script with prefix context. context.setHTML is not a function. (In 'context.setHTML("abc")', 'context.setHTML' is undefined)
+PASS setHTMLUnsafe with svg:script with prefix context.
+

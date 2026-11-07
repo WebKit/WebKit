@@ -1,0 +1,36 @@
+
+FAIL template with shadowrootmode should be removed by safe default element.setHTML is not a function. (In 'element.setHTML("<div><template shadowrootmode='open'></template></div>")', 'element.setHTML' is undefined)
+PASS template with shadowrootmode should not be removed in unsafe mode
+FAIL template with shadowrootmode should not be processed when <template> is forbidden element.setHTML is not a function. (In 'element.setHTML(
+        "<div><template shadowrootmode='open'></template></div>",
+        { sanitizer: { removeElements: ["template"] } },
+      )', 'element.setHTML' is undefined)
+FAIL template with shadowrootmode should be processed as a normal template when the shadowRootMode attribute is forbidden element.setHTML is not a function. (In 'element.setHTML(
+        "<div><template shadowrootmode='open'></template></div>",
+        { sanitizer: { removeAttributes: ["shadowrootmode"] } },
+      )', 'element.setHTML' is undefined)
+FAIL shadowRoot.delegatesFocus does not propagate to the shadow root when shadowrootdelegatesfocus is removed by sanitizer element.setHTML is not a function. (In 'element.setHTML(
+          `<div><template shadowrootmode='open' ${attribute}="${value}"></template></div>`,
+          { sanitizer: { removeAttributes: [attribute] } },
+        )', 'element.setHTML' is undefined)
+FAIL shadowRoot.serializable does not propagate to the shadow root when shadowrootserializable is removed by sanitizer element.setHTML is not a function. (In 'element.setHTML(
+          `<div><template shadowrootmode='open' ${attribute}="${value}"></template></div>`,
+          { sanitizer: { removeAttributes: [attribute] } },
+        )', 'element.setHTML' is undefined)
+FAIL shadowRoot.clonable does not propagate to the shadow root when shadowrootclonable is removed by sanitizer element.setHTML is not a function. (In 'element.setHTML(
+          `<div><template shadowrootmode='open' ${attribute}="${value}"></template></div>`,
+          { sanitizer: { removeAttributes: [attribute] } },
+        )', 'element.setHTML' is undefined)
+FAIL shadowRoot.referenceTarget does not propagate to the shadow root when shadowrootreferencetarget is removed by sanitizer element.setHTML is not a function. (In 'element.setHTML(
+          `<div><template shadowrootmode='open' ${attribute}="${value}"></template></div>`,
+          { sanitizer: { removeAttributes: [attribute] } },
+        )', 'element.setHTML' is undefined)
+FAIL shadowRoot.customElementRegistry does not propagate to the shadow root when shadowrootcustomelementregistry is removed by sanitizer element.setHTML is not a function. (In 'element.setHTML(
+          `<div><template shadowrootmode='open' ${attribute}="${value}"></template></div>`,
+          { sanitizer: { removeAttributes: [attribute] } },
+        )', 'element.setHTML' is undefined)
+FAIL shadowRoot.adoptedStyleSheets does not propagate to the shadow root when shadowrootadoptedstylesheets is removed by sanitizer element.setHTML is not a function. (In 'element.setHTML(
+          `<div><template shadowrootmode='open' ${attribute}="${value}"></template></div>`,
+          { sanitizer: { removeAttributes: [attribute] } },
+        )', 'element.setHTML' is undefined)
+

@@ -1,0 +1,24 @@
+
+FAIL sanitizer.allowAttribute() with global attributes Can't find variable: Sanitizer
+FAIL sanitizer.allowAttribute() with global removeAttributes Can't find variable: Sanitizer
+FAIL sanitizer.allowAttribute() with global attributes and elements Can't find variable: Sanitizer
+FAIL sanitizer.allowAttribute() with global removeAttributes and element's attributes Can't find variable: Sanitizer
+FAIL sanitizer.allowAttribute() with global removeAttributes and element's removeAttributes Can't find variable: Sanitizer
+FAIL sanitizer.removeAttribute() with global attributes Can't find variable: Sanitizer
+FAIL sanitizer.removeAttribute() with global removeAttributes Can't find variable: Sanitizer
+FAIL sanitizer.removeAttribute() with global attributes and elements Can't find variable: Sanitizer
+FAIL sanitizer.removeAttribute() with global removeAttributes and element's attributes Can't find variable: Sanitizer
+FAIL sanitizer.removeAttribute() with global removeAttributes and element's removeAttributes Can't find variable: Sanitizer
+FAIL sanitizer.removeElement() with global elements Can't find variable: Sanitizer
+FAIL sanitizer.removeElement() with global removeElements Can't find variable: Sanitizer
+FAIL sanitizer.replaceElementWithChildren() with global elements Can't find variable: Sanitizer
+FAIL sanitizer.replaceElementWithChildren() with global removeElements Can't find variable: Sanitizer
+FAIL sanitizer.allowElement() with global elements Can't find variable: Sanitizer
+FAIL sanitizer.allowElement() with global removeElements Can't find variable: Sanitizer
+FAIL sanitizer.allowElement() with global elements and attributes Can't find variable: Sanitizer
+FAIL sanitizer.allowElement() with global elements and removeAttributes Can't find variable: Sanitizer
+FAIL sanitizer.replaceElementWithChildren() does not allow non-replaceable elements. Can't find variable: Sanitizer
+FAIL sanitizer.setJavascriptURLs() Can't find variable: Sanitizer
+FAIL sanitizer.setComments() Can't find variable: Sanitizer
+FAIL sanitizer.setDataAttributes() Can't find variable: Sanitizer
+

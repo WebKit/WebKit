@@ -1,0 +1,32 @@
+
+FAIL parseHTML testcase 0, "text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 1, "<div>text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 2, "<div>text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 3, "<div>text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTML testcase 4, "<html onload="3 + 3"><div>a"
+FAIL parseHTML testcase 5, "<body><body onload="alert(1)">Hello" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTMLUnsafe testcase 0, "text"
+FAIL parseHTMLUnsafe testcase 1, "<div>text" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 2, "<div>text" assert_true: [object HTMLHtmlElement].isEqual(null) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 3, "<div>text" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 4, "<html onload="3 + 3"><div>a" assert_throws_js: function "() => Document.parseHTMLUnsafe(testcase.data, config)" did not throw
+FAIL parseHTMLUnsafe testcase 5, "<body><body onload="alert(1)">Hello" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTML testcase 0, "<script>hello" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 1, "<html onload="2+2"><body onload="3+3"><div>hello" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 2, "<div data-xyz="1" id="2" title="3">" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 3, "<div>a<!-- xx -->b" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTML testcase 4, "<html onload="2 + 2"><div>a"
+FAIL parseHTML testcase 5, "<br id="document">" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 6, "<br id="document">" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 7, "<p onclick="alert(document.cookie)">Click handler!</p>" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 8, "<p onclick="alert(document.cookie)">Click handler!</p>" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTMLUnsafe testcase 0, "<script>hello"
+PASS parseHTMLUnsafe testcase 1, "<html onload="2+2"><body onload="3+3"><div>hello"
+FAIL parseHTMLUnsafe testcase 2, "<div data-xyz="1" id="2" title="3">" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+PASS parseHTMLUnsafe testcase 3, "<div>a<!-- xx -->b"
+FAIL parseHTMLUnsafe testcase 4, "<html onload="2 + 2"><div>a" assert_throws_js: function "() => Document.parseHTMLUnsafe(testcase.data, config)" did not throw
+PASS parseHTMLUnsafe full document testcase 0, "<!DOCTYPE html>
+text"
+FAIL parseHTML full document testcase 0, "<!DOCTYPE html>
+text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, {})', 'Document.parseHTML' is undefined)
+

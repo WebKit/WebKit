@@ -1,0 +1,13 @@
+
+PASS innerHTML on XML document does not call createParserOptions or throw TypeError in report-only mode and reports violation when createHTML is missing
+PASS outerHTML on XML document does not call createParserOptions or throw TypeError in report-only mode and reports violation when createHTML is missing
+PASS insertAdjacentHTML on XML document does not call createParserOptions or throw TypeError in report-only mode and reports violation when createHTML is missing
+PASS createContextualFragment on XML document does not call createParserOptions or throw TypeError in report-only mode and reports violation when createHTML is missing
+FAIL setHTMLUnsafe on XML document does not report violation in report-only mode when createParserOptions has sanitizer assert_equals: no violation reported expected 0 but got 1
+FAIL setHTMLUnsafe on XML document does not report violation in report-only mode when createParserOptions has no sanitizer assert_equals: no violation reported expected 0 but got 1
+PASS innerHTML on XML document created by DOMParser does not call createParserOptions and reports violation when createHTML is missing
+PASS innerHTML on XML document executes createHTML, does not call createParserOptions, and does not report violation when default policy provides both
+PASS outerHTML on XML document executes createHTML, does not call createParserOptions, and does not report violation when default policy provides both
+PASS insertAdjacentHTML on XML document executes createHTML, does not call createParserOptions, and does not report violation when default policy provides both
+PASS createContextualFragment on XML document executes createHTML, does not call createParserOptions, and does not report violation when default policy provides both
+

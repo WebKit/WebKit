@@ -297,7 +297,7 @@
     "web-platform-tests/resource-timing": "import",
     "web-platform-tests/resources": "import",
     "web-platform-tests/resources/chromium": "skip",
-    "web-platform-tests/sanitizer-api": "skip",
+    "web-platform-tests/sanitizer-api": "import",
     "web-platform-tests/savedata": "skip",
     "web-platform-tests/scheduler": "skip",
     "web-platform-tests/screen-capture": "skip",

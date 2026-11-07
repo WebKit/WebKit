@@ -1,0 +1,10 @@
+
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL Element.setHTMLUnsafe: string with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true is allowed assert_true: script ran expected true got false
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL ShadowRoot.setHTMLUnsafe: string with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is allowed assert_true: script ran expected true got false
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL Document.parseHTMLUnsafe: string with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+

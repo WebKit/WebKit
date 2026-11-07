@@ -1,0 +1,33 @@
+
+FAIL Namespaced elements #0: elements: ["p"] div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: {elements: [elem]}})', 'div.setHTML' is undefined)
+FAIL Namespaced elements #1: elements: ["svg"] div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: {elements: [elem]}})', 'div.setHTML' is undefined)
+FAIL Namespaced elements #2: elements: [{"name":"svg","namespace":"http://www.w3.org/2000/svg"}] div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: {elements: [elem]}})', 'div.setHTML' is undefined)
+FAIL Namespaced elements #3: elements: ["math"] div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: {elements: [elem]}})', 'div.setHTML' is undefined)
+FAIL Namespaced elements #4: elements: [{"name":"math","namespace":"http://www.w3.org/2000/svg"}] div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: {elements: [elem]}})', 'div.setHTML' is undefined)
+FAIL Namespaced elements #5: elements: [{"name":"math","namespace":"http://www.w3.org/1998/Math/MathML"}] div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: {elements: [elem]}})', 'div.setHTML' is undefined)
+FAIL Namespaced attributes #0: attributes: [{"name":"style"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #1: attributes: [{"name":"href"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #2: attributes: [{"name":"xlink:href"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #3: attributes: [{"name":"href","namespace":"http://www.w3.org/1999/xlink"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #4: attributes: [{"name":"href","namespace":"http://www.w3.org/1999/xlink"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #5: attributes: [{"name":"href"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #6: attributes: [{"name":"xlink:href"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #7: attributes: [{"name":"href","namespace":"http://www.w3.org/1999/xlink"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #8: attributes: [{"name":"href","namespace":"http://www.w3.org/1999/xlink"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attributes #9: attributes: [{"name":"href"}] template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Namespaced attribute xlink:href inside SVG tree template.setHTML is not a function. (In 'template.setHTML(probe, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Mixed-case element names #0: "svg:feBlend" template.setHTML is not a function. (In 'template.setHTML(`<svg>${probe}</svg>`, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Mixed-case element names #1: "svg:feColorMatrix" template.setHTML is not a function. (In 'template.setHTML(`<svg>${probe}</svg>`, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Mixed-case element names #2: "svg:textPath" template.setHTML is not a function. (In 'template.setHTML(`<svg>${probe}</svg>`, {sanitizer: options})', 'template.setHTML' is undefined)
+FAIL Non-matching element name case #0: "DIV" div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: options})', 'div.setHTML' is undefined)
+FAIL Non-matching element name case #1: "feblend" div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: options})', 'div.setHTML' is undefined)
+FAIL Non-matching element name case #2: "FEBLEND" div.setHTML is not a function. (In 'div.setHTML(probe, {sanitizer: options})', 'div.setHTML' is undefined)
+FAIL Non-matching attribute name case #0: "viewBox" div.setHTML is not a function. (In 'div.setHTML(`<svg><marker viewbox="0 0 1 1"></marker></svg>`,
+                  {sanitizer: options})', 'div.setHTML' is undefined)
+FAIL Non-matching attribute name case #1: "viewbox" div.setHTML is not a function. (In 'div.setHTML(`<svg><marker viewbox="0 0 1 1"></marker></svg>`,
+                  {sanitizer: options})', 'div.setHTML' is undefined)
+FAIL Non-matching attribute name case #2: "VIEWBOX" div.setHTML is not a function. (In 'div.setHTML(`<svg><marker viewbox="0 0 1 1"></marker></svg>`,
+                  {sanitizer: options})', 'div.setHTML' is undefined)
+FAIL Default config keeps case-adjusted SVG attribute names div.setHTML is not a function. (In 'div.setHTML(
+        `<svg><marker viewbox="0 0 1 1" refx="1" markerwidth="2"></marker></svg>`)', 'div.setHTML' is undefined)
+

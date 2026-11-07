@@ -1,0 +1,20 @@
+
+PASS Testcase #0 with .setHTMLUnsafe("Hello!")
+PASS Testcase #0, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #1 with .setHTMLUnsafe("<p>bla")
+PASS Testcase #1, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #2 with .setHTMLUnsafe("<p id=abc def='123'>texty<!-- xxx -->textz")
+PASS Testcase #2, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #3 with .setHTMLUnsafe("<p>Hello <b>World</b><span>!")
+PASS Testcase #3, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #4 with .setHTMLUnsafe("<p>A template example.<template>Hello <b>World</b></template>!")
+PASS Testcase #4, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #5 with .setHTMLUnsafe("<td>Interesting parse context.</td>")
+PASS Testcase #5, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #6 with .setHTMLUnsafe("<p>A rather boring parse context.")
+PASS Testcase #6, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #7 with .setHTMLUnsafe("<table><b>a</b>bb<tr><td>y")
+PASS Testcase #7, .innerHTML matches .setHTMLUnsafe
+PASS Testcase #8 with .setHTMLUnsafe("<table><div>d</div><td>")
+PASS Testcase #8, .innerHTML matches .setHTMLUnsafe
+

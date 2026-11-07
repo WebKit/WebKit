@@ -1,0 +1,735 @@
+
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions can override a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions can remove a sanitizer
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.innerHTML: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.innerHTML: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL ShadowRoot.innerHTML: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.innerHTML: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.innerHTML: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.innerHTML: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.innerHTML: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.innerHTML: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.innerHTML: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.innerHTML: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.beforebegin: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.beforebegin: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL ShadowRoot.beforebegin: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.beforebegin: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.beforebegin: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.beforebegin: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.beforebegin: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.beforebegin: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.beforebegin: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.beforebegin: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.afterend: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.afterend: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL ShadowRoot.afterend: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.afterend: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.afterend: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.afterend: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.afterend: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.afterend: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.afterend: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL ShadowRoot.afterend: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+PASS ShadowRoot: createParserOptions can override runScripts from true to false
+FAIL ShadowRoot: createParserOptions can override runScripts from false to true assert_true: Default policy can override runScripts from false to true expected true got false
+FAIL ShadowRoot.innerHTML: createParserOptions returning {runScripts: true} enables script execution assert_false: Initial runScripts option should be false expected false got null
+FAIL ShadowRoot.setHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL ShadowRoot.setHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL ShadowRoot.innerHTML: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL ShadowRoot.beforebegin: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL ShadowRoot.afterend: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.setHTMLUnsafe: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.setHTMLUnsafe: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.setHTMLUnsafe: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.setHTMLUnsafe: createParserOptions can override a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+PASS Element.setHTMLUnsafe: createParserOptions can remove a sanitizer
+FAIL Element.setHTMLUnsafe: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.setHTMLUnsafe: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.setHTMLUnsafe: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.setHTMLUnsafe: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.setHTMLUnsafe: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.setHTMLUnsafe: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.setHTMLUnsafe: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.innerHTML: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.innerHTML: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.innerHTML: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.innerHTML: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.innerHTML: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.innerHTML: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.innerHTML: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.innerHTML: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.innerHTML: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.innerHTML: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.outerHTML: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.outerHTML: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.outerHTML: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.outerHTML: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.outerHTML: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.outerHTML: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.outerHTML: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.outerHTML: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.outerHTML: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.outerHTML: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.createContextualFragment: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.createContextualFragment: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.createContextualFragment: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.createContextualFragment: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.createContextualFragment: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.createContextualFragment: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.createContextualFragment: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.createContextualFragment: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.createContextualFragment: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.createContextualFragment: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterbegin: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.afterbegin: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.afterbegin: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.afterbegin: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterbegin: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterbegin: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterbegin: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterbegin: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterbegin: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterbegin: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforeend: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.beforeend: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.beforeend: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.beforeend: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforeend: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforeend: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforeend: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforeend: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforeend: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforeend: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforebegin: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.beforebegin: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.beforebegin: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.beforebegin: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforebegin: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforebegin: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforebegin: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforebegin: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforebegin: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.beforebegin: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterend: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.afterend: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.afterend: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.afterend: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterend: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterend: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterend: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterend: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterend: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.afterend: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.parseHTMLUnsafe: createParserOptions receives correct type and sink name assert_equals: expected (string) "TrustedHTMLParserOptions" but got (object) null
+FAIL Element.parseHTMLUnsafe: createParserOptions can inject a sanitizer assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.parseHTMLUnsafe: createParserOptions can override a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+PASS Element.parseHTMLUnsafe: createParserOptions can remove a sanitizer
+FAIL Element.parseHTMLUnsafe: createParserOptions returning null fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: createParserOptions returning undefined fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: createParserOptions returning 0 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: createParserOptions returning 123 fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: createParserOptions returning true fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: createParserOptions returning false fails assert_throws_js: function "() => {
+                get_root(
+                  node,
+                  method,
+                  "<div id='allowed'><span id=forbidden></span></div>",
+                );
+              }" did not throw
+PASS Element: createParserOptions can override runScripts from true to false
+FAIL Element: createParserOptions can override runScripts from false to true assert_true: Default policy can override runScripts from false to true expected true got false
+FAIL Element.innerHTML: createParserOptions returning {runScripts: true} enables script execution assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.outerHTML: createParserOptions returning {runScripts: true} enables script execution assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.afterbegin: createParserOptions returning {runScripts: true} enables script execution assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.beforeend: createParserOptions returning {runScripts: true} enables script execution assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.beforebegin: createParserOptions returning {runScripts: true} enables script execution assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.afterend: createParserOptions returning {runScripts: true} enables script execution assert_false: Initial runScripts option should be false expected false got null
+FAIL Element: createContextualFragment with createParserOptions(runScripts=false) does not run scripts assert_false: expected false got true
+PASS Element: createContextualFragment runs scripts by default
+FAIL Element.setHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Element.setHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.innerHTML: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.outerHTML: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.createContextualFragment: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.afterbegin: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.beforeend: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.beforebegin: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+FAIL Element.afterend: exception in createParserOptions is rethrown and prevents createHTML assert_throws_js: function "() => {
+              run_method(node, method, "test string");
+            }" did not throw
+

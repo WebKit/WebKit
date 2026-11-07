@@ -1,0 +1,20 @@
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: Sanitizer
+
+FAIL setHTML testcase text/0, "text" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+PASS setHTMLUnsafe testcase text/0, "text"
+FAIL ShadowRoot.setHTML testcase text/0, "text" shadowRoot .setHTML is not a function. (In 'shadowRoot .setHTML(testcase.data, config)', 'shadowRoot .setHTML' is undefined)
+PASS ShadowRoot.setHTMLUnsafe testcase text/0, "text"
+FAIL parseHTML testcase text/0, "text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTMLUnsafe testcase text/0, "text"
+FAIL setHTML testcase elements/0, "<div><p>Hello <b>World!</b>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+PASS setHTMLUnsafe testcase elements/0, "<div><p>Hello <b>World!</b>"
+FAIL ShadowRoot.setHTML testcase elements/0, "<div><p>Hello <b>World!</b>" shadowRoot .setHTML is not a function. (In 'shadowRoot .setHTML(testcase.data, config)', 'shadowRoot .setHTML' is undefined)
+PASS ShadowRoot.setHTMLUnsafe testcase elements/0, "<div><p>Hello <b>World!</b>"
+FAIL parseHTML testcase elements/0, "<div><p>Hello <b>World!</b>" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTMLUnsafe testcase elements/0, "<div><p>Hello <b>World!</b>"
+FAIL setHTML testcase elements/1, "<div><p>Hello <b>World!</b>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL setHTMLUnsafe testcase elements/1, "<div><p>Hello <b>World!</b>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: <DIV> / <DIV>. expected true got false
+FAIL ShadowRoot.setHTML testcase elements/1, "<div><p>Hello <b>World!</b>" shadowRoot .setHTML is not a function. (In 'shadowRoot .setHTML(testcase.data, config)', 'shadowRoot .setHTML' is undefined)
+FAIL ShadowRoot.setHTMLUnsafe testcase elements/1, "<div><p>Hello <b>World!</b>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: [object ShadowRoot] / <DIV>. expected true got false
+
