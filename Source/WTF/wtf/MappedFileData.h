@@ -39,9 +39,7 @@
 #include <wtf/win/Win32Handle.h>
 #endif
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 enum class MappedFileMode : bool {
     Shared,
@@ -92,8 +90,6 @@ private:
     bool m_isValid { false };
 };
 
-} // namespace FileSystemImpl
-
-} // namespace WTF
+} // namespace WTF::FileSystemImpl
 
 namespace FileSystem = WTF::FileSystemImpl;

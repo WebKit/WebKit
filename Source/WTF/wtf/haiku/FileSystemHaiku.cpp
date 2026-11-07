@@ -32,9 +32,7 @@
 #include <FindDirectory.h>
 #include <Path.h>
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 
 String localUserSpecificStorageDirectory()
@@ -44,5 +42,4 @@ String localUserSpecificStorageDirectory()
     return String::fromUTF8(path.Path());
 }
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl

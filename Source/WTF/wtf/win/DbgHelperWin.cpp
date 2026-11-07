@@ -27,9 +27,7 @@
 
 #include <mutex>
 
-namespace WTF {
-
-namespace DbgHelper {
+namespace WTF::DbgHelper {
 
 // We are only calling these DbgHelp.dll functions in debug mode since the library is not threadsafe.
 // It's possible for external code to call the library at the same time as WebKit and cause memory corruption.
@@ -67,6 +65,4 @@ bool SymFromAddress(HANDLE, DWORD64, DWORD64*, SYMBOL_INFO*)
 
 #endif // !defined(NDEBUG)
 
-} // namespace DbgHelper
-
-} // namespace WTF
+} // namespace WTF::DbgHelper

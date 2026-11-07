@@ -34,9 +34,7 @@
 #include <unistd.h>
 #endif
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 bool validRepresentation(const UTF8CString& representation)
 {
@@ -164,5 +162,4 @@ UTF8CString webkitTopLevelDirectory()
 }
 #endif
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl

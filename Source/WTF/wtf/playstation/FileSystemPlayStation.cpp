@@ -36,9 +36,7 @@
 #include <wtf/posix/POSIXExtras.h>
 #include <wtf/text/MakeString.h>
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 enum class ShouldFollowSymbolicLinks : bool { No, Yes };
 static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
@@ -150,6 +148,5 @@ String realPath(const String& filePath)
 
 
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl
 

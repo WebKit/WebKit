@@ -30,12 +30,8 @@
 
 #include <dbghelp.h>
 
-namespace WTF {
-
-namespace DbgHelper {
+namespace WTF::DbgHelper {
 
 WTF_EXPORT_PRIVATE bool SymFromAddress(HANDLE hProc, DWORD64 address, DWORD64* displacement, SYMBOL_INFO*);
 
-};
-
-} // namespace WTF
+} // namespace WTF::DbgHelper

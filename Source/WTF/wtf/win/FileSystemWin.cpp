@@ -45,9 +45,7 @@
 #include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/PathWalker.h>
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
 
@@ -246,5 +244,4 @@ std::optional<uint32_t> volumeFileBlockSize(const String& path)
     return sectorsPerCluster * bytesPerSector;
 }
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl

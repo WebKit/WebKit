@@ -52,9 +52,7 @@
 #include "Path.h"
 #endif
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 FileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission permission, OptionSet<FileLockMode> lockMode, bool failIfFileExists)
 {
@@ -282,5 +280,4 @@ String pathByAppendingComponents(StringView path, std::span<const StringView> co
 
 #endif
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl

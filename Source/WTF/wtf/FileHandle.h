@@ -37,9 +37,7 @@
 #include <sys/types.h>
 #endif
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 class MappedFileData;
 
@@ -116,8 +114,6 @@ private:
     Markable<PlatformFileHandle, PlatformHandleTraits> m_handle;
 };
 
-} // namespace FileSystemImpl
-
-} // namespace WTF
+} // namespace WTF::FileSystemImpl
 
 namespace FileSystem = WTF::FileSystemImpl;

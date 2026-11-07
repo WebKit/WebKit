@@ -25,9 +25,7 @@
 
 #pragma once
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 enum class FileLockMode {
     Shared = 1 << 0,
@@ -35,6 +33,4 @@ enum class FileLockMode {
     Nonblocking = 1 << 2,
 };
 
-} // namespace FileSystemImpl
-
-} // namespace WTF
+} // namespace WTF::FileSystemImpl

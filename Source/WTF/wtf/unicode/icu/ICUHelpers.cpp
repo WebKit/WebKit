@@ -29,8 +29,7 @@
 #include <mutex>
 #include <span>
 
-namespace WTF {
-namespace ICU {
+namespace WTF::ICU {
 
 static std::span<const uint8_t, U_MAX_VERSION_LENGTH> version()
 {
@@ -54,4 +53,4 @@ unsigned minorVersion()
     return version()[1];
 }
 
-} } // namespace WTF::ICU
+} // namespace WTF::ICU

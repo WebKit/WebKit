@@ -42,8 +42,7 @@
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WTF {
-namespace JSONImpl {
+namespace WTF::JSONImpl {
 
 namespace {
 
@@ -943,5 +942,4 @@ bool ObjectBase::getValue(const String& name, RefPtr<Value>& output) const
     return true;
 }
 
-} // namespace JSONImpl
-} // namespace WTF
+} // namespace WTF::JSONImpl

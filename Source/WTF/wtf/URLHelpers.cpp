@@ -38,8 +38,7 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/WTFString.h>
 
-namespace WTF {
-namespace URLHelpers {
+namespace WTF::URLHelpers {
 
 constexpr unsigned urlBytesBufferLength = 2048;
 
@@ -991,5 +990,4 @@ String userVisibleURL(std::span<const char8_t> url)
     return escapeUnsafeCharacters(normalizedNFC(result));
 }
 
-} // namespace URLHelpers
-} // namespace WTF
+} // namespace WTF::URLHelpers

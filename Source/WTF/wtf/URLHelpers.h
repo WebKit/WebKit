@@ -35,8 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
-namespace WTF {
-namespace URLHelpers {
+namespace WTF::URLHelpers {
 
 using URLDecodeFunction = String(*)(const String&);
 
@@ -47,5 +46,4 @@ NODELETE void initializeDefaultIDNAllowedScriptList();
 std::optional<String> mapHostName(const String&, URLDecodeFunction);
 String mapHostNames(const String&, URLDecodeFunction);
 
-} // namespace URLHelpers
-} // namespace WTF
+} // namespace WTF::URLHelpers

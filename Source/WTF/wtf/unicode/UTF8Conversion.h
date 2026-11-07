@@ -30,8 +30,7 @@
 #include <wtf/ExportMacros.h>
 #include <wtf/text/Latin1Character.h>
 
-namespace WTF {
-namespace Unicode {
+namespace WTF::Unicode {
 
 enum class ConversionResultCode : uint8_t {
     Success, // conversion successful
@@ -67,5 +66,4 @@ struct CheckedUTF8 {
 WTF_EXPORT_PRIVATE CheckedUTF8 checkUTF8(std::span<const char8_t>);
 WTF_EXPORT_PRIVATE std::span<const char8_t> checkUTF8WithoutUTF16Length(std::span<const char8_t>);
 
-} // namespace Unicode
-} // namespace WTF
+} // namespace WTF::Unicode

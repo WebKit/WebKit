@@ -79,9 +79,7 @@ SOFT_LINK(Bom, BOMCopierCopyWithOptions, int, (BOMCopier copier, const char* fro
 
 @end
 
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 String createTemporaryZipArchive(const String& path)
 {
@@ -385,5 +383,4 @@ UTF8CString currentExecutableName()
     return UTF8CString::unsafeFromUTF8(getprogname());
 }
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl

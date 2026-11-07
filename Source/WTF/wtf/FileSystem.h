@@ -62,10 +62,7 @@ struct stat;
 
 OBJC_CLASS NSString;
 
-
-namespace WTF {
-
-namespace FileSystemImpl {
+namespace WTF::FileSystemImpl {
 
 class FileHandle;
 class MappedFileData;
@@ -248,7 +245,6 @@ inline bool pathIsSameOrDescendantOf(StringView path, StringView ancestor)
     return path.length() == ancestor.length() || ancestor.endsWith('/') || path[ancestor.length()] == '/';
 }
 
-} // namespace FileSystemImpl
-} // namespace WTF
+} // namespace WTF::FileSystemImpl
 
 namespace FileSystem = WTF::FileSystemImpl;
