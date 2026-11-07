@@ -37,7 +37,7 @@ class MeshGradient;
 
 namespace Style {
 
-// https://github.com/w3c/csswg-drafts/blob/main/css-images-5/explainers/2d-gradients.md#mesh-gradient
+// https://github.com/w3c/csswg-drafts/pull/14655
 
 // <mesh-relative-control-point> = <coordinate-pair> [from origin]?
 struct MeshGradientRelativeControlPoint {
@@ -59,7 +59,7 @@ DEFINE_TYPE_MAPPING(CSS::MeshGradientRelativeControlPoint, MeshGradientRelativeC
 
 // <mesh-absolute-position> = <position> [ with <position> [ / <position> ]{0,3} ]?
 struct MeshGradientAbsolutePosition {
-    using ControlPoints = std::optional<MinimallySerializingSlashSeparatedRectEdges<Position>>;
+    using ControlPoints = std::optional<SlashSeparatedVector<Position, 4>>;
 
     Position position;
     ControlPoints controlPoints;
@@ -79,7 +79,7 @@ DEFINE_TYPE_MAPPING(CSS::MeshGradientAbsolutePosition, MeshGradientAbsolutePosit
 
 // <mesh-relative-position> = by <coordinate-pair> [ with <mesh-relative-control-point> [ / <mesh-relative-control-point> ]{0,3} ]?
 struct MeshGradientRelativePosition {
-    using ControlPoints = std::optional<MinimallySerializingSlashSeparatedRectEdges<MeshGradientRelativeControlPoint>>;
+    using ControlPoints = std::optional<SlashSeparatedVector<MeshGradientRelativeControlPoint, 4>>;
 
     CoordinatePair offset;
     ControlPoints controlPoints;
@@ -117,11 +117,11 @@ template<size_t I> const auto& get(const MeshGradientPoint& value)
 
 DEFINE_TYPE_MAPPING(CSS::MeshGradientPoint, MeshGradientPoint)
 
-// <mesh-point># [ ';' <mesh-point># ]*
+// <mesh-point>#{2,} [ ';' <mesh-point>#{2,} ]+
 using MeshGradientRow = CommaSeparatedVector<MeshGradientPoint>;
 using MeshGradientRows = SemicolonSeparatedVector<MeshGradientRow>;
 
-// mesh-gradient( [ <color-interpolation-method> || <color> ]?, <mesh-point># [ ';' <mesh-point># ]* )
+// mesh-gradient( [ <color-interpolation-method> || <color> ]?, <mesh-point>#{2,} [ ';' <mesh-point>#{2,} ]+ )
 struct MeshGradient {
     GradientColorInterpolationMethod colorInterpolationMethod;
     Markable<Color> backgroundColor;
