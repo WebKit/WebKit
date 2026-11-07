@@ -74,10 +74,12 @@ namespace WTF {
 ThreadSuspendLocker::ThreadSuspendLocker()
 {
     pas_thread_suspend_lock_lock();
+    pas_thread_suspend_current_reason = pas_thread_suspend_reason_client;
 }
 
 ThreadSuspendLocker::~ThreadSuspendLocker()
 {
+    pas_thread_suspend_current_reason = pas_thread_suspend_reason_libpas;
     pas_thread_suspend_lock_unlock();
 }
 #else

@@ -39,7 +39,14 @@
 #include "pas_heap_lock.h"
 #include "pas_scavenger.h"
 #include "pas_thread_local_cache_layout.h"
+#include "pas_thread_suspend_lock.h"
+#include <atomic>
 #include <thread>
+#include <vector>
+
+#if PAS_OS(LINUX)
+#include <signal.h>
+#endif
 
 using namespace std;
 
@@ -439,6 +446,57 @@ void testAllocateFromStoppedBaselineDuringThreadDestruction()
     myThread.join();
 }
 
+// The scavenger must suspend a thread that never calls into libpas again to stop its allocators.
+void testDecommitTLCOfSpinningThread()
+{
+#if PAS_OS(LINUX)
+    struct sigaction action { };
+    sigemptyset(&action.sa_mask);
+    sigaddset(&action.sa_mask, SIGUSR1);
+    action.sa_handler = [] (int) { pas_thread_suspend_handle_signal(); };
+    action.sa_flags = SA_RESTART;
+    CHECK(!sigaction(SIGUSR1, &action, nullptr));
+    pas_thread_suspend_set_signal(SIGUSR1);
+#endif
+
+    atomic<bool> isSpinning { false };
+    atomic<bool> isDone { false };
+    atomic<unsigned> spins { 0 };
+    size_t pagesAfter = 0;
+
+    pas_scavenger_suspend();
+
+    thread spinningThread([&] () {
+        vector<void*> objects;
+        for (size_t size = 16; size <= 16 * 1024; size += 16)
+            objects.push_back(bmalloc_allocate(size));
+        for (void* object : objects)
+            bmalloc_deallocate(object);
+
+        isSpinning = true;
+        while (!isDone)
+            spins++;
+        pagesAfter = numCommittedPagesInTLC();
+    });
+
+    while (!isSpinning)
+        this_thread::yield();
+    pas_scavenger_clear_all_caches();
+
+    // The thread must run again after it is resumed.
+    unsigned spinsAfterClear = spins;
+    while (spins == spinsAfterClear)
+        this_thread::yield();
+    isDone = true;
+    spinningThread.join();
+
+    // Only the pages before the first allocator stay committed.
+    CHECK_EQUAL(pagesAfter,
+        pas_round_up_to_power_of_2(
+            pas_thread_local_cache_offset_of_allocator(PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES),
+            pas_page_malloc_alignment()) >> pas_page_malloc_alignment_shift());
+}
+
 } // anonymous namespace
 
 #endif // PAS_ENABLE_BMALLOC
@@ -492,5 +550,7 @@ void addTLCDecommitTests()
         ADD_TEST(testAllocateFromStoppedBaseline());
         ADD_TEST(testAllocateFromStoppedBaselineDuringThreadDestruction());
     }
+
+    ADD_TEST(testDecommitTLCOfSpinningThread());
 #endif // PAS_ENABLE_BMALLOC
 }
