@@ -34,8 +34,8 @@ PASS Calling execCommand("insertParagraph", false, null) (inputType value)
 PASS Calling execCommand("insertParagraph", false, null) (data value)
 PASS Calling execCommand("insertParagraph", false, null) (dataTransfer value)
 PASS Calling execCommand("insertHorizontalRule", false, null) (calling execCommand)
-FAIL Calling execCommand("insertHorizontalRule", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "insertText"
-FAIL Calling execCommand("insertHorizontalRule", false, null) (inputType value) assert_equals: expected "insertHorizontalRule" but got "insertText"
+FAIL Calling execCommand("insertHorizontalRule", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "insertHorizontalRule"
+PASS Calling execCommand("insertHorizontalRule", false, null) (inputType value)
 PASS Calling execCommand("insertHorizontalRule", false, null) (data value)
 FAIL Calling execCommand("insertHorizontalRule", false, null) (dataTransfer value) assert_equals: Calling execCommand("insertHorizontalRule", false, null) should produce dataTransfer: null expected null but got object "[object DataTransfer]"
 PASS Calling execCommand("bold", false, null) (calling execCommand)
@@ -264,8 +264,8 @@ PASS Calling execCommand("justifyLeft", false, null) (data value)
 PASS Calling execCommand("justifyLeft", false, null) (dataTransfer value)
 PASS execCommand("justifyLeft") should wrap the text with <div> element whose text-align is left
 PASS Calling execCommand("removeFormat", false, null) (calling execCommand)
-FAIL Calling execCommand("removeFormat", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("removeFormat", false, null) (inputType value) assert_equals: expected "formatRemove" but got ""
+FAIL Calling execCommand("removeFormat", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatRemove"
+PASS Calling execCommand("removeFormat", false, null) (inputType value)
 PASS Calling execCommand("removeFormat", false, null) (data value)
 PASS Calling execCommand("removeFormat", false, null) (dataTransfer value)
 FAIL execCommand("removeFormat") should remove the style of current block assert_equals: expected "<div style=\"\">abc</div>" but got "<div>abc</div>"

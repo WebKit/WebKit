@@ -98,6 +98,8 @@ ASCIILiteral inputTypeNameForEditingAction(EditAction action)
         return "insertReplacementText"_s;
     case EditAction::InsertFromDrop:
         return "insertFromDrop"_s;
+    case EditAction::InsertHorizontalRule:
+        return "insertHorizontalRule"_s;
     case EditAction::TypingInsertLineBreak:
         return "insertLineBreak"_s;
     case EditAction::TypingInsertParagraph:
@@ -120,6 +122,8 @@ ASCIILiteral inputTypeNameForEditingAction(EditAction action)
         return "formatSetBlockTextDirection"_s;
     case EditAction::CreateLink:
         return "insertLink"_s;
+    case EditAction::RemoveFormat:
+        return "formatRemove"_s;
     default:
         return ""_s;
     }
