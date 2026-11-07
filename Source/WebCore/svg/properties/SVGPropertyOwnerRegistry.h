@@ -96,10 +96,12 @@ public:
         registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property>(initialValue));
     }
 
+    // negativeValuesMode and initialValue have to agree with what the element passes to
+    // SVGLengthValue::construct() in attributeChanged(), so that a script write ends where markup does.
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLength> OwnerType::*property>
-    static void registerProperty()
+    static void registerProperty(SVGLengthNegativeValuesMode negativeValuesMode = SVGLengthNegativeValuesMode::Allow, ASCIILiteral initialValue = { })
     {
-        registerProperty(attributeName, SVGAnimatedLengthAccessor<OwnerType>::template singleton<property>());
+        registerProperty(attributeName, SVGAnimatedLengthAccessor<OwnerType>::template singleton<property>(negativeValuesMode, initialValue));
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLengthList> OwnerType::*property>
@@ -345,6 +347,15 @@ public:
             return false;
         });
         ASSERT_UNUSED(found, found);
+    }
+
+    bool isAnimatedPropertyBaseValOutOfRange(const SVGElement& element, const QualifiedName& attributeName) const override
+    {
+        bool isOutOfRange = false;
+        lookupRecursivelyAndApply(attributeName, [&](auto& accessor) {
+            isOutOfRange = accessor.isBaseValOutOfRange(owner(element));
+        });
+        return isOutOfRange;
     }
 
     // Detach all the properties recursively from their OwnerTypes.

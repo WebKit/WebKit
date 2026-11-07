@@ -47,7 +47,7 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGCircleElement::m_cx>();
         PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGCircleElement::m_cy>();
-        PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGCircleElement::m_r>();
+        PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGCircleElement::m_r>(SVGLengthNegativeValuesMode::Forbid);
     }
 }
 

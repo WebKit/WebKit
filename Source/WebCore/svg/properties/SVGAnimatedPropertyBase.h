@@ -62,14 +62,14 @@ public:
     virtual void startAnimation(SVGAttributeAnimator& animator) { m_animators.add(animator); }
     virtual void stopAnimation(SVGAttributeAnimator& animator) { m_animators.remove(animator); }
 
+    // Out of line because it reaches the owner's property registry, and SVGElement is incomplete
+    // here. Same reason as commitPropertyChange() below.
+    void resetBaseValToInitialValue();
+
 protected:
     explicit SVGAnimatedPropertyBase(SVGElement*);
     NODELETE SVGPropertyOwner* owner() const override;
     void commitPropertyChange(SVGProperty*) override;
-
-    // Out of line because it reaches the owner's property registry, and SVGElement is incomplete
-    // here. Same reason as commitPropertyChange() above.
-    void resetBaseValToInitialValue();
 
     WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
     WeakHashSet<SVGAttributeAnimator> m_animators;

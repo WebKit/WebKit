@@ -60,8 +60,8 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& 
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGImageElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGImageElement::m_y>();
-        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGImageElement::m_width>();
-        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGImageElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGImageElement::m_width>(SVGLengthNegativeValuesMode::Forbid);
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGImageElement::m_height>(SVGLengthNegativeValuesMode::Forbid);
         PropertyRegistry::registerProperty<SVGNames::preserveAspectRatioAttr, &SVGImageElement::m_preserveAspectRatio>();
     }
 }
