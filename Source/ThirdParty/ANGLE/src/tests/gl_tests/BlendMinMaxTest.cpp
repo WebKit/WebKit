@@ -194,6 +194,33 @@ TEST_P(BlendMinMaxTest, RGBA16F)
     runTest(GL_RGBA16F, GL_FLOAT);
 }
 
+// Tests GL_MIN and GL_MAX blending of an RGBA8 color buffer with blend factors other than the
+// default ones, which GL ignores for these equations. The colors of the RGBA8 test are all zero.
+TEST_P(BlendMinMaxTest, RGBA8IgnoresBlendFactors)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_EXT_blend_minmax"));
+
+    SetUpFramebuffer(GL_RGBA8);
+    glUseProgram(mProgram);
+    glDisable(GL_BLEND);
+    glUniform4f(mColorLocation, 0.25f, 0.75f, 0.5f, 1.0f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_ZERO, GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ZERO);
+    glBlendEquation(GL_MIN);
+    glUniform4f(mColorLocation, 0.5f, 0.25f, 0.5f, 0.75f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(64, 64, 128, 191), 1);
+
+    glBlendEquationSeparate(GL_MAX, GL_MIN);
+    glUniform4f(mColorLocation, 0.0f, 1.0f, 0.75f, 0.5f);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(64, 255, 191, 128), 1);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(BlendMinMaxTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(BlendMinMaxTest, ES3_WEBGPU());
