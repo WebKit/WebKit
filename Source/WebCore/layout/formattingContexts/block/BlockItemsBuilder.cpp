@@ -75,10 +75,11 @@ BlockItemList BlockItemsBuilder::build(const RenderBox& firstBox, const RenderBo
     auto blockItems = BlockItemList { };
     CheckedPtr<const RenderBox> box = &firstBox;
     while (box) {
-        // FIXME: Floats are kept out by coverage.
-        auto isSingleItem = box->isOutOfFlowPositioned() || BlockFormattingUtils::establishesIndependentFormattingContext(*box);
+        auto isSingleItem = box->isOutOfFlowPositioned() || box->isFloating() || BlockFormattingUtils::establishesIndependentFormattingContext(*box);
         if (box->isOutOfFlowPositioned())
             blockItems.append({ *box, BlockItem::Type::OutOfFlowBox });
+        else if (box->isFloating())
+            blockItems.append({ *box, BlockItem::Type::Float });
         else if (isSingleItem)
             blockItems.append({ *box, BlockItem::Type::IndependentFormattingContextRoot });
         else {
