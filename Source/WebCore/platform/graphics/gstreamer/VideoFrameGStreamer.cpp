@@ -905,19 +905,10 @@ RefPtr<DMABufBuffer> VideoFrameGStreamer::getDMABuf()
 
     Ref dmabuf = DMABufBuffer::create({ size, fourcc, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier });
 
-    DMABufBuffer::ColorSpace colorSpace = DMABufBuffer::ColorSpace::Bt601;
-    DMABufBuffer::TransferFunction transferFunction = DMABufBuffer::TransferFunction::Bt709;
-    if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_BT709))
-        colorSpace = DMABufBuffer::ColorSpace::Bt709;
-    else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_BT2020))
-        colorSpace = DMABufBuffer::ColorSpace::Bt2020;
-    else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_BT2100_PQ)) {
-        colorSpace = DMABufBuffer::ColorSpace::Bt2020;
-        transferFunction = DMABufBuffer::TransferFunction::Pq;
-    } else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_SMPTE240M))
-        colorSpace = DMABufBuffer::ColorSpace::Smpte240M;
-    dmabuf->setColorSpace(colorSpace);
-    dmabuf->setTransferFunction(transferFunction);
+    auto yuvColorimetry = this->yuvColorimetry();
+    dmabuf->setColorSpace(yuvColorimetry.colorSpace);
+    dmabuf->setTransferFunction(yuvColorimetry.transferFunction);
+    dmabuf->setSampleRange(yuvColorimetry.sampleRange);
 
     dmabuf->ref();
     gst_mini_object_set_qdata(memory, dmabufQuark, dmabuf.ptr(), [](gpointer data) {
@@ -980,24 +971,44 @@ Ref<DMABufBuffer> VideoFrameGStreamer::dmabufForQualcommDecoder(const IntSize& s
     Ref dmabuf = DMABufBuffer::create({ size, fourcc, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier });
 
     // The driver converts YUV to RGB while sampling, so it needs the frame colorimetry.
-    const auto& videoInfo = info();
-    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(&videoInfo);
-    std::optional<DMABufBuffer::ColorSpace> colorSpace = DMABufBuffer::ColorSpace::Bt601;
-    if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT709))
-        colorSpace = DMABufBuffer::ColorSpace::Bt709;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2020) || gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2100_PQ))
-        colorSpace = DMABufBuffer::ColorSpace::Bt2020;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_SMPTE240M))
-        colorSpace = std::nullopt;
-
-    if (colorSpace) {
-        dmabuf->setColorSpace(*colorSpace);
-
-        auto sampleRange = colorimetry.range == GST_VIDEO_COLOR_RANGE_0_255 ? DMABufBuffer::SampleRange::Full : DMABufBuffer::SampleRange::Narrow;
-        dmabuf->setSampleRange(sampleRange);
+    // EGL has no token for SMPTE 240M.
+    auto yuvColorimetry = this->yuvColorimetry();
+    if (yuvColorimetry.colorSpace != DMABufBuffer::ColorSpace::Smpte240M) {
+        dmabuf->setColorSpace(yuvColorimetry.colorSpace);
+        dmabuf->setSampleRange(yuvColorimetry.sampleRange);
+        dmabuf->setIsQualcommVideoFrameBuffer();
     }
 
     return dmabuf;
+}
+#endif
+
+#if USE(COORDINATED_GRAPHICS)
+static DMABufBuffer::ColorSpace yuvColorSpaceFromMatrix(GstVideoColorMatrix matrix)
+{
+    switch (matrix) {
+    case GST_VIDEO_COLOR_MATRIX_BT709:
+        return DMABufBuffer::ColorSpace::Bt709;
+    case GST_VIDEO_COLOR_MATRIX_BT2020:
+        return DMABufBuffer::ColorSpace::Bt2020;
+    case GST_VIDEO_COLOR_MATRIX_SMPTE240M:
+        return DMABufBuffer::ColorSpace::Smpte240M;
+    default:
+        break;
+    }
+
+    // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
+    return DMABufBuffer::ColorSpace::Bt601;
+}
+
+VideoFrameGStreamer::YUVColorimetry VideoFrameGStreamer::yuvColorimetry() const
+{
+    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(&m_info.info);
+    return {
+        yuvColorSpaceFromMatrix(colorimetry.matrix),
+        colorimetry.transfer == GST_VIDEO_TRANSFER_SMPTE2084 ? DMABufBuffer::TransferFunction::Pq : DMABufBuffer::TransferFunction::Bt709,
+        colorimetry.range == GST_VIDEO_COLOR_RANGE_0_255 ? DMABufBuffer::SampleRange::Full : DMABufBuffer::SampleRange::Narrow,
+    };
 }
 #endif
 
