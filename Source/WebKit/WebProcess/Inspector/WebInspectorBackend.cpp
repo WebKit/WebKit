@@ -46,6 +46,11 @@
 #include <WebCore/FrameInspectorController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/FrameSnapshotting.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/ImageBufferParameters.h>
+#include <WebCore/ImageUtilities.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/InspectorPageAgent.h>
@@ -58,11 +63,13 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
+#include <WebCore/RenderObject.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/Settings.h>
 #include <WebCore/WebInjectedScriptManager.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/Borrow.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/HashSet.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
@@ -933,6 +940,126 @@ void WebInspectorBackend::getFrameResourceContent(WebCore::FrameIdentifier frame
     // Matches InspectorPageAgent::getResourceContent: on a lookup miss, report success with
     // empty content rather than an error -- the frontend already tolerates empty content here.
     completionHandler(content, base64Encoded, String());
+}
+
+struct NodeForSnapshot {
+    Ref<LocalFrame> rootFrame;
+    Ref<Node> node;
+};
+
+// Finds the node that the DOM agent of the frame target for frameID, or of the page target, gave this id.
+// The root is that target's frame. The node is in it, or in a frame below it in this process.
+static std::expected<NodeForSnapshot, String> nodeForSnapshot(WebPage* page, std::optional<FrameIdentifier> frameID, int nodeId)
+{
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage)
+        return makeUnexpected("Missing page"_s);
+
+    RefPtr<LocalFrame> rootFrame;
+    RefPtr<Node> node;
+    if (frameID) {
+        RefPtr webFrame = WebProcess::singleton().webFrame(*frameID);
+        rootFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+        if (!rootFrame || rootFrame->page() != corePage)
+            return makeUnexpected("Frame is not local to this process"_s);
+        node = rootFrame->inspectorController().nodeForId(nodeId);
+    } else {
+        rootFrame = page->localMainFrame();
+        if (!rootFrame)
+            return makeUnexpected("Main frame isn't local"_s);
+        node = corePage->inspectorController().nodeForId(nodeId);
+    }
+
+    if (!node)
+        return makeUnexpected("Missing node for given nodeId"_s);
+    return NodeForSnapshot { rootFrame.releaseNonNull(), node.releaseNonNull() };
+}
+
+void WebInspectorBackend::snapshotNode(std::optional<FrameIdentifier> frameID, int nodeId, CompletionHandler<void(std::expected<String, String>&&)>&& completionHandler)
+{
+    auto result = nodeForSnapshot(m_page.get(), frameID, nodeId);
+    if (!result) {
+        completionHandler(makeUnexpected(result.error()));
+        return;
+    }
+
+    // Paint the node's own frame, which may be below the root.
+    Ref node = result->node;
+    RefPtr frame = node->document().frame();
+    RefPtr snapshot = frame ? WebCore::snapshotNode(*frame, node, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }) : nullptr;
+    if (!snapshot) {
+        completionHandler(makeUnexpected("Could not capture snapshot"_s));
+        return;
+    }
+    completionHandler(encodeDataURL(WTF::move(snapshot), "image/png"_s));
+}
+
+// Paints like WebCore::snapshotNode(), but records into the remote snapshot, so frames of other processes
+// inside the node are drawn too. Modeled on WebPage::takeRemoteSnapshotForTargetedElement().
+void WebInspectorBackend::snapshotNodeToRemoteSnapshot(std::optional<FrameIdentifier> frameID, int nodeId, RemoteSnapshotIdentifier snapshotIdentifier, CompletionHandler<void(std::expected<void, String>&&)>&& completionHandler)
+{
+#if ENABLE(GPU_PROCESS)
+    RefPtr page = m_page;
+
+    auto fail = [&](const String& errorString) {
+        // The UI process waits for the snapshot in the GPU process, which has to hear that the root failed.
+        WebProcess::singleton().failSnapshot(snapshotIdentifier);
+        completionHandler(makeUnexpected(errorString));
+    };
+
+    auto result = nodeForSnapshot(page.get(), frameID, nodeId);
+    if (!result) {
+        fail(result.error());
+        return;
+    }
+
+    Ref corePage = *page->corePage();
+    ASSERT(corePage->settings().remoteSnapshottingEnabled());
+
+    Ref rootFrame = result->rootFrame;
+    Ref node = result->node;
+    RefPtr frame = node->document().frame();
+    RefPtr frameView = frame ? frame->view() : nullptr;
+    if (frameView)
+        frameView->updateLayoutAndStyleIfNeededRecursive();
+    CheckedPtr renderer = node->renderer();
+    if (!frameView || !renderer) {
+        fail("Could not capture snapshot"_s);
+        return;
+    }
+
+    LayoutRect elementRect;
+    auto paintingRect = snappedIntRect(renderer->subtreePaintRootRect(elementRect, RenderObject::RespectTransforms::Yes));
+    if (paintingRect.isEmpty()) {
+        fail("Could not capture snapshot"_s);
+        return;
+    }
+
+    float scaleFactor = corePage->deviceScaleFactor() * (corePage->delegatesScaling() ? corePage->pageScaleFactor() : 1);
+    auto bitmapSize = calculateImageBufferBackendSize(paintingRect.size(), scaleFactor);
+
+    Ref callback = MainRunLoopSuccessCallbackAggregator::create(WebPage::failRemoteSnapshotIfRootFails(snapshotIdentifier, [completionHandler = WTF::move(completionHandler)](bool success) mutable {
+        if (!success) {
+            completionHandler(makeUnexpected("Could not capture snapshot"_s));
+            return;
+        }
+        completionHandler({ });
+    }));
+
+    auto savedBackgroundColor = frameView->baseBackgroundColor();
+    frameView->setBaseBackgroundColor(Color::transparentBlack);
+    page->recordRemoteSnapshot(snapshotIdentifier, rootFrame->frameID(), WebPage::RemoteSnapshotRole::Root, RenderingMode::DisplayList, IntRect { { }, bitmapSize }, bitmapSize, WTF::move(callback), [&](GraphicsContext& context) {
+        context.applyDeviceScaleFactor(scaleFactor);
+        context.translate(-paintingRect.location());
+        frameView->paintContentsForSnapshot(context, paintingRect, node.ptr(), LocalFrameView::IncludeSelection, LocalFrameView::DocumentCoordinates);
+    });
+    frameView->setBaseBackgroundColor(savedBackgroundColor);
+#else
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(nodeId);
+    UNUSED_PARAM(snapshotIdentifier);
+    completionHandler(makeUnexpected("Remote snapshots are not supported"_s));
+#endif
 }
 
 } // namespace WebKit

@@ -103,8 +103,8 @@ public:
 #endif
     CommandResult<void> setShowPaintRects(bool) final;
     CommandResult<void> setEmulatedMedia(const String&) final;
-    CommandResult<String> snapshotNode(Protocol::DOM::NodeId) final;
-    CommandResult<String> snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem) final;
+    void snapshotNode(Protocol::DOM::NodeId, const String& targetId, Ref<SnapshotNodeCallback>&&) final;
+    void snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem, Ref<SnapshotRectCallback>&&) final;
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
     void archive(Ref<ArchiveCallback>&&) final;
 #endif

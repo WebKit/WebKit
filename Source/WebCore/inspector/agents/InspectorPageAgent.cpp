@@ -1010,27 +1010,39 @@ void InspectorPageAgent::applyEmulatedMedia(AtomString& media)
         media = m_emulatedMedia;
 }
 
-Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Inspector::Protocol::DOM::NodeId nodeId)
+void InspectorPageAgent::snapshotNode(Inspector::Protocol::DOM::NodeId nodeId, const String& targetId, Ref<SnapshotNodeCallback>&& callback)
 {
+    // Only the web-page target can reach the DOM agents of other targets.
+    if (!targetId.isEmpty()) {
+        callback->sendFailure("targetId is not supported by this target"_s);
+        return;
+    }
+
     Inspector::Protocol::ErrorString errorString;
 
     CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
     ASSERT(domAgent);
     RefPtr node = domAgent->assertNode(errorString, nodeId);
-    if (!node)
-        return makeUnexpected(errorString);
-    
+    if (!node) {
+        callback->sendFailure(errorString);
+        return;
+    }
+
     RefPtr localMainFrame = m_inspectedPage->localMainFrame();
-    if (!localMainFrame)
-        return makeUnexpected("Main frame isn't local"_s);
+    if (!localMainFrame) {
+        callback->sendFailure("Main frame isn't local"_s);
+        return;
+    }
 
     RefPtr snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() });
-    if (!snapshot)
-        return makeUnexpected("Could not capture snapshot"_s);
-    return encodeDataURL(WTF::move(snapshot), "image/png"_s);
+    if (!snapshot) {
+        callback->sendFailure("Could not capture snapshot"_s);
+        return;
+    }
+    callback->sendSuccess(encodeDataURL(WTF::move(snapshot), "image/png"_s));
 }
 
-Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Inspector::Protocol::Page::CoordinateSystem coordinateSystem)
+void InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Inspector::Protocol::Page::CoordinateSystem coordinateSystem, Ref<SnapshotRectCallback>&& callback)
 {
     SnapshotOptions options { { }, PixelFormat::BGRA8, ColorSpace::SRGB() };
     if (coordinateSystem == Inspector::Protocol::Page::CoordinateSystem::Viewport)
@@ -1038,13 +1050,17 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int 
 
     IntRect rectangle(x, y, width, height);
     RefPtr localMainFrame = m_inspectedPage->localMainFrame();
-    if (!localMainFrame)
-        return makeUnexpected("Main frame isn't local"_s);
+    if (!localMainFrame) {
+        callback->sendFailure("Main frame isn't local"_s);
+        return;
+    }
     RefPtr snapshot = snapshotFrameRect(*localMainFrame, rectangle, WTF::move(options));
 
-    if (!snapshot)
-        return makeUnexpected("Could not capture snapshot"_s);
-    return encodeDataURL(WTF::move(snapshot), "image/png"_s);
+    if (!snapshot) {
+        callback->sendFailure("Could not capture snapshot"_s);
+        return;
+    }
+    callback->sendSuccess(encodeDataURL(WTF::move(snapshot), "image/png"_s));
 }
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)

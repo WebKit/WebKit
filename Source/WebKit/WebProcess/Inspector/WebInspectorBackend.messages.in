@@ -106,4 +106,11 @@ messages -> WebInspectorBackend {
 
     # Page.searchInResources: search each requested local frame's cached resources plus this process's XHR/Fetch bodies.
     SearchInFramesAndRequests(Vector<WebCore::FrameIdentifier> frameIDs, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchResult> results) Async
+
+    # Page.snapshotNode from the UIProcess ProxyingPageAgent. frameID is the frame of the frame target whose DOM
+    # agent gave out nodeId, or null for the page target. SnapshotNode returns a PNG data URL of this process's
+    # pixels only. SnapshotNodeToRemoteSnapshot records the node into a remote snapshot rooted at that frame
+    # (the main frame for the page target), so frames in other processes are drawn in the GPU process.
+    SnapshotNode(std::optional<WebCore::FrameIdentifier> frameID, int nodeId) -> (std::expected<String, String> result) Async
+    SnapshotNodeToRemoteSnapshot(std::optional<WebCore::FrameIdentifier> frameID, int nodeId, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (std::expected<void, String> result) Async
 }

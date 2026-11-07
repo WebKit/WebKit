@@ -291,9 +291,11 @@
         {
             "name": "snapshotNode",
             "description": "Capture a snapshot of the specified node that does not include unrelated layers.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
+            "async": true,
             "parameters": [
-                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Id of the node to snapshot." }
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Id of the node to snapshot." },
+                { "name": "targetId", "type": "string", "optional": true, "description": "Id of the frame target that owns the node, if it is not the page target. Only the web-page target accepts it." }
             ],
             "returns": [
                 { "name": "dataURL", "type": "string", "description": "Base64-encoded image data (PNG)." }
@@ -302,7 +304,8 @@
         {
             "name": "snapshotRect",
             "description": "Capture a snapshot of the page within the specified rectangle and coordinate system.",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
+            "async": true,
             "parameters": [
                 { "name": "x", "type": "integer", "description": "X coordinate" },
                 { "name": "y", "type": "integer", "description": "Y coordinate" },

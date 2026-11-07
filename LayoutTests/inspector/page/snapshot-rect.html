@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+    height: 2000px;
+}
+.box {
+    position: absolute;
+    top: 100px;
+    width: 50px;
+    height: 50px;
+}
+#box-1 {
+    left: 0;
+    background-color: rgb(0, 0, 255);
+}
+#box-2 {
+    left: 50px;
+    background-color: rgb(0, 128, 0);
+}
+</style>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    // The boxes are side by side at y = 100 in the document. The page is scrolled to
+    // y = 100, so they are at y = 0 in the viewport.
+    const rectInPage = {x: 0, y: 100, width: 100, height: 50};
+    const rectInViewport = {x: 0, y: 0, width: 100, height: 50};
+
+    const pageTarget = WI.pageTarget || WI.assumingMainTarget();
+    const backendTargetHasSnapshotRect = WI.backendTarget && WI.backendTarget.hasCommand("Page.snapshotRect");
+
+    function colorName([r, g, b]) {
+        const near = (value, expected) => Math.abs(value - expected) <= 10;
+        if (near(r, 0) && near(g, 0) && near(b, 255))
+            return "blue";
+        if (near(r, 0) && near(g, 128) && near(b, 0))
+            return "green";
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Returns the colors at the centers of the boxes, and the size of the decoded PNG.
+    async function snapshot(target, rect, coordinateSystem) {
+        let {dataURL} = await target.PageAgent.snapshotRect(rect.x, rect.y, rect.width, rect.height, coordinateSystem);
+        let bytes = Uint8Array.from(atob(dataURL.substring(dataURL.indexOf(",") + 1)), (c) => c.charCodeAt(0));
+        let bitmap = await createImageBitmap(new Blob([bytes], {type: "image/png"}));
+        let canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        let context = canvas.getContext("2d");
+        context.drawImage(bitmap, 0, 0);
+
+        let scale = bitmap.width / rect.width;
+        let colorAt = (x, y) => colorName(context.getImageData(Math.floor(x * scale), Math.floor(y * scale), 1, 1).data);
+        return {
+            firstBox: colorAt(25, 25),
+            secondBox: colorAt(75, 25),
+            width: bitmap.width,
+            height: bitmap.height,
+        };
+    }
+
+    let pageTargetResults = {};
+
+    async function expectSnapshot(target, targetName, coordinateSystemName, coordinateSystem, rect) {
+        let result = await snapshot(target, rect, coordinateSystem);
+        InspectorTest.expectEqual(result.firstBox, "blue", `Snapshot (${targetName}, ${coordinateSystemName}) should contain the blue box.`);
+        InspectorTest.expectEqual(result.secondBox, "green", `Snapshot (${targetName}, ${coordinateSystemName}) should contain the green box.`);
+
+        let devicePixelRatio = await InspectorTest.evaluateInPage(`window.devicePixelRatio`);
+        InspectorTest.expectEqual(result.width, rect.width * devicePixelRatio, `Snapshot (${targetName}, ${coordinateSystemName}) should be (CSS pixel width) * devicePixelRatio pixels wide.`);
+        InspectorTest.expectEqual(result.height, rect.height * devicePixelRatio, `Snapshot (${targetName}, ${coordinateSystemName}) should be (CSS pixel height) * devicePixelRatio pixels tall.`);
+        return result;
+    }
+
+    async function expectSnapshotError(target, targetName) {
+        let error = null;
+        await target.PageAgent.snapshotRect(rectInViewport.x, rectInViewport.y, 0, 0, InspectorBackend.Enum.Page.CoordinateSystem.Viewport).catch((e) => { error = e; });
+        InspectorTest.expectThat(error, `Page.snapshotRect (${targetName}) should return an error for a zero-size rect.`);
+        InspectorTest.log(`Error message: ${error ? error.message : "no error"}`);
+        return error ? error.message : null;
+    }
+
+    function expectMatchesPageTarget(result, coordinateSystemName) {
+        InspectorTest.expectEqual(result.firstBox, pageTargetResults[coordinateSystemName].firstBox, `Snapshot (BackendTarget, ${coordinateSystemName}) should match the page target's snapshot.`);
+        InspectorTest.expectEqual(result.secondBox, pageTargetResults[coordinateSystemName].secondBox, `Snapshot (BackendTarget, ${coordinateSystemName}) should match the page target's snapshot.`);
+        InspectorTest.expectEqual(result.width, pageTargetResults[coordinateSystemName].width, `Snapshot (BackendTarget, ${coordinateSystemName}) should match the page target's snapshot size.`);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Page.snapshotRect");
+
+    function addSnapshotTestCase(target, targetName, coordinateSystemName, coordinateSystem, rect) {
+        suite.addTestCase({
+            name: `Page.snapshotRect.${targetName}.${coordinateSystemName}`,
+            description: `Page.snapshotRect on the ${targetName} target should capture the boxes (${coordinateSystemName} coordinates).`,
+            async test() {
+                let result = await expectSnapshot(target, targetName, coordinateSystemName, coordinateSystem, rect);
+                if (targetName === "PageTarget")
+                    pageTargetResults[coordinateSystemName] = result;
+                else
+                    expectMatchesPageTarget(result, coordinateSystemName);
+            }
+        });
+    }
+
+    addSnapshotTestCase(pageTarget, "PageTarget", "Viewport", InspectorBackend.Enum.Page.CoordinateSystem.Viewport, rectInViewport);
+    addSnapshotTestCase(pageTarget, "PageTarget", "Page", InspectorBackend.Enum.Page.CoordinateSystem.Page, rectInPage);
+
+    let backendTargetCanSnapshot = false;
+
+    suite.addTestCase({
+        name: "Page.snapshotRect.BackendTarget",
+        description: "Page.snapshotRect on the backend target should capture the boxes when the backend target has a Page domain.",
+        async test() {
+            if (!backendTargetHasSnapshotRect) {
+                InspectorTest.log("SKIP: Backend target does not support Page.snapshotRect.");
+                return;
+            }
+
+            // Target.hasCommand consults the protocol's target types, not the domains the
+            // backend registered. The backend target has a Page domain only with Site
+            // Isolation, where ProxyingPageAgent is registered.
+            if (!WI.networkManager.enabledPageForSiteIsolation) {
+                InspectorTest.log("SKIP: Backend target does not have the Page domain without Site Isolation.");
+                return;
+            }
+            backendTargetCanSnapshot = true;
+
+            expectMatchesPageTarget(await expectSnapshot(WI.backendTarget, "BackendTarget", "Viewport", InspectorBackend.Enum.Page.CoordinateSystem.Viewport, rectInViewport), "Viewport");
+            expectMatchesPageTarget(await expectSnapshot(WI.backendTarget, "BackendTarget", "Page", InspectorBackend.Enum.Page.CoordinateSystem.Page, rectInPage), "Page");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.snapshotRect.ZeroSizeRect",
+        description: "Page.snapshotRect should return an error for a zero-size rect.",
+        async test() {
+            let pageTargetErrorMessage = await expectSnapshotError(pageTarget, "PageTarget");
+            if (!backendTargetCanSnapshot)
+                return;
+            let backendTargetErrorMessage = await expectSnapshotError(WI.backendTarget, "BackendTarget");
+            InspectorTest.expectEqual(backendTargetErrorMessage, pageTargetErrorMessage, "Both targets should return the same error for a zero-size rect.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+window.addEventListener("load", () => {
+    window.scrollTo(0, 100);
+    runTest();
+});
+</script>
+</head>
+<body>
+<div id="box-1" class="box"></div>
+<div id="box-2" class="box"></div>
+</body>
+</html>

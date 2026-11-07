@@ -393,25 +393,25 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         }
 
         if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile) && InspectorBackend.hasCommand("Page.snapshotNode") && attached) {
-            contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), () => {
-                let target = WI.assumingMainTarget();
-                target.PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
-                    if (error) {
-                        const target = WI.mainTarget;
-                        const source = WI.ConsoleMessage.MessageSource.Other;
-                        const level = WI.ConsoleMessage.MessageLevel.Error;
-                        let consoleMessage = new WI.ConsoleMessage(target, source, level, error);
-                        consoleMessage.shouldRevealConsole = true;
+            contextMenu.appendItem(WI.UIString("Capture Screenshot", "Capture screenshot of the selected DOM node"), async () => {
+                let dataURL;
+                try {
+                    dataURL = await domNode.snapshot();
+                } catch (error) {
+                    const target = WI.mainTarget;
+                    const source = WI.ConsoleMessage.MessageSource.Other;
+                    const level = WI.ConsoleMessage.MessageLevel.Error;
+                    let consoleMessage = new WI.ConsoleMessage(target, source, level, error.message);
+                    consoleMessage.shouldRevealConsole = true;
 
-                        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
-                        return;
-                    }
+                    WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
+                    return;
+                }
 
-                    WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
-                        content: parseDataURL(dataURL).data,
-                        base64Encoded: true,
-                        suggestedName: WI.FileUtilities.screenshotString() + ".png",
-                    });
+                WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
+                    content: parseDataURL(dataURL).data,
+                    base64Encoded: true,
+                    suggestedName: WI.FileUtilities.screenshotString() + ".png",
                 });
             });
         }

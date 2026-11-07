@@ -1,0 +1,56 @@
+
+
+== Running test suite: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.FrameTargetNode
+PASS: Node should belong to the frame target.
+PASS: Backend target's Page agent should be enabled.
+PASS: Snapshot should contain the node's color.
+PASS: Snapshot width should be the CSS width times devicePixelRatio.
+PASS: Snapshot height should be the CSS height times devicePixelRatio.
+
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.FrameTargetNodeWithNestedCrossOriginIFrame
+PASS: Snapshot should contain the node's own color.
+PASS: Snapshot should contain the cross-origin iframe.
+PASS: Snapshot width should be the CSS width times devicePixelRatio.
+PASS: Snapshot height should be the CSS height times devicePixelRatio.
+
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.MainFrameNode
+PASS: Node should belong to the page target.
+PASS: Snapshot should contain the node's own color.
+PASS: Snapshot should contain the cross-origin iframe.
+PASS: Snapshot width should be the CSS width times devicePixelRatio.
+PASS: Snapshot height should be the CSS height times devicePixelRatio.
+
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.MainFrameNodeThroughFrameTarget
+PASS: Node should belong to the main frame's frame target.
+PASS: Snapshot should contain the node's own color.
+PASS: Snapshot should contain the cross-origin iframe.
+PASS: Snapshot width should be the CSS width times devicePixelRatio.
+PASS: Snapshot height should be the CSS height times devicePixelRatio.
+
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.SameOriginIFrameNode
+PASS: Node should belong to the page target.
+PASS: Snapshot should contain the node's color.
+PASS: Snapshot width should be the CSS width times devicePixelRatio.
+PASS: Snapshot height should be the CSS height times devicePixelRatio.
+
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.SameOriginIFrameNodeThroughFrameTarget
+PASS: Node should belong to the iframe's frame target.
+PASS: Snapshot should contain the node's color.
+PASS: Snapshot width should be the CSS width times devicePixelRatio.
+PASS: Snapshot height should be the CSS height times devicePixelRatio.
+
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.PageTarget
+PASS: Snapshot should contain the node's own color.
+PASS: Snapshot should not contain the cross-origin iframe.
+
+-- Running test case: SiteIsolation.Page.SnapshotNodeCrossOriginIFrame.Errors
+PASS: Should fail for an unknown targetId.
+Error: Missing frame target for given targetId
+PASS: Should fail for an unknown nodeId in a frame target.
+Error: Missing node for given nodeId
+PASS: Should fail for an unknown nodeId in the page target.
+Error: Missing node for given nodeId
+PASS: Page target should reject a targetId.
+Error: targetId is not supported by this target
+
