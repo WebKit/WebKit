@@ -28,6 +28,7 @@
 #include <WebCore/SelectionType.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/VisiblePosition.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ enum class Directionality : uint8_t { None, Strong };
 enum class SelectionDirection : uint8_t { Forward, Backward, Right, Left };
 
 class VisibleSelection {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(VisibleSelection);
+    WTF_MAKE_TZONE_ALLOCATED(VisibleSelection);
 public:
     NODELETE WEBCORE_EXPORT VisibleSelection();
     NODELETE static const VisibleSelection& emptySelection();

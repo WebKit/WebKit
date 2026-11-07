@@ -30,8 +30,11 @@
 #include "Document.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SetSelectionCommand);
 
 SetSelectionCommand::SetSelectionCommand(const VisibleSelection& selection, OptionSet<FrameSelection::SetSelectionOption> options)
     : SimpleEditCommand(selection.base().anchorNode()->document())

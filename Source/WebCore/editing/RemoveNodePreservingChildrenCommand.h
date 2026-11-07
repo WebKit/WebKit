@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RemoveNodePreservingChildrenCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(RemoveNodePreservingChildrenCommand);
 public:
     static Ref<RemoveNodePreservingChildrenCommand> create(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     {

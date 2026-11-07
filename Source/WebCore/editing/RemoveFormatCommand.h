@@ -26,10 +26,12 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class RemoveFormatCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(RemoveFormatCommand);
 public:
     static Ref<RemoveFormatCommand> create(Ref<Document>&& document)
     {

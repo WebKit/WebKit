@@ -28,6 +28,7 @@
 #include "CompositeEditCommand.h"
 #include "EditAction.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class Document;
 class HTMLElement;
 
 class ChangeListTypeCommand final : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ChangeListTypeCommand);
 public:
     enum class Type : uint8_t { ConvertToOrderedList, ConvertToUnorderedList };
     static std::optional<Type> listConversionType(Document&);

@@ -39,8 +39,11 @@
 #include "SimpleRange.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoveFormatCommand);
 
 using namespace HTMLNames;
 
