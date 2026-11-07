@@ -1282,6 +1282,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSONCache.h
     runtime/JSObject.h
     runtime/JSObjectInlines.h
+    runtime/JSObjectInlinesLight.h
     runtime/JSONObject.h
     runtime/JSOrderedHashTable.h
     runtime/JSOrderedHashTableHelper.h
