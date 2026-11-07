@@ -22,8 +22,10 @@
 
 import logging
 import os
+import subprocess
 import sys
 import time
+from unittest.mock import patch
 
 from webkitcorepy import Editor, OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Terminal as MockTerminal
@@ -272,6 +274,38 @@ Fetched 2 remotes!
 Fetched 1 remote!
 ''',
         )
+
+    def test_credential_helper_relative_invocation(self):
+        if os.name != 'posix':
+            self.skipTest('Executing the credential helper requires a POSIX shell')
+
+        installation = os.path.join(self.container, "standalone installation's directory")
+        os.makedirs(installation)
+        executable = os.path.join(installation, 'git-webkit')
+        with open(executable, 'w') as file:
+            file.write("#!/bin/sh\nprintf 'helper-called\\n'\n")
+        os.chmod(executable, 0o755)
+
+        with OutputCapture(), mocks.remote.GitHub() as remote, \
+                mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
+                wkmocks.Environment(EMAIL_ADDRESS='', SVN_LOG_EDITOR=''), \
+                patch.object(program.Setup, 'github', return_value=0), \
+                patch.object(sys, 'argv', [os.path.relpath(executable)]):
+            self.assertEqual(0, program.main(
+                args=('setup', '--defaults'), path=self.path,
+            ))
+            helper = repo.config()['credential.https://github.example.com.helper']
+
+        self.assertTrue(helper.startswith('!'))
+        result = subprocess.run(
+            ['/bin/sh', '-c', helper[1:] + ' get'],
+            cwd=self.path,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual('helper-called\n', result.stdout)
 
     def test_commit_message(self):
         with OutputCapture(level=logging.INFO), MockTerminal.input('n'), mocks.local.Git(self.path) as git, mocks.local.Svn():
