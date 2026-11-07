@@ -911,6 +911,8 @@ FloatRect LineLayout::applySVGTextFragments()
 
 void LineLayout::preparePlacedFloats(const Layout::PlacedFloats::List& intrudingFloats)
 {
+    // The block formatting context adds the floats of the block-level boxes in the content to the placed floats as it lays them out.
+    m_intrudingFloats = intrudingFloats;
     auto& placedFloats = ensureBlockFormattingState().placedFloats();
     placedFloats.clear();
     for (auto& floatItem : intrudingFloats)
@@ -929,20 +931,9 @@ Layout::PlacedFloats::List LineLayout::floatsInContent() const
     return floats;
 }
 
-Layout::PlacedFloats::List LineLayout::intrudingFloats() const
-{
-    auto floats = Layout::PlacedFloats::List { };
-    if (!m_blockFormattingState)
-        return floats;
-    for (auto& floatItem : m_blockFormattingState->placedFloats().list()) {
-        if (!floatItem.isInFormattingContextOf(rootLayoutBox()))
-            floats.append(floatItem);
-    }
-    return floats;
-}
-
 void LineLayout::preparePlacedFloats()
 {
+    m_intrudingFloats = { };
     auto& placedFloats = ensureBlockFormattingState().placedFloats();
     placedFloats.clear();
 
