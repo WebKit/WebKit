@@ -21,6 +21,27 @@ test(() => {
 test(() => {
     assert_equals(new Request("http://example.com/").targetAddressSpace, "public");
 }, "Request defaults targetAddressSpace to public when init omits it");
+
+test(() => {
+    assert_equals(new Request("http://127.0.0.1/", { targetAddressSpace: "local" }).targetAddressSpace, "local");
+    assert_equals(new Request("http://[::1]/", { targetAddressSpace: "local" }).targetAddressSpace, "local");
+    assert_equals(new Request("http://10.0.0.1/", { targetAddressSpace: "loopback" }).targetAddressSpace, "loopback");
+    assert_equals(new Request("http://printer.local/", { targetAddressSpace: "loopback" }).targetAddressSpace, "loopback");
+}, "Request keeps targetAddressSpace from init when the URL host is an address literal or a reserved name");
+
+test(() => {
+    const original = new Request("http://127.0.0.1/");
+    assert_equals(original.targetAddressSpace, "loopback");
+    assert_equals(new Request(original, { targetAddressSpace: "local" }).targetAddressSpace, "local");
+    assert_equals(new Request(original).targetAddressSpace, "loopback");
+}, "Request constructed from a Request with an address literal URL reads targetAddressSpace from init");
+
+test(() => {
+    assert_equals(new Request("http://127.0.0.1/").targetAddressSpace, "loopback");
+    assert_equals(new Request("http://10.0.0.1/").targetAddressSpace, "local");
+    assert_equals(new Request("http://printer.local/").targetAddressSpace, "local");
+    assert_equals(new Request("http://printer.local./").targetAddressSpace, "local");
+}, "Request derives targetAddressSpace from the URL host when init omits it");
 </script>
 </body>
 </html>

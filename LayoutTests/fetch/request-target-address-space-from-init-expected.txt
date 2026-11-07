@@ -2,4 +2,7 @@
 PASS Request constructed from a URL string reads targetAddressSpace from init
 PASS Request constructed from another Request reads targetAddressSpace from init
 PASS Request defaults targetAddressSpace to public when init omits it
+PASS Request keeps targetAddressSpace from init when the URL host is an address literal or a reserved name
+PASS Request constructed from a Request with an address literal URL reads targetAddressSpace from init
+PASS Request derives targetAddressSpace from the URL host when init omits it
 
