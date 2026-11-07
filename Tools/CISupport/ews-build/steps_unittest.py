@@ -12463,6 +12463,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 log_environ=False,
                 env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count origin/main..HEAD)" -ge 1'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
                 command=['git', 'pull', 'origin', 'main', '--rebase'],
             ).exit(0),
             ExpectShell(
@@ -12507,66 +12514,18 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string='Canonicalized commit')
         return self.run_step()
 
-    def test_success_no_head_ref(self):
+    def test_failure_no_head_ref(self):
         self.setup_step(Canonicalize())
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('remote', 'origin')
+        self.setProperty('build_summary', 'Ignored pre-existing failure: test.html')
 
-        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
-        fixed_time = int(time.time())
-        date = f'{int(time.time())} {gmtoffset}'
-        time.time = lambda: fixed_time
-
-        self.expectRemoteCommands(
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm .git/identifiers.json || true'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'pull', 'origin', 'main', '--rebase'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq 1'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'checkout', '--progress', 'main'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
-            ).exit(0),
-            ExpectShell(workdir='wkdir',
-                        log_environ=False,
-                        env=self.ENV,
-                        timeout=300,
-                        command=[
-                            'git', 'filter-branch', '-f',
-                            '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='WebKit Committer';GIT_COMMITTER_EMAIL='committer@webkit.org'".format(date=date),
-                            'HEAD...HEAD~1',
-                        ],
-                        ).exit(0),
-        )
-        self.expect_outcome(result=SUCCESS, state_string='Canonicalized commit')
+        self.expectRemoteCommands()
+        self.expect_outcome(result=FAILURE, state_string='Pull request branch is unknown')
+        self.expect_property('build_summary', '')
+        self.expect_property('build_finish_summary', 'Pull request branch is unknown')
         return self.run_step()
 
     def test_success_multiple_commits(self):
@@ -12597,6 +12556,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 log_environ=False,
                 env=self.ENV,
                 command=['git', 'checkout', '--progress', 'eng/pull-request-branch'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count origin/main..HEAD)" -ge 1'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',
@@ -12674,6 +12640,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 log_environ=False,
                 env=self.ENV,
                 command=['git', 'checkout', '--progress', 'eng/pull-request-branch'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count security/safari-000-branch..HEAD)" -ge 1'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',
@@ -12794,6 +12767,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 log_environ=False,
                 env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count origin/main..HEAD)" -ge 1'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
                 command=['git', 'pull', 'origin', 'main', '--rebase'],
             ).exit(0),
             ExpectShell(
@@ -12857,6 +12837,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 log_environ=False,
                 env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count origin/main..HEAD)" -ge 1'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
                 command=['git', 'pull', 'origin', 'main', '--rebase'],
             ).exit(1)
             .log('stdio', stdout='CONFLICT (content): Merge conflict in Source/WebCore/platform/ScrollingEffectsController.h\n'),
@@ -12887,6 +12874,13 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 log_environ=False,
                 env=self.ENV,
                 command=['git', 'checkout', '--progress', 'eng/pull-request-branch'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'test "$(git rev-list --count origin/main..HEAD)" -ge 1'],
             ).exit(0),
             ExpectShell(
                 workdir='wkdir',

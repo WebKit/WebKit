@@ -7989,6 +7989,7 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         self.rebase_enabled = rebase_enabled
         self.contributors = {}
         self.verify_commit_count_command = None
+        self.verify_on_branch_command = None
         self.summary = ''
 
     def number_commits_to_canonicalize(self):
@@ -8010,8 +8011,19 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         commands = [self.shell_command('rm .git/identifiers.json || {}'.format(self.shell_exit_0()))]
         if self.rebase_enabled:
+            if not head_ref and self.getProperty('github.number'):
+                # RevertAppliedChanges leaves HEAD on the pre-patch revision. Pulling main
+                # from there fast-forwards main, and the commit-count check then blocks the
+                # pull request as already landed.
+                self.summary = 'Pull request branch is unknown'
+                self.setProperty('build_summary', '')
+                self.setProperty('build_finish_summary', self.summary)
+                defer.returnValue(FAILURE)
+                return
             if head_ref:
                 commands += [['git', 'checkout', '--progress', head_ref]]
+                self.verify_on_branch_command = self.shell_command(f'test "$(git rev-list --count {remote}/{base_ref}..HEAD)" -ge 1')
+                commands.append(self.verify_on_branch_command)
             commands += [['git', 'pull', remote, base_ref, '--rebase']]
             self.verify_commit_count_command = self.shell_command(f'test "$(git rev-list --count FETCH_HEAD..HEAD)" -eq {self.getProperty("commit_count", 1)}')
             commands.append(self.verify_commit_count_command)
@@ -8048,7 +8060,9 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         if rc == FAILURE:
             self.setProperty('build_summary', '')
 
-        if rc == FAILURE and self.verify_commit_count_command and self.last_command == self.verify_commit_count_command:
+        count_check_failed = rc == FAILURE and self.verify_commit_count_command and self.last_command == self.verify_commit_count_command
+        branch_check_failed = rc == FAILURE and self.verify_on_branch_command and self.last_command == self.verify_on_branch_command
+        if count_check_failed or branch_check_failed:
             pr_number = self.getProperty('github.number')
             self.summary = f'Changes already landed on {base_ref}'
             self.setProperty('build_finish_summary', self.summary)
