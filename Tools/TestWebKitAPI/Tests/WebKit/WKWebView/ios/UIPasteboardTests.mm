@@ -69,6 +69,16 @@ static _UIDataOwner gLastKnownDataOwner = _UIDataOwnerUndefined;
 
 @end
 
+static ClassMethodSwizzler makePerformAsDataOwnerScope()
+{
+    gLastKnownDataOwner = _UIDataOwnerUndefined;
+    return {
+        UIPasteboard.class,
+        @selector(_performAsDataOwner:block:),
+        [TestUIPasteboard methodForSelector:@selector(_performAsDataOwner:block:)]
+    };
+}
+
 @interface TestMCProfileConnection : NSObject
 @end
 
@@ -421,11 +431,7 @@ TEST(UIPasteboardTests, MissingPreferredPresentationSizeForImage)
 
 TEST(UIPasteboardTests, PerformAsDataOwnerWhenCopying)
 {
-    auto swizzler = ClassMethodSwizzler {
-        UIPasteboard.class,
-        @selector(_performAsDataOwner:block:),
-        [TestUIPasteboard methodForSelector:@selector(_performAsDataOwner:block:)]
-    };
+    auto swizzler = makePerformAsDataOwnerScope();
 
     auto webView = setUpWebViewForPasteboardTests(@"simple");
     [webView _setDataOwnerForCopy:_UIDataOwnerShared];
@@ -440,11 +446,7 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWhenCopying)
 
 TEST(UIPasteboardTests, PerformAsDataOwnerWhenPasting)
 {
-    auto swizzler = ClassMethodSwizzler {
-        UIPasteboard.class,
-        @selector(_performAsDataOwner:block:),
-        [TestUIPasteboard methodForSelector:@selector(_performAsDataOwner:block:)]
-    };
+    auto swizzler = makePerformAsDataOwnerScope();
 
     auto webView = setUpWebViewForPasteboardTests(@"autofocus-contenteditable");
     [webView _setDataOwnerForCopy:_UIDataOwnerShared];
@@ -460,11 +462,7 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWhenPasting)
 
 TEST(UIPasteboardTests, PerformAsDataOwnerWithManagedURL)
 {
-    auto pasteboardSwizzler = ClassMethodSwizzler {
-        UIPasteboard.class,
-        @selector(_performAsDataOwner:block:),
-        [TestUIPasteboard methodForSelector:@selector(_performAsDataOwner:block:)]
-    };
+    auto pasteboardSwizzler = makePerformAsDataOwnerScope();
 
     auto managedConfigurationSwizzler = InstanceMethodSwizzler {
         PAL::getMCProfileConnectionClassSingleton(),
