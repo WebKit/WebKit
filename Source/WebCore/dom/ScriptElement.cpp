@@ -366,7 +366,7 @@ void ScriptElement::updateTaintedOriginFromSourceURL()
     if (!page)
         return;
 
-    if (!page->requiresScriptTrackingPrivacyProtections(hasSourceAttribute() ? document->encodingParseURL(sourceAttributeValue()) : document->url()))
+    if (!m_setFromDOMString && !page->requiresScriptTrackingPrivacyProtections(hasSourceAttribute() ? document->encodingParseURL(sourceAttributeValue()) : document->url()))
         return;
 
     m_taintedOrigin[JSC::SourceTaintKind::ScriptTrackingPrivacy] = JSC::SourceTaintedOrigin::KnownTainted;
@@ -669,6 +669,7 @@ String ScriptElement::scriptContent() const
 
 void ScriptElement::setTrustedScriptText(const String& text)
 {
+    m_setFromDOMString = true;
     m_trustedScriptText = text;
 }
 
