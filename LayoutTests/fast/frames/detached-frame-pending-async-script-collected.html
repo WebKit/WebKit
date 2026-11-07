@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that a detached frame kept alive only by a pending user agent script is destroyed safely when the script's promise is garbage collected. The test passes if it doesn't crash.</p>
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const frameCount = 10;
+let callbackCount = 0;
+
+function callbackWasCalled()
+{
+    if (++callbackCount < frameCount)
+        return;
+
+    setTimeout(() => {
+        for (const iframe of document.querySelectorAll("iframe"))
+            iframe.remove();
+        GCController.collect();
+        setTimeout(() => {
+            document.getElementById("console").textContent = "PASS: Did not crash.";
+            testRunner.notifyDone();
+        }, 0);
+    }, 0);
+}
+
+// WebKitTestRunner calls a runUIScript callback as an async function in the frame that passed it.
+// The promise it returns never settles, so the call stays pending until the promise is collected.
+for (let i = 0; i < frameCount; ++i) {
+    const iframe = document.createElement("iframe");
+    iframe.srcdoc = `<script>testRunner.runUIScript("'done'", () => { top.callbackWasCalled(); return new Promise(() => { }); });<\/script>`;
+    document.body.appendChild(iframe);
+}
+</script>
+</body>
+</html>
