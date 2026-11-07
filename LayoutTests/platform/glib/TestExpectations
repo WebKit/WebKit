@@ -3918,6 +3918,11 @@ webkit.org/b/160248 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure
 # vertical offset in the port, not the mark displacement these tests were written for.
 imported/w3c/web-platform-tests/css/css-fonts/synthetic-bold-combining-mark-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/synthetic-bold-combining-mark-002.html [ ImageOnlyFailure ]
+
+# These references draw the synthetic bold as the glyphs painted twice, offset by the synthetic bold
+# offset, which is how Core Text draws it. Skia emboldens the glyph outline instead.
+webkit.org/b/330430 fast/text/synthetic-bold/synthetic-bold-translucent.html [ ImageOnlyFailure ]
+webkit.org/b/330430 fast/text/synthetic-bold/synthetic-bold-translucent-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/160249 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/161583 accessibility/auto-fill-types.html [ Failure ]
 webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure ]

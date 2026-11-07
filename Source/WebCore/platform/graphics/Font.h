@@ -96,6 +96,10 @@ public:
     const Font& verticalRightOrientationFont() const;
     const Font& uprightOrientationFont() const;
     const Font& invisibleFont() const;
+#if USE(CORE_TEXT)
+    // This font with the synthetic bold turned off, or this font if it has no synthetic bold.
+    const Font& nonSyntheticBoldFont() const;
+#endif
 
     FloatRect boundsForGlyph(Glyph) const;
 #if USE(CORE_TEXT) || USE(SKIA)
@@ -192,6 +196,9 @@ private:
         RefPtr<Font> verticalRightOrientationFont;
         RefPtr<Font> uprightOrientationFont;
         RefPtr<Font> invisibleFont;
+#if USE(CORE_TEXT)
+        RefPtr<Font> nonSyntheticBoldFont;
+#endif
         RefPtr<Font> halfWidthFont;
     };
 
