@@ -43,8 +43,8 @@ TouchEvent::TouchEvent()
 }
 
 TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomString& type,
-    RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
-    : MouseRelatedEvent(EventInterfaceType::TouchEvent, type, IsCancelable::Yes, MonotonicTime::now(), WTF::move(view), globalLocation, modifiers)
+    RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers, IsCancelable isCancelable)
+    : MouseRelatedEvent(EventInterfaceType::TouchEvent, type, isCancelable, MonotonicTime::now(), WTF::move(view), globalLocation, modifiers)
     , m_touches(touches)
     , m_targetTouches(targetTouches)
     , m_changedTouches(changedTouches)

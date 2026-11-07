@@ -327,6 +327,8 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID,
     }
 
     auto trackingType = scrollingTree->eventTrackingTypeForTouchEvent(platform(touchEvent));
+    if (trackingType == TrackingType::Synchronous && !touchEvent->canPreventNativeGestures())
+        trackingType = TrackingType::Asynchronous;
 
     if (trackingType == TrackingType::NotTracking) {
         completionHandler(touchEvent->type(), false);

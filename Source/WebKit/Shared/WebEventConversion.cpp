@@ -541,6 +541,9 @@ public:
         // PlatformTouchEvent
         for (size_t i = 0; i < webEvent.touchPoints().size(); ++i)
             m_touchPoints.append(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+        m_canPreventNativeGestures = webEvent.canPreventNativeGestures();
+#endif
 #endif //PLATFORM(IOS_FAMILY)
     }
 };

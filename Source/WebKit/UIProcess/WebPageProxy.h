@@ -3743,6 +3743,7 @@ private:
 
 #if ENABLE(COORDINATED_TOUCH_EVENTS)
     void processNextQueuedTouchEvent();
+    void handleUnpreventableTouchEvent(NativeWebTouchEvent&);
 #endif
 #if ENABLE(TOUCH_EVENTS)
     void touchEventHandlingCompleted(IPC::Connection*, std::optional<WebEventType>, bool handled);
