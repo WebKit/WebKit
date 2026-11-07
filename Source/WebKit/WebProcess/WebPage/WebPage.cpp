@@ -3041,12 +3041,8 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters, Co
 
     ASSERT(isBackForwardLoadType(parameters.backForwardType));
 
-    RefPtr<HistoryItem> item;
-    {
-        auto ignoreHistoryItemChangesForScope = m_historyItemClient->ignoreChangesForScope();
-        ASSERT(!corePage()->settings().useUIProcessForBackForwardItemLoading() || parameters.frameState->children.isEmpty());
-        item = toHistoryItem(m_historyItemClient, protect(parameters.frameState));
-    }
+    ASSERT(!corePage()->settings().useUIProcessForBackForwardItemLoading() || parameters.frameState->children.isEmpty());
+    Ref item = toHistoryItem(m_historyItemClient, protect(parameters.frameState));
 
     LOG_WITH_STREAM(Loading, stream << "In WebProcess pid "_s << getCurrentProcessID() << ", WebPage "_s << m_identifier.toUInt64() << " is navigating to back/forward URL "_s << item->url().string());
 
@@ -3068,7 +3064,7 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters, Co
     if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame()) {
         if (targetFrame.ptr() == m_mainFrame.ptr())
             targetLocalFrame->loader().setNavigationUpgradeToHTTPSBehavior(item->url().protocolIs("http"_s) ? NavigationUpgradeToHTTPSBehavior::Disabled : NavigationUpgradeToHTTPSBehavior::BasedOnPolicy);
-        protect(corePage())->goToItem(*targetLocalFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad, parameters.shouldRestoreFromBackForwardCache, [weakTargetLocalFrame = WeakPtr { *targetLocalFrame }, item = Ref { *item }, navigationID = parameters.navigationID, completionHandler = WTF::move(completionHandler)] mutable {
+        protect(corePage())->goToItem(*targetLocalFrame, item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad, parameters.shouldRestoreFromBackForwardCache, [weakTargetLocalFrame = WeakPtr { *targetLocalFrame }, item, navigationID = parameters.navigationID, completionHandler = WTF::move(completionHandler)] mutable {
             RefPtr targetLocalFrame = weakTargetLocalFrame;
             if (!targetLocalFrame) {
                 completionHandler(FrameTraversalResult::NotTaken);
