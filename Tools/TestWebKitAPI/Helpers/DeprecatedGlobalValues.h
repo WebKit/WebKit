@@ -51,8 +51,6 @@ extern bool didCreateWebView;
 extern bool receivedLoadedMessage;
 extern bool receivedFullscreenChangeMessage;
 
-void resetGlobalState();
-
 #if PLATFORM(COCOA)
 OBJC_CLASS NSString;
 OBJC_CLASS NSMutableArray;
@@ -66,6 +64,7 @@ extern RetainPtr<NSString> sharedExtensionTabIdentifier;
 extern RetainPtr<NSMutableArray> receivedMessages;
 extern Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 WKScriptMessage *getNextMessage();
+void resetCocoaGlobalState();
 #endif
 
 #endif // __cplusplus

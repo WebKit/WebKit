@@ -45,11 +45,47 @@ bool didCreateWebView { false };
 bool receivedLoadedMessage { false };
 bool receivedFullscreenChangeMessage { false };
 
-void resetGlobalState()
+static void resetGlobalState()
 {
+    receivedScriptMessage = false;
+    isDone = false;
+    done = false;
     didAttachLocalInspectorCalled = false;
     didShowExtensionTabWasCalled = false;
+    pendingCallbackWasCalled = false;
     didHideExtensionTabWasCalled = false;
     inspectedPageDidNavigateWasCalled = false;
-    pendingCallbackWasCalled = false;
+    didEnterPiP = false;
+    didExitPiP = false;
+    readyToContinue = false;
+    didFinishLoad = false;
+    didBecomeUnresponsive = false;
+    wasPrompted = false;
+    didFinishNavigationBoolean = false;
+    didCreateWebView = false;
+    receivedLoadedMessage = false;
+    receivedFullscreenChangeMessage = false;
+#if PLATFORM(COCOA)
+    resetCocoaGlobalState();
+#endif
 }
+
+namespace TestWebKitAPI {
+
+class GlobalStateResetter final : public testing::EmptyTestEventListener {
+public:
+    GlobalStateResetter()
+    {
+        testing::UnitTest::GetInstance()->listeners().Append(this);
+    }
+
+private:
+    void OnTestStart(const testing::TestInfo&) final
+    {
+        resetGlobalState();
+    }
+};
+
+static GlobalStateResetter* const globalStateResetter = new GlobalStateResetter;
+
+} // namespace TestWebKitAPI
