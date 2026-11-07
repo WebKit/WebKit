@@ -1268,6 +1268,19 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #if HAVE(UIKIT_PRINTING)
 
+static std::optional<UIEdgeInsets> explicitPageMarginForPrinting(_WKPrintFormattingAttributes *attributes)
+{
+    auto printInfo = attributes.printInfo;
+    if (printInfo.snapshotFirstPage || attributes.computedPageMargin == printInfo.margin)
+        return std::nullopt;
+    return WebKit::uiEdgeInsets(attributes.computedPageMargin);
+}
+
+static UIEdgeInsets edgeInsetsBetween(CGRect outerRect, CGRect innerRect)
+{
+    return UIEdgeInsetsMake(CGRectGetMinY(innerRect) - CGRectGetMinY(outerRect), CGRectGetMinX(innerRect) - CGRectGetMinX(outerRect), CGRectGetMaxY(outerRect) - CGRectGetMaxY(innerRect), CGRectGetMaxX(outerRect) - CGRectGetMaxX(innerRect));
+}
+
 @implementation WKContentView (_WKWebViewPrintFormatter)
 
 - (std::optional<WebCore::FrameIdentifier>)_frameIdentifierForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
@@ -1309,6 +1322,17 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         CGSize contentSize = self.bounds.size;
         printingRect = (CGRect) { CGPointZero, { contentSize.width, std::min(contentSize.height, maximumPDFHeight) } };
         [printFormatter _setSnapshotPaperRect:printingRect];
+    } else if (UIPrintPageRenderer *printPageRenderer = printFormatter.printPageRenderer; !CGRectIsEmpty(printPageRenderer.paperRect)) {
+        // Explicit @page margins replace this gap between the paper and the content rect.
+        CGRect paperRect = printPageRenderer.paperRect;
+        printInfo.margin = WebKit::floatBoxExtent(edgeInsetsBetween(paperRect, printingRect));
+
+        // UIKit draws the header and footer inside the printable rect.
+        CGRect printableRect = printPageRenderer.printableRect;
+        if (CGFloat headerHeight = printPageRenderer.headerHeight; headerHeight > 0)
+            printInfo.minimumTopMargin = CGRectGetMinY(printableRect) - CGRectGetMinY(paperRect) + headerHeight;
+        if (CGFloat footerHeight = printPageRenderer.footerHeight; footerHeight > 0)
+            printInfo.minimumBottomMargin = CGRectGetMaxY(paperRect) - CGRectGetMaxY(printableRect) + footerHeight;
     }
     printInfo.availablePaperWidth = CGRectGetWidth(printingRect);
     printInfo.availablePaperHeight = CGRectGetHeight(printingRect);
@@ -1375,6 +1399,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     if (!attributes)
         return 0;
 
+    // rectForPageAtIndex: needs the margin before the document is drawn.
+    [printFormatter _setPrintedDocument:WebKit::PrintedDocument { nullptr, explicitPageMarginForPrinting(attributes.get()) }];
+
     return [attributes pageCount];
 }
 
@@ -1421,8 +1448,10 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     bool isPrintingOnBackgroundThread = !isMainRunLoop();
 
     ensureOnMainRunLoop([formatterAttributes = retainPtr(formatterAttributes), isPrintingOnBackgroundThread, printFormatter = retainPtr(printFormatter), retainedSelf = retainPtr(self)] {
+        auto explicitPageMargin = explicitPageMarginForPrinting(formatterAttributes.get());
+
         // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
-        auto callbackID = protect(retainedSelf->_page)->drawToPDFiOS(*[formatterAttributes frameID], [formatterAttributes printInfo], [formatterAttributes pageCount], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](RefPtr<WebCore::SharedBuffer>&& pdfData) mutable {
+        auto callbackID = protect(retainedSelf->_page)->drawToPDFiOS(*[formatterAttributes frameID], [formatterAttributes printInfo], [formatterAttributes pageCount], [isPrintingOnBackgroundThread, printFormatter, retainedSelf, explicitPageMargin](RefPtr<WebCore::SharedBuffer>&& pdfData) mutable {
             if (!isPrintingOnBackgroundThread)
                 retainedSelf->_printRenderingCallbackID = std::nullopt;
             else {
@@ -1431,11 +1460,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
             }
 
             if (!pdfData || pdfData->isEmpty())
-                [printFormatter _setPrintedDocument:nullptr];
+                [printFormatter _setPrintedDocument:WebKit::PrintedDocument { nullptr, explicitPageMargin }];
             else {
                 auto data = pdfData->createCFData();
                 auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
-                [printFormatter _setPrintedDocument:adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get())).get()];
+                [printFormatter _setPrintedDocument:WebKit::PrintedDocument { adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get())), explicitPageMargin }];
             }
         });
 

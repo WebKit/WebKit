@@ -48,7 +48,7 @@
 
     Lock _printLock;
     Condition _printCompletionCondition;
-    RetainPtr<CGPDFDocumentRef> _printedDocument;
+    WebKit::PrintedDocument _printedDocument;
     RetainPtr<CGImageRef> _printPreviewImage;
 }
 
@@ -90,16 +90,16 @@
     return YES;
 }
 
-- (CGPDFDocumentRef)_printedDocument
+- (WebKit::PrintedDocument)_printedDocument
 {
     Locker locker { _printLock };
-    return _printedDocument.get();
+    return _printedDocument;
 }
 
-- (void)_setPrintedDocument:(CGPDFDocumentRef)printedDocument
+- (void)_setPrintedDocument:(WebKit::PrintedDocument&&)printedDocument
 {
     Locker locker { _printLock };
-    _printedDocument = printedDocument;
+    _printedDocument = WTF::move(printedDocument);
     _printCompletionCondition.notifyOne();
 }
 
@@ -133,7 +133,7 @@
 - (void)_invalidatePrintRenderingState
 {
     [self _setPrintPreviewImage:nullptr];
-    [self _setPrintedDocument:nullptr];
+    [self _setPrintedDocument:WebKit::PrintedDocument { }];
 }
 
 - (NSInteger)_recalcPageCount
@@ -152,8 +152,15 @@
 
 - (CGRect)rectForPageAtIndex:(NSInteger)pageIndex
 {
+    CGRect paperRect = self.printPageRenderer.paperRect;
     if (self.snapshotFirstPage)
-        return self.printPageRenderer.paperRect;
+        return paperRect;
+    if (auto explicitPageMargin = [self _printedDocument].explicitPageMargin; explicitPageMargin && !CGRectIsEmpty(paperRect)) {
+        // Negative margins are shrunk to fit the paper. Margins that leave no page area fall back to UIKit's content rect.
+        CGRect pageAreaRect = UIEdgeInsetsInsetRect(paperRect, *explicitPageMargin);
+        if (pageAreaRect.size.width > 0 && pageAreaRect.size.height > 0)
+            return CGRectIntersection(paperRect, pageAreaRect);
+    }
     return [self _pageContentRect:pageIndex == self.startPage];
 }
 
@@ -191,9 +198,9 @@
 
     RetainPtr pageImage = adoptCF(CGImageCreateWithImageInRect(printPreviewImage.get(), CGRectMake(0, pageIndex * pageImageHeight, pageImageWidth, pageImageHeight)));
 
-    CGContextTranslateCTM(context.get(), CGRectGetMinX(rect), CGRectGetMaxY(rect));
-    CGContextScaleCTM(context.get(), 1, -1);
-    CGContextScaleCTM(context.get(), CGRectGetWidth(rect) / pageImageWidth, CGRectGetHeight(rect) / pageImageHeight);
+    CGFloat scale = std::min(CGRectGetWidth(rect) / pageImageWidth, CGRectGetHeight(rect) / pageImageHeight);
+    CGContextTranslateCTM(context.get(), CGRectGetMinX(rect), CGRectGetMinY(rect) + scale * pageImageHeight);
+    CGContextScaleCTM(context.get(), scale, -scale);
     CGContextDrawImage(context.get(), CGRectMake(0, 0, pageImageWidth, pageImageHeight), pageImage.get());
 
     CGContextRestoreGState(context.get());
@@ -201,10 +208,10 @@
 
 - (void)_drawInRectUsingPDF:(CGRect)rect forPageAtIndex:(NSInteger)pageIndex
 {
-    RetainPtr<CGPDFDocumentRef> printedDocument = [self _printedDocument];
+    RetainPtr printedDocument = [self _printedDocument].document;
     if (!printedDocument) {
         [self._contentView _wk_requestDocumentForPrintFormatter:self];
-        printedDocument = [self _printedDocument];
+        printedDocument = [self _printedDocument].document;
         if (!printedDocument)
             return;
     }
@@ -217,13 +224,20 @@
     if (!page)
         return;
 
+    CGRect pageRect = CGPDFPageGetBoxRect(page.get(), kCGPDFCropBox);
+    if (CGRectIsEmpty(pageRect))
+        return;
+
+    // Pages are in points, so only shrink pages that don't fit.
+    CGFloat scale = std::min<CGFloat>({ 1, CGRectGetWidth(rect) / CGRectGetWidth(pageRect), CGRectGetHeight(rect) / CGRectGetHeight(pageRect) });
+
     RetainPtr context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context.get());
 
-    CGContextTranslateCTM(context.get(), CGRectGetMinX(rect), CGRectGetMaxY(rect));
-    CGContextScaleCTM(context.get(), 1, -1);
-    CGContextConcatCTM(context.get(), CGPDFPageGetDrawingTransform(page.get(), kCGPDFCropBox, CGRectMake(0, 0, CGRectGetWidth(rect), CGRectGetHeight(rect)), 0, true));
-    CGContextClipToRect(context.get(), CGPDFPageGetBoxRect(page.get(), kCGPDFCropBox));
+    CGContextTranslateCTM(context.get(), CGRectGetMinX(rect), CGRectGetMinY(rect) + scale * CGRectGetHeight(pageRect));
+    CGContextScaleCTM(context.get(), scale, -scale);
+    CGContextTranslateCTM(context.get(), -CGRectGetMinX(pageRect), -CGRectGetMinY(pageRect));
+    CGContextClipToRect(context.get(), pageRect);
     CGContextDrawPDFPage(context.get(), page.get());
 
     CGContextRestoreGState(context.get());

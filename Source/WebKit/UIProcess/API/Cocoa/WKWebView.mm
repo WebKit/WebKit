@@ -3402,7 +3402,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
     CGSize containerSize = self.frame.size;
     auto contentInsets = _page->obscuredContentInsets();
 #if PLATFORM(IOS_FAMILY)
-    UIEdgeInsets cocoaInsets = UIEdgeInsetsMake(contentInsets.top(), contentInsets.left(), contentInsets.bottom(), contentInsets.right());
+    UIEdgeInsets cocoaInsets = WebKit::uiEdgeInsets(contentInsets);
 #else
     NSEdgeInsets cocoaInsets = NSEdgeInsetsMake(contentInsets.top(), contentInsets.left(), contentInsets.bottom(), contentInsets.right());
 #endif
