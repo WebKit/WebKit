@@ -487,6 +487,7 @@ def serialized_identifiers():
         'WebCore::DebuggerPauseSessionIdentifier',
         'WebCore::DictationContext',
         'WebCore::NodeIdentifier',
+        'WebCore::DeferredFetchIdentifier',
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',

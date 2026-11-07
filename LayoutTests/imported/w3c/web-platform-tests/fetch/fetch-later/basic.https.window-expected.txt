@@ -1,0 +1,25 @@
+
+PASS fetchLater() cannot be called without request.
+PASS fetchLater() with same-origin (https) URL does not throw.
+PASS fetchLater() with http://localhost URL does not throw.
+PASS fetchLater() with https://localhost URL does not throw.
+PASS fetchLater() with http://127.0.0.1 URL does not throw.
+PASS fetchLater() with https://127.0.0.1 URL does not throw.
+PASS fetchLater() with http://[::1] URL does not throw.
+PASS fetchLater() with https://[::1] URL does not throw.
+PASS fetchLater() with https://example.com URL does not throw.
+PASS fetchLater() throws TypeError on non-trustworthy http URL.
+PASS fetchLater() throws TypeError on file:// scheme.
+PASS fetchLater() throws TypeError on ftp:// scheme.
+PASS fetchLater() throws TypeError on ssh:// scheme.
+PASS fetchLater() throws TypeError on wss:// scheme.
+PASS fetchLater() throws TypeError on about: scheme.
+PASS fetchLater() throws TypeError on javascript: scheme.
+PASS fetchLater() throws TypeError on data: scheme.
+PASS fetchLater() throws TypeError on blob: scheme.
+PASS fetchLater() throws RangeError on negative activateAfter.
+PASS fetchLater()'s return tells the deferred request is not yet sent.
+PASS fetchLater() throws TypeError when mutating its returned state.
+PASS fetchLater() throws AbortError when its initial abort signal is aborted.
+PASS fetchLater() does not throw error when it is aborted before sending.
+
