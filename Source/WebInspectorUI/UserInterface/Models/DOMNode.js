@@ -1420,12 +1420,8 @@ WI.DOMNode = class DOMNode extends WI.Object
     // COMPATIBILITY (macOS 14.4, iOS 17.4): `DOM.getMediaStats` did not exist yet.
     async getMediaStats()
     {
-        // FIXME: <https://webkit.org/b/298980> Media stats for cross-origin frame nodes are not yet supported.
-        if (this.owningTarget)
-            return null;
-
-        let target = WI.assumingMainTarget();
-        let {mediaStats} = await target.DOMAgent.getMediaStats(this.id);
+        let target = this.owningTarget || WI.assumingMainTarget();
+        let {mediaStats} = await target.DOMAgent.getMediaStats(this.backendNodeId);
         return mediaStats;
     }
 };
