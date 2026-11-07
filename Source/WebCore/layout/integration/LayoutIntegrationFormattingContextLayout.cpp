@@ -242,10 +242,10 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
     auto layoutBlockRenderer = [&] {
         if (inlineLayoutState.lineCount()) {
             auto textBoxTrimStartDisabler = TextBoxTrimStartDisabler { blockRenderer.get() };
-            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+            positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(inlineLayoutState.marginState()));
             return;
         }
-        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+        positionAndMargin = rootBlockContainer->layoutBlockChildFromInlineLayout(blockRenderer.get(), blockLineLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(inlineLayoutState.marginState()));
     };
     layoutBlockRenderer();
     ASSERT(!blockRenderer->needsLayout());
@@ -283,7 +283,7 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         // before is not above the border box at all, which is why this is the positive part only.
         if (auto marginBeforeWithClearance = rootBlockContainer->selfCollapsingMarginBeforeWithClear(blockRenderer.ptr()))
             marginState.marginBeforeWithClearance = *marginBeforeWithClearance;
-        parentBlockLayoutState.marginState() = marginState;
+        inlineLayoutState.marginState() = marginState;
     };
     updateIFCAfterLayout();
 }
