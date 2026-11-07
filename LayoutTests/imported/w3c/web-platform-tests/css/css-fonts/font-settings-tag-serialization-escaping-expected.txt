@@ -1,0 +1,7 @@
+
+PASS font-feature-settings: "a\"bc" escapes the tag when serialized
+PASS font-feature-settings: "a\\bc" escapes the tag when serialized
+PASS font-feature-settings: "a\"bc" 2 escapes the tag when serialized
+PASS font-variation-settings: "a\"bc" 1 escapes the tag when serialized
+PASS font-variation-settings: "a\\bc" 1 escapes the tag when serialized
+

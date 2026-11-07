@@ -27,7 +27,9 @@
 #include "config.h"
 #include "CSSFontFeatureValue.h"
 
+#include "CSSMarkup.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -44,7 +46,7 @@ String CSSFontFeatureValue::customCSSText(const CSS::SerializationContext& conte
     using namespace CSS::Literals;
 
     StringBuilder builder;
-    builder.append('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], '"');
+    serializeString(builder, makeString(m_tag[0], m_tag[1], m_tag[2], m_tag[3]));
     // Omit the value if it's `1` as `1` is implied by default.
     if (m_value != 1_css_integer)
         builder.append(' ', CSS::serializationForCSS(context, m_value));

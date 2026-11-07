@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "CSSMarkup.h"
 #include <WebCore/FontTaggedSettings.h>
 #include <WebCore/StyleValueTypes.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -44,7 +46,7 @@ struct FontOpentypeTag {
 template<> struct Serialize<FontOpentypeTag> {
     void operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, const FontOpentypeTag& tag)
     {
-        builder.append('"', tag.value[0], tag.value[1], tag.value[2], tag.value[3], '"');
+        serializeString(builder, makeString(tag.value[0], tag.value[1], tag.value[2], tag.value[3]));
     }
 };
 
