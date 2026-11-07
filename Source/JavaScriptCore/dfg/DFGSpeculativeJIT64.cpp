@@ -799,6 +799,18 @@ void SpeculativeJIT::emitCall(Node* node)
                     unlock(reservedGPR);
                 flushRegisters();
             };
+            if (data->isFunctionApply && !isFunctionSpeculation(m_state.forNode(node->child1()).m_type)) {
+                JSValueOperand callee(this, node->child1());
+                GPRReg calleeGPR = callee.gpr();
+                flushRegisters();
+                JumpList slowCases;
+                slowCases.append(branchIfNotCell(calleeGPR));
+                slowCases.append(branchIfNotFunction(calleeGPR));
+                Jump done = jump();
+                slowCases.link(this);
+                callOperation(operationThrowIfNotFunctionApplyCallee, LinkableConstant::globalObject(*this, node), calleeGPR);
+                done.link(this);
+            }
 
             loadArgumentsGPR(InvalidGPRReg);
 
