@@ -1026,7 +1026,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 // Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
 // glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
 ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)
-    : m_font(font)
+    : m_coreTextIndices(ReserveCapacityTag { }, indexEnd - indexBegin)
+    , m_font(font)
     , m_characters(characters)
     , m_indexBegin(indexBegin)
     , m_indexEnd(indexEnd)
@@ -1034,8 +1035,6 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::spa
     , m_isLTR(ltr)
     , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
-    auto runLengthInCodeUnits = m_indexEnd - m_indexBegin;
-    m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
     unsigned r = m_indexBegin;
     while (r < m_indexEnd) {
         auto currentIndex = r;

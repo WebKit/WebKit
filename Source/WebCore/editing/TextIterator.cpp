@@ -1861,6 +1861,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     : m_target(foldQuoteMarks(target))
     , m_targetCharacters(StringView(m_target).upconvertedCharacters())
     , m_options(options)
+    , m_buffer(ReserveCapacityTag { }, std::max(size_t { m_target.length() } * 8, minimumSearchBufferSize))
     , m_prefixLength(0)
     , m_atBreak(true)
     , m_needsMoreContext(options.contains(FindOption::AtWordStarts))
@@ -1870,7 +1871,6 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     ASSERT(!m_target.isEmpty());
 
     size_t targetLength = m_target.length();
-    m_buffer.reserveInitialCapacity(std::max(targetLength * 8, minimumSearchBufferSize));
     m_overlap = m_buffer.capacity() / 4;
 
     m_needsMoreContext = m_options.contains(FindOption::AtWordStarts);

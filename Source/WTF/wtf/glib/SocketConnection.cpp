@@ -38,10 +38,9 @@ SocketConnection::SocketConnection(GRefPtr<GSocketConnection>&& connection, cons
     : m_connection(WTF::move(connection))
     , m_messageHandlers(messageHandlers)
     , m_userData(userData)
+    , m_readBuffer(ReserveCapacityTag { }, defaultBufferSize)
+    , m_writeBuffer(ReserveCapacityTag { }, defaultBufferSize)
 {
-    m_readBuffer.reserveInitialCapacity(defaultBufferSize);
-    m_writeBuffer.reserveInitialCapacity(defaultBufferSize);
-
     auto* socket = g_socket_connection_get_socket(m_connection.get());
     g_socket_set_blocking(socket, FALSE);
     m_readMonitor.start(socket, G_IO_IN, RunLoop::currentSingleton(), nullptr, [this, protectedThis = Ref { *this }](GIOCondition condition) -> gboolean {

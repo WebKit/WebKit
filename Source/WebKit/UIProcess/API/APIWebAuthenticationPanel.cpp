@@ -53,10 +53,10 @@ WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manag
     : m_client(WebAuthenticationPanelClient::create())
     , m_weakManager(manager)
     , m_rpId(rpId)
+    , m_transports(ReserveCapacityTag { }, AuthenticatorManager::maxTransportNumber)
     , m_clientDataType(type)
     , m_userName(userName)
 {
-    m_transports.reserveInitialCapacity(AuthenticatorManager::maxTransportNumber);
     if (transports.contains(AuthenticatorTransport::Usb))
         m_transports.append(AuthenticatorTransport::Usb);
     if (transports.contains(AuthenticatorTransport::Nfc))

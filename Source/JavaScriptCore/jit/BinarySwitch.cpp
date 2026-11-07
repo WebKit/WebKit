@@ -41,6 +41,7 @@ static unsigned globalCounter; // We use a different seed every time we are invo
 
 BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type type)
     : m_weakRandom(globalCounter++)
+    , m_cases(ReserveCapacityTag { }, cases.size())
     , m_type(type)
     , m_value(value)
     , m_totalCases(cases.size())
@@ -53,7 +54,6 @@ BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type ty
     if (BinarySwitchInternal::verbose)
         dataLog("Original cases: ", listDump(cases), "\n");
 
-    m_cases.reserveInitialCapacity(cases.size());
     for (unsigned i = 0; i < cases.size(); ++i)
         m_cases.append(Case(cases[i], i));
     
@@ -72,13 +72,13 @@ BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type ty
 
 BinarySwitch::BinarySwitch(GPRReg value, std::span<const std::tuple<uint32_t, size_t>> runs)
     : m_weakRandom(globalCounter++)
+    , m_cases(ReserveCapacityTag { }, runs.size())
     , m_type(UInt32CheckRuns)
     , m_value(value)
 {
     if (runs.empty())
         return;
 
-    m_cases.reserveInitialCapacity(runs.size());
     unsigned keyStart = 0;
     for (auto [firstKey, runLength] : runs) {
         RELEASE_ASSERT(runLength);
