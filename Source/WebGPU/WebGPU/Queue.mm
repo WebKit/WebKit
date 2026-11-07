@@ -2048,15 +2048,20 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
         if (!sourceTexture || !sourceSecondPlaneTexture)
             return;
 
-        // The frame's clean aperture, which is both the extent script sees and the extent the crop
-        // matrix normalizes against, rather than the larger extent the planes may be coded at.
-        auto cleanSize = CVImageBufferGetCleanRect(pixelBuffer.get()).size;
-        sourceWidth = static_cast<uint32_t>(cleanSize.width);
-        sourceHeight = static_cast<uint32_t>(cleanSize.height);
-        // A quarter turn presents the frame's extent transposed, and both the copy's coordinates and
-        // the origin script asked to copy from are in the presented image.
-        if (source.pixelBufferRotation == WebGPU::VideoFrameRotation::Right || source.pixelBufferRotation == WebGPU::VideoFrameRotation::Left)
-            std::swap(sourceWidth, sourceHeight);
+        // The size the source presents the frame at, which is the extent script sees and which the
+        // pixel buffer does not carry when a pixel aspect ratio or display size scales it. Fall back
+        // to the frame's clean aperture when the caller did not supply one.
+        sourceWidth = source.sourceSize.width;
+        sourceHeight = source.sourceSize.height;
+        if (!sourceWidth || !sourceHeight) {
+            auto cleanSize = CVImageBufferGetCleanRect(pixelBuffer.get()).size;
+            sourceWidth = static_cast<uint32_t>(cleanSize.width);
+            sourceHeight = static_cast<uint32_t>(cleanSize.height);
+            // A quarter turn presents the frame's extent transposed, and both the copy's coordinates and
+            // the origin script asked to copy from are in the presented image.
+            if (source.pixelBufferRotation == WebGPU::VideoFrameRotation::Right || source.pixelBufferRotation == WebGPU::VideoFrameRotation::Left)
+                std::swap(sourceWidth, sourceHeight);
+        }
         if (!sourceWidth || !sourceHeight)
             return;
 

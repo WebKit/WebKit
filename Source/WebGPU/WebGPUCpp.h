@@ -951,9 +951,9 @@ struct ImageCopyExternalImage {
     RetainPtr<IOSurfaceRef> source;
     // The format of the single plane of the IOSurface. An accelerated 2D canvas can be backed by it.
     std::optional<TextureFormat> sourceFormat;
-    // The logical extent of the IOSurface, which may be larger.
+    // The logical extent of the IOSurface, or the presented extent of a video frame.
     Extent2D sourceSize;
-    // A video frame carries its own extent, crop and primaries, and it is treated as opaque.
+    // A video frame carries its own crop and primaries, and it is treated as opaque.
     RetainPtr<CVPixelBufferRef> pixelBuffer;
     // The display transform of the frame: a horizontal mirror, then a clockwise rotation.
     VideoFrameRotation pixelBufferRotation { VideoFrameRotation::None };

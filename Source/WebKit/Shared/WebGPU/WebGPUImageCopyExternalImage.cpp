@@ -43,7 +43,7 @@ std::optional<WebCore::WebGPUExternalImageSource> ConvertFromBackingContext::con
 {
     // The source ImageBuffer cannot be resolved here; RemoteQueue looks it up through RemoteGPU
     // and fills it in, because only RemoteGPU can reach the RemoteRenderingBackend.
-    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, nullptr, imageCopyExternalImage.premultipliedAlpha, std::nullopt } };
+    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, nullptr, imageCopyExternalImage.premultipliedAlpha, std::nullopt, { } } };
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
@@ -59,7 +59,7 @@ std::optional<ImageCopyExternalImageVideoSource> ConvertToBackingContext::conver
 
     // A frame which has no media player behind it has to travel through the shared video frame
     // memory instead, which only RemoteQueueProxy can write to, so it fills sharedFrame in.
-    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, mediaIdentifier, std::nullopt } };
+    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, mediaIdentifier, imageCopyExternalImage.videoSourceSize, std::nullopt } };
 }
 
 std::optional<WebCore::WebGPUExternalImageSource> ConvertFromBackingContext::convertFromBacking(const ImageCopyExternalImageVideoSource& imageCopyExternalImage, ConvertFromBackingContext::PixelBufferType pixelBuffer, WebCore::VideoFrameRotation rotation, bool isMirrored)
@@ -68,7 +68,7 @@ std::optional<WebCore::WebGPUExternalImageSource> ConvertFromBackingContext::con
     // the pixel buffer the backing queue wraps, and read the display transform off the frame the
     // pixel buffer came from; a decoded frame is opaque, so its alpha needs neither premultiplying
     // nor undoing.
-    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, nullptr, true, WebCore::WebGPUVideoSourceIdentifier { pixelBuffer }, rotation, isMirrored } };
+    return { { imageCopyExternalImage.origin, imageCopyExternalImage.flipY, nullptr, true, WebCore::WebGPUVideoSourceIdentifier { pixelBuffer }, imageCopyExternalImage.sourceSize, rotation, isMirrored } };
 }
 #endif
 
