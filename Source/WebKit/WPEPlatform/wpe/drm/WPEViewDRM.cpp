@@ -97,7 +97,8 @@ static void wpeViewDRMConstructed(GObject* object)
 
     auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(view));
     auto* priv = WPE_VIEW_DRM(view)->priv;
-    priv->refreshDuration = Seconds(1 / (wpe_screen_get_refresh_rate(wpeDisplayDRMGetScreen(display)) / 1000.));
+    auto refreshRate = wpe_screen_get_refresh_rate(wpeDisplayDRMGetScreen(display));
+    priv->refreshDuration = Seconds(1 / ((refreshRate > 0 ? refreshRate : 60000) / 1000.));
 
     int fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
     priv->eventContext.version = DRM_EVENT_CONTEXT_VERSION;
