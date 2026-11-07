@@ -32,6 +32,7 @@
 #include <WebCore/IDLTypes.h>
 #include <WebCore/RegistrationResponseJSON.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -55,6 +56,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
 
 class PublicKeyCredential final : public BasicCredential {
+    WTF_MAKE_TZONE_ALLOCATED(PublicKeyCredential);
 public:
     NODELETE static Ref<PublicKeyCredential> create(Ref<AuthenticatorResponse>&&);
 

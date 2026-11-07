@@ -36,8 +36,11 @@
 #include "MIMETypeRegistry.h"
 #include "PlatformRenderTheme.h"
 #include "RenderTheme.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaControlsUtils);
 
 MediaControlsUtils::MediaControlsUtils(Document& document)
     : ContextDestructionObserver(&document)

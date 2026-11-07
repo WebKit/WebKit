@@ -34,6 +34,7 @@
 #include <wtf/Deque.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -54,6 +55,7 @@ template<typename> class ExceptionOr;
 class RTCRtpScriptTransformer
     : public RefCounted<RTCRtpScriptTransformer>
     , public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(RTCRtpScriptTransformer);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

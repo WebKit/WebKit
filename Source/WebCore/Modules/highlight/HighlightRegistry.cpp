@@ -39,8 +39,11 @@
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HighlightRegistry);
     
 void HighlightRegistry::initializeMapLike(DOMMapAdapter& map)
 {

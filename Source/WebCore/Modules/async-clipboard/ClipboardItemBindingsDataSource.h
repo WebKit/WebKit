@@ -57,6 +57,7 @@ private:
 
     using BufferOrString = Variant<String, Ref<SharedBuffer>>;
     class ClipboardItemTypeLoader : public FileReaderLoaderClient, public RefCounted<ClipboardItemTypeLoader> {
+        WTF_MAKE_TZONE_ALLOCATED(ClipboardItemTypeLoader);
     public:
         static Ref<ClipboardItemTypeLoader> create(Clipboard& writingDestination, const String& type, CompletionHandler<void()>&& completionHandler)
         {

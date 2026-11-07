@@ -41,9 +41,12 @@
 #include "Settings.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchRequest);
 
 static std::optional<Exception> setMethod(ResourceRequest& request, const String& initMethod)
 {

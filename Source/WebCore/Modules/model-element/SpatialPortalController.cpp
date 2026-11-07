@@ -70,6 +70,8 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <ranges>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 
@@ -85,6 +87,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SpatialPortalController);
 
 #if ENABLE(GPU_PROCESS_MODEL) || ENABLE(TOUCH_EVENTS)
 class SpatialPortalEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED(SpatialPortalEventListener);
 public:
     static Ref<SpatialPortalEventListener> create(SpatialPortalController& controller)
     {
@@ -105,9 +108,12 @@ private:
 
     const WeakPtr<SpatialPortalController> m_controller;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpatialPortalEventListener);
 #endif
 
 class PortalModelPlayerClient final : public RefCounted<PortalModelPlayerClient>, public ModelPlayerClient {
+    WTF_MAKE_TZONE_ALLOCATED(PortalModelPlayerClient);
 public:
     static Ref<PortalModelPlayerClient> create(SpatialPortalController& controller)
     {
@@ -190,7 +196,10 @@ private:
     const WeakPtr<SpatialPortalController> m_controller;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PortalModelPlayerClient);
+
 class PortalVisibilityChangeClient final : public RefCounted<PortalVisibilityChangeClient>, public VisibilityChangeClient {
+    WTF_MAKE_TZONE_ALLOCATED(PortalVisibilityChangeClient);
 public:
     static Ref<PortalVisibilityChangeClient> create(SpatialPortalController& controller)
     {
@@ -215,7 +224,10 @@ private:
     const WeakPtr<SpatialPortalController> m_controller;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PortalVisibilityChangeClient);
+
 class PortalIntersectionObserverCallback final : public IntersectionObserverCallback {
+    WTF_MAKE_TZONE_ALLOCATED(PortalIntersectionObserverCallback);
 public:
     static Ref<PortalIntersectionObserverCallback> create(Document& document, SpatialPortalController& controller)
     {
@@ -248,6 +260,8 @@ private:
 
     const WeakPtr<SpatialPortalController> m_controller;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PortalIntersectionObserverCallback);
 
 SpatialPortalController::SpatialPortalController(Element& element)
     : m_portalElement(element)

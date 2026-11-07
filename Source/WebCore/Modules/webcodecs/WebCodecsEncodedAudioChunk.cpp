@@ -33,8 +33,11 @@
 #include "WebCodecsBufferTransfer.h"
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsEncodedAudioChunk);
 
 ExceptionOr<Ref<WebCodecsEncodedAudioChunk>> WebCodecsEncodedAudioChunk::create(JSC::JSGlobalObject& globalObject, Init&& init)
 {

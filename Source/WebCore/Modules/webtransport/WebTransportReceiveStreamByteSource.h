@@ -27,6 +27,7 @@
 
 #include "ReadableStreamSource.h"
 #include <wtf/Deque.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -46,6 +47,7 @@ struct WebTransportStreamIdentifierType;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class WebTransportReceiveStreamByteSource final : public RefCounted<WebTransportReceiveStreamByteSource> {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransportReceiveStreamByteSource);
 public:
     static Ref<WebTransportReceiveStreamByteSource> create(WebTransport& transport, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportReceiveStreamByteSource(transport, identifier)); }
 

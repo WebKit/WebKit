@@ -35,6 +35,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,6 +50,7 @@ struct GPUTextureViewDescriptor;
 template<typename> class ExceptionOr;
 
 class GPUTexture : public RefCountedAndCanMakeWeakPtr<GPUTexture> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUTexture);
 public:
     static Ref<GPUTexture> create(Ref<::WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device, bool isCanvasBacking = false)
     {

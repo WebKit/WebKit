@@ -46,8 +46,11 @@
 #include "VisibilityState.h"
 #include "WakeLockManager.h"
 #include "WakeLockSentinel.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WakeLock);
 
 WakeLock::WakeLock(Document* document)
     : ContextDestructionObserver(document)

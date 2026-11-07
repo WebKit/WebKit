@@ -30,6 +30,7 @@
 #include "RTCRtpTransformableFrame.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace JSC {
@@ -40,6 +41,7 @@ class VM;
 namespace WebCore {
 
 class RTCEncodedFrame : public RefCounted<RTCEncodedFrame> {
+    WTF_MAKE_TZONE_ALLOCATED(RTCEncodedFrame);
 public:
     virtual ~RTCEncodedFrame() { }
 

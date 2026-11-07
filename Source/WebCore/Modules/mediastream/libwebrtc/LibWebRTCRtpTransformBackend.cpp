@@ -28,8 +28,11 @@
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 #include "LibWebRTCRtpTransformableFrame.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCRtpTransformBackend);
 
 void LibWebRTCRtpTransformBackend::setInputCallback(Callback&& callback)
 {

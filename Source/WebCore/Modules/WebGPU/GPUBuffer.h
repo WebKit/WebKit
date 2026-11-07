@@ -39,6 +39,7 @@
 #include <wtf/RangeSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,6 +51,7 @@ class WeakPtrImplWithEventTargetData;
 template<typename> class ExceptionOr;
 
 class GPUBuffer : public RefCountedAndCanMakeWeakPtr<GPUBuffer> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUBuffer);
 public:
     static Ref<GPUBuffer> create(Ref<::WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, String&& label, GPUDevice& device)
     {

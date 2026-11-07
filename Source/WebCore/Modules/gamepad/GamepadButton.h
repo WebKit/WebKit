@@ -29,10 +29,12 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class GamepadButton : public RefCounted<GamepadButton> {
+    WTF_MAKE_TZONE_ALLOCATED(GamepadButton);
 public:
     static Ref<GamepadButton> create()
     {

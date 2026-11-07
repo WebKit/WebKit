@@ -31,6 +31,7 @@
 #include "WebTransportSessionClient.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace JSC {
@@ -75,6 +76,7 @@ struct WebTransportHash;
 template<typename> class ExceptionOr;
 
 class WebTransport : public WebTransportSessionClient, public ActiveDOMObject {
+    WTF_MAKE_TZONE_ALLOCATED(WebTransport);
 public:
     static ExceptionOr<Ref<WebTransport>> create(ScriptExecutionContext&, String&&, WebTransportOptions&&);
     ~WebTransport();

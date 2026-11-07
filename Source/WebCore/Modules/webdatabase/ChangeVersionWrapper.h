@@ -30,12 +30,14 @@
 
 #include "SQLTransaction.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SQLError;
 
 class ChangeVersionWrapper : public SQLTransactionWrapper {
+    WTF_MAKE_TZONE_ALLOCATED(ChangeVersionWrapper);
 public:
     static Ref<ChangeVersionWrapper> create(String&& oldVersion, String&& newVersion) { return adoptRef(*new ChangeVersionWrapper(WTF::move(oldVersion), WTF::move(newVersion))); }
 

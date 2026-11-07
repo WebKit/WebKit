@@ -27,8 +27,11 @@
 #include "GPUPipelineLayout.h"
 
 #include "GPUDevice.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUPipelineLayout);
 
 GPUPipelineLayout::GPUPipelineLayout(Ref<WebGPU::PipelineLayout>&& backing, String&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))

@@ -33,6 +33,7 @@
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,6 +43,7 @@ class DeferredPromise;
 class GPUDevice;
 
 class GPUShaderModule : public RefCountedAndCanMakeWeakPtr<GPUShaderModule> {
+    WTF_MAKE_TZONE_ALLOCATED(GPUShaderModule);
 public:
     static Ref<GPUShaderModule> create(Ref<::WebGPU::ShaderModule>&& backing, WebGPUShaderModuleDescriptor&& descriptor, GPUDevice& device)
     {

@@ -38,8 +38,11 @@
 #include "WebTransportSession.h"
 #include <JavaScriptCore/JSPromise.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportReceiveStream);
 
 ExceptionOr<Ref<WebTransportReceiveStream>> WebTransportReceiveStream::create(WebTransportStreamIdentifier identifier, WebTransportSession& session, JSDOMGlobalObject& globalObject, Ref<WebTransportReceiveStreamByteSource>&& source)
 {

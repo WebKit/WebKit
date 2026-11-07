@@ -40,8 +40,11 @@
 #include "WebTransportSession.h"
 #include "WebTransportWriter.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportSendStream);
 
 // FIXME: use this to implement the check in the setter of https://www.w3.org/TR/webtransport/#dom-webtransportsendstream-sendgroup
 

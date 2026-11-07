@@ -81,6 +81,7 @@ private:
     SessionIsValid updateSessionValidity();
 
     class ItemWriter : public RefCounted<ItemWriter> {
+        WTF_MAKE_TZONE_ALLOCATED(ItemWriter);
     public:
         static Ref<ItemWriter> create(Clipboard& clipboard, Ref<DeferredPromise>&& promise)
         {

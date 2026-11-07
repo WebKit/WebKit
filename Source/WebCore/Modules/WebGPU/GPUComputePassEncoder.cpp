@@ -33,8 +33,11 @@
 #include "GPUComputePipeline.h"
 #include "GPUDevice.h"
 #include "GPUQuerySet.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUComputePassEncoder);
 
 GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder)
     : m_backing(WTF::move(backing))

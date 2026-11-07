@@ -30,6 +30,7 @@
 
 #include <WebCore/BasicCredential.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ struct CredentialCreationOptions;
 struct CredentialRequestOptions;
 
 class CredentialsContainer : public RefCounted<CredentialsContainer> {
+    WTF_MAKE_TZONE_ALLOCATED(CredentialsContainer);
 public:
     static Ref<CredentialsContainer> create(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
     {

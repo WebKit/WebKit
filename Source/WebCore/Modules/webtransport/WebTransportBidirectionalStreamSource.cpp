@@ -27,8 +27,11 @@
 #include "WebTransportBidirectionalStreamSource.h"
 
 #include "JSWebTransportBidirectionalStream.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTransportBidirectionalStreamSource);
 
 void WebTransportBidirectionalStreamSource::doCancel()
 {

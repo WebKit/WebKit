@@ -43,8 +43,11 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DatabaseContext);
 
 // How the DatabaseContext Life-Cycle works?
 // ========================================

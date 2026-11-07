@@ -40,6 +40,10 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackGenerator::Source);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackGenerator::Sink);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackGenerator);
 
 ExceptionOr<Ref<VideoTrackGenerator>> VideoTrackGenerator::create(ScriptExecutionContext& context)

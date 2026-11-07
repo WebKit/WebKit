@@ -26,6 +26,7 @@
 #pragma once
 
 #include "QueuingStrategySize.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class JSValue;
@@ -36,6 +37,7 @@ namespace WebCore {
 class JSDOMGlobalObject;
 
 class ByteLengthQueuingStrategy : public RefCounted<ByteLengthQueuingStrategy> {
+    WTF_MAKE_TZONE_ALLOCATED(ByteLengthQueuingStrategy);
 public:
     struct Init {
         double highWaterMark;

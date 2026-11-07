@@ -33,9 +33,12 @@
 #include "PlatformGamepad.h"
 #include "ScriptExecutionContext.h"
 #include "SharedGamepadValue.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Gamepad);
 
 Gamepad::Gamepad(Document* document, const PlatformGamepad& platformGamepad)
     : m_id(platformGamepad.id())

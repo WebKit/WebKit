@@ -73,6 +73,7 @@
 #include <wtf/NativePromise.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -109,6 +110,7 @@ String convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus enumerat
 }
 
 class MediaSourceClientImpl final : public MediaSourcePrivateClient {
+    WTF_MAKE_TZONE_ALLOCATED(MediaSourceClientImpl);
 public:
     static Ref<MediaSourceClientImpl> create(MediaSource& parent) { return adoptRef(*new MediaSourceClientImpl(parent)); }
 
@@ -191,6 +193,8 @@ private:
     mutable Lock m_lock;
     RefPtr<MediaSourcePrivate> m_private WTF_GUARDED_BY_LOCK(m_lock);
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSourceClientImpl);
 
 URLRegistry* MediaSource::s_registry;
 

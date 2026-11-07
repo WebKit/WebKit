@@ -29,6 +29,7 @@
 
 #include "ContextDestructionObserver.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class HTMLImageElement;
 class MediaControlsUtils
     : public RefCounted<MediaControlsUtils>
     , public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(MediaControlsUtils);
 public:
     static Ref<MediaControlsUtils> create(Document& document) { return adoptRef(*new MediaControlsUtils(document)); }
 
