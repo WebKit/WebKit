@@ -29,6 +29,7 @@
 #include "CalleeBits.h"
 #include "CodeBlock.h"
 #include "CodeBlockSetInlines.h"
+#include "Collector.h"
 #include "JITStubRoutineSet.h"
 #include "JSCast.h"
 #include "JSString.h"
@@ -70,7 +71,6 @@ void ConservativeRoots::grow()
 template<bool lookForWasmCallees, typename MarkHook>
 inline void ConservativeRoots::genericAddPointer(char* pointer, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t> jsGCFilter, TinyBloomFilter<uintptr_t> boxedWasmCalleeFilter, MarkHook& markHook)
 {
-    ASSERT(m_heap.worldIsStopped());
     pointer = removeArrayPtrTag(pointer);
     markHook.mark(pointer);
 
@@ -195,6 +195,7 @@ template<typename MarkHook>
 SUPPRESS_ASAN
 void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHook)
 {
+    m_heap.collector().assertIsMarkerWithWorldStopped();
     if (begin > end)
         std::swap(begin, end);
 

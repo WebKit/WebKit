@@ -957,6 +957,17 @@ void Collector::assertIsCollectorThread() const
     ASSERT(m_collectorThreadUID.loadRelaxed() == Thread::currentSingleton().uid());
 }
 
+void Collector::assertIsConductorOrHelper() const
+{
+    ASSERT(currentThreadIsConductor() || Thread::currentSingleton().gcThreadType() == GCThreadType::Helper);
+}
+
+void Collector::assertIsMarkerWithWorldStopped() const
+{
+    ASSERT(m_worldIsStopped);
+    assertIsConductorOrHelper();
+}
+
 bool Collector::currentThreadIsConductor() const
 {
     if (m_conductingHeap)
