@@ -883,6 +883,12 @@ static void runAsyncGeneratorAwaitReturn(JSGlobalObject*, VM&, InternalMicrotask
     RELEASE_AND_RETURN(scope, asyncGeneratorDrainQueue(globalObject, generator));
 }
 
+// PromiseResolve(onFinally()).then(valueThunk) is two jobs before finally's reactions.
+static void queuePromiseFinallySettlement(JSGlobalObject* globalObject, VM& vm, JSValue settledValue, JSSlimPromiseReaction* context, JSPromise::Status status)
+{
+    globalObject->queueMicrotask(vm, InternalMicrotask::PromiseFinallyAwaitDelayJob, static_cast<uint8_t>(status), jsUndefined(), settledValue, context);
+}
+
 static void promiseFinallyAwaitJob(JSGlobalObject* globalObject, VM& vm, JSValue settledValue, JSSlimPromiseReaction* context, JSPromise::Status status)
 {
     auto* resultPromise = uncheckedDowncast<JSPromise>(context->promise());
@@ -938,21 +944,21 @@ static void runPromiseFinallyReactionJob(JSGlobalObject*, VM& vm, InternalMicrot
         auto* promise = uncheckedDowncast<JSPromise>(result);
         if (promise->realm() == globalObject && promise->isThenFastAndNonObservable()) {
             scope.release();
-            promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::PromiseFinallyAwaitJob, resultPromise, context);
+            promise->performPromiseThenWithInternalMicrotask(vm, InternalMicrotask::PromiseFinallyAwaitDelayJob, resultPromise, context);
             return;
         }
     }
 
     if (!result.isObject()) {
         scope.release();
-        promiseFinallyAwaitJob(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
+        queuePromiseFinallySettlement(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
         return;
     }
 
     auto* resolutionObject = asObject(result);
     if (isDefinitelyNonThenable(resolutionObject, globalObject)) {
         scope.release();
-        promiseFinallyAwaitJob(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
+        queuePromiseFinallySettlement(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
         return;
     }
 
@@ -976,11 +982,11 @@ static void runPromiseFinallyReactionJob(JSGlobalObject*, VM& vm, InternalMicrot
 
     if (!then.isCallable()) [[likely]] {
         scope.release();
-        promiseFinallyAwaitJob(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
+        queuePromiseFinallySettlement(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
         return;
     }
 
-    auto [resolve, reject] = JSPromise::createResolvingFunctionsWithInternalMicrotask(vm, globalObject, InternalMicrotask::PromiseFinallyAwaitJob, context);
+    auto [resolve, reject] = JSPromise::createResolvingFunctionsWithInternalMicrotask(vm, globalObject, InternalMicrotask::PromiseFinallyAwaitDelayJob, context);
     scope.release();
     promiseResolveThenableJob(globalObject, resolutionObject, then, resolve, reject, microtaskCallCache);
 }
@@ -1976,6 +1982,12 @@ static void runAsyncFromSyncIteratorDone(JSGlobalObject*, VM& vm, InternalMicrot
 {
     auto* iterator = uncheckedDowncast<JSAsyncFromSyncIterator>(argument2);
     asyncFromSyncIteratorContinueOrDone(iterator->realm(), vm, iterator, argument1, static_cast<JSPromise::Status>(payload), /* done */ true, microtaskCallCache);
+}
+
+static void runPromiseFinallyAwaitDelayJob(JSGlobalObject*, VM& vm, InternalMicrotask, uint8_t payload, JSValue, JSValue argument1, JSValue argument2, MicrotaskCallCache*)
+{
+    auto* context = uncheckedDowncast<JSSlimPromiseReaction>(argument2);
+    uncheckedDowncast<JSPromise>(context->promise())->realm()->queueMicrotask(vm, InternalMicrotask::PromiseFinallyAwaitJob, payload, jsUndefined(), argument1, context);
 }
 
 static void runPromiseFinallyAwaitJob(JSGlobalObject*, VM& vm, InternalMicrotask, uint8_t payload, JSValue, JSValue argument1, JSValue argument2, MicrotaskCallCache*)
