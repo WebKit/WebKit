@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Grid 'order' determines paint order even when items form stacking contexts</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid/#z-order">
+<link rel="match" href="grid-order-paint-order-stacking-context-ref.html">
+<meta name="fuzzy" content="maxDifference=2-3; totalPixels=2400">
+<meta name="assert" content="Grid items are painted in order-modified document order even when they establish a stacking context; 'order' still controls paint order.">
+<style>
+  body { margin: 0; }
+  .row { display: grid; width: 60px; margin: 0 0 8px 0; }
+  /* Both items occupy the same grid cell, so they overlap. The green item is
+     first in the DOM but has a higher 'order', so per order-modified document
+     order it must paint last (on top of red). */
+  .row > div { grid-area: 1 / 1; height: 40px; }
+  .g { order: 2; width: 60px; background: green; }
+  .r { order: 1; width: 30px; background: red; }
+  /* Each trigger establishes a stacking context on both items with no z-index
+     difference. Painting must still follow 'order', so green stays on top. */
+  .relz > div { position: relative; z-index: 0; }
+  .iso  > div { isolation: isolate; }
+  .op   > div { opacity: 0.99; }
+  .tf   > div { transform: translateZ(0); }
+  .wc   > div { will-change: transform; }
+  .flt  > div { filter: blur(0); }
+</style>
+<span class="row"><div class="g"></div><div class="r"></div></span>
+<span class="row relz"><div class="g"></div><div class="r"></div></span>
+<span class="row iso"><div class="g"></div><div class="r"></div></span>
+<span class="row op"><div class="g"></div><div class="r"></div></span>
+<span class="row tf"><div class="g"></div><div class="r"></div></span>
+<span class="row wc"><div class="g"></div><div class="r"></div></span>
+<span class="row flt"><div class="g"></div><div class="r"></div></span>
