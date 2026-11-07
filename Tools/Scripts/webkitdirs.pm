@@ -4377,7 +4377,7 @@ sub runGitUpdate()
 {
     # This will die if branch.$BRANCHNAME.merge isn't set, which is
     # almost certainly what we want.
-    system("git", "pull", "--autostash") == 0 or die;
+    system("git", "pull", "--prune", "--autostash") == 0 or die;
 }
 
 
