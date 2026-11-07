@@ -651,12 +651,11 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
 
     auto rect = backgroundRectForRange(startOffset, endOffset, logicalTop, logicalBottom);
 
-    if (m_paintTextRun.length() == endOffset - startOffset) {
-        // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
-        auto unAdjustedRectMaxX = LayoutUnit { m_paintRect.x() + m_logicalRect.width() };
-        auto visualRight = std::max(rect.maxX(), unAdjustedRectMaxX);
-        rect.shiftMaxXEdgeTo(visualRight);
-    }
+    // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
+    auto boxVisualRight = LayoutUnit { m_paintRect.x() + m_logicalRect.width() };
+    bool rangeReachesVisualRight = m_paintTextRun.ltr() ? endOffset == m_paintTextRun.length() : !startOffset;
+    if (rangeReachesVisualRight)
+        rect.shiftMaxXEdgeTo(boxVisualRight);
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
     auto backgroundRect = snapRectToDevicePixels(rect, m_document->deviceScaleFactor());
