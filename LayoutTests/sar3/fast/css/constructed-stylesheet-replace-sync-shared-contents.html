@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("replaceSync() on a detached constructed stylesheet must not mutate contents shared with another sheet or published to the stylesheet contents cache.");
+
+// A second replaceSync() replaces rather than appends.
+const sheet = new CSSStyleSheet();
+sheet.replaceSync(".x { color: red; }");
+sheet.replaceSync(".y { color: blue; }");
+shouldBe("sheet.cssRules.length", "1");
+shouldBeEqualToString("sheet.cssRules[0].cssText", ".y { color: blue; }");
+
+// Same, with contents that are not cacheable and so stay in place across both calls.
+const nested = new CSSStyleSheet();
+nested.replaceSync(".p { & .q { color: red; } }");
+nested.replaceSync(".r { & .s { color: blue; } }");
+shouldBe("nested.cssRules.length", "1");
+shouldBeEqualToString("nested.cssRules[0].selectorText", ".r");
+
+// Replacing after the sheet has been adopted takes the general path.
+const adopted = new CSSStyleSheet();
+adopted.replaceSync(".t { color: red; }");
+document.adoptedStyleSheets = [adopted];
+adopted.replaceSync(".u { color: blue; }");
+shouldBe("adopted.cssRules.length", "1");
+shouldBeEqualToString("adopted.cssRules[0].selectorText", ".u");
+
+// A fresh sheet parsing the first text does not see rules left behind by the sheet above.
+const other = new CSSStyleSheet();
+other.replaceSync(".x { color: red; }");
+shouldBe("other.cssRules.length", "1");
+shouldBeEqualToString("other.cssRules[0].cssText", ".x { color: red; }");
+
+// Two sheets sharing cached contents: replacing one does not grow the other, which would
+// desync its CSSOM wrapper vector from the rule count and make insertRule() write out of bounds.
+const first = new CSSStyleSheet();
+const second = new CSSStyleSheet();
+first.replaceSync(".p { color: red; }");
+second.replaceSync(".p { color: red; }");
+second.cssRules[0];
+first.replaceSync(".q { color: blue; }");
+shouldBe("second.cssRules.length", "1");
+shouldThrowErrorName("second.insertRule('.r { color: green; }', 2)", "IndexSizeError");
+shouldBe("second.cssRules.length", "1");
+</script>
+</body>
+</html>
