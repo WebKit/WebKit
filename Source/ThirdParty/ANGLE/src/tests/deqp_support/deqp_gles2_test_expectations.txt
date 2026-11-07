@@ -319,10 +319,6 @@
 356399840 WGPU : dEQP-GLES2.functional.buffer.write.random.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.clipping.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.default_vertex_attrib.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.depth_range.*.reverse = FAIL
-356399840 WGPU : dEQP-GLES2.functional.depth_range.*.half_to_zero = FAIL
-356399840 WGPU : dEQP-GLES2.functional.depth_range.*.one_to_half = FAIL
-356399840 WGPU : dEQP-GLES2.functional.depth_range.*.0_8_to_third = FAIL
 356399840 WGPU : dEQP-GLES2.functional.draw.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
 356399840 WGPU : dEQP-GLES2.functional.fbo.render.stencil.* = FAIL
