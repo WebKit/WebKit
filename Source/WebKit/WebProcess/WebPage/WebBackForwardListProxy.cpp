@@ -95,7 +95,6 @@ Vector<Ref<HistoryItem>> WebBackForwardListProxy::allItems(FrameIdentifier frame
     auto [allFrameStates] = sendResult.takeReplyOr(Vector<Ref<FrameState>> { });
 
     Ref historyItemClient = page->historyItemClient();
-    auto ignoreHistoryItemChangesForScope = historyItemClient->ignoreChangesForScope();
 
     Vector<Ref<HistoryItem>> allItems;
     for (Ref frameState : allFrameStates)
@@ -116,7 +115,6 @@ RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex, FrameIde
         return nullptr;
 
     Ref historyItemClient = page->historyItemClient();
-    auto ignoreHistoryItemChangesForScope = historyItemClient->ignoreChangesForScope();
     return toHistoryItem(historyItemClient, Ref { *frameState });
 }
 

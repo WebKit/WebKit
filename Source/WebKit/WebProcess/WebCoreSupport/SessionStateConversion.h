@@ -29,14 +29,14 @@
 
 namespace WebCore {
 class HistoryItem;
-class HistoryItemClient;
 };
 
 namespace WebKit {
 
 class FrameState;
+class WebHistoryItemClient;
 
 Ref<FrameState> toFrameState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const FrameState&);
+Ref<WebCore::HistoryItem> toHistoryItem(WebHistoryItemClient&, const FrameState&);
 
 } // namespace WebKit
