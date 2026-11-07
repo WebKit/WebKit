@@ -143,39 +143,36 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, s
     return jsValueForDecodedArgumentValue(globalObject, std::forward<U>(*value));
 }
 
-template<typename... Elements>
-std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject*, IPC::Decoder&, JSC::JSArray*, size_t currentIndex, std::tuple<Elements...>*);
-
-template<>
-inline std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, size_t currentIndex, std::tuple<>*)
-{
-    return JSC::JSValue { array };
-}
-
-template<typename T, typename... Elements>
-std::optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, size_t currentIndex, std::tuple<T, Elements...>*)
+template<typename T>
+bool putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, size_t currentIndex)
 {
     auto startingBufferOffset = decoder.currentBufferOffset();
     std::optional<T> value = decoder.decode<T>();
     if (!value)
-        return std::nullopt;
+        return false;
 
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
     auto jsValue = jsValueForDecodedArgumentValue(globalObject, WTF::move(*value));
-    RETURN_IF_EXCEPTION(scope, std::nullopt);
+    RETURN_IF_EXCEPTION(scope, false);
     if (jsValue.isEmpty()) {
         // Create array buffers out of types we don't recognize.
         auto span = decoder.span().subspan(startingBufferOffset, decoder.currentBufferOffset() - startingBufferOffset);
         auto arrayBuffer = JSC::ArrayBuffer::create(span);
         if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
             jsValue = JSC::JSArrayBuffer::create(Ref { globalObject->vm() }, structure, WTF::move(arrayBuffer));
-        RETURN_IF_EXCEPTION(scope, std::nullopt);
+        RETURN_IF_EXCEPTION(scope, false);
     }
     array->putDirectIndex(globalObject, currentIndex, jsValue);
-    RETURN_IF_EXCEPTION(scope, std::nullopt);
+    RETURN_IF_EXCEPTION(scope, false);
+    return true;
+}
 
-    std::tuple<Elements...>* dummyArguments = nullptr;
-    return putJSValueForDecodeArgumentInArray<Elements...>(globalObject, decoder, array, currentIndex + 1, dummyArguments);
+template<typename... Elements, size_t... Indices>
+std::optional<JSC::JSValue> putJSValuesForDecodedArgumentsInArray([[maybe_unused]] JSC::JSGlobalObject* globalObject, IPC::Decoder& decoder, JSC::JSArray* array, std::tuple<Elements...>*, std::index_sequence<Indices...>)
+{
+    if (!(putJSValueForDecodeArgumentInArray<Elements>(globalObject, decoder, array, Indices) && ...))
+        return std::nullopt;
+    return JSC::JSValue { array };
 }
 
 template<typename T>
@@ -185,7 +182,7 @@ std::optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObject* glob
     auto* array = JSC::constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
     T* dummyArguments = nullptr;
-    return putJSValueForDecodeArgumentInArray<>(globalObject, decoder, array, 0, dummyArguments);
+    return putJSValuesForDecodedArgumentsInArray(globalObject, decoder, array, dummyArguments, std::make_index_sequence<std::tuple_size_v<T>> { });
 }
 
 // The bindings implementation will call the function templates below to decode a message.
