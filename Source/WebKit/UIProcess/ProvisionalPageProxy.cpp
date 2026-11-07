@@ -512,7 +512,7 @@ void ProvisionalPageProxy::didFailProvisionalLoad(FrameInfoData&& frameInfo, Res
             m_browsingContextGroup->transitionProvisionalPageToRemotePage(*this, Site(request.url()));
         else if (m_takenRemotePage)
             m_browsingContextGroup->addRemotePage(*page, m_takenRemotePage.releaseNonNull());
-        m_shouldClosePage = false;
+        m_shouldClosePage = !m_shouldReuseMainFrame;
     } else if (RefPtr pageMainFrame = page->mainFrame())
         pageMainFrame->didFailProvisionalLoad();
 
