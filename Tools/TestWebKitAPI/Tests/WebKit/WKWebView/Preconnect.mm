@@ -25,17 +25,19 @@
 
 #import "config.h"
 
-#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Utilities.h"
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
-#import "Helpers/Utilities.h"
+#import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/ParsingUtilities.h>
 
 @interface PreconnectSessionDelegate : NSObject <NSURLSessionDataDelegate>
@@ -422,6 +424,89 @@ TEST(Preconnect, PrivacyProxyRequestFlags)
 
     Util::run(&requested);
     EXPECT_EQ(connectionCount, 1U);
+}
+
+static void appendHPACKString(Vector<uint8_t>& headerBlock, const String& string)
+{
+    auto utf8 = string.utf8();
+    headerBlock.append(utf8.length());
+    headerBlock.append(byteCast<uint8_t>(utf8.span()));
+}
+
+static void appendHPACKLiteralHeader(Vector<uint8_t>& headerBlock, const String& name, const String& value)
+{
+    // https://httpwg.org/specs/rfc7541.html#literal.header.without.indexing
+    headerBlock.append(0x00);
+    appendHPACKString(headerBlock, name);
+    appendHPACKString(headerBlock, value);
+}
+
+static void respondWithEarlyHintsPreconnect(Ref<H2::Connection>&& connection, uint16_t preconnectPort)
+{
+    connection->receive([connection, preconnectPort](H2::Frame&& frame) mutable {
+        if (frame.type() == H2::Frame::Type::Headers) {
+            constexpr uint8_t endStream = 0x1;
+            constexpr uint8_t endHeaders = 0x4;
+            auto streamID = frame.streamID();
+
+            // Literal header field without indexing, named by static table index 8 (":status").
+            Vector<uint8_t> earlyHints { 0x08 };
+            appendHPACKString(earlyHints, "103"_s);
+            appendHPACKLiteralHeader(earlyHints, "link"_s, makeString("<https://127.0.0.1:"_s, preconnectPort, "/>; rel=preconnect"_s));
+
+            // Send each frame only after the previous one, since the first send waits for the connection preface.
+            connection->send(H2::Frame(H2::Frame::Type::Headers, endHeaders, streamID, WTF::move(earlyHints)), [connection, streamID] {
+                // Indexed header field, static table index 8 (":status: 200").
+                Vector<uint8_t> responseHeaders { 0x88 };
+                appendHPACKLiteralHeader(responseHeaders, "content-type"_s, "text/html"_s);
+                connection->send(H2::Frame(H2::Frame::Type::Headers, endHeaders, streamID, WTF::move(responseHeaders)), [connection, streamID] {
+                    Vector<uint8_t> body;
+                    body.append("<!DOCTYPE html><body>Hello world</body>"_span8);
+                    connection->send(H2::Frame(H2::Frame::Type::Data, endStream, streamID, WTF::move(body)));
+                });
+            });
+        }
+        respondWithEarlyHintsPreconnect(WTF::move(connection), preconnectPort);
+    });
+}
+
+TEST(Preconnect, EarlyHintsUsesEnhancedPrivacy)
+{
+    bool preconnected = false;
+    HTTPServer preconnectServer([&](Connection) {
+        preconnected = true;
+    }, HTTPServer::Protocol::Https);
+
+    HTTPServer server([preconnectPort = preconnectServer.port()](Connection tlsConnection) {
+        respondWithEarlyHintsPreconnect(H2::Connection::create(tlsConnection), preconnectPort);
+    }, HTTPServer::Protocol::Http2Raw);
+
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setNetworkConnectionIntegrityPolicy:_WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry | _WKWebsiteNetworkConnectionIntegrityPolicyEnabled | _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:WKWebsiteDataStore.defaultDataStore];
+    [configuration setDefaultWebpagePreferences:preferences.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:server.request()];
+    [navigationDelegate waitForDidFinishNavigation];
+    Util::run(&preconnected);
+
+#if PLATFORM(MAC)
+    auto logMessages = [webView collectLogsForNewConnections];
+#if CPU(X86_64)
+    EXPECT_EQ([logMessages count], 0U);
+#else
+    EXPECT_GE([logMessages count], 2U);
+    for (NSString *message : logMessages)
+        EXPECT_TRUE([message containsString:@"enhanced privacy"]);
+#endif
+#endif
 }
 
 #endif // HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)

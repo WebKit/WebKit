@@ -15,7 +15,7 @@ async function loadImage(url) {
 }
 
 // Whether the network process issued the early hints preconnect is reported by the console message
-// EarlyHintsResourceLoader emits, so the expectations file is what distinguishes the blocked arm from
+// NetworkResourceLoader emits, so the expectations file is what distinguishes the blocked arm from
 // the allowed one. Loading an image from the origin the early hint named keeps the page alive long
 // enough for that message to have been delivered to this frame.
 promise_test(async (t) => {

@@ -5,7 +5,7 @@
 // Safari does for an installed content blocker. That rule list blocks ping loads to the cross-origin
 // host, "ping" being the resource type content rule lists classify a preconnect as.
 //
-// 103 Early Hints are handled by EarlyHintsResourceLoader in the network process before any renderer
+// 103 Early Hints are handled by NetworkResourceLoader in the network process before any renderer
 // has run, so the WebContent-side gate in LinkLoader::preconnectIfNeeded cannot see this ingress. If
 // the network process does not consult the rule lists itself, the server-supplied preconnect target
 // reaches the wire (DNS, TCP, and a TLS ClientHello naming the blocked host) despite the block rule.

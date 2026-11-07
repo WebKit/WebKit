@@ -1300,17 +1300,15 @@ void NetworkResourceLoader::startPreconnectTask(const URL& baseURL, const LinkHe
     if (!contentSecurityPolicy.allowConnectToSource(url, { }, ContentSecurityPolicy::RedirectResponseReceived::No, originalRequest().url()))
         return;
 
-    NetworkLoadParameters parameters;
-    auto globalFrameID = this->globalFrameID();
-    parameters.webPageProxyID = globalFrameID.webPageProxyID;
-    parameters.webPageID = globalFrameID.webPageID;
-    parameters.webFrameID = globalFrameID.frameID;
+    auto parameters = this->parameters().networkLoadParameters();
+    parameters.request = constructPreconnectRequest(originalRequest(), url);
     parameters.storedCredentialsPolicy = equalLettersIgnoringASCIICase(header.crossOrigin(), "anonymous"_s) ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
-    parameters.request = constructPreconnectRequest(originalRequest(), url);
-    parameters.isNavigatingToAppBoundDomain = this->parameters().isNavigatingToAppBoundDomain;
+    parameters.isMainFrameNavigation = false;
+    parameters.mainResourceNavigationDataForAnyFrame = std::nullopt;
+    parameters.needsCertificateInfo = false;
 
     startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), baseURL);
 #else
