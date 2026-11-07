@@ -124,7 +124,7 @@ static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& rang
         if (!center.customPropertyName.isNull())
             feature.name = center.customPropertyName;
         else
-            feature.subject = Value { WTF::move(center.value) };
+            feature.subject = Box<Value>::create(WTF::move(center.value));
     };
 
     Feature feature;
@@ -132,13 +132,13 @@ static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& rang
 
     if (!thirdOperand) {
         setCenter(feature, WTF::move(*firstOperand));
-        feature.rightComparison = Comparison { *firstOperator, Value { WTF::move(secondOperand->value) } };
+        feature.rightComparison = Comparison { *firstOperator, Box<Value>::create(WTF::move(secondOperand->value)) };
         return feature;
     }
 
-    feature.leftComparison = Comparison { *firstOperator, Value { WTF::move(firstOperand->value) } };
+    feature.leftComparison = Comparison { *firstOperator, Box<Value>::create(WTF::move(firstOperand->value)) };
     setCenter(feature, WTF::move(*secondOperand));
-    feature.rightComparison = Comparison { *secondOperator, Value { WTF::move(thirdOperand->value) } };
+    feature.rightComparison = Comparison { *secondOperator, Box<Value>::create(WTF::move(thirdOperand->value)) };
     return feature;
 }
 
@@ -163,7 +163,7 @@ static std::optional<Feature> consumeStyleFeature(CSSParserTokenRange& range, co
             return Feature {
                 .name = name,
                 .syntax = Syntax::Plain,
-                .rightComparison = Comparison { ComparisonOperator::Equal, WTF::move(value) }
+                .rightComparison = Comparison { ComparisonOperator::Equal, Box<Value>::create(WTF::move(*value)) }
             };
         }
     }

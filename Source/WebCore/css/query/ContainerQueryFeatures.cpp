@@ -374,7 +374,7 @@ struct StyleFeatureSchema : public FeatureSchema {
             return ensureBuilder().resolveCustomPropertyForContainerQueries(value);
         };
 
-        auto resolveOperand = [&](const std::optional<Value>& operandValue, const AtomString& centerName) -> std::optional<StyleRangeValue> {
+        auto resolveOperand = [&](const Box<Value>& operandValue, const AtomString& centerName) -> std::optional<StyleRangeValue> {
             RefPtr<const Style::CustomProperty> customProperty;
             if (!centerName.isNull())
                 customProperty = style.customPropertyValue(centerName);

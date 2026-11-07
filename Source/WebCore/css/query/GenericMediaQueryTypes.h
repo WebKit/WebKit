@@ -30,6 +30,7 @@
 #include <WebCore/CSSRatio.h>
 #include <WebCore/CSSToLengthConversionData.h>
 #include <WebCore/CSSValueKeywords.h>
+#include <wtf/Box.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Variant.h>
@@ -90,24 +91,27 @@ using Value = Variant<
 
 struct Comparison {
     ComparisonOperator op;
-    std::optional<Value> value;
+    // Values are boxed to keep Feature small, since media query conditions are copied and retained in
+    // bulk. They are immutable after parsing, so sharing them between copies is fine.
+    Box<Value> value;
 };
 
 struct Feature {
     AtomString name;
     Syntax syntax;
+    std::optional<CSSValueID> functionId { };
     std::optional<Comparison> leftComparison { };
     std::optional<Comparison> rightComparison { };
 
     // The center operand of a style range, used when it is not a bare <custom-property-name>
     // (those are stored in `name`, matching the plain/size feature model). For example, the
     // subject of `style(10px < 10em)` or `style(calc(1px + 1px) > --foo)`.
-    std::optional<Value> subject { };
-
-    std::optional<CSSValueID> functionId { };
+    Box<Value> subject { };
 
     const FeatureSchema* schema { nullptr };
 };
+
+static_assert(sizeof(Feature) <= 80, "MQ::Feature should stay small");
 
 struct GeneralEnclosed {
     String name;
