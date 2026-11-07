@@ -1,0 +1,62 @@
+This tests ChildNode.before() and ChildNode.after() when a DOMNodeRemoved listener, run by the detach step of "converting nodes into a node", re-parents the reference sibling into another container.
+Per step 4 of ensure pre-insertion validity WebKit should throw NotFoundError rather than splicing the new children into the other container's sibling chain.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+after(): reference sibling moved into another container
+PASS t.target.after(t.n1, t.n2) threw exception NotFoundError: The object can not be found here..
+PASS t.refSibling.parentNode is t.otherParent
+PASS t.parent.firstChild is t.target
+PASS t.parent.lastChild is t.target
+PASS t.n1.parentNode is null
+PASS t.n2.parentNode is null
+
+before(): preceding sibling moved into another container
+PASS t.refSibling.before(t.n1, t.n2) threw exception NotFoundError: The object can not be found here..
+PASS t.target.nextSibling is t.stranger
+PASS t.parent.firstChild is t.refSibling
+PASS t.parent.lastChild is t.refSibling
+PASS t.n1.parentNode is null
+PASS t.n2.parentNode is null
+
+after(): reference sibling detached without being re-parented
+PASS t.target.after(t.n1, t.n2) threw exception NotFoundError: The object can not be found here..
+PASS t.refSibling.parentNode is null
+PASS t.parent.firstChild is t.target
+PASS t.parent.lastChild is t.target
+
+The reference sibling staying put must keep working (the check must not be too strict)
+PASS t.target.after(t.n1, t.n2) did not throw exception.
+PASS t.parent.childNodes[0] is t.target
+PASS t.parent.childNodes[1] is t.n1
+PASS t.parent.childNodes[2] is t.n2
+PASS t.parent.childNodes[3] is t.refSibling
+PASS t.refSibling.before(t.n1, t.n2) did not throw exception.
+PASS t.parent.childNodes[0] is t.target
+PASS t.parent.childNodes[1] is t.n1
+PASS t.parent.childNodes[2] is t.n2
+PASS t.parent.childNodes[3] is t.refSibling
+PASS t.refSibling.after(t.n1, t.n2) did not throw exception.
+PASS t.parent.childNodes[2] is t.n1
+PASS t.parent.childNodes[3] is t.n2
+PASS t.target.before(t.n1, t.n2) did not throw exception.
+PASS t.parent.childNodes[0] is t.n1
+PASS t.parent.childNodes[1] is t.n2
+PASS t.parent.childNodes[2] is t.target
+PASS t.target.after(t.n1) did not throw exception.
+PASS t.parent.childNodes[1] is t.n1
+PASS t.target.after(t.n1, t.n2) did not throw exception.
+PASS t.parent.childNodes[0] is t.n1
+PASS t.parent.childNodes[1] is t.n2
+PASS t.parent.childNodes[2] is t.refSibling
+PASS t.parent.childNodes[3] is t.target
+
+Walking the tree after the aborted insertions must not touch a freed node
+PASS document.body.querySelectorAll('span').length did not throw exception.
+PASS t.otherParent.appendChild(document.createElement('span')) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
