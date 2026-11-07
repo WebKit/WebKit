@@ -142,6 +142,10 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     if (!m_synthesizer) {
         lazyInitialize(m_synthesizer, adoptNS([PAL::allocAVSpeechSynthesizerInstance() init]));
         [m_synthesizer setDelegate:self];
+#if PLATFORM(IOS)
+        // Speak on a separate, mixable audio session so speech doesn't interrupt media capture or playback.
+        [m_synthesizer setUsesApplicationAudioSession:NO];
+#endif
     }
     
     // Choose the best voice, by first looking at the utterance voice, then the utterance language,
