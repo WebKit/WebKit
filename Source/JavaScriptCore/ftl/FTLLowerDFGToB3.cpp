@@ -18766,6 +18766,48 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         LValue base = lowJSValue(baseEdge);
+        if (m_node->enumeratorMetadata().contains(JSPropertyNameEnumerator::OwnStructureMode)) {
+            LBasicBlock checkIsCellBlock = m_out.newBlock();
+            LBasicBlock checkStructureBlock = m_out.newBlock();
+            LBasicBlock checkGenericModeBlock = m_out.newBlock();
+            LBasicBlock checkIndexBlock = m_out.newBlock();
+            LBasicBlock ownStructureModeBlock = m_out.newBlock();
+            LBasicBlock operationBlock = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue flags = m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_flags);
+            m_out.branch(m_out.equal(m_out.bitAnd(flags, m_out.constInt32(JSPropertyNameEnumerator::IndexedMode | JSPropertyNameEnumerator::OwnStructureMode)), m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode)), unsure(checkIsCellBlock), unsure(operationBlock));
+
+            m_out.appendTo(checkIsCellBlock);
+            m_out.branch(isCell(base, provenType(baseEdge)), usually(checkStructureBlock), rarely(operationBlock));
+
+            m_out.appendTo(checkStructureBlock);
+            m_out.branch(m_out.equal(m_out.load32(base, m_heaps.JSCell_structureID), m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)), unsure(checkGenericModeBlock), unsure(operationBlock));
+
+            m_out.appendTo(checkGenericModeBlock);
+            LValue newIndex = m_out.select(m_out.isZero32(mode), index, m_out.add(index, m_out.int32One));
+            m_out.branch(m_out.testIsZero32(flags, m_out.constInt32(JSPropertyNameEnumerator::GenericMode)), unsure(ownStructureModeBlock), unsure(checkIndexBlock));
+
+            m_out.appendTo(checkIndexBlock);
+            m_out.branch(m_out.below(newIndex, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_endStructurePropertyIndex)), unsure(ownStructureModeBlock), unsure(operationBlock));
+
+            m_out.appendTo(ownStructureModeBlock);
+            ValueFromBlock ownStructureIndex = m_out.anchor(newIndex);
+            ValueFromBlock ownStructureMode = m_out.anchor(m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode));
+            m_out.jump(continuation);
+
+            m_out.appendTo(operationBlock);
+            LValue tuple = vmCall(toOperationType(pointerType()), operationEnumeratorNextUpdateIndexAndMode, weakPointer(globalObject), base, index, mode, enumerator);
+            ValueFromBlock operationIndex = m_out.anchor(m_out.castToInt32(m_out.extract(tuple, 0)));
+            ValueFromBlock operationMode = m_out.anchor(m_out.castToInt32(m_out.extract(tuple, 1)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation);
+            setTuple(0, m_out.phi(Int32, ownStructureIndex, operationIndex));
+            setTuple(1, m_out.phi(Int32, ownStructureMode, operationMode));
+            return;
+        }
+
         LValue tuple = vmCall(toOperationType(pointerType()), operationEnumeratorNextUpdateIndexAndMode, weakPointer(globalObject), base, index, mode, enumerator);
 
         setTuple(0, m_out.castToInt32(m_out.extract(tuple, 0)));

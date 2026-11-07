@@ -14921,6 +14921,54 @@ void SpeculativeJIT::compileEnumeratorNextUpdateIndexAndMode(Node* node)
         return;
     }
 
+    if (node->enumeratorMetadata().contains(JSPropertyNameEnumerator::OwnStructureMode)) {
+        JSValueOperand base(this, baseEdge);
+        GPRTemporary newIndex(this);
+        GPRTemporary newMode(this, Reuse, mode);
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg newIndexGPR = newIndex.gpr();
+        GPRReg newModeGPR = newMode.gpr();
+
+        flushRegisters();
+
+        JumpList operationCases;
+
+        load32(Address(enumeratorGPR, JSPropertyNameEnumerator::flagsOffset()), newIndexGPR);
+        and32(TrustedImm32(JSPropertyNameEnumerator::IndexedMode | JSPropertyNameEnumerator::OwnStructureMode), newIndexGPR);
+        operationCases.append(branch32(NotEqual, newIndexGPR, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode)));
+
+        if (needsTypeCheck(baseEdge, SpecCell))
+            operationCases.append(branchIfNotCell(baseGPR));
+
+        load32(Address(baseGPR, JSCell::structureIDOffset()), newIndexGPR);
+        operationCases.append(branch32(NotEqual, newIndexGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+
+        move(indexGPR, newIndexGPR);
+        Jump initMode = branchTest32(Zero, modeGPR);
+        add32(TrustedImm32(1), newIndexGPR);
+        initMode.link(this);
+
+        Jump hasNoGenericProperties = branchTest32(Zero, Address(enumeratorGPR, JSPropertyNameEnumerator::flagsOffset()), TrustedImm32(JSPropertyNameEnumerator::GenericMode));
+        operationCases.append(branch32(AboveOrEqual, newIndexGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::endStructurePropertyIndexOffset())));
+        hasNoGenericProperties.link(this);
+
+        move(TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode), newModeGPR);
+        Jump done = jump();
+
+        operationCases.link(this);
+        setupArguments<decltype(operationEnumeratorNextUpdateIndexAndMode)>(LinkableConstant::globalObject(*this, node), baseGPR, indexGPR, modeGPR, enumeratorGPR);
+        appendCallSetResult(operationEnumeratorNextUpdateIndexAndMode, newIndexGPR, newModeGPR);
+        exceptionCheck();
+
+        done.link(this);
+
+        useChildren(node);
+        strictInt32TupleResultWithoutUsingChildren(newIndexGPR, node, 0);
+        strictInt32TupleResultWithoutUsingChildren(newModeGPR, node, 1);
+        return;
+    }
+
     JSValueOperand base(this, baseEdge);
     GPRTemporary newMode(this, Reuse, mode);
     GPRReg baseGPR = base.gpr();
