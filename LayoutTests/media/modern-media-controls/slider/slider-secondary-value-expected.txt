@@ -1,0 +1,19 @@
+Testing that the Slider draws its secondary value (e.g. the buffered time range).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The primary fill covers the played portion (value = 0.5):
+PASS primaryStyle.width is "100px"
+
+The track covers the remaining portion:
+PASS trackStyle.width is "100px"
+
+The secondary fill is drawn inside the track, spanning from the value (0.5) to the secondary value (0.75):
+PASS secondaryStyle.width is "50px"
+PASS secondaryStyle.height is "5px"
+PASS secondaryStyle.backgroundColor is "rgba(255, 255, 255, 0.08)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,45 @@
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that the <code>Slider</code> draws its secondary value (e.g. the buffered time range).");
+
+window.jsTestIsAsync = true;
+
+const layoutDelegate = null;
+
+const slider = new Slider(layoutDelegate);
+slider.width = 200;
+slider.height = 25;
+slider.value = 0.5;
+slider.secondaryValue = 0.75;
+
+let primaryStyle, trackStyle, secondaryStyle;
+scheduler.frameDidFire = function()
+{
+    document.body.appendChild(slider.element);
+
+    primaryStyle = window.getComputedStyle(slider.element.querySelector(".primary"));
+    trackStyle = window.getComputedStyle(slider.element.querySelector(".track"));
+    secondaryStyle = window.getComputedStyle(slider.element.querySelector(".track > .secondary"));
+
+    debug("The primary fill covers the played portion (value = 0.5):");
+    shouldBeEqualToString("primaryStyle.width", "100px");
+
+    debug("");
+    debug("The track covers the remaining portion:");
+    shouldBeEqualToString("trackStyle.width", "100px");
+
+    debug("");
+    debug("The secondary fill is drawn inside the track, spanning from the value (0.5) to the secondary value (0.75):");
+    shouldBeEqualToString("secondaryStyle.width", "50px");
+    shouldBeEqualToString("secondaryStyle.height", "5px");
+    shouldBeEqualToString("secondaryStyle.backgroundColor", "rgba(255, 255, 255, 0.08)");
+
+    finishMediaControlsTest();
+}
+
+</script>
+</body>
