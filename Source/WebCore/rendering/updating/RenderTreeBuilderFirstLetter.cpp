@@ -39,6 +39,7 @@
 #include "Text.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
