@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: a grid container's percentage padding and margin resolve against its grid area when its parent grid uses another layout path</title>
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#padding-props">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-item-sizing">
+<link rel="match" href="grid-container-percentage-padding-grid-item-002-ref.html">
+<meta name="assert" content="Same as 001, but the parent also has grid-template-areas, so that grid is laid out by a different path than the nested one. Padding and margin 10% of the 300px grid area are 30px.">
+<style>
+.o { display: grid; width: 400px; grid-template-columns: 100px 300px; grid-template-areas: 'a b'; }
+.i { display: grid; grid-template-columns: 50px; padding: 10%; margin-left: 10%; background: yellow; }
+.i > div { height: 10px; background: green; }
+</style>
+<div class="o"><div></div><div class="i"><div></div></div></div>

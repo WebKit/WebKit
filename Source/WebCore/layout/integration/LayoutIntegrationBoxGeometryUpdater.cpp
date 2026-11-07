@@ -673,8 +673,14 @@ void BoxGeometryUpdater::setFormattingContextContentGeometry(std::optional<Layou
     }
 
     if (rootLayoutBox().establishesGridFormattingContext()) {
-        for (auto* gridItemOrOutOfFlowPositionedChild = rootLayoutBox().firstChild(); gridItemOrOutOfFlowPositionedChild; gridItemOrOutOfFlowPositionedChild = gridItemOrOutOfFlowPositionedChild->nextSibling())
+        for (auto* gridItemOrOutOfFlowPositionedChild = rootLayoutBox().firstChild(); gridItemOrOutOfFlowPositionedChild; gridItemOrOutOfFlowPositionedChild = gridItemOrOutOfFlowPositionedChild->nextSibling()) {
+            if (gridItemOrOutOfFlowPositionedChild->isExcludedFromGridFormattingContextForIntegration())
+                continue;
+            // A grid item's box model is written when the item is laid out, against its grid area.
+            if (gridItemOrOutOfFlowPositionedChild->isGridItem())
+                continue;
             updateBoxGeometry(downcast<RenderElement>(*gridItemOrOutOfFlowPositionedChild->rendererForIntegration()), availableLogicalWidth, intrinsicWidthMode);
+        }
         return;
     }
 
@@ -745,6 +751,7 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::formattingContextConstra
 
 void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::ElementBox& layoutBox, LayoutUnit availableWidth)
 {
+    ASSERT(!layoutBox.isGridItem());
     CheckedPtr renderBox = dynamicDowncast<RenderBox>(layoutBox.rendererForIntegration());
     if (!renderBox) {
         ASSERT_NOT_REACHED();
@@ -793,6 +800,18 @@ void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::E
             const_cast<Layout::ElementBox&>(layoutBox).setShape(&shapeOutsideInfo->computedShape());
     };
     integrationAdjustments();
+}
+
+void BoxGeometryUpdater::updateGridItemGeometryAfterLayout(const Layout::ElementBox& gridItem, LayoutUnit gridAreaInlineSize)
+{
+    ASSERT(gridItem.isGridItem());
+    CheckedRef renderBox = downcast<RenderBox>(*gridItem.rendererForIntegration());
+
+    // https://drafts.csswg.org/css-grid-1/#item-margins
+    // "Percentage margins and paddings on grid items, like those on block boxes, are resolved against
+    // the inline size of their containing block". That is the grid area, so the margins, border and padding are
+    // resolved against the grid area's inline size, in the grid container's writing mode.
+    updateLayoutBoxDimensions(renderBox.get(), gridAreaInlineSize);
 }
 
 void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)

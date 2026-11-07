@@ -1,0 +1,4 @@
+a
+
+PASS Changing the height of the rendered legend
+

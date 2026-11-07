@@ -237,6 +237,7 @@ public:
 
     enum FieldsetFindLegendOption { FieldsetIgnoreFloatingOrOutOfFlow, FieldsetIncludeFloatingOrOutOfFlow };
     RenderBox* findFieldsetLegend(FieldsetFindLegendOption = FieldsetIgnoreFloatingOrOutOfFlow) const;
+    RenderBox* renderedFieldsetLegend() const;
     virtual void layoutExcludedChildren(RelayoutChildren);
     virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthsForFieldsetLegend() const;
 

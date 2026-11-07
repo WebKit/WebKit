@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<title>Grid container min-height and max-height sizing keywords</title>
+<style>
+.cb { width: 200px; height: 200px; }
+.grid { display: grid; background: grey; }
+.grid > div { height: 20px; background: blue; }
+</style>
+<body>
+<pre id="out"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Each case lists: name, grid container style, track list, expected container size, columns, rows.
+// The expectations follow css-grid-1 #auto-repeat and css-sizing-4 #stretch-fit-sizing, and match what Chrome produces. A case may end
+// with the number of grid items, which defaults to 3, and the containing block's extra style.
+// intrinsic and min-intrinsic are WebKit-only keywords, which Chrome drops as invalid. They are not definite sizes for #auto-repeat, so
+// they give no constraint, and in the block axis RenderBox treats them as auto when it resolves the box's used height.
+const cases = [
+  ["minh-stretch", "min-height: stretch", "grid-template-rows: auto", "200x200", "200px", "100px 100px", 2],
+  ["minh-stretch-fr", "min-height: stretch", "grid-template-rows: 1fr 1fr", "200x200", "200px", "90px 90px 20px"],
+  ["maxh-stretch-h500", "max-height: stretch; height: 500px", "grid-template-rows: auto", "200x200", "200px", "100px 100px", 2],
+  ["maxh-stretch-fr", "max-height: stretch", "grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr", "200x200", "200px", "20px 20px 20px 14px 14px 14px 14px 14px 14px 14px 14px 14px 14px"],
+  ["minh-intrinsic", "min-height: intrinsic", "grid-template-rows: auto", "200x60", "200px", "20px 20px 20px"],
+  ["minh-minintrinsic", "min-height: min-intrinsic", "grid-template-rows: 1fr", "200x60", "200px", "20px 20px 20px"],
+  ["maxh-intrinsic", "max-height: intrinsic", "grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr", "200x260", "200px", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px 20px 20px 20px"],
+  ["maxh-minintrinsic-autofill", "max-height: min-intrinsic", "grid-template-rows: repeat(auto-fill, 20px)", "200x60", "200px", "20px 20px 20px"],
+  ["minh-calcsize", "min-height: calc-size(100px, size * 2)", "grid-template-rows: 1fr 1fr", "200x200", "200px", "90px 90px 20px"],
+  ["minh-calcsize-autofill", "min-height: calc-size(100px, size * 2)", "grid-template-rows: repeat(auto-fill, 20px)", "200x200", "200px", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px"],
+  ["maxh-calcsize-autofill", "max-height: calc-size(100px, size * 2)", "grid-template-rows: repeat(auto-fill, 20px)", "200x200", "200px", "20px 20px 20px 20px 20px 20px 20px 20px 20px 20px"],
+  ["minh-calcsize-keyword", "min-height: calc-size(auto, size)", "grid-template-rows: auto", "200x60", "200px", "20px 20px 20px"],
+  ["minh-stretch-border-box", "box-sizing: border-box; padding: 10px; border: 5px solid; min-height: stretch", "grid-template-rows: 1fr 1fr", "200x200", "170px", "85px 85px", 2],
+  ["autoh-minh-stretch-rows", "min-height: stretch", "grid-template-rows: 20px 20px", "200x200", "200px", "20px 20px 160px"],
+  ["minh-stretch-margin", "margin-top: 20px; min-height: stretch", "grid-template-rows: 1fr 1fr", "200x180", "200px", "90px 90px", 2, "display: flow-root"],
+  ["maxh-stretch-margin", "margin-top: 20px; max-height: stretch; height: 500px", "grid-template-rows: 1fr 1fr", "200x180", "200px", "90px 90px", 2, "display: flow-root"],
+  ["minh-calcsize-stretch-margin", "margin-top: 20px; min-height: calc-size(stretch, size - 10px)", "grid-template-rows: 1fr 1fr", "200x170", "200px", "85px 85px", 2, "display: flow-root"],
+  ["minh-percent-fr", "min-height: 50%", "grid-template-rows: 1fr 1fr", "200x100", "200px", "40px 40px 20px"],
+  ["maxh-percent-autofill", "max-height: 50%", "grid-template-rows: repeat(auto-fill, 30px)", "200x90", "200px", "30px 30px 30px"],
+];
+
+const out = document.getElementById("out");
+
+// -webkit-fill-available is not specified, and Chrome resolves it as stretch in the block axis. The expectations below follow RenderBox,
+// which the grid container's used height has to agree with: it resolves the keyword as the containing block's available height (walking
+// up the containing block chain), subtracts no margins, and does not need a definite containing block. stretch subtracts the margins
+// when the containing block is a formatting context root, so the same grid container with stretch is smaller (compare minh-stretch-margin).
+const webkitOnlyCases = [
+  ["minh-fill", "min-height: -webkit-fill-available", "grid-template-rows: auto", "200x200", "200px", "100px 100px", 2],
+  ["minh-fill-margin", "margin-top: 20px; min-height: -webkit-fill-available", "grid-template-rows: 1fr 1fr", "200x200", "200px", "100px 100px", 2, "display: flow-root"],
+  ["maxh-fill-margin", "margin-top: 20px; max-height: -webkit-fill-available; height: 500px", "grid-template-rows: 1fr 1fr", "200x200", "200px", "100px 100px", 2, "display: flow-root"],
+  ["minh-calcsize-fill-margin", "margin-top: 20px; min-height: calc-size(-webkit-fill-available, size - 10px)", "grid-template-rows: 1fr 1fr", "200x190", "200px", "95px 95px", 2, "display: flow-root"]
+];
+
+function runCases(cases) {
+    for (const [name, css, template, size, columns, rows, itemCount = 3, containingBlockStyle = ""] of cases) {
+        const containingBlock = document.createElement("div");
+        containingBlock.className = "cb";
+        containingBlock.style = containingBlockStyle;
+        containingBlock.innerHTML = `<div class="grid" style="${css}; ${template}">${"<div></div>".repeat(itemCount)}</div>`;
+        document.body.appendChild(containingBlock);
+        const grid = containingBlock.firstChild;
+        const style = getComputedStyle(grid);
+        const actual = `${grid.offsetWidth}x${grid.offsetHeight} cols[${style.gridTemplateColumns}] rows[${style.gridTemplateRows}]`;
+        const expected = `${size} cols[${columns}] rows[${rows}]`;
+        out.textContent += `${actual == expected ? "PASS" : "FAIL"} ${name}${actual == expected ? "" : `: expected ${expected} but got ${actual}`}\n`;
+        containingBlock.remove();
+    }
+}
+runCases(cases);
+runCases(webkitOnlyCases);
+
+// A floated grid container sizes itself from its intrinsic widths, which have to resolve the container's min and max sizes
+// as layout does: with a definite maximum size the repetition count is the largest that does not overflow, and with a definite
+// minimum size the smallest that fulfills it (css-grid-1 #auto-repeat).
+// Each case lists: name, containing block style, grid container style, track list, grid items, expected container size.
+const floatCases = [
+  ["float-minh-fill", "width: 400px; height: 200px", "min-height: -webkit-fill-available; grid-auto-columns: 100px", "grid-template-rows: repeat(auto-fill, 50px)", ["grid-row: 1", "grid-row: -2"], "100x200"],
+  ["float-minh-stretch", "width: 400px; height: 200px", "min-height: stretch; grid-auto-columns: 100px", "grid-template-rows: repeat(auto-fill, 50px)", ["grid-row: 1", "grid-row: -2"], "100x200"],
+  ["float-maxh-stretch", "width: 400px; height: 190px", "max-height: stretch; grid-auto-columns: 100px", "grid-template-rows: repeat(auto-fill, 20px)", ["grid-row: 1", "grid-row: -2"], "100x180"],
+  ["float-maxw-fill", "width: 390px", "max-width: -webkit-fill-available", "grid-template-columns: repeat(auto-fill, 50px)", ["grid-column: 1"], "350x20"],
+  ["float-maxw-stretch", "width: 390px", "max-width: stretch", "grid-template-columns: repeat(auto-fill, 50px)", ["grid-column: 1"], "350x20"],
+  ["float-minw-fill", "width: 390px", "min-width: -webkit-fill-available", "grid-template-columns: repeat(auto-fill, 50px)", ["grid-column: 1"], "400x20"],
+  ["float-minw-stretch", "width: 390px", "min-width: stretch", "grid-template-columns: repeat(auto-fill, 50px)", ["grid-column: 1"], "400x20"],
+  ["float-maxw-stretch-border-box", "width: 390px", "max-width: stretch; box-sizing: border-box; padding: 10px; border: 5px solid", "grid-template-columns: repeat(auto-fill, 50px)", ["grid-column: 1"], "380x50"],
+];
+for (const [name, containingBlockStyle, css, template, items, size] of floatCases) {
+    const containingBlock = document.createElement("div");
+    containingBlock.style = containingBlockStyle;
+    containingBlock.innerHTML = `<div class="grid" style="float: left; ${css}; ${template}">${items.map(item => `<div style="${item}"></div>`).join("")}</div>`;
+    document.body.appendChild(containingBlock);
+    const grid = containingBlock.firstChild;
+    const actual = `${grid.offsetWidth}x${grid.offsetHeight}`;
+    out.textContent += `${actual == size ? "PASS" : "FAIL"} ${name}${actual == size ? "" : `: expected ${size} but got ${actual}`}\n`;
+    containingBlock.remove();
+}
+
+// In a containing block with an indefinite height stretch behaves as auto, so the container has no definite minimum or maximum size
+// and auto-fill repeats once.
+// Each case lists: name, grid container style.
+const indefiniteCases = [
+  ["indefinite-minh-stretch", "min-height: stretch"],
+  ["indefinite-maxh-stretch", "max-height: stretch"],
+];
+for (const [name, css] of indefiniteCases) {
+    const containingBlock = document.createElement("div");
+    containingBlock.innerHTML = `<div class="grid" style="${css}; grid-template-rows: repeat(auto-fill, 20px)"><div></div></div>`;
+    document.body.appendChild(containingBlock);
+    const rows = getComputedStyle(containingBlock.firstChild).gridTemplateRows;
+    out.textContent += `${rows == "20px" ? "PASS" : "FAIL"} ${name}${rows == "20px" ? "" : `: expected one row but got ${rows}`}\n`;
+    containingBlock.remove();
+}
+
+// -webkit-fill-available does not need a definite containing block: RenderBox resolves it through the containing block chain, so
+// a grid container in an auto-height block is as tall as the available height. The tracks have to follow that height.
+// WebKit-only keyword: the test compares the tracks with the box height RenderBox computed.
+{
+    const rowSizes = grid => getComputedStyle(grid).gridTemplateRows.split(" ").map(parseFloat);
+    const sum = sizes => sizes.reduce((a, b) => a + b, 0);
+    const report = (name, pass, detail) => { out.textContent += `${pass ? "PASS" : "FAIL"} ${name}${pass ? "" : `: ${detail}`}\n`; };
+    {
+        // Auto rows share the height of the box: they do not stay at their content size of 20px.
+        const containingBlock = document.createElement("div");
+        containingBlock.innerHTML = `<div class="grid" style="min-height: -webkit-fill-available; grid-template-rows: auto"><div></div><div></div></div>`;
+        document.body.appendChild(containingBlock);
+        const grid = containingBlock.firstChild;
+        const rows = rowSizes(grid);
+        report("indefinite-minh-fill-auto-rows", grid.offsetHeight > 100 && Math.abs(sum(rows) - grid.offsetHeight) < 1 && rows.length == 2 && Math.abs(rows[0] - rows[1]) < 1, `rows ${rows} in a box of height ${grid.offsetHeight}`);
+        containingBlock.remove();
+    }
+    {
+        // min-height: the smallest number of 20px rows that fills the box. A single row would leave the box taller than its tracks.
+        const containingBlock = document.createElement("div");
+        containingBlock.innerHTML = `<div class="grid" style="min-height: -webkit-fill-available; grid-template-rows: repeat(auto-fill, 20px)"><div></div></div>`;
+        document.body.appendChild(containingBlock);
+        const grid = containingBlock.firstChild;
+        const rows = rowSizes(grid);
+        report("indefinite-minh-fill-autofill", rows.length > 5 && rows.every(size => size == 20) && grid.offsetHeight == sum(rows), `rows ${rows} in a box of height ${grid.offsetHeight}`);
+        containingBlock.remove();
+    }
+    {
+        // max-height: the largest number of 20px rows that fits. The box is as tall as its tracks.
+        const containingBlock = document.createElement("div");
+        containingBlock.innerHTML = `<div class="grid" style="max-height: -webkit-fill-available; grid-template-rows: repeat(auto-fill, 20px)"><div></div></div>`;
+        document.body.appendChild(containingBlock);
+        const grid = containingBlock.firstChild;
+        const rows = rowSizes(grid);
+        report("indefinite-maxh-fill-autofill", rows.length > 5 && rows.every(size => size == 20) && grid.offsetHeight == sum(rows), `rows ${rows} in a box of height ${grid.offsetHeight}`);
+        containingBlock.remove();
+    }
+}
+</script>

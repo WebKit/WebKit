@@ -40,22 +40,41 @@ class ElementBox;
 class InlineLayoutState;
 class LayoutState;
 
+// Border plus padding of a grid item along the grid container's axes, whatever the item's own writing mode.
+struct GridItemBorderAndPadding {
+    LayoutUnit inlineAxis;
+    LayoutUnit blockAxis;
+};
+
+// The overriding border-box size to lay a grid item out at, along the grid container's axes. An absent block size lets the item size itself.
+struct GridItemOverridingBorderBoxSize {
+    LayoutUnit inlineAxis;
+    std::optional<LayoutUnit> blockAxis;
+};
+
+enum class GridItemIntrinsicSize : uint8_t {
+    MinContent,
+    MaxContent,
+    MinContentContribution,
+    MaxContentContribution
+};
+
 class IntegrationUtils {
 public:
     IntegrationUtils(const LayoutState&);
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth = { }, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight = { }) const;
-    std::pair<LayoutUnit, LayoutUnit> borderAndPaddingForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
-    void layoutGridItem(const ElementBox&, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight, LayoutUnit gridAreaInlineSize) const;
+    GridItemBorderAndPadding borderAndPaddingForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
+    void layoutGridItem(const ElementBox&, GridItemOverridingBorderBoxSize, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize) const;
+    // The grid item's laid-out border-box size along the grid container's `axis`. Call it after the item's layout.
+    LayoutUnit borderBoxSizeForGridItem(const ElementBox&, LogicalBoxAxis) const;
+    // Border-box sizes along the grid container's inline / block axis. The stretched block size is the container-block size the item is stretched to; it only
+    // applies to inline contributions, where it can be transferred through the item's preferred aspect ratio.
+    LayoutUnit inlineIntrinsicSizeForGridItem(const ElementBox&, GridItemIntrinsicSize, std::optional<LayoutUnit> gridAreaInlineSize, std::optional<LayoutUnit> gridAreaBlockSize, std::optional<LayoutUnit> stretchedBlockSize) const;
+    LayoutUnit blockIntrinsicSizeForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
     LayoutUnit maxContentWidth(const ElementBox&) const;
-    LayoutUnit maxContentWidthForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
     LayoutUnit minContentWidth(const ElementBox&) const;
     LayoutUnit minContentHeight(const ElementBox&) const;
-    LayoutUnit minContentWidthForGridItem(const ElementBox&, std::optional<LayoutUnit> gridAreaInlineSize) const;
-    LayoutUnit minContentHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
-    LayoutUnit maxContentHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
-    LayoutUnit minContentContributionHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
-    LayoutUnit maxContentContributionHeightForGridItem(const ElementBox&, LayoutUnit gridAreaInlineSize) const;
     LayoutUnit minContentLogicalWidthContribution(const ElementBox&) const;
     LayoutUnit maxContentLogicalWidthContribution(const ElementBox&) const;
     std::optional<LayoutUnit> firstLineBaselineForGridItem(const ElementBox&) const;

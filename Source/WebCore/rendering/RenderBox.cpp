@@ -543,7 +543,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
 
     if ((oldStyle && !oldStyle->shapeOutside().isNone()) || !style().shapeOutside().isNone())
         updateShapeOutsideInfoAfterStyleChange(style(), oldStyle, diff);
-    updateGridPositionAfterStyleChange(style(), oldStyle);
+    updateGridPositionAfterStyleChange(style(), oldStyle, diff);
 
     // Changing the position from/to absolute can potentially create/remove flex/grid items, as absolutely positioned
     // children of a flex/grid box are out-of-flow, and thus, not flex/grid items. This means that we need to clear
@@ -598,13 +598,15 @@ NODELETE static bool hasEquivalentGridPositioningStyle(const Style::ComputedStyl
         && (oldStyle.gridTemplateRows().subgrid == style.gridTemplateRows().subgrid || style.gridTemplateRows().orderedNamedLines.map.isEmpty());
 }
 
-void RenderBox::updateGridPositionAfterStyleChange(const Style::ComputedStyle& style, const Style::ComputedStyle* oldStyle)
+void RenderBox::updateGridPositionAfterStyleChange(const Style::ComputedStyle& style, const Style::ComputedStyle* oldStyle, Style::Difference diff)
 {
     if (!oldStyle)
         return;
     CheckedPtr parentGrid = dynamicDowncast<RenderGrid>(parent());
     if (!parentGrid)
         return;
+
+    parentGrid->gridItemStyleDidChange(diff, *oldStyle, style);
 
     // Positioned items don't participate on the layout of the grid,
     // so we don't need to mark the grid as dirty if they change positions.

@@ -128,7 +128,7 @@ struct GridPosition {
 
     bool operator==(const GridPosition&) const = default;
 
-    NODELETE WEBCORE_EXPORT static void setMaxPositionForTesting(unsigned);
+    NODELETE WEBCORE_EXPORT static void setMaxPositionForTesting(std::optional<unsigned>);
 
 private:
     friend void add(Hasher&, const GridPosition&);

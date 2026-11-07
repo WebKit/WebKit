@@ -1,0 +1,11 @@
+1
+L
+
+
+a
+
+PASS Inserting, removing and hiding legends
+PASS Changing the fieldset's min-width
+PASS Removing a legend with a margin-top
+PASS Changing the height of the legend of a fieldset with an automatic width and a height
+

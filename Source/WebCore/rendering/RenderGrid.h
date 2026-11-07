@@ -98,6 +98,7 @@ public:
     bool shouldInvalidateContentWidths() const final;
 
     void setNeedsItemPlacement(SubgridDidChange descendantSubgridsNeedItemPlacement = SubgridDidChange::No);
+    void gridItemStyleDidChange(Style::Difference, const Style::ComputedStyle& oldItemStyle, const Style::ComputedStyle& newItemStyle);
     NODELETE const Vector<LayoutUnit>& trackSizesForComputedStyle(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
     const Vector<LayoutUnit>& columnPositions() const LIFETIME_BOUND { return m_columnPositions; }
@@ -105,6 +106,7 @@ public:
     const Vector<LayoutUnit>& positions(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? columnPositions() : rowPositions(); }
 
     unsigned autoRepeatCountForDirection(Style::GridTrackSizingDirection direction) const { return currentGrid().autoRepeatTracks(direction); }
+    bool autoRepeatTruncatedForDirection(Style::GridTrackSizingDirection direction) const { return currentGrid().autoRepeatTruncatedByLimit(direction); }
     unsigned explicitGridStartForDirection(Style::GridTrackSizingDirection direction) const { return currentGrid().explicitGridStart(direction); }
 
     // Required by GridTrackSizingAlgorithm. Keep them under control.
@@ -192,6 +194,7 @@ private:
 
     ASCIILiteral renderName() const override;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidthContributions() override;
 
     bool selfAlignmentChangedToStretch(LogicalBoxAxis containingAxis, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, const RenderBox& gridItem) const;
     bool selfAlignmentChangedFromStretch(LogicalBoxAxis containingAxis, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, const RenderBox& gridItem) const;
@@ -343,10 +346,31 @@ private:
 
     mutable std::optional<GridItemSizeCache> m_intrinsicLogicalHeightsForRowSizingFirstPass;
 
-    bool layoutUsingGridFormattingContext();
+    // Whether the grid, as it is now, is laid out by the grid formatting context. Never remembered: layout and intrinsic
+    // sizing both ask this. They can still disagree if an input of the decision changes after the intrinsic widths were
+    // cached and nothing invalidated them, which is why every such input invalidates them (see gridItemStyleDidChange(),
+    // and attachToRenderGrid()/detachFromRenderGrid() in RenderTreeBuilder).
+    bool shouldUseGridFormattingContext() const;
+    void layoutUsingGridFormattingContext();
+    void setGridFormattingContextBaselines(std::optional<LayoutUnit> first, std::optional<LayoutUnit> last) { m_gridFormattingContextFirstBaseline = first; m_gridFormattingContextLastBaseline = last; }
 
     LayoutUnit m_gridLanesContentSizeForWebInspectorOverlay;
-    std::optional<bool> m_hasGridFormattingContextLayout;
+    // What the last full layout actually did (a record, not a prediction); empty before the first one. It tells the
+    // baseline getters which state to read and layoutGrid when the layout path changed.
+    std::optional<bool> m_lastLayoutUsedGFC;
+#if ASSERT_ENABLED
+    struct IntrinsicWidthsForAssert {
+        bool usedGFC;
+    };
+    // The path the cached intrinsic widths (the content logical width contributions) were computed on. Not set by
+    // direct calls of computeIntrinsicLogicalWidths(), which cache nothing.
+    mutable std::optional<bool> m_lastIntrinsicWidthsUsedGFC;
+    std::optional<IntrinsicWidthsForAssert> m_intrinsicWidthsForAssert;
+#endif
+    // The baselines GFC computed, as offsets from the border-box block-start. They are only meaningful while
+    // m_lastLayoutUsedGFC is true: GFC grids never fill the legacy grid's cells that baselineGridItem walks.
+    std::optional<LayoutUnit> m_gridFormattingContextFirstBaseline;
+    std::optional<LayoutUnit> m_gridFormattingContextLastBaseline;
 
     mutable bool m_isComputingTrackSizes { false };
 };

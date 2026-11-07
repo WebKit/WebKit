@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementById('grid').style.backgroundColor = 'green';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body {
+  margin: 0;
+}
+p {
+  margin: 0;
+  height: 50px;
+}
+#grid {
+  display: grid;
+  grid-template-columns: 100px;
+  grid-template-rows: 100px;
+  width: 100px;
+  margin-left: 60px;
+  background-color: blue;
+  box-shadow: 0 0 0 10px red;
+}
+#item {
+  height: 50px;
+  background-color: yellow;
+}
+</style>
+<p>Tests that the repaint rect of a grid container includes its box-shadow.</p>
+<div id="grid">
+    <div id="item"></div>
+</div>

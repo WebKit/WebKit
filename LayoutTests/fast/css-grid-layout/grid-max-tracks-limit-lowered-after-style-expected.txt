@@ -1,0 +1,6 @@
+
+PASS A span of 20 columns in a grid limited to 10 columns is clamped to 10 (row)
+PASS A span of 20 columns after another item in a grid limited to 10 columns is clamped to 10 (row)
+PASS A span of 20 columns in a grid limited to 10 columns is clamped to 10 (row dense)
+PASS A span of 20 columns after another item in a grid limited to 10 columns is clamped to 10 (row dense)
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: the border of a grid fieldset is painted around the rendered legend</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#the-fieldset-and-legend-elements">
+<link rel="match" href="grid-fieldset-legend-004-ref.html">
+<style>
+body { margin: 0; }
+/* min-width: 0 replaces the UA stylesheet's min-width: min-content. */
+fieldset {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  padding: 5px;
+  border: 10px solid blue;
+  width: 200px;
+  grid-template-columns: 100px;
+  grid-auto-rows: 20px;
+}
+legend { padding: 0; width: 60px; height: 30px; margin-left: 20px; background: lime; }
+.item { background: orange; }
+</style>
+<fieldset><legend></legend><div class="item"></div><div class="item"></div></fieldset>

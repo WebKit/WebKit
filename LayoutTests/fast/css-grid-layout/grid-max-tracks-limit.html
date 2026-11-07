@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<title>Grid placement and track counts are limited to the maximum number of grid tracks</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#overlarge-grids">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.grid { display: grid; grid-auto-columns: 10px; grid-auto-rows: 10px; }
+.float { float: left; }
+</style>
+<div id="container"></div>
+<script>
+// The limit is 10 tracks. Style clamps the line numbers and the repeat() counts to it; the grid has to clamp what the
+// lines, the spans and the auto-repeat make of that. Keep the CSS values in sync with this limit.
+// Every case runs for both axes. The expected values are the ones Chrome gives for the same structure at its own limit
+// (10,000,000 tracks, 1px tracks), in tracks, which cannot be changed from a test.
+const maxTracks = 10;
+if (window.internals)
+    window.internals.setGridMaxTracksLimit(maxTracks);
+
+const axes = [
+    { name: "columns", line: "grid-column", otherLine: "grid-row", template: "grid-template-columns", size: "width", minSize: "min-width", start: "left", extent: "width", shrinkToFit: true },
+    { name: "rows", line: "grid-row", otherLine: "grid-column", template: "grid-template-rows", size: "height", minSize: "min-height", start: "top", extent: "height", shrinkToFit: false },
+];
+
+// The items are placed in the other axis too, so that the position in the tested axis is the only thing that is automatic.
+function createGrid(axis, gridStyle, itemStyle, shrinkToFit = false)
+{
+    let className = shrinkToFit && axis.shrinkToFit ? "grid float" : "grid";
+    container.innerHTML = `<div class="${className}" style="${gridStyle}"><div style="${axis.otherLine}: 1; ${itemStyle}"></div></div>`;
+    return container.firstChild;
+}
+
+function itemRect(axis, grid)
+{
+    let gridRect = grid.getBoundingClientRect();
+    let rect = grid.firstChild.getBoundingClientRect();
+    return { start: rect[axis.start] - gridRect[axis.start], size: rect[axis.extent] };
+}
+
+function gridExtent(axis, grid)
+{
+    return grid.getBoundingClientRect()[axis.extent];
+}
+
+function trackList(axis, grid)
+{
+    return getComputedStyle(grid).getPropertyValue(axis.template).split(" ");
+}
+
+function testAxes(testFunction, name)
+{
+    for (let axis of axes)
+        test(() => testFunction(axis), `${name} (${axis.name})`);
+}
+
+// "If the grid area would span outside the limited grid, its span is clamped to the last line of the limited grid."
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.template}: 10px`, `${axis.line}: 5 / span 30`);
+    // Line 5 is track 4 from the grid start; the span of 10 (already clamped by style) would end at track 14.
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 40, "start");
+    assert_equals(rect.size, 60, "size: tracks 4 to 10");
+    assert_equals(trackList(axis, grid).length, maxTracks);
+}, "A span that ends past the limit is clamped to the last line of the limited grid");
+
+// "If the grid area would be placed completely outside the limited grid, its span must be truncated to 1 and the area
+// repositioned into the last grid track on that side of the grid."
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.template}: repeat(10, 10px)`, `${axis.line}-start: -1; ${axis.line}-end: span 5`);
+    // The start line is the last line of the explicit grid, line 11, which is past the last line of the limited grid.
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 90, "start");
+    assert_equals(rect.size, 10, "size");
+    assert_equals(trackList(axis, grid).length, maxTracks);
+}, "A grid area that starts at the end of a full explicit grid is placed in the last track of the limited grid");
+
+// The limited grid is the lines [-9, 10] around the start of the explicit grid: 9 leading implicit tracks, and 10 tracks after the start.
+// Chrome allows 10 leading tracks, so an item that goes past the first line gets one track fewer here than in Chrome.
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.template}: 10px`, `${axis.line}: span 3 / -10`, true);
+    // The explicit grid has 1 track. Line -10 is line index -8 and the span of 3 would start at index -11, which is before the
+    // first line of the limited grid, index -9: the area is the single track from -9 to -8.
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 0, "start");
+    assert_equals(rect.size, 10, "size: indexes -9 to -8");
+    assert_equals(gridExtent(axis, grid), 100, "9 leading tracks and the explicit track");
+}, "A grid area that starts before the first line of the limited grid is clamped to it");
+
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.template}: 10px`, `${axis.line}: span 10 / -5`, true);
+    // The explicit grid has 1 track. Line -5 is line index -3 and the span of 10 would start at index -13, which is before the
+    // first line of the limited grid, index -9.
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 0, "start");
+    assert_equals(rect.size, 60, "size: indexes -9 to -3");
+    assert_equals(gridExtent(axis, grid), 100, "9 leading tracks and the explicit track, not the 13 the area would need");
+}, "A grid area that spans past the first line of the limited grid is clamped to it");
+
+// "If the grid area would be placed completely outside the limited grid, its span must be truncated to 1 and the area
+// repositioned into the last grid track on that side of the grid." Leading side: with no explicit grid, line -10 is line index -9,
+// the first line of the limited grid, so the whole span of 3 is before it.
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.template}: none`, `${axis.line}: span 3 / -10`, true);
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 0, "start");
+    assert_equals(rect.size, 10, "size: the first track of the limited grid, indexes -9 to -8");
+    assert_equals(gridExtent(axis, grid), 90, "9 leading tracks");
+}, "A grid area that ends at the first line of the limited grid is placed in the first track of the limited grid");
+
+// "dropping all lines outside that limit"
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.template}: repeat(10, 10px) repeat(10, 10px)`, `${axis.line}: -2 / -1`);
+    assert_equals(trackList(axis, grid).length, maxTracks, "track count");
+    // Negative lines are resolved against the explicit grid that is kept.
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 90, "start");
+    assert_equals(rect.size, 10, "size");
+}, "The explicit grid is truncated to the limit and negative lines are resolved against what is left");
+
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.size}: 1000px; ${axis.template}: repeat(auto-fill, 10px 20px 30px)`, `${axis.line}: 1`);
+    let tracks = trackList(axis, grid);
+    // 16 repetitions fit; only the first 4 are needed to reach 10 tracks, and the last of those is cut after 1 track.
+    assert_equals(tracks.length, maxTracks, "track count");
+    assert_equals(tracks[0], "10px");
+    assert_equals(tracks[8], "30px");
+    assert_equals(tracks[maxTracks - 1], "10px", "the 10th track is the first track of the 4th repetition");
+}, "The auto-fill repetitions stop at the limit, in the middle of a repetition");
+
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.size}: 1000px; ${axis.template}: repeat(auto-fit, 10px 20px 30px) repeat(5, 40px)`, `${axis.line}: -2 / -1`);
+    let tracks = trackList(axis, grid);
+    // The 5 fixed tracks come after the 12 auto-fit tracks, so all of them are past the limit.
+    assert_equals(tracks.length, maxTracks, "track count");
+    assert_equals(tracks.join(" "), "0px 0px 0px 0px 0px 0px 0px 0px 0px 10px", "only the track the item is in is not collapsed");
+}, "Auto-fit tracks past the limit are dropped and empty ones collapse; -1 is the last track of the truncated grid");
+
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.size}: 1000px; ${axis.template}: repeat(12, 5px) repeat(auto-fill, 10px)`, `${axis.line}: -2 / -1`);
+    // repeat(12, ...) is clamped to 10 tracks by style, which leaves no room for the auto-fill: without the limit, the 94 repetitions
+    // that fit in 1000px would follow and -1 would be the last of them.
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 45, "start");
+    assert_equals(rect.size, 5, "size");
+}, "An auto-repeat that starts at the limit has no repetitions");
+
+// Debug-only coverage: in a release build this passes with or without the fix. In a debug build the 8 tracks plus the 8
+// auto-repeated tracks used to be compared with the limit as if they were separate tracks, and asserted.
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.size}: 80px; ${axis.template}: repeat(auto-fill, 10px)`, `${axis.line}: 1`);
+    // 8 tracks, all auto-repeated. The grid is under the limit, so nothing is clamped.
+    assert_equals(trackList(axis, grid).length, 8);
+    let rect = itemRect(axis, grid);
+    assert_equals(rect.start, 0, "start");
+    assert_equals(rect.size, 10, "size");
+}, "A grid under the limit that is made of auto-repeated tracks is not clamped (asserts in a debug build)");
+
+testAxes(axis => {
+    let grid = createGrid(axis, `${axis.minSize}: 1000px; ${axis.template}: repeat(auto-fill, 10px)`, `${axis.line}: 1`, true);
+    // The smallest number of repetitions that fulfills the minimum size is 100, but the grid is limited to 10 tracks.
+    assert_equals(trackList(axis, grid).length, maxTracks, "track count");
+    assert_equals(gridExtent(axis, grid), 1000, "the minimum size still applies");
+}, "The auto-repeat of a grid with a minimum size is limited too");
+</script>

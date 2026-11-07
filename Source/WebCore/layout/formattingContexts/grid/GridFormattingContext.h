@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExplicitGridTrackSizes.h"
+#include "GridLinePositions.h"
 #include "GridTypeAliases.h"
 #include "UsedTrackSizes.h"
 #include <WebCore/LayoutIntegrationUtils.h>
@@ -62,19 +63,38 @@ struct GridAutoFlowOptions {
     GridAutoFlowDirection direction;
 };
 
+// The grid container's baselines, as logical block offsets from the block-start edge of the grid container's content box.
+// The caller adds the container's border and padding to make them relative to its border box.
+// https://drafts.csswg.org/css-grid-1/#grid-baselines
+struct GridContainerBaselines {
+    std::optional<LayoutUnit> first;
+    std::optional<LayoutUnit> last;
+};
+
 struct GridLayoutResult {
     UsedTrackSizes usedTrackSizes;
+    GridLinePositions columnLines;
+    GridLinePositions rowLines;
     GridItemRects gridItemRects;
     LayoutUnit usedBlockContentSize;
     // The number of explicit grid tracks that came from an auto-repeat.
     size_t autoRepeatColumnsCount { 0 };
     size_t autoRepeatRowsCount { 0 };
+    // https://drafts.csswg.org/css-grid-1/#overlarge-grids
+    // Whether the limit on the number of tracks left out repetitions of the auto-repeat, or part of the last one, that the container
+    // would have fitted. The resolved track list needs it to name the last line of the auto-repeat (a repeat that ends exactly at the
+    // limit is followed by the lines after it, one that was cut is not). Only integration reads it, to write the RenderGrid state that
+    // the resolved track list is built from; the formatting context does not use it.
+    bool autoRepeatColumnsTruncatedByLimit { false };
+    bool autoRepeatRowsTruncatedByLimit { false };
 
     size_t leadingImplicitColumnsCount { 0 };
     size_t leadingImplicitRowsCount { 0 };
 
     BitVector collapsedColumnTracks;
     BitVector collapsedRowTracks;
+
+    GridContainerBaselines baselines;
 };
 
 // The number of implicit tracks generated before the start of the explicit grid, per axis, because
@@ -120,31 +140,11 @@ public:
     IntrinsicWidths computeIntrinsicWidths(const AutoRepeatConstraint& inlineAxisAutoRepeatConstraint, const AutoRepeatConstraint& blockAxisAutoRepeatConstraint);
     IntrinsicWidthSizingPath intrinsicWidthSizingPath() const { return m_intrinsicWidthSizingPath; }
 
-    PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
-
     const ElementBox& root() const { return m_gridBox; }
 
     const IntegrationUtils& integrationUtils() const LIFETIME_BOUND { return m_integrationUtils; }
 
-    const BoxGeometry& geometryForGridItem(const ElementBox&) const LIFETIME_BOUND;
-
     const WritingMode writingMode() const { return m_gridBox->style().writingMode(); }
-
-    // FIXME: This is only here because the integration code needs to know the
-    // row gap to update RenderGrid. We should figure out a way to do that and remove
-    // this from the public API.
-    static LayoutUnit usedGapValue(const Style::GapGutter& gap, const Style::ComputedStyle& style)
-    {
-        if (gap.isNormal())
-            return { };
-
-        // Only handle fixed length gaps for now
-        if (auto fixedGap = gap.tryFixed())
-            return Style::evaluate<LayoutUnit>(*fixedGap, 0_lu, style.usedZoomForLength());
-
-        ASSERT_NOT_REACHED();
-        return { };
-    }
 
 private:
     IntrinsicWidthSizingPath classifyIntrinsicWidthSizingPath() const;
@@ -152,8 +152,6 @@ private:
     const LayoutState& layoutState() const LIFETIME_BOUND { return m_globalLayoutState; }
     BoxGeometry& geometryForGridItem(const ElementBox&) LIFETIME_BOUND;
     void setGridItemGeometries(const GridItemRects&);
-
-    const Style::ComputedStyle& gridContainerStyle() const LIFETIME_BOUND { return m_gridBox->style(); }
 
     const CheckedRef<const ElementBox> m_gridBox;
     const CheckedRef<LayoutState> m_globalLayoutState;

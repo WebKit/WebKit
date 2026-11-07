@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: Block grid in a baseline-aligned table cell</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-baselines">
+<link rel="help" href="https://drafts.csswg.org/css-align-3/#baseline-export">
+<meta name="flags" content="ahem">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<meta name="assert" content="A block grid container in a baseline-aligned table cell provides its first baseline as the baseline of the cell.">
+<style>
+body { margin: 0; font: 20px/20px Ahem; }
+.grid { display: grid; grid-template-columns: 100px 100px; background: lightblue; }
+.grid > div { background: yellow; }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid, .inline')">
+<div id="log"></div>
+<table style="border-spacing: 0; font: 20px/20px Ahem;">
+  <tr>
+    <td style="vertical-align: baseline; padding: 0;">X</td>
+    <td style="vertical-align: baseline; padding: 0;">
+      <div class="grid" style="grid-template-columns: 100px;" data-offset-y="0">
+        <div style="padding-top: 14px;">A</div>
+      </div>
+    </td>
+    <td style="vertical-align: baseline; padding: 0;">
+      <div class="grid" style="grid-template-columns: 100px;" data-offset-y="7">
+        <div style="height: 20px; margin-top: 3px;"></div>
+      </div>
+    </td>
+  </tr>
+</table>

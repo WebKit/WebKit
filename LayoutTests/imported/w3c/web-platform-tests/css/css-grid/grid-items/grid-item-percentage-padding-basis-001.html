@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<title>CSS Grid: percentage padding of a grid item resolves against its grid area</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#item-margins">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#padding-props">
+<meta name="assert" content="Percentage padding of a grid item resolves against the inline size of its grid area, not the inline size of the grid container.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<style>
+.grid {
+  display: grid;
+  position: relative;
+  width: 400px;
+  grid-template-columns: 100px 300px;
+  margin-bottom: 10px;
+}
+.child { height: 20px; }
+</style>
+<body onload="checkLayout('.grid')">
+<div id="log"></div>
+
+<!-- Every padded item has a block child on purpose: it is what makes the item sensitive to the percentage basis.
+     An item with only inline content is an IFC root, and its own layout rewrites its geometry against the grid area. -->
+
+<!-- Area is 100px wide: padding is 10px top and bottom, not 40px. -->
+<div class="grid" data-expected-height="40">
+  <div style="padding: 10% 0" data-expected-height="40" data-expected-width="100">
+    <div class="child" data-offset-y="10"></div>
+  </div>
+</div>
+
+<!-- Same with the logical shorthand. -->
+<div class="grid" data-expected-height="40">
+  <div style="padding-block: 10%" data-expected-height="40" data-expected-width="100">
+    <div class="child" data-offset-y="10"></div>
+  </div>
+</div>
+
+<!-- The row track is sized by the padded item, so a stretched sibling in the same row has the same height. -->
+<div class="grid" data-expected-height="40">
+  <div style="padding: 10% 0" data-expected-height="40">
+    <div class="child"></div>
+  </div>
+  <div data-expected-height="40" data-expected-width="300"></div>
+</div>
+
+<!-- Spanning item: the area is 100px + 20px gap + 300px = 420px wide, which is neither the container (500px) nor a single column. -->
+<div class="grid" style="width: 500px; column-gap: 20px" data-expected-height="104">
+  <div style="grid-column: 1 / 3; padding: 10% 0" data-expected-height="104" data-expected-width="420">
+    <div class="child" data-offset-y="42"></div>
+  </div>
+</div>
+
+<!-- 1fr column: the area (100px) is only known after the column has been sized. -->
+<div class="grid" style="grid-template-columns: 1fr 300px" data-expected-height="40">
+  <div style="padding: 10% 0" data-expected-height="40" data-expected-width="100">
+    <div class="child" data-offset-y="10"></div>
+  </div>
+</div>
+
+<!-- auto column: sized by the 100px wide child, so the area is 100px wide. -->
+<div class="grid" style="grid-template-columns: auto 300px" data-expected-height="40">
+  <div style="padding: 10% 0" data-expected-height="40" data-expected-width="100">
+    <div class="child" style="width: 100px" data-offset-y="10"></div>
+  </div>
+</div>
+
+<!-- Inline axis: padding is 10px on each side, not 40px. -->
+<div class="grid" style="grid-template-columns: 1fr 300px" data-expected-height="20">
+  <div style="padding: 0 10%" data-expected-height="20" data-expected-width="100">
+    <div class="child" data-offset-x="10" data-expected-width="80"></div>
+  </div>
+</div>
+
+<!-- Not stretched, so the item is sized to its fit-content block size: 20px content + 2 * 10px padding. -->
+<div class="grid" style="align-items: start" data-expected-height="40">
+  <div style="padding-block: 10%" data-expected-height="40" data-expected-width="100">
+    <div class="child" data-offset-y="10"></div>
+  </div>
+</div>

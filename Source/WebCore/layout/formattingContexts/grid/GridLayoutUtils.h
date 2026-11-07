@@ -102,11 +102,11 @@ std::pair<LayoutUnit, LayoutUnit> usedSizesForAspectRatioItem(const PlacedGridIt
     LayoutUnit inlineBorderAndPadding, LayoutUnit blockBorderAndPadding, LayoutUnit gridAreaInlineSize, LayoutUnit gridAreaBlockSize, const GridFormattingContext&,
     const UsedMargins& inlineMargins, const UsedMargins& blockMargins);
 
-LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, const BitVector& collapsedTracksList, LayoutUnit gap);
-NODELETE LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);
 
-MarginBoxSize inlineAxisMinContentContribution(const PlacedGridItem&, const IntegrationUtils&);
-MarginBoxSize inlineAxisMaxContentContribution(const PlacedGridItem&, const IntegrationUtils&);
+// The grid area block size is absent when the rows it spans are not sized yet and have no definite
+// max track sizing function.
+MarginBoxSize inlineAxisMinContentContribution(const PlacedGridItem&, std::optional<LayoutUnit> gridAreaBlockSize, const IntegrationUtils&);
+MarginBoxSize inlineAxisMaxContentContribution(const PlacedGridItem&, std::optional<LayoutUnit> gridAreaBlockSize, const IntegrationUtils&);
 
 MarginBoxSize blockAxisMinContentContribution(const PlacedGridItem&, LayoutUnit gridAreaInlineSize, const GridFormattingContext&);
 MarginBoxSize blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit gridAreaInlineSize, const GridFormattingContext&);
@@ -121,7 +121,6 @@ bool sizeDependsOnContainingBlockSize(const SizeType& size)
     return size.isStretch() || size.isPercentOrCalculated();
 }
 
-std::optional<double> preferredAspectRatio(const ElementBox&);
 bool hasFitContentBlockSize(const PlacedGridItem&);
 bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const ElementBox&, WritingMode containerWritingMode);
 

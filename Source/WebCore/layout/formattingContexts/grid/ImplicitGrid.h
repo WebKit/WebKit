@@ -41,12 +41,13 @@ struct UnplacedGridItems;
 // https://drafts.csswg.org/css-grid-1/#implicit-grids
 class ImplicitGrid {
 public:
+    // maxTracks is the limit on the number of tracks around the explicit grid (https://drafts.csswg.org/css-grid-1/#overlarge-grids).
     // Builds the implicit grid that the grid item placement algorithm starts from: the explicit grid,
     // grown to cover every definite item placement that falls outside of it and wide enough for the
     // largest column span among the items without a definite column position.
-    static ImplicitGrid createInitialGrid(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount);
+    static ImplicitGrid createInitialGrid(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, size_t maxTracks);
 
-    ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount);
+    ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount, size_t maxColumnsCount, size_t maxRowsCount);
 
     size_t rowsCount() const { return m_gridMatrix.size(); }
     size_t columnsCount() const { return m_columnsCount; }
@@ -60,9 +61,11 @@ private:
     using RowCursors = HashMap<size_t, size_t, WTF::DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
     NODELETE std::optional<size_t> findFirstAvailableColumnPosition(WTF::Range<size_t> rowRange, size_t columnSpan, size_t startSearchColumn) const;
     std::optional<size_t> findColumnPositionForDefiniteRowItem(WTF::Range<size_t> rowRange, size_t columnSpan, GridAutoFlowOptions) const;
-    void growColumnsForDefiniteRowItem(size_t columnSpan, WTF::Range<size_t> rowRange);
+    size_t growColumnsForDefiniteRowItem(size_t columnSpan, WTF::Range<size_t> rowRange);
     NODELETE bool isCellRangeEmpty(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange) const;
     NODELETE GridAreaLines markAreaAsOccupied(WTF::Range<size_t> columnRange, WTF::Range<size_t> rowRange);
+
+    size_t columnSpanLimitedToGrid(const UnplacedGridItem&) const;
 
     // Helper functions for auto-positioned items
     void growColumnsToFit(size_t requiredCount);
@@ -75,6 +78,12 @@ private:
     // The width of every row. BitVector::size() reports the inline bit capacity rather than the
     // number of bits asked for, so the grid has to remember how wide it actually is.
     size_t m_columnsCount { 0 };
+
+    // https://drafts.csswg.org/css-grid-1/#overlarge-grids
+    // The most columns and rows the grid may have: the leading implicit tracks plus the limit on the tracks after the explicit grid start.
+    // Growing stops here, and an item that would go past it gets a clamped grid area.
+    size_t m_maxColumnsCount { 0 };
+    size_t m_maxRowsCount { 0 };
 
     // Per-row cursors for sparse packing in Step 2 (definite row items only).
     RowCursors m_rowCursors;

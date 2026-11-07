@@ -1,0 +1,13 @@
+
+PASS .fc, .inline 1
+PASS .fc, .inline 2
+PASS .fc, .inline 3
+PASS .fc, .inline 4
+A
+B
+A
+B
+A
+B
+A
+B

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: A floated grid container's width counts the auto-fill columns of its stretch max-width</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-repeat">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="grid-container-auto-fill-max-width-stretch-float-001-ref.html">
+<meta name="assert" content="The stretch max-width of a floated grid container is definite, as its containing block's width is, so repeat(auto-fill) repeats the largest number of times that fits it, which also decides the float's shrink-to-fit width. The 390px containing block is not a multiple of the 50px tracks: 7 columns. The item on grid-column: -2 is in the last column, so it shows the number of columns.">
+<style>
+.containing-block { width: 390px; }
+.grid {
+  float: left;
+  display: grid;
+  grid-auto-rows: 50px;
+  grid-template-columns: repeat(auto-fill, 50px);
+  max-width: stretch;
+}
+.grid > div:nth-child(1) { grid-column: 1; background: green; }
+.grid > div:nth-child(2) { grid-column: -2; background: lime; }
+</style>
+<div class="containing-block">
+  <div class="grid"><div></div><div></div></div>
+</div>

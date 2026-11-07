@@ -72,6 +72,11 @@ void BoxTreeUpdater::tearDown()
         return;
 
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
+        // Set by GridLayout's constructor. The box is not content of this formatting context.
+        if (layoutBox->isExcludedFromGridFormattingContextForIntegration()) {
+            const_cast<Layout::Box&>(layoutBox.get()).setIsExcludedFromGridFormattingContextForIntegration(false);
+            continue;
+        }
         // Nested formatting context roots keep what their own live layout needs.
         if (layoutBox->isIntegrationRoot())
             continue;
