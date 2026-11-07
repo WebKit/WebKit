@@ -1,0 +1,9 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.float { float: left; width: 10px; height: 30px; background-color: green; }
+.block { margin-top: 50px; width: 10px; height: 10px; background-color: blue; }
+</style>
+<div><div class="float"></div><span><div class="block"></div></span>after</div>
+<div style="padding: 1px"></div>
+<div><div class="float" style="clear: both"></div><span><div class="block"></div></span>the stretched body keeps the margins of the content laid out again</div>

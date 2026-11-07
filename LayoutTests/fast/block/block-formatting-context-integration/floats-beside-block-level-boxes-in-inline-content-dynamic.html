@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+p { margin: 0; background: rgba(255, 255, 0, 0.4); }
+</style>
+<div class="roots">
+<div class="root" id="resized"><a><div class="r" id="wider"></div><p id="text">a block-level box after a float</p><p>and another one</p></a></div>
+<div class="root"><span>text<div style="background: silver" id="inserted">a block-level box that gets a float</div>lines after it that wrap around that float and more text</span></div>
+<div class="root"><span><span class="l" id="removed" style="height: 60px"></span><p>a block next to a float that goes away</p>text after it</span></div>
+<div class="root"><div><a><span class="r" style="height: 30px"></span><p id="margin" style="margin-top: 4px">a margin that collapses through the block container grows</p></a></div><p>after</p></div>
+<div class="root"><span><span class="l"></span>text<p id="block-removed">a block-level box that goes away</p>text after it</span></div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "160px";
+document.getElementById("wider").style.width = "60px";
+document.getElementById("text").firstChild.data = "a block-level box after a float, whose text got longer";
+const added = document.createElement("span");
+added.className = "l";
+added.style.height = "50px";
+document.getElementById("inserted").prepend(added);
+document.getElementById("removed").remove();
+document.getElementById("margin").style.marginTop = "20px";
+document.getElementById("block-removed").remove();
+</script>

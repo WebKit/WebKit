@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 250px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.c { background: silver; }
+.b { height: 12px; background: rgba(0, 128, 0, 0.6); }
+span { background: rgba(0, 0, 255, 0.2); }
+</style>
+<div class="roots">
+<div class="root">
+  <div class="c"><span style="padding: 0 10px">text before<div class="b" style="margin: 10px 0"></div>text after</span></div>
+  <div class="c"><span><div class="b" style="margin: 15px 0"></div></span></div>
+  <div class="c" style="margin-top: 20px"><span><div class="b" style="margin-top: 30px"></div>after</span></div>
+  <div class="c" style="margin-bottom: 20px"><span>before<div class="b" style="margin-bottom: 30px"></div></span></div>
+  <div class="b"></div>
+  <div class="c"><span>a<div style="margin: 10px 0"></div>b</span></div>
+  <div class="c"><span><div style="margin: 10px 0"></div><div class="b" style="margin-top: 25px"></div></span></div>
+  <div class="c" style="border-top: 2px solid black"><span><div class="b" style="margin-top: 10px"></div></span></div>
+  <div class="c"><span>x<div class="b"></div><div class="b" style="margin-top: 5px"></div>y</span></div>
+</div>
+<div class="root">
+  <div class="c"><span>one<div><div class="b" style="margin: 8px 0"></div></div>two</span></div>
+  <div class="c"><span style="border: 2px solid blue">bordered<div class="b" style="width: 50%; margin-left: auto"></div>end</span></div>
+  <div class="c"><span>outer<span>inner<div class="b">nested inline</div>tail</span>done</span></div>
+  <div class="c"><span>text<div style="display: flow-root; margin: 5px; background: orange"><div class="b"></div></div>after</span></div>
+  <div class="c"><span>p<div><span>deep<div class="b"></div>er</span></div>q</span></div>
+  <div class="c" dir="rtl"><span>rtl text<div class="b" style="width: 100px"></div>more</span></div>
+  <div class="c" dir="rtl"><span id="rtl-span">rtl text<div class="b" style="width: 100px; margin-right: 10px">own text</div>more</span></div>
+  <div class="c" style="height: 60px"><span>tall<div class="b" style="height: 50%"></div>percent</span></div>
+  <div class="c" style="width: 200px"><span>long text that wraps onto more lines<div class="b" style="margin: 0 20px"></div>and after it</span></div>
+</div>
+<div class="root" style="padding: 5px">
+  <span>the root's own inline content<div class="b" style="margin: 7px 0"></div>continues here</span>
+</div>
+</div>
+<div id="rtl-span-size"></div>
+<script>
+const span = document.getElementById("rtl-span");
+document.getElementById("rtl-span-size").textContent = `${span.offsetLeft} ${span.offsetWidth}`;
+</script>

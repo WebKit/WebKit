@@ -1,0 +1,9 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>body { font-family: monospace; font-size: 12px; } table { border: 1px solid; margin: 4px; } caption { background: lightblue; } td { border: 1px solid; }</style>
+<table><caption>a caption</caption><tr><td>cell</td></tr></table>
+<table><caption style="caption-side: bottom; padding: 5px"><p>caption with a paragraph</p><div style="margin: 10px">and a div</div></caption><tr><td>cell</td></tr></table>
+<table style="width: 200px"><caption style="text-align: right">a caption that is longer than the table is wide and wraps</caption><tr><td>cell</td></tr></table>
+<table><caption dir="rtl"><span>rtl caption</span></caption><tr><td>cell</td></tr></table>
+<svg width="300" height="120" style="border: 1px solid"><foreignObject x="10" y="10" width="200" height="100"><div xmlns="http://www.w3.org/1999/xhtml" style="background: lightgreen"><p>foreign object paragraph</p>text</div></foreignObject></svg>
+<svg width="300" height="120" style="border: 1px solid"><g transform="translate(20, 5) scale(1.5)"><foreignObject x="0" y="0" width="150" height="60" style="padding: 3px"><div xmlns="http://www.w3.org/1999/xhtml">transformed <b>content</b><div style="margin-top: 8px">block</div></div></foreignObject></g></svg>
+<div><input type="file"> <input type="file" multiple> <input type="file" style="width: 120px; padding: 4px"> <input type="file" dir="rtl"></div>

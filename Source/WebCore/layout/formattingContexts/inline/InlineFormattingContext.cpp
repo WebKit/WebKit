@@ -95,16 +95,28 @@ NODELETE static bool isEmptyInlineContent(const InlineItemList& inlineItemList)
     return inlineTextItem && !inlineTextItem->length();
 }
 
-InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, BlockLayoutState& parentBlockLayoutState)
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats)
+    : InlineFormattingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState, placedFloats, IntegrationUtils { globalLayoutState })
+{
+}
+
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats, BlockFormattingContext& blockFormattingContext, BlockLayoutResult& blockLayoutResult)
+    : InlineFormattingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState, placedFloats, IntegrationUtils { globalLayoutState, blockFormattingContext, blockLayoutResult })
+{
+}
+
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats, IntegrationUtils&& integrationUtils)
     : m_rootBlockContainer(rootBlockContainer)
     , m_globalLayoutState(globalLayoutState)
-    , m_floatingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState.placedFloats())
+    , m_floatingContext(rootBlockContainer, placedFloats, { }, { })
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
-    , m_integrationUtils(globalLayoutState)
+    , m_integrationUtils(WTF::move(integrationUtils))
     , m_inlineContentCache(globalLayoutState.inlineContentCache(rootBlockContainer))
-    , m_inlineLayoutState(parentBlockLayoutState)
+    , m_inlineLayoutState(parentBlockLayoutState, placedFloats)
 {
+    // The placed floats are the root's own, so the floating context needs no offset, and the inline directions match.
+    ASSERT(&placedFloats.blockFormattingContextRoot() == &rootBlockContainer);
     initializeInlineLayoutState(globalLayoutState);
 }
 
@@ -299,7 +311,7 @@ NODELETE static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, si
 NODELETE static inline void handleAfterSideMargin(BlockLayoutState::MarginState& marginState, InlineDisplay::Content& displayContent)
 {
     if (!InlineDisplayLineBuilder::hasTrailingLineWithBlockContent(displayContent.lines))
-        marginState.canCollapseMarginAfterWithChildren = false;
+        marginState.blockContainerMarginAfterCollapsesWithContent = false;
 }
 
 UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage, bool mayUseSimplifiedDisplayContentBuild)
@@ -307,7 +319,7 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
     ASSERT(!needsLayoutRange.isEmpty());
     auto layoutResult = makeUniqueRef<InlineLayoutResult>();
     auto& inlineLayoutState = layoutState();
-    auto& marginState = inlineLayoutState.parentBlockLayoutState().marginState();
+    auto& marginState = inlineLayoutState.marginState();
 
     auto isPartialLayout = InlineInvalidation::mayOnlyNeedPartialLayout(lineDamage);
     ASSERT(isPartialLayout || !previousLine);
@@ -400,9 +412,10 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
             staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
             floatBoxGeometry.setTopLeft(staticPosition);
 
-            auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, constraints.horizontal());
+            auto containingBlock = FloatingContext::ContainingBlock { { }, constraints.horizontal() };
+            auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, containingBlock);
             floatBoxGeometry.setTopLeft(floatBoxTopLeft);
-            placedFloats.add(floatingContext.makeFloatItem(floatBox, floatBoxGeometry));
+            placedFloats.add(floatingContext.makeFloatItem(floatBox, floatBoxGeometry, containingBlock));
             continue;
         }
         ASSERT_NOT_REACHED();
