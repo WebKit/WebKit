@@ -29,6 +29,7 @@
 #include <JavaScriptCore/JSGenerator.h>
 #include <JavaScriptCore/JSInternalFieldObjectImpl.h>
 #include <JavaScriptCore/ModuleMap.h>
+#include <JavaScriptCore/PropertyName.h>
 #include <JavaScriptCore/ScriptFetchParameters.h>
 #include <JavaScriptCore/ScriptFetcher.h>
 #include <wtf/OrderedHashMap.h>
@@ -98,7 +99,7 @@ public:
         Identifier localName;
     };
 
-    enum class ModulePhase : uint8_t { Evaluation, Defer };
+    enum class ModulePhase : uint8_t { Evaluation, Defer, Source };
 
     enum class ImportEntryType { Single, Namespace };
     struct ImportEntry {
@@ -156,6 +157,14 @@ public:
 
     std::optional<ImportEntry> tryGetImportEntry(UniquedStringImpl* localName);
     std::optional<ExportEntry> tryGetExportEntry(UniquedStringImpl* exportName);
+    bool hasImportBinding(PropertyName propertyName) const
+    {
+        for (const auto& pair : m_importEntries) {
+            if (propertyName == pair.value.localName)
+                return true;
+        }
+        return false;
+    }
 
     class AsyncEvaluationOrder {
     public:
@@ -223,6 +232,8 @@ public:
     AbstractModuleRecord* hostResolveImportedModule(JSGlobalObject*, const Identifier& moduleName, ScriptFetchParameters::Type moduleRequestType);
 
     JSModuleNamespaceObject* getModuleNamespace(JSGlobalObject*, ModulePhase = ModulePhase::Evaluation);
+    JSValue getModuleSource(JSGlobalObject*);
+    JSValue getSourcePhaseBinding(JSGlobalObject*, PropertyName);
 
     void gatherAsynchronousTransitiveDependencies(OrderedHashSet<AbstractModuleRecord*>& result, UncheckedKeyHashSet<AbstractModuleRecord*>& seen);
     bool readyForSyncExecution();
