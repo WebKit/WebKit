@@ -39,6 +39,8 @@ namespace XPath {
 /* @return whether the given node is the root node */
 NODELETE bool isRootDomNode(Node*);
 
+NODELETE Node& treeRoot(Node&);
+
 /* @return the 'string-value' of the given node as specified by http://www.w3.org/TR/xpath */
 String stringValue(Node&);
 

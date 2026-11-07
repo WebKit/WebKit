@@ -28,7 +28,8 @@
 #include "config.h"
 #include "XPathUtil.h"
 
-#include "ContainerNode.h"
+#include "Attr.h"
+#include "ContainerNodeInlines.h"
 #include "TextNodeTraversal.h"
 
 namespace WebCore::XPath {
@@ -36,6 +37,16 @@ namespace WebCore::XPath {
 bool isRootDomNode(Node* node)
 {
     return node && !node->parentNode();
+}
+
+Node& treeRoot(Node& node)
+{
+    if (auto* attr = dynamicDowncast<Attr>(node)) {
+        if (auto* element = attr->ownerElement())
+            return element->rootNode();
+        return node;
+    }
+    return node.rootNode();
 }
 
 String stringValue(Node& node)

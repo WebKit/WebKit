@@ -1,0 +1,7 @@
+
+PASS / selects the document when the context node is an attribute of a connected element
+PASS // searches the document when the context node is an attribute of a connected element
+PASS / selects the same node for an attribute as for its element in a disconnected tree
+PASS / selects the same node for an attribute as for its element in a shadow tree
+PASS / selects nothing when the context node is an attribute without an element
+

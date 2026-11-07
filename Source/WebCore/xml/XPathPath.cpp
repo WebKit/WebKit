@@ -28,10 +28,12 @@
 #include "config.h"
 #include "XPathPath.h"
 
+#include "Attr.h"
 #include "Document.h"
 #include "NodeInlines.h"
 #include "XPathPredicate.h"
 #include "XPathStep.h"
+#include "XPathUtil.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::XPath {
@@ -85,17 +87,16 @@ Value LocationPath::evaluate() const
 {
     EvaluationContext& evaluationContext = Expression::evaluationContext();
     EvaluationContext backupContext = evaluationContext;
-    // http://www.w3.org/TR/xpath/
-    // Section 2, Location Paths:
-    // "/ selects the document root (which is always the parent of the document element)"
+    // https://www.w3.org/TR/xpath-10/#location-paths
     // "A / by itself selects the root node of the document containing the context node."
-    // In the case of a tree that is detached from the document, we violate
-    // the spec and treat / as the root node of the detached tree.
-    // This is for compatibility with Firefox, and also seems like a more
-    // logical treatment of where you would expect the "root" to be.
+    // For a node in a detached or shadow tree, / selects the root of that tree instead, like Firefox.
+    // An attribute is in its owner element's tree, so without an owner element there is no root to select.
     RefPtr context = evaluationContext.node;
-    if (m_isAbsolute && !context->isDocumentNode())
-        context = &context->rootNode();
+    if (m_isAbsolute) {
+        if (RefPtr attr = dynamicDowncast<Attr>(*context); attr && !attr->ownerElement())
+            return Value(NodeSet { });
+        context = &treeRoot(*context);
+    }
 
     NodeSet nodes;
     nodes.append(context.releaseNonNull());
