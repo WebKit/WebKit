@@ -1627,7 +1627,6 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
         Location sizeLocation = materializeToGPR(size, sizeScratch, NeedsWritableGPR::Yes);
         Value initValue;
         if (elementType.unpacked().isV128()) {
-            // FIXME: We should have V128 Constant.
             materializeVectorConstant(v128_t { }, Location::fromFPR(wasmScratchFPR));
             initValue = Value::pinned(TypeKind::V128, Location::fromFPR(wasmScratchFPR));
         } else
@@ -2120,12 +2119,16 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         JIT_COMMENT(m_jit, "Struct allocation done, do initialization");
 
         bool needsWriteBarrier = false;
+        Value zeroV128;
         for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
             if (Wasm::isRefType(structType.field(i).type))
                 needsWriteBarrier |= emitStructSet(resultGPR, structType, i, Value::fromRef(TypeKind::RefNull, JSValue::encode(jsNull())));
             else if (structType.field(i).type.unpacked().isV128()) {
-                materializeVectorConstant(v128_t { }, Location::fromFPR(wasmScratchFPR));
-                needsWriteBarrier |= emitStructSet(resultGPR, structType, i, Value::pinned(TypeKind::V128, Location::fromFPR(wasmScratchFPR)));
+                if (zeroV128.isNone()) {
+                    materializeVectorConstant(v128_t { }, Location::fromFPR(wasmScratchFPR));
+                    zeroV128 = Value::pinned(TypeKind::V128, Location::fromFPR(wasmScratchFPR));
+                }
+                needsWriteBarrier |= emitStructSet(resultGPR, structType, i, zeroV128);
             } else
                 needsWriteBarrier |= emitStructSet(resultGPR, structType, i, Value::fromI64(0));
         }
@@ -4927,8 +4930,14 @@ void BBQJIT::emitMoveConst(Value constant, Location loc)
 {
     ASSERT(constant.isConst());
 
-    if (loc.isMemory())
+    if (loc.isMemory()) {
+        if (constant.type() == TypeKind::V128) {
+            emitMoveConst(constant, Location::fromFPR(wasmScratchFPR));
+            emitStore(constant.type(), Location::fromFPR(wasmScratchFPR), loc);
+            return;
+        }
         return emitStoreConst(constant, loc);
+    }
 
     ASSERT(loc.isRegister());
     ASSERT(loc.isFPR() == constant.isFloat());
@@ -4963,6 +4972,9 @@ void BBQJIT::emitMoveConst(Value constant, Location loc)
         break;
     case TypeKind::F64:
         m_jit.move64ToDouble(Imm64(constant.asI64()), loc.asFPR());
+        break;
+    case TypeKind::V128:
+        materializeVectorConstant(constant.asV128(), loc);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unimplemented constant typekind.");
@@ -5193,6 +5205,11 @@ Location BBQJIT::materializeToGPR(Value value, std::optional<ScratchScope<1, 0>>
 void BBQJIT::emitMove(StorageType type, Value src, BaseIndex dst)
 {
     if (src.isConst()) {
+        if (src.type() == TypeKind::V128) {
+            emitMoveConst(src, Location::fromFPR(wasmScratchFPR));
+            emitStore(type, Location::fromFPR(wasmScratchFPR), dst);
+            return;
+        }
         emitStoreConst(type, src, dst);
         return;
     }
@@ -5207,6 +5224,11 @@ void BBQJIT::emitMove(StorageType type, Value src, BaseIndex dst)
 void BBQJIT::emitMove(StorageType type, Value src, Address dst)
 {
     if (src.isConst()) {
+        if (src.type() == TypeKind::V128) {
+            emitMoveConst(src, Location::fromFPR(wasmScratchFPR));
+            emitStore(type, Location::fromFPR(wasmScratchFPR), dst);
+            return;
+        }
         emitStoreConst(type, src, dst);
         return;
     }
