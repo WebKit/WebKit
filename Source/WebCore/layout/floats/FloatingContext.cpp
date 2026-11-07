@@ -328,18 +328,23 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
         return BlockAxisPositionWithClearance { logicalTopRelativeToBlockFormattingContextRoot - containingBlockRootRelativeTop, clearance };
     };
 
-    auto clear = clearInBlockFormattingContext(layoutBox);
-    if (clear == Clear::Left)
-        return lowestPositionOnBlockAxis(placedFloats().lowestPositionOnBlockAxis(Clear::InlineStart));
+    return lowestPositionOnBlockAxis(blockEndOfFloatsToClear(layoutBox));
+}
 
-    if (clear == Clear::Right)
-        return lowestPositionOnBlockAxis(placedFloats().lowestPositionOnBlockAxis(Clear::InlineEnd));
-
-    if (clear == Clear::Both)
-        return lowestPositionOnBlockAxis(placedFloats().lowestPositionOnBlockAxis());
-
-    ASSERT_NOT_REACHED();
-    return { };
+std::optional<LayoutUnit> FloatingContext::blockEndOfFloatsToClear(const Box& layoutBox) const
+{
+    ASSERT(layoutBox.hasFloatClear());
+    switch (clearInBlockFormattingContext(layoutBox)) {
+    case Clear::Left:
+        return placedFloats().lowestPositionOnBlockAxis(Clear::InlineStart);
+    case Clear::Right:
+        return placedFloats().lowestPositionOnBlockAxis(Clear::InlineEnd);
+    case Clear::Both:
+        return placedFloats().lowestPositionOnBlockAxis();
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 }
 
 NODELETE static bool floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
