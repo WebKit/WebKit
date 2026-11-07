@@ -173,7 +173,7 @@ private:
     RefPtr<StyleRuleCounterStyle> consumeCounterStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleLayer> consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block);
     RefPtr<StyleRuleContainer> consumeContainerRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-    RefPtr<StyleRuleProperty> consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    NEVER_INLINE_LARGE_STACK_ALLOC RefPtr<StyleRuleProperty> consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleScope> consumeScopeRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleStartingStyle> consumeStartingStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleViewTransition> consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
@@ -186,6 +186,7 @@ private:
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     ParsedPropertyVector consumeDeclarationListInNewNestingContext(CSSParserTokenRange, StyleRuleType);
+    NEVER_INLINE_LARGE_STACK_ALLOC Ref<ImmutableStyleProperties> consumeStylePropertiesInNewNestingContext(CSSParserTokenRange, StyleRuleType);
     Vector<Ref<StyleRuleBase>> consumeDeclarationRuleListInNewNestingContext(CSSParserTokenRange, StyleRuleType);
 
     enum class BlockAllowedRule : uint8_t { QualifiedRules = 1 << 0, Declarations = 1 << 1, AtRules = 1 << 2, };
