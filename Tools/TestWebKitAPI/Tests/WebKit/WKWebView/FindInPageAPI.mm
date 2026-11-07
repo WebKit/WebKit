@@ -38,9 +38,7 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 #import "Helpers/cocoa/ImageAnalysisTestingUtilities.h"
-#import "InstanceMethodSwizzler.h"
 #import <WebKit/_WKFeature.h>
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #endif
 
 TEST(WKWebView, FindAPIForwardsNoMatch)
@@ -268,8 +266,6 @@ TEST(WKWebView, FindAPIForwardsCaseSensitive)
 }
 #if PLATFORM(MAC)
 #if ENABLE(IMAGE_ANALYSIS)
-static unsigned gDidProcessRequestCount = 0;
-
 @interface FindDelegate : NSObject<_WKFindDelegate>
 @property (nonatomic, readonly) int numberOfCallsToDidFindMatches;
 @end
@@ -282,26 +278,6 @@ static unsigned gDidProcessRequestCount = 0;
 }
 
 @end
-
-static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
-{
-    gDidProcessRequestCount++;
-    completion(TestWebKitAPI::createImageAnalysisWithSimpleFixedResults().get(), nil);
-}
-
-static VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes requestTypes)
-{
-    return TestWebKitAPI::createRequest(image, orientation, requestTypes).leakRef();
-}
-
-template <typename FunctionType>
-std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMethodSwizzler>> makeImageAnalysisRequestSwizzler(FunctionType function)
-{
-    return std::pair {
-        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerClassSingleton(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(function)),
-        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerRequestClassSingleton(), @selector(initWithCGImage:orientation:requestType:), reinterpret_cast<IMP>(makeFakeRequest))
-    };
-}
 
 static RetainPtr<TestWKWebView> createWebViewWithImageAnalysisDuringFindInPageEnabled()
 {
@@ -317,7 +293,7 @@ static RetainPtr<TestWKWebView> createWebViewWithImageAnalysisDuringFindInPageEn
 
 TEST(WKWebView, FindAPITextInImage)
 {
-    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+    TestWebKitAPI::ImageAnalysisRequestSwizzler requestSwizzler;
 
     auto webView = createWebViewWithImageAnalysisDuringFindInPageEnabled();
     [webView synchronouslyLoadTestPageNamed:@"image-with-text"];
@@ -332,7 +308,7 @@ TEST(WKWebView, FindAPITextInImage)
 
     TestWebKitAPI::Util::run(&done);
     TestWebKitAPI::Util::waitForConditionWithLogging([&] {
-        return gDidProcessRequestCount == 1 && [findDelegate numberOfCallsToDidFindMatches] == 2;
+        return requestSwizzler.processedRequestCount() == 1 && [findDelegate numberOfCallsToDidFindMatches] == 2;
     }, 1, @"Timed out waiting for image analysis to start and for search for string to be performed twice.");
 }
 

@@ -49,6 +49,19 @@ RetainPtr<VKWKTextInfo> createTextInfo(NSString *text, VKQuad *);
 RetainPtr<VKWKLineInfo> createLineInfo(NSString *text, VKQuad *, NSArray<VKWKTextInfo *> *);
 RetainPtr<VKImageAnalysis> createImageAnalysis(NSArray<VKWKLineInfo *> *);
 RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef, VKImageOrientation, VKAnalysisTypes);
+VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef, VKImageOrientation, VKAnalysisTypes);
+
+class ImageAnalysisRequestSwizzler {
+public:
+    ImageAnalysisRequestSwizzler();
+
+    unsigned processedRequestCount() const { return m_processedRequestCount; }
+
+private:
+    unsigned m_processedRequestCount { 0 };
+    InstanceMethodSwizzler m_processRequestSwizzler;
+    InstanceMethodSwizzler m_makeRequestSwizzler;
+};
 
 #if ENABLE(IMAGE_ANALYSIS)
 

@@ -274,6 +274,25 @@ RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef image, VKImageOrienta
     return adoptNS(static_cast<VKImageAnalyzerRequest *>([[TestVKImageAnalyzerRequest alloc] initWithCGImage:image orientation:orientation requestType:types]));
 }
 
+VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes requestTypes)
+{
+    return createRequest(image, orientation, requestTypes).leakRef();
+}
+
+static IMP makeProcessRequestHandler(unsigned& processedRequestCount)
+{
+    return imp_implementationWithBlock([&processedRequestCount](id, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *)) {
+        processedRequestCount++;
+        completion(createImageAnalysisWithSimpleFixedResults().get(), nil);
+    });
+}
+
+ImageAnalysisRequestSwizzler::ImageAnalysisRequestSwizzler()
+    : m_processRequestSwizzler { PAL::getVKImageAnalyzerClassSingleton(), @selector(processRequest:progressHandler:completionHandler:), makeProcessRequestHandler(m_processedRequestCount) }
+    , m_makeRequestSwizzler { PAL::getVKImageAnalyzerRequestClassSingleton(), @selector(initWithCGImage:orientation:requestType:), reinterpret_cast<IMP>(makeFakeRequest) }
+{
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 static IMP makeRequestHandler(CGImageRef image, CGRect cropRect, std::optional<CGSize>& lastRequestImageSize)
