@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.a { display: flow-root; background: rgba(255, 255, 0, 0.4); }
+.h { overflow: hidden; background: rgba(255, 0, 255, 0.3); }
+canvas { display: block; width: 60px; height: 20px; background: orange; }
+p { margin: 6px 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l"></div><div class="r"></div><div class="a">beside both floats, with text that wraps in the space</div></div>
+<div class="root"><div class="l"></div><div class="h" style="width: 100px">fixed width</div></div>
+<div class="root"><div class="l"></div><div class="h" style="width: 170px">too wide to fit</div></div>
+<div class="root"><div class="r"></div><div class="h" style="width: 100px; margin: 0 auto">auto margins</div></div>
+<div class="root"><div class="r"></div><div class="h" style="width: 100px; margin-left: auto">auto start margin</div></div>
+<div class="root"><div class="l"></div><div class="h" style="width: 100px; margin: 0 auto 0 20px">auto end margin, a start margin under the float</div><div class="h" style="width: 100px; margin: 0 auto 0 60px">and past it</div></div>
+<div class="root"><div class="l"></div><div class="h" style="margin-left: 20px">margin under the float</div></div>
+<div class="root"><div class="l"></div><div class="h" style="margin-left: 60px; margin-right: 10px">margin past the float</div></div>
+<div class="root"><div class="r"></div><div class="h" style="width: 150px; margin-left: 30px">start margin beside a float at the end</div></div>
+<div class="root"><div class="l"></div><div class="l" style="clear: left; width: 120px"></div><div class="h" style="width: 100px">below the wide float</div></div>
+<div class="root"><div class="r" style="clear: right"></div><div class="r" style="clear: right; width: 100px"></div><div class="h" style="width: 60px; height: 30px; margin-left: auto">auto</div><div class="h" style="width: 60px; height: 30px; margin-left: auto">beside the wide float</div></div>
+<div class="root"><div class="l"></div><div class="l" style="clear: left; width: 80px; height: 10px"></div><div class="a">a narrower space further down, which the text wraps in</div></div>
+<div class="root"><div class="l"></div><canvas></canvas><canvas style="width: 180px"></canvas></div>
+<div class="root"><div class="l"></div><div class="h" style="width: 0; min-width: stretch">min-width: stretch</div><div class="h" style="width: 1000px; max-width: stretch">max-width: stretch</div><div class="h" style="max-width: 50%">50% of the containing block</div></div>
+<div class="root"><div class="l"></div><div class="r"></div><div class="h" style="clear: left">cleared, beside the right float</div></div>
+<div class="root"><div class="l"></div><div class="h" style="width: 170px; margin-top: 10px">margin smaller than the float</div></div>
+<div class="root"><p>before</p><div class="l"></div><div class="h" style="width: 170px; margin-top: 4px">below the float after a margin</div></div>
+<div class="root"><div style="margin-top: 15px"><div class="l"></div></div><div class="h" style="width: 170px">below a float in a block with a margin</div></div>
+<div class="root"><div style="margin-top: 15px"><div class="l"></div><div class="h" style="width: 170px; margin-top: 25px">below a float whose block container's top is not known yet</div></div></div>
+<div class="root"><div class="l"></div><div style="margin-left: 10px"><div class="a">in a block after the float</div></div></div>
+<div class="root" dir="rtl"><div class="l"></div><div class="r"></div><div class="a">right to left, beside both</div><div class="h" style="width: 100px; margin-right: auto">auto end margin</div></div>
+<div class="root"><div class="l"></div><div class="a"><div class="l" style="width: 20px"></div>its own float</div></div>
+<div class="root"><div class="r"></div><div class="h" id="used-margins" style="width: 100px; margin: 0 auto">used margins </div></div>
+</div>
+<script>
+const usedMarginsStyle = getComputedStyle(document.getElementById("used-margins"));
+document.getElementById("used-margins").firstChild.appendData(usedMarginsStyle.marginLeft + " " + usedMarginsStyle.marginRight);
+</script>
