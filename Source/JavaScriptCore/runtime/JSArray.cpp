@@ -2444,7 +2444,7 @@ static uint64_t calculateFlattenedLength(JSGlobalObject* globalObject, JSArray* 
                 continue;
             resultLength++;
             if (lengthExceeded()) [[unlikely]] {
-                throwTypeError(globalObject, scope, "flatten array exceeds 2**52 - 1");
+                throwTypeError(globalObject, scope, "flatten array exceeds 2**53 - 1");
                 return std::numeric_limits<uint64_t>::max();
             }
         }
@@ -2467,7 +2467,7 @@ static uint64_t calculateFlattenedLength(JSGlobalObject* globalObject, JSArray* 
                     return flatLength;
                 resultLength += flatLength;
                 if (lengthExceeded()) [[unlikely]] {
-                    throwTypeError(globalObject, scope, "flatten array exceeds 2**52 - 1");
+                    throwTypeError(globalObject, scope, "flatten array exceeds 2**53 - 1");
                     return std::numeric_limits<uint64_t>::max();
                 }
             } else {
@@ -2478,7 +2478,7 @@ static uint64_t calculateFlattenedLength(JSGlobalObject* globalObject, JSArray* 
                 }
                 resultLength++;
                 if (lengthExceeded()) [[unlikely]] {
-                    throwTypeError(globalObject, scope, "flatten array exceeds 2**52 - 1");
+                    throwTypeError(globalObject, scope, "flatten array exceeds 2**53 - 1");
                     return std::numeric_limits<uint64_t>::max();
                 }
             }
@@ -2493,7 +2493,7 @@ static uint64_t calculateFlattenedLength(JSGlobalObject* globalObject, JSArray* 
                 continue;
             resultLength++;
             if (lengthExceeded()) [[unlikely]] {
-                throwTypeError(globalObject, scope, "flatten array exceeds 2**52 - 1");
+                throwTypeError(globalObject, scope, "flatten array exceeds 2**53 - 1");
                 return std::numeric_limits<uint64_t>::max();
             }
         }

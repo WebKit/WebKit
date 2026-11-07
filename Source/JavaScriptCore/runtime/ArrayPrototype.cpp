@@ -2330,7 +2330,7 @@ static uint64_t flatIntoArray(JSGlobalObject* globalObject, JSObject* target, JS
             RETURN_IF_EXCEPTION(scope, { });
         } else {
             if (targetIndex >= maxSafeIntegerAsUInt64()) [[unlikely]] {
-                throwTypeError(globalObject, scope, "flatten array exceeds 2**52 - 1");
+                throwTypeError(globalObject, scope, "flatten array exceeds 2**53 - 1");
                 return { };
             }
             target->putDirectIndex(globalObject, targetIndex, element, 0, PutDirectIndexShouldThrow);
