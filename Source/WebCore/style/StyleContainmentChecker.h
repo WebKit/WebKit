@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/StyleContain.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -49,6 +50,8 @@ public:
     inline bool shouldApplyPaintContainment() const;
 
     inline bool isSkippedContentRoot() const;
+
+    static inline bool hasContainment(const ComputedStyle&, ContainValue);
 
 private:
     const CheckedRef<const Style::ComputedStyle> m_style;
