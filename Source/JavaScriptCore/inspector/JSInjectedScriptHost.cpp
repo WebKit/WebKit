@@ -1115,7 +1115,7 @@ public:
 
         UncheckedKeyHashSet<JSCell*> visited;
 
-        Function<void(JSCell*)> visit = [&] (auto* from) {
+        auto visit = [&](this auto& visit, JSCell* from) -> void {
             auto isFirstVisit = visited.add(from).isNewEntry;
 
             out.print(makeString(indent));
