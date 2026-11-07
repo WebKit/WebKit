@@ -103,6 +103,8 @@ class Conflict(Command):
         full_branch = '{}:{}'.format(conflict_pr._metadata['full_name'], conflict_pr.head)
         print('Found conflict branch {}'.format(full_branch))
         checkout_response = repository.checkout(full_branch)
+        if conflict_pr.hash and checkout_response and checkout_response.hash != conflict_pr.hash:
+            sys.stderr.write('Checked out {} but {} is at {}, your local branch may be stale\n'.format(checkout_response.hash, conflict_pr, conflict_pr.hash))
 
         msg = "\n\n-------------------------------------------------------"
         msg += "\nYou are now checked out into the conflict branch.\n"
