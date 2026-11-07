@@ -39,8 +39,10 @@
 #include "compiler/translator/tree_util/BuiltIn_autogen.h"
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
 #include "compiler/translator/util.h"
 #include "compiler/translator/wgsl/OutputUniformBlocks.h"
@@ -320,10 +322,7 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
 
     // Default uniforms should no longer be referenced--they should all be in an interface block by
     // now.
-    // TODO(anglebug.com/376553328): gl_DepthRange should be handled by referencing driver
-    // uniforms--then the check for builtin default uniforms can be removed here.
-    if (type.getBasicType() == TBasicType::EbtVoid ||
-        (IsDefaultUniform(type) && var.symbolType() != SymbolType::BuiltIn))
+    if (type.getBasicType() == TBasicType::EbtVoid || IsDefaultUniform(type))
     {
         UNREACHABLE();
     }
@@ -364,9 +363,7 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
         if (var.symbolType() == SymbolType::BuiltIn)
         {
             ASSERT(mRewritePipelineVarOutput->IsInputVar(var.uniqueId()) ||
-                   mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()) ||
-                   type.getQualifier() == EvqDepthRange);
-            // TODO(anglebug.com/376553328): support gl_DepthRange.
+                   mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()));
             // Match the name of the struct field in `mRewritePipelineVarOutput`.
             mSink << "_";
         }
@@ -2688,6 +2685,37 @@ bool AppendVertexShaderDepthCorrectionToMain(TCompiler *compiler,
     return RunAtTheEndOfShader(compiler, root, ifCall, &compiler->getSymbolTable());
 }
 
+// WebGPU requires the viewport's minDepth to be at most its maxDepth, so the backend swaps a depth
+// range whose near value n is greater than its far value f. This operation reverses the depth to
+// compensate: with the depth z_wgpu / w reversed, the window depth f + (1 - z_wgpu / w) * (n - f)
+// of the swapped range equals the window depth n + z_wgpu / w * (f - n) of the GL range.
+//
+//     if (depthRange.far < depthRange.near) gl_Position.z = gl_Position.w - gl_Position.z
+//
+// This runs after AppendVertexShaderDepthCorrectionToMain(), when z_wgpu is in [0, w].
+bool AppendVertexShaderReversedDepthRangeCorrectionToMain(TCompiler *compiler,
+                                                          TIntermBlock *root,
+                                                          const DriverUniform *driverUniforms)
+{
+    const TVariable *position  = BuiltInVariable::gl_Position();
+    TIntermSymbol *positionRef = new TIntermSymbol(position);
+
+    TIntermSwizzle *positionZ = new TIntermSwizzle(positionRef, {2});
+    TIntermSwizzle *positionW = new TIntermSwizzle(positionRef->deepCopy(), {3});
+
+    // Create the assignment "gl_Position.z = gl_Position.w - gl_Position.z"
+    TIntermBinary *wMinusZ    = new TIntermBinary(EOpSub, positionW, positionZ->deepCopy());
+    TIntermBinary *assignment = new TIntermBinary(TOperator::EOpAssign, positionZ, wMinusZ);
+
+    TIntermBlock *block = new TIntermBlock;
+    block->appendStatement(assignment);
+    TIntermIfElse *ifCall =
+        new TIntermIfElse(driverUniforms->getDepthRangeReversed(), block, nullptr);
+
+    // Append the assignment as a statement at the end of the shader.
+    return RunAtTheEndOfShader(compiler, root, ifCall, &compiler->getSymbolTable());
+}
+
 }  // namespace
 
 TranslatorWGSL::TranslatorWGSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
@@ -2740,6 +2768,15 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
         driverUniforms.addGraphicsDriverUniformsToShader(root, &getSymbolTable());
     }
 
+    // Replace gl_DepthRange with the driver uniforms' depth range.
+    const TVariable *depthRange = static_cast<const TVariable *>(
+        getSymbolTable().findBuiltIn(ImmutableString("gl_DepthRange"), 0));
+    if (FindSymbolNode(root, depthRange->name()) != nullptr &&
+        !ReplaceVariableWithTyped(this, root, depthRange, driverUniforms.getDepthRange()))
+    {
+        return false;
+    }
+
     if (getShaderType() == GL_VERTEX_SHADER)
     {
         TIntermTyped *flipNegY =
@@ -2752,6 +2789,11 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
         }
 
         if (!AppendVertexShaderDepthCorrectionToMain(this, root, &driverUniforms))
+        {
+            return false;
+        }
+
+        if (!AppendVertexShaderReversedDepthRangeCorrectionToMain(this, root, &driverUniforms))
         {
             return false;
         }

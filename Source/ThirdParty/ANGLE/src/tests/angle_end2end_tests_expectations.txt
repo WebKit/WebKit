@@ -2543,8 +2543,6 @@
 // 383356846 ubyte index formats are not fully supported yet.
 383356846 WGPU : LineLoopTest.*UShort* = SKIP
 383356846 WGPU : LineLoopTest.*BufferBlend* = SKIP
-// The WebGPU backend does not support depth ranges with near > far yet.
-0 WGPU : ViewportTest.ReversedDepthRangeAfterViewportAndFramebufferChanges/* = SKIP
 
 42266907 WGPU : AddMockTextureNoRenderTargetTest.NoProgramOutputWorkaround/* = SKIP
 42266907 WGPU : AttributeLayoutBufferIndexed.Test/* = SKIP
@@ -2621,7 +2619,6 @@
 42267100 WGPU : GLSLTest.FragDataPassedToFunctionNoDrawBuffers/* = SKIP
 42267100 WGPU : GLSLTest.FragDataPassedToFunctionOutNoDrawBuffers/* = SKIP
 42267100 WGPU : GLSLValidationTest.VectorScalarArithmeticWithSideEffectInLoop/* = SKIP
-42267100 WGPU : GLSLTestNoValidation.DepthRangeUniforms/* = SKIP
 42266907 WGPU : IncompleteTextureTest.IncompleteTexture2D/* = SKIP
 42266907 WGPU : IncompleteTextureTest.UpdateTexture/* = SKIP
 42266907 WGPU : IndexBufferOffsetTest.DrawArraysLineLoopFollowedByDrawElementsTriangle/* = SKIP
@@ -2666,7 +2663,6 @@
 42266907 WGPU : SixteenBppTextureTest.RGB565Validation/* = SKIP
 42266907 WGPU : SixteenBppTextureTest.RGBA4444Validation/* = SKIP
 42266907 WGPU : SixteenBppTextureTest.RGBA5551Validation/* = SKIP
-42266907 WGPU : StateChangeRenderTest.DepthRangeUpdates/* = SKIP
 42266907 WGPU : StateChangeRenderTest.GenerateMipmap/* = SKIP
 42266907 WGPU : StateChangeRenderTest.RecreateTexture/* = SKIP
 42266907 WGPU : StateChangeTest.DisablingBufferedVertexAttribute/* = SKIP

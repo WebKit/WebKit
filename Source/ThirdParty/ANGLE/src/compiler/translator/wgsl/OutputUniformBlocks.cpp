@@ -293,8 +293,9 @@ bool OutputUniformBlocksAndSamplers(TCompiler *compiler,
             }
             if (shaderVar.isBuiltIn())
             {
-                // gl_DepthRange and also the GLSL 4.2 gl_NumSamples are uniforms.
-                // TODO(anglebug.com/42267100): put gl_DepthRange into default uniform block.
+                // CollectVariables reports gl_DepthRange and also the GLSL 4.2 gl_NumSamples as
+                // uniforms. They are not in the default uniform block: gl_DepthRange is read from
+                // the driver uniforms.
                 continue;
             }
 
