@@ -93,6 +93,7 @@ public:
     bool hasMultiplePages() const;
     void forEachPage(NOESCAPE const Function<void(WebPageProxy&)>&);
     bool hasVisiblePage() const;
+    bool hasPageWithDifferentSecurityRestrictions(WebProcessProxy::LockdownMode, EnhancedSecurity, const WebPageProxy* excludedPage = nullptr) const;
     void forEachRemotePage(const WebPageProxy&, NOESCAPE const Function<void(RemotePageProxy&)>&);
 
     RefPtr<RemotePageProxy> remotePageInProcess(const WebPageProxy&, const WebProcessProxy&);

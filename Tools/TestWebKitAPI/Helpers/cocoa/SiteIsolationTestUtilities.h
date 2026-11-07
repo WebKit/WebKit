@@ -121,6 +121,9 @@ WebViewWithFocusedCrossOriginIframe webViewWithFocusedCrossOriginIframe(const HT
 // selection, since some commands check it before sending anything to a web process.
 void setSelectionInFrame(TestWKWebView *, WKFrameInfo *, NSString *script, _WKSelectionAttributes expectedSelection);
 
+// Appends an iframe loading the URL to the main frame's body, waits for its load event, and returns it.
+RetainPtr<WKFrameInfo> appendIframe(TestWKWebView *, NSString *url);
+
 } // namespace TestWebKitAPI
 
 #endif // __cplusplus

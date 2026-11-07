@@ -455,6 +455,9 @@ public:
     bool isEnhancedSecurityEnabled() const;
     bool isEnhancedSecurityEnabledByDefault(bool isLockdownModeActive) const;
 
+    WebKit::WebProcessProxy::LockdownMode lockdownMode() const;
+    WebKit::EnhancedSecurity enhancedSecurity() const;
+
     void setAllowTestOnlyIPC(bool enabled) { m_data.allowTestOnlyIPC = enabled; }
     bool allowTestOnlyIPC() const { return m_data.allowTestOnlyIPC; }
 

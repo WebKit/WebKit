@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
 
+#import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -34,6 +35,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKFrameTreeNode.h>
 
 namespace TestWebKitAPI {
 
@@ -112,6 +114,13 @@ void setSelectionInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *s
     [webView objectByEvaluatingJavaScript:script inFrame:frame];
     while (!([webView _selectionAttributes] & expectedSelection))
         Util::spinRunLoop();
+}
+
+RetainPtr<WKFrameInfo> appendIframe(TestWKWebView *webView, NSString *url)
+{
+    id loaded { [webView objectByCallingAsyncFunction:@"return new Promise(resolve => { let iframe = document.createElement('iframe'); iframe.onload = () => resolve(true); iframe.src = url; document.body.appendChild(iframe); })" withArguments:@{ @"url": url }] };
+    EXPECT_TRUE([loaded boolValue]);
+    return [webView mainFrame].childFrames.lastObject.info;
 }
 
 } // namespace TestWebKitAPI
