@@ -42,6 +42,7 @@ struct WebKit::RemoteGraphicsContextGLInitializationState {
     GCGLint maxArrayTextureLayers;
 };
 
+header: <WebCore/GraphicsTypes.h>
 enum class WebCore::TextDrawingMode : uint8_t {
     Fill
     Stroke,

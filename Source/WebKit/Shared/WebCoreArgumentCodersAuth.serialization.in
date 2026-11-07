@@ -124,6 +124,7 @@ struct WebCore::CurrentUserDetailsOptions {
     String displayName;
 };
 
+header: <WebCore/AuthenticatorAttachment.h>
 struct WebCore::AuthenticatorSelectionCriteria {
     std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
     std::optional<WebCore::ResidentKeyRequirement> residentKey;

@@ -1304,6 +1304,9 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
+    if bundle_filter is not None:
+        # Bundles only get their own inputs' headers, and the Xcode prefix header doesn't include this.
+        result.append('#include "ArgumentCoders.h"')
     result.append('#include "GeneratedSerializers.h"')
     result.append('#include "GeneratedWebKitSecureCoding.h"')
     result.append('#include <wtf/IsIncreasing.h>')
@@ -2794,6 +2797,7 @@ def main(argv):
     headers = []
     header_set = set()
     header_set.add(ConditionalHeader('"FormDataReference.h"', None))
+    bundle_header_sets = {}
     additional_forward_declarations_list = []
     file_extension = args.file_extension
     output_dir = args.output_dir
@@ -2817,6 +2821,7 @@ def main(argv):
                 using_statements.append(using_statement)
             for header in new_headers:
                 header_set.add(header)
+                bundle_header_sets.setdefault(bundle, set()).add(header)
             for declaration in new_additional_forward_declarations:
                 additional_forward_declarations_list.append(declaration)
             for objc_wrapped_type in new_objc_wrapped_types:
@@ -2842,8 +2847,10 @@ def main(argv):
         # Common bundle catches inputs that don't match any prefix
         # (e.g. WebCore-generated inputs that aren't under Source/WebKit/).
         for bundle in ALL_BUNDLES:
+            # Only include this bundle's own headers, so other bundles' headers don't slow it down or rebuild it.
+            bundle_headers = sorted(bundle_header_sets.get(bundle, set()) | {ConditionalHeader('"FormDataReference.h"', None)})
             with open(output_path(f'GeneratedSerializers{bundle}.{file_extension}'), "w+") as output:
-                output.write(generate_impl(serialized_types, serialized_enums, headers, False, [], bundle_filter=bundle))
+                output.write(generate_impl(serialized_types, serialized_enums, bundle_headers, False, [], bundle_filter=bundle))
     else:
         with open(output_path('GeneratedSerializers.%s' % file_extension), "w+") as output:
             output.write(generate_impl(serialized_types, serialized_enums, headers, False, []))

@@ -29,6 +29,7 @@
     Unknown
 }
 
+header: <WebCore/InbandTextTrackPrivate.h>
 enum class WebCore::InbandTextTrackPrivateMode : uint8_t {
     Disabled,
     Hidden,
