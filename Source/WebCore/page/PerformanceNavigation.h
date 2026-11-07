@@ -33,10 +33,12 @@
 #include "LocalDOMWindowProperty.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PerformanceNavigation : public RefCounted<PerformanceNavigation>, public LocalDOMWindowProperty {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceNavigation);
 public:
     static Ref<PerformanceNavigation> create(LocalDOMWindow* window) { return adoptRef(*new PerformanceNavigation(window)); }
 

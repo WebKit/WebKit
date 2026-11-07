@@ -31,6 +31,7 @@
 #include "dom/DOMHighResTimeStamp.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,6 +42,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class PerformanceObserver : public RefCounted<PerformanceObserver> {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceObserver);
 public:
     struct Init {
         std::optional<Vector<String>> entryTypes;

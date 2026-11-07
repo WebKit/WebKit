@@ -137,6 +137,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -150,6 +151,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalFrame);
+
 using namespace HTMLNames;
 
 #if PLATFORM(IOS_FAMILY)
@@ -157,7 +160,8 @@ static const Seconds scrollFrequency { 1000_s / 60. };
 #endif
 
 struct OverrideScreenSize {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(OverrideScreenSize);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OverrideScreenSize);
+public:
 
     FloatSize size;
 };

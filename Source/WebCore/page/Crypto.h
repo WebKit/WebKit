@@ -30,6 +30,7 @@
 #pragma once
 
 #include "ContextDestructionObserver.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBufferView;
@@ -41,6 +42,7 @@ class SubtleCrypto;
 template<typename> class ExceptionOr;
 
 class Crypto : public ContextDestructionObserver, public RefCounted<Crypto> {
+    WTF_MAKE_TZONE_ALLOCATED(Crypto);
 public:
     static Ref<Crypto> create(ScriptExecutionContext* context) { return adoptRef(*new Crypto(context)); }
     virtual ~Crypto();

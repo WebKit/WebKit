@@ -44,9 +44,12 @@
 #include "WebsitePolicies.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteFrame);
 
 Ref<RemoteFrame> RemoteFrame::createMainFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, Frame* opener, Ref<FrameTreeSyncData>&& frameTreeSyncData)
 {

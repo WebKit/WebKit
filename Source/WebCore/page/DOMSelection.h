@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -49,6 +50,7 @@ struct SimpleRange;
 template<typename> class ExceptionOr;
 
 class DOMSelection : public RefCounted<DOMSelection>, public LocalDOMWindowProperty {
+    WTF_MAKE_TZONE_ALLOCATED(DOMSelection);
 public:
     static Ref<DOMSelection> create(LocalDOMWindow&);
 

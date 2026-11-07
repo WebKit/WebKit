@@ -27,6 +27,7 @@
 
 #include "DOMHighResTimeStamp.h"
 #include "PerformanceEntry.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ class Element;
 class WeakPtrImplWithEventTargetData;
 
 class LargestContentfulPaint final : public PerformanceEntry {
+    WTF_MAKE_TZONE_ALLOCATED(LargestContentfulPaint);
 public:
     static Ref<LargestContentfulPaint> create(DOMHighResTimeStamp timeStamp)
     {

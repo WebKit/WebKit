@@ -29,8 +29,11 @@
 #include "IDLTypes.h"
 #include "JSDOMMapLike.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EventCounts);
 
 EventCounts::EventCounts(Performance* performance)
     : m_performance(*performance)

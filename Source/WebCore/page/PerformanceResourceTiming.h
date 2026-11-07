@@ -35,6 +35,7 @@
 #include "PerformanceEntry.h"
 #include "ResourceTiming.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ class PerformanceServerTiming;
 class ResourceTiming;
 
 class PerformanceResourceTiming : public PerformanceEntry {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceResourceTiming);
 public:
     NODELETE static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 

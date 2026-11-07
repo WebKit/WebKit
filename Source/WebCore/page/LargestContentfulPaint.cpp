@@ -28,8 +28,11 @@
 
 #include "Element.h"
 #include "LargestContentfulPaintData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LargestContentfulPaint);
 
 LargestContentfulPaint::LargestContentfulPaint(DOMHighResTimeStamp timeStamp)
     : PerformanceEntry(emptyString(), timeStamp, timeStamp)

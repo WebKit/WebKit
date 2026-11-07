@@ -34,8 +34,11 @@
 #include "Page.h"
 #include "UserContentController.h"
 #include "UserMessageHandler.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMessageHandlersNamespace);
 
 UserMessageHandlersNamespace::UserMessageHandlersNamespace(LocalFrame& frame, UserContentProvider& userContentProvider)
     : FrameDestructionObserver(&frame)

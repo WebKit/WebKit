@@ -1087,6 +1087,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
 }
 
 class PromiseSettlementObserver : public RefCounted<PromiseSettlementObserver> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PromiseSettlementObserver);
 public:
     using SuccessSteps = Function<void()>;
     using FailureSteps = Function<void(JSC::JSValue)>;

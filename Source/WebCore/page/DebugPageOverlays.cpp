@@ -57,6 +57,7 @@
 #endif
 
 #include <wtf/SortedArrayMap.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -102,6 +103,7 @@ protected:
 #endif
 
 class MouseWheelRegionOverlay final : public RegionOverlay {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MouseWheelRegionOverlay);
 public:
     static Ref<MouseWheelRegionOverlay> create(Page& page)
     {
@@ -154,6 +156,7 @@ bool MouseWheelRegionOverlay::updateRegion()
 #endif
 
 class NonFastScrollableRegionOverlay final : public RegionOverlay {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(NonFastScrollableRegionOverlay);
 public:
     static Ref<NonFastScrollableRegionOverlay> create(Page& page)
     {
@@ -264,6 +267,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
 #endif
 
 class InteractionRegionOverlay final : public RegionOverlay {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InteractionRegionOverlay);
 public:
     static Ref<InteractionRegionOverlay> create(Page& page)
     {
@@ -683,6 +687,7 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
 #endif
 
 class EnhancedSecurityOverlay final : public RegionOverlay {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EnhancedSecurityOverlay);
 public:
     static Ref<EnhancedSecurityOverlay> create(Page& page)
     {

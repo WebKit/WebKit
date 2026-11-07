@@ -30,12 +30,15 @@
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 #include <JavaScriptCore/JSObjectInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "CompiledContentExtension.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserContentController);
 
 Ref<UserContentController> UserContentController::create()
 {

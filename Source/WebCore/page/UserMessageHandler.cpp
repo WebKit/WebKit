@@ -35,8 +35,11 @@
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMessageHandler);
 
 UserMessageHandler::UserMessageHandler(LocalFrame& frame, const UserMessageHandlerDescriptor& descriptor)
     : FrameDestructionObserver(&frame)

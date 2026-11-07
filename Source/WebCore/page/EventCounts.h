@@ -28,6 +28,7 @@
 
 #include "EventNames.h"
 #include "Performance.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ namespace WebCore {
 class DOMMapAdapter;
 
 class EventCounts final {
-WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventCounts);
+WTF_MAKE_TZONE_ALLOCATED(EventCounts);
 public:
     EventCounts(Performance*);
     void ref() { m_performance->ref(); }

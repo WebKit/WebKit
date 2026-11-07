@@ -28,6 +28,7 @@
 #include "PerformanceEntry.h"
 #include "PerformanceMarkOptions.h"
 #include "dom/ExceptionOr.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -41,6 +42,7 @@ class SerializedScriptValue;
 class ScriptExecutionContext;
 
 class PerformanceMark final : public PerformanceEntry {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceMark);
 public:
     static ExceptionOr<Ref<PerformanceMark>> create(JSC::JSGlobalObject&, ScriptExecutionContext&, const String& name, std::optional<PerformanceMarkOptions>&&);
 

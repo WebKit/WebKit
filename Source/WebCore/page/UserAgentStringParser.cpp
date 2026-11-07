@@ -30,6 +30,7 @@
 #include <optional>
 #include <wtf/ASCIICType.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringCommon.h>
@@ -69,6 +70,8 @@
  */
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UserAgentStringParser);
 UserAgentStringParser::UserAgentStringParser(const String& userAgentString)
     : m_userAgentString(userAgentString)
     , data(UserAgentStringData::create()) { };

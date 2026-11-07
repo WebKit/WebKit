@@ -34,8 +34,11 @@
 #include "PerformanceEventTiming.h"
 #include "PerformanceObserverEntryList.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceObserver);
 
 PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecutionContext, Ref<PerformanceObserverCallback>&& callback)
     : m_callback(WTF::move(callback))

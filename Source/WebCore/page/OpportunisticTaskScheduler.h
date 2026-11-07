@@ -32,6 +32,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -55,6 +56,7 @@ private:
 };
 
 class OpportunisticTaskScheduler final : public RefCountedAndCanMakeWeakPtr<OpportunisticTaskScheduler> {
+    WTF_MAKE_TZONE_ALLOCATED(OpportunisticTaskScheduler);
 public:
     static Ref<OpportunisticTaskScheduler> create(Page& page)
     {

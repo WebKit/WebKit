@@ -33,8 +33,11 @@
 #include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include <wtf/Ref.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMWindowExtension);
 
 DOMWindowExtension::DOMWindowExtension(LocalDOMWindow* window, DOMWrapperWorld& world)
     : m_window(window)

@@ -30,8 +30,11 @@
 #include "Document.h"
 #include "ExceptionOr.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShareDataReader);
 
 ShareDataReader::ShareDataReader(CompletionHandler<void(ExceptionOr<ShareDataWithParsedURL&>)>&& completionHandler)
     : m_completionHandler(WTF::move(completionHandler))

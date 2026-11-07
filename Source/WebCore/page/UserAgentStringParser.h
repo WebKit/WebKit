@@ -27,6 +27,7 @@
 #include <WebCore/PlatformExportMacros.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -37,6 +38,7 @@ struct UserAgentStringData;
  * This class takes in a user agent string and returns a UserAgentStringData class
  */
 class UserAgentStringParser : public RefCountedAndCanMakeWeakPtr<UserAgentStringParser> {
+    WTF_MAKE_TZONE_ALLOCATED(UserAgentStringParser);
 public:
     WEBCORE_EXPORT static Ref<UserAgentStringParser> create(const String& userAgentString);
     WEBCORE_EXPORT std::optional<Ref<UserAgentStringData>> parse();

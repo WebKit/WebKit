@@ -37,8 +37,11 @@
 #include "SerializedScriptValue.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceMark);
 
 static double performanceNow(ScriptExecutionContext& scriptExecutionContext)
 {

@@ -30,8 +30,11 @@
 #include "Performance.h"
 #include "ResourceTiming.h"
 #include <wtf/ReducedResolutionSeconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceNavigationTiming);
 
 NODELETE static PerformanceNavigationTiming::NavigationType toPerformanceNavigationTimingNavigationType(NavigationType navigationType)
 {

@@ -32,6 +32,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -149,6 +150,7 @@ struct TextIndicatorData {
 };
 
 class TextIndicator : public RefCounted<TextIndicator> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIndicator, WEBCORE_EXPORT);
 public:
     // FIXME: These are fairly Mac-specific, and they don't really belong here.
     // But they're needed at TextIndicator creation time, so they can't go in TextIndicatorLayer.

@@ -28,6 +28,7 @@
 #include "ShareData.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class ShareDataReader : public RefCountedAndCanMakeWeakPtr<ShareDataReader> {
+    WTF_MAKE_TZONE_ALLOCATED(ShareDataReader);
 public:
     static Ref<ShareDataReader> create(CompletionHandler<void(ExceptionOr<ShareDataWithParsedURL&>)>&& completionHandler) { return adoptRef(*new ShareDataReader(WTF::move(completionHandler))); }
     ~ShareDataReader();

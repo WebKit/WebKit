@@ -30,6 +30,7 @@
 #include "PerformanceResourceTiming.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ class SecurityOrigin;
 enum class NavigationType : uint8_t;
 
 class PerformanceNavigationTiming final : public PerformanceResourceTiming {
+    WTF_MAKE_TZONE_ALLOCATED(PerformanceNavigationTiming);
 public:
     enum class NavigationType : uint8_t {
         Navigate,

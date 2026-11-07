@@ -29,6 +29,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ class DOMWrapperWorld;
 class LocalFrame;
 
 class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindowObserver {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMWindowExtension, WEBCORE_EXPORT);
 public:
     static Ref<DOMWindowExtension> create(LocalDOMWindow* window, DOMWrapperWorld& world)
     {

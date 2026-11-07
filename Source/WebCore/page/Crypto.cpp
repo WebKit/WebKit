@@ -36,6 +36,7 @@
 #include "SubtleCrypto.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 #if OS(DARWIN)
@@ -46,6 +47,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Crypto);
 
 Crypto::Crypto(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)

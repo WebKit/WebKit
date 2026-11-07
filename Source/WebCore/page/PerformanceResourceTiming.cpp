@@ -41,9 +41,12 @@
 #include "ResourceResponse.h"
 #include "ResourceTiming.h"
 #include <wtf/ReducedResolutionSeconds.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerformanceResourceTiming);
 
 static double networkLoadTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, MonotonicTime timeStamp)
 {

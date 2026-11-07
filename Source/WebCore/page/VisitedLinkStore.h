@@ -27,6 +27,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ using SharedStringHash = uint32_t;
 class Page;
 
 class VisitedLinkStore : public RefCounted<VisitedLinkStore> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VisitedLinkStore, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT VisitedLinkStore();
     WEBCORE_EXPORT virtual ~VisitedLinkStore();

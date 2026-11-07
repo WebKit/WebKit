@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <random>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakRandomNumber.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
@@ -53,6 +54,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigatorUAData);
 NavigatorUAData::NavigatorUAData() = default;
 NavigatorUAData::~NavigatorUAData() = default;
 
