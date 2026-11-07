@@ -109,6 +109,7 @@ ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRu
     : m_element(element)
     , m_authorStyle(ruleSets.authorStyle())
     , m_userStyle(ruleSets.userStyle())
+    , m_quirkStyle(ruleSets.quirkStyle())
     , m_userAgentMediaQueryStyle(ruleSets.userAgentMediaQueryStyle())
     , m_dynamicViewTransitionsStyle(ruleSets.dynamicViewTransitionsStyle())
     , m_selectorMatchingState(selectorMatchingState)
@@ -193,6 +194,15 @@ void ElementRuleCollector::collectMatchingRules(DeclarationOrigin origin)
     case DeclarationOrigin::User:
         if (m_userStyle) {
             MatchRequest matchRequest(*m_userStyle);
+            collectMatchingRules(matchRequest);
+            if (isFirstMatchModeAndHasMatchedAnyRules())
+                return;
+        }
+        break;
+
+    case DeclarationOrigin::Quirk:
+        if (m_quirkStyle) {
+            MatchRequest matchRequest(*m_quirkStyle);
             collectMatchingRules(matchRequest);
             if (isFirstMatchModeAndHasMatchedAnyRules())
                 return;
@@ -302,6 +312,7 @@ Vector<MatchedProperties>& ElementRuleCollector::declarationsForOrigin(Declarati
     case DeclarationOrigin::UserAgent: return m_result->userAgentDeclarations;
     case DeclarationOrigin::User: return m_result->userDeclarations;
     case DeclarationOrigin::Author: return m_result->authorDeclarations;
+    case DeclarationOrigin::Quirk: return m_result->quirkDeclarations;
     }
     ASSERT_NOT_REACHED();
     return m_result->authorDeclarations;
@@ -557,6 +568,18 @@ void ElementRuleCollector::matchUserRules()
     collectMatchingRules(DeclarationOrigin::User);
 
     sortAndTransferMatchedRules(DeclarationOrigin::User);
+}
+
+void ElementRuleCollector::matchQuirkRules()
+{
+    if (!m_quirkStyle)
+        return;
+
+    clearMatchedRules();
+
+    collectMatchingRules(DeclarationOrigin::Quirk);
+
+    sortAndTransferMatchedRules(DeclarationOrigin::Quirk);
 }
 
 void ElementRuleCollector::matchUARules()
@@ -1032,6 +1055,8 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
 
         // Rules from the host scopes override inline style.
         transferMatchedRules(DeclarationOrigin::Author);
+
+        matchQuirkRules();
     }
 }
 
