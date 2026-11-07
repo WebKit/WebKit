@@ -795,6 +795,7 @@ ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorke
     request.setShouldBlockThirdPartyStorage(jobData.shouldBlockThirdPartyStorage);
     request.setAllowCookies(true);
     request.setFirstPartyForCookies(topOrigin->toURL());
+    request.setIsSameSite(RegistrableDomain(url) == RegistrableDomain(jobData.topOrigin));
 
     request.setHTTPHeaderField(HTTPHeaderName::Origin, origin->toString());
     request.setHTTPReferrer(SecurityPolicy::referrerToOriginString(jobData.scriptURL));
