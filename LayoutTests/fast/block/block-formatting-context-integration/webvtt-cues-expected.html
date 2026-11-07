@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>video { width: 320px; height: 180px; }</style>
+<video id="video" src="../../../imported/w3c/web-platform-tests/media/white.mp4"></video>
+<script>
+testRunner.waitUntilDone();
+const video = document.getElementById("video");
+const track = video.addTextTrack("captions");
+track.mode = "showing";
+track.addCue(new VTTCue(0, 100, "a cue at the bottom"));
+track.addCue(new VTTCue(0, 100, "an overlapping cue moves up"));
+const start = new VTTCue(0, 100, "start aligned at 30%");
+start.align = "start";
+start.position = 30;
+start.line = 1;
+track.addCue(start);
+const wrapped = new VTTCue(0, 100, "a long cue that wraps over several lines in a small box");
+wrapped.size = 40;
+wrapped.line = 0;
+wrapped.align = "end";
+track.addCue(wrapped);
+const notSnapped = new VTTCue(0, 100, "not snapped to lines");
+notSnapped.snapToLines = false;
+notSnapped.line = 40;
+notSnapped.position = 70;
+track.addCue(notSnapped);
+video.addEventListener("seeked", () => requestAnimationFrame(() => requestAnimationFrame(() => testRunner.notifyDone())));
+video.addEventListener("loadeddata", () => { video.currentTime = 0.5; });
+</script>

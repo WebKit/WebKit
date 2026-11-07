@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; width: 120px; height: 90px; border: 1px solid; margin: 3px; display: inline-block; vertical-align: top; }
+.vrl { writing-mode: vertical-rl; }
+.a { position: absolute; background: lightblue; border: 2px solid blue; padding: 1px 3px 5px 7px; }
+.flex { display: flex; flex-wrap: wrap; }
+</style>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: min-content">min content text</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; right: 5px; width: max-content">max content</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: fit-content">fit content that wraps</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 15px; margin-left: 4px; width: stretch">stretch</div></div>
+<div class="cb"><div class="a" style="top: 5px; right: 10px; margin: 2px 6px; width: -webkit-fill-available">fill available</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: 10px; min-width: max-content">min max</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: 300px; max-width: min-content">max min content</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: 10px; min-width: fit-content">min fit content text</div></div>
+<div class="cb"><div class="a" style="top: 5px; left: 5px; width: 50px; height: min-content">height min content</div></div>
+<div class="cb"><div class="a" style="top: 5px; bottom: 5px; left: 5px; height: max-content">height max</div></div>
+<div class="cb"><div class="a" style="top: 5px; bottom: 5px; left: 5px; width: 50px; max-height: fit-content">max height fit content text</div></div>
+<div class="cb"><div class="a" style="top: 10px; left: 5px; margin-top: 3px; height: stretch">stretch</div></div>
+<div class="cb"><div class="a" style="top: 10px; left: 5px; margin-bottom: 4px; height: -webkit-fill-available">fill available</div></div>
+<div class="cb"><div class="a" style="top: 10px; left: 5px; height: 20px; min-height: stretch">min stretch</div></div>
+<div class="cb"><div class="a" style="top: 10px; left: 5px; height: 200px; max-height: -webkit-fill-available">max fill</div></div>
+<div class="cb"><div class="a vrl" style="top: 5px; left: 5px; height: min-content">vertical min content</div></div>
+<div class="cb"><div class="a vrl" style="top: 5px; left: 5px; width: max-content; height: stretch">vertical stretch</div></div>
+<div class="cb vrl"><div class="a" style="top: 5px; right: 5px; width: fit-content; height: min-content">horizontal in vertical</div></div>
+<div class="cb vrl"><div class="a vrl" style="top: 5px; right: 5px; height: max-content">vertical max content</div></div>
+<div class="cb"><div class="a flex" style="top: 5px; left: 5px; width: min-content"><div>flex</div><div>min content</div></div></div>
+<div class="cb"><div class="a flex" style="top: 5px; left: 5px; width: 10px; min-width: fit-content"><div>flex</div><div>min fit</div></div></div>
+<div class="cb"><div class="a flex" style="top: 5px; left: 5px; width: 300px; max-width: max-content; height: stretch"><div>flex</div><div>max</div></div></div>

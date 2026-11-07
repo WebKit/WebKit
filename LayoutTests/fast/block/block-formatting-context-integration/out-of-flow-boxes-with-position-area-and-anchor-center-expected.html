@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px monospace; }
+.cb { position: relative; width: 150px; height: 70px; border: 1px solid; margin: 4px; display: inline-block; vertical-align: top; }
+.anchor { position: absolute; left: 50px; top: 25px; width: 50px; height: 20px; background: orange; }
+.a { position: absolute; background: lightblue; }
+</style>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: top">top</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: bottom right">br</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: span-left top">span</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: center">center</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: span-all top">span all</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: block-start inline-end; width: 50%">pct</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: top; justify-self: stretch; align-self: stretch">stretch</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: bottom; margin: 5px; top: 3px">margins</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: top; margin: auto; width: 30px">auto margins</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: left; width: 120px">overflows</div></div>
+<div class="cb" style="direction: rtl"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: inline-start block-end">rtl</div></div>
+<div class="cb" style="writing-mode: vertical-rl"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: block-start inline-end">vrl</div></div>
+<div class="cb" style="writing-mode: vertical-lr"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: top left">vlr</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; justify-self: anchor-center; top: 0">anchor-center</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; justify-self: anchor-center; align-self: anchor-center; inset: 0; width: 20px; height: 10px">both</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a; left: 0"></div><div class="a" style="position-anchor: --a; justify-self: anchor-center; top: 0; width: 100px">clamped</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a; left: 0"></div><div class="a" style="position-anchor: --a; justify-self: unsafe anchor-center; top: 0; width: 100px">unsafe</div></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><img class="a" style="position-anchor: --a; position-area: bottom left; width: 20px; height: 20px; background: green"></div>
+<div class="cb"><div class="anchor" style="anchor-name: --a"></div><button class="a" style="position-anchor: --a; position-area: top right">button</button></div>
+<div class="cb" style="overflow: hidden"><div class="anchor" style="anchor-name: --a"></div><div class="a" style="position-anchor: --a; position-area: right; width: 150px">scroller</div></div>
+<div class="cb"><div style="height: 40px"></div><span class="anchor" style="anchor-name: --a; position: static; display: inline-block">in flow</span><div class="a" style="position-anchor: --a; position-area: bottom span-right">inflow anchor</div></div>

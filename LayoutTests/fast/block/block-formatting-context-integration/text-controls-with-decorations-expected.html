@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>body { font-family: monospace; font-size: 12px; } div { margin: 2px; }</style>
+<datalist id="list"><option value="one"><option value="two"></datalist>
+<div><input type="search" value="search"> <input type="number" value="12"> <input list="list" value="list"> <input id="contacts" value="contacts"></div>
+<div><input type="password" id="credentials" value="secret"> <input type="password" id="strong" value="strong"> <input id="card" value="card"> <input type="search" style="padding: 0" value="no padding"></div>
+<div><input type="search" style="height: 40px" value="tall"> <input type="number" style="height: 10px" value="3"> <input list="list" style="padding: 6px; border: 3px solid" value="padded"> <input type="search" style="font-size: 20px" value="big"></div>
+<div><input type="search" style="width: 40px" value="narrow search field"> <input type="search" dir="rtl" value="right to left"> <input type="number" style="field-sizing: content" value="12345"> <input type="password" id="strongTall" style="height: 40px" value="strong"></div>
+<div><input type="search" placeholder="placeholder"> <input type="number" placeholder="number"> <input id="contactsShort" style="height: 8px" value="short"> <input type="search" style="text-align: center; width: 150px" value="center"></div>
+<div style="writing-mode: vertical-lr; height: 140px"><input type="search" value="vertical"> <input type="number" value="5"> <input id="contactsVertical" value="contacts"></div>
+<script>
+internals.setAutofillButtonType(document.getElementById("contacts"), "Contacts");
+internals.setAutofillButtonType(document.getElementById("credentials"), "Credentials");
+internals.setAutofillButtonType(document.getElementById("strong"), "StrongPassword");
+internals.setAutofillButtonType(document.getElementById("card"), "CreditCard");
+internals.setAutofillButtonType(document.getElementById("strongTall"), "StrongPassword");
+internals.setAutofillButtonType(document.getElementById("contactsShort"), "Contacts");
+internals.setAutofillButtonType(document.getElementById("contactsVertical"), "Contacts");
+</script>

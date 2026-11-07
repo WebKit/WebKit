@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 10px/12px monospace; }
+.cb { position: relative; width: 120px; height: 90px; border: 1px solid; margin: 3px; display: inline-block; vertical-align: top; }
+.vrl { writing-mode: vertical-rl; }
+.vlr { writing-mode: vertical-lr; }
+.htb { writing-mode: horizontal-tb; }
+.a { position: absolute; background: lightblue; border: 2px solid blue; padding: 1px 3px 5px 7px; }
+</style>
+<div class="cb">before<div class="a vrl">static vertical text</div></div>
+<div class="cb"><div class="a vrl" style="top: 5px; bottom: 10px; left: 10px">stretched inline size</div></div>
+<div class="cb"><div class="a vlr" style="inset: 5px 10px 15px 20px">stretched both ways</div></div>
+<div class="cb"><div class="a vrl" style="inset: 0; width: 30px; height: 40px; margin: auto">auto</div></div>
+<div class="cb"><div class="a vrl" style="inset: 0; width: 30px; height: 40px; justify-self: end; align-self: center">al</div></div>
+<div class="cb"><div class="a vlr" style="right: 5px; bottom: 5px; width: 50%; height: 40%">percent</div></div>
+<div class="cb"><div class="a vrl" style="top: 0; right: 0; min-height: 60px; max-width: 25px">min max</div></div>
+<div class="cb"><div class="a vrl" style="top: 10px; left: 0; margin: 4px 6px 8px 10px">long text that wraps into several vertical lines</div></div>
+<div class="cb vrl">before<div class="a htb">static horizontal text</div></div>
+<div class="cb vrl"><div class="a htb" style="left: 5px; right: 10px; top: 4px">horizontal in vertical</div></div>
+<div class="cb vrl"><div class="a vlr" style="top: 5px; left: 5px">flipped<div>blocks</div></div></div>
+<div class="cb vrl"><div class="a vlr" style="inset: 4px 8px">flipped stretched</div></div>
+<div class="cb"><div class="a vrl" style="direction: rtl; top: 5px; bottom: 5px; left: 5px; align-self: end">rtl end</div></div>
+<div class="cb" style="direction: rtl"><div class="a vrl" style="top: 5px">rtl containing block</div></div>
+<div class="cb"><div class="a vrl" style="top: 5px; left: 5px"><div style="height: 30px; background: green"></div><div class="htb" style="width: 20px; background: orange">o</div>text</div></div>

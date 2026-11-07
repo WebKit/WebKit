@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 90px; border: 1px solid; margin: 2px; }
+.vrl { writing-mode: vertical-rl; background: lightblue; }
+.vlr { writing-mode: vertical-lr; background: lightgreen; }
+.htb { writing-mode: horizontal-tb; background: orange; }
+</style>
+<div class="root"><div class="vrl">auto height</div></div>
+<div class="root" style="height: 80px"><div class="vrl">fixed height containing block text</div></div>
+<div class="root" style="max-height: 70px"><div class="vlr">maximum height containing block</div></div>
+<div class="root" style="height: 100px"><div style="height: 60%"><div class="vrl">percentage height</div></div></div>
+<div class="root"><div style="aspect-ratio: 2 / 1"><div class="vrl">ratio box</div></div></div>
+<div class="root" style="height: 90px">text <span class="vrl" style="display: inline-block">inline-block</span> after</div>
+<div class="root" style="height: 90px"><div class="vrl" style="width: 30px; height: 50%; margin: 5px auto">sized</div></div>
+<div class="root" style="height: 90px"><div class="vrl" style="max-height: 40px; border: 2px solid; padding: 3px">max height</div></div>
+<div class="root vrl" style="height: 90px; width: auto"><div class="htb">horizontal in vertical</div></div>
+<div class="root vrl" style="height: 90px; width: 70px"><div class="htb" style="width: 50%">percent</div></div>
+<div class="root" style="height: 60px"><div class="vrl"><div class="htb">nested back</div></div></div>

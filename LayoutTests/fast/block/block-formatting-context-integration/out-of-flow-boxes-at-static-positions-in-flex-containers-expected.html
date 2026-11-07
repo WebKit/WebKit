@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 6px; align-items: start; }
+.root { display: flow-root; position: relative; width: 150px; height: 50px; background: lightgray; font-family: monospace; font-size: 10px; line-height: 12px; }
+.f { display: flex; height: 26px; padding: 5px 7px 3px 9px; border: solid; border-width: 1px 2px 3px 4px; background: silver; }
+.a { position: absolute; background: rgba(0, 128, 0, 0.6); }
+.v { writing-mode: vertical-rl; width: 50px; height: 150px; }
+.v .f { height: auto; width: 26px; }
+</style>
+<div class="roots">
+<div class="root"><div class="f" style="justify-content: center; align-items: center"><div class="a">center</div></div></div>
+<div class="root"><div class="f" style="justify-content: flex-end; align-items: flex-end"><div class="a">flex-end</div></div></div>
+<div class="root"><div class="f" style="justify-content: space-between"><div class="a">between</div></div></div>
+<div class="root"><div class="f" style="justify-content: space-around"><div class="a">around</div></div></div>
+<div class="root"><div class="f" style="justify-content: space-evenly; align-items: end"><div class="a">evenly</div></div></div>
+<div class="root"><div class="f" style="flex-direction: row-reverse"><div class="a">row-reverse</div></div></div>
+<div class="root"><div class="f" style="flex-direction: row-reverse; justify-content: flex-end"><div class="a">flex-end</div></div></div>
+<div class="root"><div class="f" style="flex-direction: column; justify-content: center; align-items: center"><div class="a">column</div></div></div>
+<div class="root"><div class="f" style="flex-direction: column-reverse; align-items: flex-end"><div class="a">reverse</div></div></div>
+<div class="root"><div class="f" style="flex-wrap: wrap-reverse"><div class="a">wrap-reverse</div></div></div>
+<div class="root"><div class="f" style="flex-wrap: wrap-reverse; align-items: flex-end"><div class="a">flex-end</div></div></div>
+<div class="root"><div class="f" style="width: 20px; justify-content: safe center; align-items: safe center"><div class="a" style="height: 40px">safe center</div></div></div>
+<div class="root"><div class="f" style="width: 20px; justify-content: center; align-items: center"><div class="a" style="height: 40px">overflowing</div></div></div>
+<div class="root"><div class="f" style="align-items: last baseline; justify-content: right"><div class="a">last baseline</div></div></div>
+<div class="root"><div class="f" style="flex-direction: column; justify-content: right; align-items: self-end"><div class="a">self-end</div></div></div>
+<div class="root"><div class="f" dir="rtl" style="justify-content: center; align-items: center"><div class="a">rtl center</div></div></div>
+<div class="root"><div class="f" dir="rtl" style="justify-content: flex-end"><div class="a">rtl flex-end</div></div></div>
+<div class="root" dir="rtl"><div class="f" dir="ltr" style="justify-content: flex-end; align-items: center"><div class="a">ltr in rtl</div></div></div>
+<div class="root" dir="rtl"><div class="f" style="justify-content: start; align-items: end"><div class="a">rtl in rtl</div></div></div>
+<div class="root"><div class="f" style="justify-content: center; align-items: center"><div class="a" style="margin: 2px 4px 6px 8px">margins</div></div></div>
+<div class="root"><div class="f" style="justify-content: center; align-items: center"><div class="a" style="margin: auto">auto margins</div></div></div>
+<div class="root"><div class="f" style="justify-content: center; align-items: center"><div class="a" style="left: 4px">left</div><div class="a" style="bottom: 2px">bottom</div></div></div>
+<div class="root"><div style="padding: 4px 0 0 11px"><div class="f" style="justify-content: center; align-items: center; overflow: hidden"><div class="a">nested</div></div></div></div>
+<div class="root">text <span class="f" style="display: inline-flex; width: 70px; height: 20px; justify-content: center; align-items: center"><span class="a">inline</span></span></div>
+<div class="root"><div class="f" style="justify-content: flex-end; align-items: center"><span>item</span><div class="a" style="display: flex">flex</div></div></div>
+<div class="root"><div class="f" style="justify-content: center; align-items: center"><img class="a" style="width: 20px; height: 10px" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></div>
+<div class="root v"><div class="f" style="justify-content: center; align-items: center"><div class="a">vertical</div></div></div>
+<div class="root v"><div class="f" style="flex-direction: column; justify-content: flex-end; align-items: flex-end"><div class="a">column</div></div></div>
+</div>
