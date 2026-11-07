@@ -1061,7 +1061,7 @@ function(WEBKIT_COPY_FILES target_name)
         if (opt_COMMAND)
             set(command ${opt_COMMAND})
         elseif (APPLE AND NOT opt_NO_SYMLINK)
-            set(command ${CMAKE_COMMAND} -E create_symlink)
+            set(command ln -sfn)
         else ()
             set(command ${CMAKE_COMMAND} -E copy_if_different)
         endif ()
@@ -1098,8 +1098,13 @@ function(WEBKIT_SYMLINK_FILES target_name)
             file(MAKE_DIRECTORY ${opt_DESTINATION}/${file_dir})
             set(dst_file ${opt_DESTINATION}/${file})
         endif ()
+        if (CMAKE_HOST_UNIX)
+            set(command ln -sfn)
+        else ()
+            set(command ${CMAKE_COMMAND} -E create_symlink)
+        endif ()
         add_custom_command(OUTPUT ${dst_file}
-            COMMAND ${CMAKE_COMMAND} -E create_symlink ${src_file} ${dst_file}
+            COMMAND ${command} ${src_file} ${dst_file}
             MAIN_DEPENDENCY ${src_file}
             VERBATIM
         )
