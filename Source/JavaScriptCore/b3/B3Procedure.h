@@ -287,7 +287,7 @@ public:
     bool shouldDumpIR() const { return m_shouldDumpIR; }
     JS_EXPORT_PRIVATE void setShouldDumpIR();
 
-    void setUsessSIMD()
+    void setUsesSIMD()
     { 
         RELEASE_ASSERT(Options::useWasmSIMD());
         m_usesSIMD = true;
