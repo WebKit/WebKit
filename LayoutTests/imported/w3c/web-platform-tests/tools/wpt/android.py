@@ -53,6 +53,7 @@ def do_delayed_imports(paths):
             "ro.test_harness=true",
             "-no-snapstorage",
             "-no-snapshot",
+            "-no-metrics",
             "-skin",
             "800x1280"
         ],
@@ -257,7 +258,7 @@ def install(logger, dest=None, reinstall=False, prompt=True):
         if new_install:
             packages = ["platform-tools",
                         "build-tools;37.0.0",
-                        "platforms;android-37.0",
+                        "platforms;android-37.1",
                         "emulator"]
 
             install_android_packages(logger, paths, packages, prompt=prompt)
