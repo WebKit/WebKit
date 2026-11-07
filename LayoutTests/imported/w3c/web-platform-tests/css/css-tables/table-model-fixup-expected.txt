@@ -28,7 +28,7 @@ This should read as "1\t2":
 This should read as "A B":
 1.4. Anonymous inline boxes which contains only white space and are between two immediate siblings *each* of which is a table-non-root element, are treated as if they had display: none.
 
-AB
+A B
 
 PASS 1.1. Children of a table-column are treated as if they had display: none.
 PASS 1.2. Children of a table-column-group which are not a table-column are treated as if they had display: none.
@@ -40,5 +40,5 @@ PASS 2.2. An anonymous table-row box must be generated around each sequence of c
 PASS 2.3 happens after 2.1. and 2.2. (1/2)
 PASS 2.3 happens after 2.1. and 2.2. (2/2)
 PASS 3.2. An anonymous table or inline-table box must be generated around each sequence of consecutive proper table child box which are misparented
-FAIL 1.4. Anonymous inline boxes which contains only white space and are between two immediate siblings *each* of which is a table-non-root element, are treated as if they had display: none. assert_equals: expected true but got false
+PASS 1.4. Anonymous inline boxes which contains only white space and are between two immediate siblings *each* of which is a table-non-root element, are treated as if they had display: none.
 

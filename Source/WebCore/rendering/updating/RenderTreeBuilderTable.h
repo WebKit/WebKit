@@ -55,6 +55,7 @@ public:
 
     void collapseAndDestroyAnonymousSiblingCells(const RenderTableCell& willBeDestroyed);
     void collapseAndDestroyAnonymousSiblingRows(const RenderTableRow& willBeDestroyed);
+    void mergeAdjacentAnonymousTables(RenderTable& previous, RenderTable& next);
 
     static RenderPtr<RenderTable> createAnonymousTableWithStyle(Document&, const Style::ComputedStyle&);
     static RenderPtr<RenderTableCell> createAnonymousTableCellWithStyle(Document&, const Style::ComputedStyle&);
@@ -62,6 +63,8 @@ public:
     static RenderPtr<RenderTableSection> createAnonymousTableSectionWithStyle(Document&, const Style::ComputedStyle&);
 
 private:
+    template <typename Parent>
+    void moveAllTableChildren(Parent& from, Parent& to);
     template <typename Parent, typename Child>
     RenderPtr<RenderObject> collapseAndDetachAnonymousNextSibling(Parent*, Child* previousChild, Child* nextChild);
 
