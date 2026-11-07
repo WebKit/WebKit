@@ -164,9 +164,13 @@ private:
     void incrementBufferMapCount();
     void decrementBufferMapCount();
     void clearIndexBufferForCommandBuffer(CommandBuffer&);
+<<<<<<< HEAD
     bool hasPendingRecordedIndexWrite() const;
     id<MTLBuffer> _Nullable snapshotRangeBeforeClear(Queue&, NSUInteger offset, NSUInteger size);
     void restoreSnapshotAfterCommit(CommandBuffer&, Queue&, id<MTLBuffer> _Nullable snapshot, NSUInteger offset);
+=======
+    void invalidateDrawIndexedCache(CommandEncoder* = nullptr);
+>>>>>>> 32cc627f0193 (WebGPU drawIndexedValidated size-cap eviction severs in-flight skip backstop causing GPU OOB read)
 
     id<MTLBuffer> m_buffer { nil };
 
