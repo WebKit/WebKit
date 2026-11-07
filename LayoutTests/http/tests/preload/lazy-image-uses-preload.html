@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+<script>
+if (window.internals)
+    internals.settings.setLazyImageLoadingEnabled(true);
+
+function preload(url) {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = url;
+    document.head.append(link);
+    return new Promise(resolve => link.onload = resolve);
+}
+
+function insertImage(url, loading) {
+    const img = document.createElement("img");
+    img.loading = loading;
+    img.width = img.height = 50;
+    img.src = url;
+    document.body.append(img);
+    return new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+    });
+}
+
+function fetchCount(url) {
+    return performance.getEntriesByName(url).length;
+}
+
+promise_test(async () => {
+    const url = new URL("/resources/square100.png?lazy-after-preload-load", location.href).href;
+    await preload(url);
+    await insertImage(url, "lazy");
+    assert_equals(fetchCount(url), 1);
+}, "A loading=lazy image uses a link preload that has finished loading");
+
+promise_test(async () => {
+    const url = new URL("/resources/slow-image.py?lazy-while-preloading", location.href).href;
+    const preloaded = preload(url);
+    await insertImage(url, "lazy");
+    await preloaded;
+    assert_equals(fetchCount(url), 1);
+}, "A loading=lazy image uses a link preload that is still loading");
+
+promise_test(async () => {
+    const url = new URL("/resources/slow-image.py?eager-while-preloading", location.href).href;
+    const preloaded = preload(url);
+    await insertImage(url, "eager");
+    await preloaded;
+    assert_equals(fetchCount(url), 1);
+}, "A loading=eager image uses a link preload that is still loading");
+</script>
