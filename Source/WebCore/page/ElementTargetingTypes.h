@@ -28,6 +28,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/RenderStyleConstants.h>
@@ -69,12 +70,14 @@ struct TargetedElementInfo {
     FloatRect boundsInClientCoordinates;
     PositionType positionType { PositionType::Static };
     Vector<FrameIdentifier> childFrameIdentifiers;
+    Vector<FrameIdentifier> remoteFrameIdentifiers;
     HashSet<URL> mediaAndLinkURLs;
     bool isNearbyTarget { true };
     bool isPseudoElement { false };
     bool isInShadowTree { false };
     bool isInVisibilityAdjustmentSubtree { false };
     bool hasLargeReplacedDescendant { false };
+    FloatSize sizeInDocument;
     bool hasAudibleMedia { false };
 };
 
@@ -91,6 +94,13 @@ struct TargetedTextSearchResult {
     // Targets for the owner element of each of the main frame's subframes. Only computed by the main frame's process.
     HashMap<FrameIdentifier, Vector<TargetedElementInfo>> targetsBySubframe;
 };
+
+struct TargetedFrameContent {
+    bool hasAudibleMedia { false };
+    Vector<IntSize> largestReplacedContentSizes;
+};
+
+WEBCORE_EXPORT void mergeRemoteFrameContent(TargetedElementInfo&, const TargetedFrameContent&);
 
 WEBCORE_EXPORT Ref<SharedBuffer> serializeTargetedElementSelectors(const TargetedElementSelectors&);
 WEBCORE_EXPORT std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std::span<const uint8_t>);

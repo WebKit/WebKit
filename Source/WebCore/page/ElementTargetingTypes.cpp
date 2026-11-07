@@ -27,6 +27,8 @@
 #include "ElementTargetingTypes.h"
 
 #include "SharedBuffer.h"
+#include "TextExtraction.h"
+#include <ranges>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
@@ -85,6 +87,17 @@ std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std:
     }
 
     return result;
+}
+
+void mergeRemoteFrameContent(TargetedElementInfo& info, const TargetedFrameContent& content)
+{
+    info.hasAudibleMedia |= content.hasAudibleMedia;
+
+    if (!info.hasLargeReplacedDescendant) {
+        info.hasLargeReplacedDescendant = std::ranges::any_of(content.largestReplacedContentSizes, [&](auto& size) {
+            return TextExtraction::isLargeReplacedContent(size, info.sizeInDocument);
+        });
+    }
 }
 
 } // namespace WebCore

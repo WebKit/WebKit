@@ -390,6 +390,7 @@ struct SleepDisablerIdentifierType;
 struct SpeechRecognitionError;
 struct SnapshotIdentifierType;
 struct SystemPreviewInfo;
+struct TargetedElementInfo;
 struct TargetedElementRequest;
 struct TextAlternativeWithRange;
 struct TextCheckingResult;
@@ -3263,6 +3264,8 @@ private:
 
     void sendCORSDisablingPatternsToNetworkProcessIfNecessary();
     void requestTargetedElementForText(WebCore::TargetedElementRequest&&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
+    void completeTargetedElementRequest(Vector<WebCore::TargetedElementInfo>&&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
+    void mergeContentFromRemoteFrames(Vector<WebCore::TargetedElementInfo>&&, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&&);
     std::optional<WebCore::RegistrableDomain> unpartitionedStorageSiteForNavigation(const WebFrameProxy&, const URL&) const;
 
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);

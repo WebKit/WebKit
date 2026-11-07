@@ -61,6 +61,7 @@ public:
     WEBCORE_EXPORT Vector<Vector<TargetedElementInfo>> findAllTargets(float);
 
     WEBCORE_EXPORT TargetedTextSearchResult searchTextInLocalFrames(TargetedElementRequest&&);
+    WEBCORE_EXPORT std::optional<TargetedFrameContent> contentForLocalFrame(LocalFrame&);
 
     WEBCORE_EXPORT bool adjustVisibility(Vector<TargetedElementAdjustment>&&);
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);

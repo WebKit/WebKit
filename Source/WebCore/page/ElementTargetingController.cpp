@@ -62,6 +62,7 @@
 #include "Page.h"
 #include "PseudoElement.h"
 #include "Region.h"
+#include "RemoteFrame.h"
 #include "RenderBoxInlines.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
@@ -586,6 +587,39 @@ static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(const Element
     return identifiers;
 }
 
+static Vector<FrameIdentifier> collectRemoteFrameIdentifiers(const Element& element)
+{
+    RefPtr documentFrame = element.document().frame();
+    if (!documentFrame || !documentFrame->tree().hasRemoteFrameDescendant())
+        return { };
+
+    Vector<FrameIdentifier> identifiers;
+    auto collectUnder = [&](Frame& root) {
+        for (RefPtr frame = &root; frame;) {
+            if (!is<RemoteFrame>(*frame)) {
+                frame = frame->tree().traverseNext(&root);
+                continue;
+            }
+
+            for (RefPtr descendant = frame; descendant; descendant = descendant->tree().traverseNext(frame.get()))
+                identifiers.append(descendant->frameID());
+            frame = frame->tree().traverseNextSkippingChildren(&root);
+        }
+    };
+
+    if (RefPtr owner = dynamicDowncast<HTMLFrameOwnerElement>(element)) {
+        if (RefPtr contentFrame = owner->contentFrame())
+            collectUnder(*contentFrame);
+    }
+
+    for (Ref owner : descendantsOfType<HTMLFrameOwnerElement>(element)) {
+        if (RefPtr contentFrame = owner->contentFrame())
+            collectUnder(*contentFrame);
+    }
+
+    return identifiers;
+}
+
 static FloatRect computeClientRect(const RenderElement& renderer)
 {
     auto rect = FloatRect { renderer.absoluteBoundingBoxRect() };
@@ -746,7 +780,7 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         return false;
     }();
 
-    auto [renderedText, screenReaderText, hasLargeReplacedDescendant] = TextExtraction::extractRenderedText(element);
+    auto [renderedText, screenReaderText, hasLargeReplacedDescendant, sizeInDocument] = TextExtraction::extractRenderedText(element);
     return { {
         .nodeIdentifier = element.nodeIdentifier(),
         .documentIdentifier = element.document().identifier(),
@@ -759,13 +793,15 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
         .boundsInClientCoordinates = WTF::move(boundsInClientCoordinates),
         .positionType = positionType,
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
+        .remoteFrameIdentifiers = collectRemoteFrameIdentifiers(element),
         .mediaAndLinkURLs = collectMediaAndLinkURLs(element),
         .isNearbyTarget = isNearbyTarget == IsNearbyTarget::Yes,
         .isPseudoElement = element.isPseudoElement(),
         .isInShadowTree = element.isInShadowTree(),
         .isInVisibilityAdjustmentSubtree = isInVisibilityAdjustmentSubtree,
         .hasLargeReplacedDescendant = hasLargeReplacedDescendant,
-        .hasAudibleMedia = hasAudibleMedia(element)
+        .sizeInDocument = sizeInDocument,
+        .hasAudibleMedia = hasAudibleMedia(element),
     } };
 }
 
@@ -1174,6 +1210,26 @@ TargetedTextSearchResult ElementTargetingController::searchTextInLocalFrames(Tar
     }
 
     return result;
+}
+
+static TargetedFrameContent targetedFrameContent(Document& document)
+{
+    document.updateLayoutIgnorePendingStylesheets();
+
+    RefPtr documentElement = document.documentElement();
+    return {
+        .hasAudibleMedia = documentElement && hasAudibleMedia(*documentElement),
+        .largestReplacedContentSizes = TextExtraction::extractLargestReplacedContentSizes(document),
+    };
+}
+
+std::optional<TargetedFrameContent> ElementTargetingController::contentForLocalFrame(LocalFrame& frame)
+{
+    RefPtr document = frame.document();
+    if (!document)
+        return std::nullopt;
+
+    return targetedFrameContent(*document);
 }
 
 std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNodes(const TargetedElementSelectors& selectors)

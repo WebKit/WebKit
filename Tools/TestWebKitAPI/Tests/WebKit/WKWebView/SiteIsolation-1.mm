@@ -3084,6 +3084,59 @@ TEST(SiteIsolation, TakeSnapshotOfCrossOriginIframeElement)
     EXPECT_EQ(reader.at(reader.width() / 2, reader.height() / 2), WebCore::Color::green);
 }
 
+static RetainPtr<_WKTargetedElementInfo> targetedElementInfoForIframe(TestWKWebView *webView)
+{
+    RetainPtr targets = synchronouslyRequestTargetedElementInfoWithSelectors(webView, @[ [NSSet setWithObject:@"#frame"] ]);
+    EXPECT_EQ(1UL, [targets count]);
+    return [targets firstObject];
+}
+
+TEST(SiteIsolation, TargetedElementInfoOfCrossOriginIframeIncludesAudibleMedia)
+{
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+    HTTPServer server({
+        { "/mainframe"_s, { "<p>main frame text</p><iframe id='frame' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<p>iframe with video</p><video src='/video-with-audio.mp4' webkit-playsinline loop></video>"_s } },
+        { "/video-with-audio.mp4"_s, { videoData.get() } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    waitForIframeText(webView.get(), @"iframe with video");
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, [webView mainFrame].info._processIdentifier);
+
+    __block bool done = false;
+    [webView callAsyncJavaScript:@"document.querySelector('video').play()" arguments:nil inFrame:[webView firstChildFrame] inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    Util::run(&done);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView _isPlayingAudio];
+    }));
+
+    RetainPtr target = targetedElementInfoForIframe(webView.get());
+    EXPECT_TRUE([target hasAudibleMedia]);
+}
+
+TEST(SiteIsolation, TargetedElementInfoOfCrossOriginIframeHasLargeReplacedDescendant)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<p>main frame text</p><iframe id='frame' style='width: 300px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'><canvas style='display: block; width: 300px; height: 200px;'></canvas><p>iframe with canvas</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    waitForIframeText(webView.get(), @"iframe with canvas");
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, [webView mainFrame].info._processIdentifier);
+
+    RetainPtr target = targetedElementInfoForIframe(webView.get());
+    EXPECT_TRUE([target hasLargeReplacedDescendant]);
+}
+
 #if PLATFORM(MAC) && ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
 static WebAVPlayerLayer *findWebAVPlayerLayerInLayerTree(CALayer *layer)

@@ -21835,7 +21835,70 @@ void WebPageProxy::requestTargetedElement(const API::TargetedElementRequest& req
         if (!protectedThis)
             return completion({ });
 
+        protectedThis->completeTargetedElementRequest(WTF::move(elements), WTF::move(completion));
+    });
+}
+
+static bool isFrameHostedByProcess(const WebFrameProxy* frame, const WebPageProxy& page, const WebProcessProxy& process)
+{
+    return frame && frame->page() == &page && &frame->process() == &process;
+}
+
+void WebPageProxy::completeTargetedElementRequest(Vector<WebCore::TargetedElementInfo>&& elements, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completion)
+{
+    mergeContentFromRemoteFrames(WTF::move(elements), [completion = WTF::move(completion), weakThis = WeakPtr { *this }](Vector<WebCore::TargetedElementInfo>&& elements) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return completion({ });
+
         completion(createTargetedElementInfos(*protectedThis, WTF::move(elements)));
+    });
+}
+
+void WebPageProxy::mergeContentFromRemoteFrames(Vector<WebCore::TargetedElementInfo>&& elements, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&& completion)
+{
+    HashSet<WebCore::FrameIdentifier> remoteFrameIDs;
+    for (auto& element : elements)
+        remoteFrameIDs.addAll(element.remoteFrameIdentifiers);
+
+    if (remoteFrameIDs.isEmpty())
+        return completion(WTF::move(elements));
+
+    auto contentByFrame = Box<HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent>>::create();
+    Ref aggregator = CallbackAggregator::create([elements = WTF::move(elements), contentByFrame, completion = WTF::move(completion)] mutable {
+        for (auto& element : elements) {
+            for (auto frameID : element.remoteFrameIdentifiers) {
+                if (auto iterator = contentByFrame->find(frameID); iterator != contentByFrame->end())
+                    WebCore::mergeRemoteFrameContent(element, iterator->value);
+            }
+        }
+        completion(WTF::move(elements));
+    });
+
+    HashMap<Ref<WebProcessProxy>, Vector<WebCore::FrameIdentifier>> frameIDsByProcess;
+    for (auto frameID : remoteFrameIDs) {
+        RefPtr frame = WebFrameProxy::webFrame(frameID);
+        if (!frame || frame->page() != this)
+            continue;
+        auto& frameIDs = frameIDsByProcess.add(Ref { frame->process() }, Vector<WebCore::FrameIdentifier> { }).iterator->value;
+        frameIDs.append(frameID);
+    }
+
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        auto frameIDs = frameIDsByProcess.take(Ref { process });
+        if (frameIDs.isEmpty())
+            return;
+
+        process.sendWithAsyncReply(Messages::WebPage::RequestTargetedFrameContent(WTF::move(frameIDs)), [contentByFrame, aggregator, process = Ref { process }, weakThis = WeakPtr { *this }](HashMap<WebCore::FrameIdentifier, WebCore::TargetedFrameContent>&& result) {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
+
+            for (auto& [frameID, content] : result) {
+                if (isFrameHostedByProcess(WebFrameProxy::webFrame(frameID), *protectedThis, process.get()))
+                    contentByFrame->set(frameID, WTF::move(content));
+            }
+        }, pageID);
     });
 }
 
@@ -21867,7 +21930,7 @@ void WebPageProxy::requestTargetedElementForText(WebCore::TargetedElementRequest
                 break;
             }
         }
-        completion(createTargetedElementInfos(*protectedThis, WTF::move(targets)));
+        protectedThis->completeTargetedElementRequest(WTF::move(targets), WTF::move(completion));
     });
 
     forEachWebContentProcess([&](auto& process, auto pageID) {
@@ -21877,17 +21940,13 @@ void WebPageProxy::requestTargetedElementForText(WebCore::TargetedElementRequest
                 return;
 
             // Only accept results for this page's frames that the replying process hosts.
-            auto isHostedByProcess = [&](RefPtr<WebFrameProxy>&& frame) {
-                return frame && frame->page() == protectedThis.get() && &frame->process() == process.ptr();
-            };
-
             for (auto& [frameID, items] : result.itemsByFrame) {
-                if (isHostedByProcess(WebFrameProxy::webFrame(frameID)))
+                if (isFrameHostedByProcess(WebFrameProxy::webFrame(frameID), *protectedThis, process.get()))
                     results->itemsByFrame.add(frameID, WTF::move(items));
             }
 
             RefPtr mainFrame = protectedThis->mainFrame();
-            if (!isHostedByProcess(RefPtr { mainFrame }))
+            if (!isFrameHostedByProcess(mainFrame.get(), *protectedThis, process.get()))
                 return;
 
             for (auto& [frameID, targets] : result.targetsBySubframe) {
