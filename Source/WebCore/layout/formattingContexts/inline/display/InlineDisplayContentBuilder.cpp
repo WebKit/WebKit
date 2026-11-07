@@ -771,6 +771,29 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
         Vector<size_t> blockLevelOutOfFlowBoxList;
         auto contentLineRightEdge = contentLineLeftEdge;
         auto& inlineContent = lineLayoutResult.runs;
+
+        auto createDisplayBoxesForOpaqueLineSpanningInlineBoxes = [&] {
+            // Opaque runs do not participate in visual reordering (see computedVisualOrder), but line spanning inline boxes
+            // still need a display box and geometry on this line, just like in the non-bidi codepath.
+            // e.g. <span style="unicode-bidi: isolate; padding: 5px"><div></div></span>: the closing edge of the span is on the line that follows the block.
+            if (lineLayoutResult.isBlockContent())
+                return;
+            auto& visualOrderList = lineLayoutResult.directionality.visualOrderList;
+            for (size_t runIndex = 0; runIndex < inlineContent.size(); ++runIndex) {
+                auto& lineRun = inlineContent[runIndex];
+                if (!lineRun.isLineSpanningInlineBoxStart() || lineRun.bidiLevel() != InlineItem::opaqueBidiLevel)
+                    continue;
+                if (visualOrderList.contains(static_cast<int32_t>(runIndex)))
+                    continue;
+                CheckedRef layoutBox = lineRun.layoutBox();
+                auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox->parent(), displayBoxTree, ancestorStack, boxes);
+                appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
+                createDisplayBoxNodeForContainerAndPushToAncestorStack(downcast<ElementBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
+                hasInlineBox = true;
+            }
+        };
+        createDisplayBoxesForOpaqueLineSpanningInlineBoxes();
+
         for (size_t index = 0; index < lineLayoutResult.directionality.visualOrderList.size(); ++index) {
             auto logicalIndex = lineLayoutResult.directionality.visualOrderList[index];
             ASSERT(inlineContent[logicalIndex].bidiLevel() != InlineItem::opaqueBidiLevel || inlineContent[logicalIndex].isLineSpanningInlineBoxStart());
