@@ -1738,7 +1738,13 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(const RenderLayer*
         LayoutRect ancestorCompositedBounds = ancestorBacking->compositedBounds();
         LayoutRect scrollContainerBox = scrollContainerLayerBox(*ancestorRenderBox);
         ScrollOffset scrollOffset = scrollableArea->scrollOffset();
-        parentGraphicsLayerRect = LayoutRect((scrollContainerBox.location() - toLayoutSize(ancestorCompositedBounds.location()) - toLayoutSize(scrollOffset)), scrollContainerBox.size());
+        auto scrolledContentsLocation = scrollContainerBox.location() - toLayoutSize(ancestorCompositedBounds.location());
+        if (!ancestorBacking->hasClippingLayer()) {
+            // Match the pixel-snapped position of the ancestor's scroll container layer (see updateGeometry()).
+            auto scrollContainerOffset = computeOffsetFromAncestorGraphicsLayer(compositedAncestor, scrollContainerBox.location(), pixelSnappingScaleFactor());
+            scrolledContentsLocation = snappedGraphicsLayer(scrollContainerOffset, scrollContainerBox.size(), renderer()).m_snappedRect.location();
+        }
+        parentGraphicsLayerRect = LayoutRect(scrolledContentsLocation - toLayoutSize(scrollOffset), scrollContainerBox.size());
     }
 
     return parentGraphicsLayerRect;
@@ -1945,8 +1951,14 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         LayoutRect scrollContainerBox = scrollContainerLayerBox(downcast<RenderBox>(renderer()));
         LayoutRect parentLayerBounds = clippingLayer() ? scrollContainerBox : compositedBounds();
 
-        // FIXME: need to do some pixel snapping here.
-        m_scrollContainerLayer->setPosition(FloatPoint(scrollContainerBox.location() - parentLayerBounds.location()));
+        if (clippingLayer())
+            m_scrollContainerLayer->setPosition(FloatPoint(scrollContainerBox.location() - parentLayerBounds.location()));
+        else {
+            // Snap the same way the clipping layers of descendants are snapped (see updateClippingStackLayerGeometry()),
+            // so that content clipped by this layer and content clipped by those layers agree on the first device pixel row.
+            auto scrollContainerOffsetFromGraphicsLayer = toLayoutSize(scrollContainerBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
+            m_scrollContainerLayer->setPosition(snappedGraphicsLayer(scrollContainerOffsetFromGraphicsLayer, scrollContainerBox.size(), renderer()).m_snappedRect.location());
+        }
         m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(scrollContainerBox.width(), scrollContainerBox.height())));
 
         auto* scrollableArea = m_owningLayer.scrollableArea();
