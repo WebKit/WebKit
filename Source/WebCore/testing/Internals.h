@@ -1512,6 +1512,7 @@ public:
     };
 
     void setCookie(CookieData&&);
+    void deleteCookie(const String& cookieName);
     Vector<CookieData> getCookies() const;
 
     // In combination with createWebDriverCookieData() this attempts to implement

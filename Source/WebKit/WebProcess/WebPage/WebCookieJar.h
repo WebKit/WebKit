@@ -56,7 +56,7 @@ public:
     std::pair<String, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::IncludeSecureCookies) const final;
     std::optional<SHA1::Digest> cookieRequestHeaderFieldValueDigest(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::IncludeSecureCookies) const final;
     bool getRawCookies(WebCore::Document&, const URL&, Vector<WebCore::Cookie>&) const final;
-    void setRawCookie(const WebCore::Document&, const WebCore::Cookie&, WebCore::ShouldPartitionCookie) final;
+    void setRawCookie(const WebCore::Document&, const URL&, const WebCore::Cookie&, WebCore::ShouldPartitionCookie) final;
     void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&) final;
 
     void getCookiesAsync(WebCore::Document&, const URL&, const WebCore::CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&) const final;
