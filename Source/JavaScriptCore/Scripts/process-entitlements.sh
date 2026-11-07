@@ -72,6 +72,13 @@ function mac_process_jsc_tools_entitlements()
     fi
 }
 
+function mac_process_testLibJSCToolsHelper_entitlements()
+{
+    # testLibJSCToolsHelper's purpose is to be a test debuggee target for testLibJSCTools.
+    # So, always allow debuggers to attach to it.
+    plistbuddy Print :com.apple.security.get-task-allow > /dev/null 2>&1 || plistbuddy Add :com.apple.security.get-task-allow bool YES
+}
+
 # ========================================
 # macCatalyst entitlements
 # ========================================
@@ -129,6 +136,14 @@ function ios_family_process_jsc_tools_entitlements()
 
     plistbuddy Add :com.apple.developer.hardened-process bool YES
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+    plistbuddy Add :com.apple.system-task-ports.read bool YES
+}
+
+function ios_family_process_testLibJSCToolsHelper_entitlements()
+{
+    # testLibJSCToolsHelper's purpose is to be a test debuggee target for testLibJSCTools.
+    # So, always allow debuggers to attach to it.
+    plistbuddy Add :get-task-allow bool YES
 }
 
 rm -f "${WK_PROCESSED_XCENT_FILE}"
@@ -153,6 +168,7 @@ then
     elif [[ "${PRODUCT_NAME}" == testapi ]]; then mac_process_testapi_entitlements
     elif [[ "${PRODUCT_NAME}" == mya ||
         "${PRODUCT_NAME}" == testLibJSCTools ]]; then mac_process_jsc_tools_entitlements
+    elif [[ "${PRODUCT_NAME}" == testLibJSCToolsHelper ]]; then mac_process_testLibJSCToolsHelper_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 elif [[ "${WK_PLATFORM_NAME}" == maccatalyst || "${WK_PLATFORM_NAME}" == iosmac ]]
@@ -188,6 +204,7 @@ then
           "${PRODUCT_NAME}" == testRegExp ]]; then ios_family_process_jsc_entitlements
     elif [[ "${PRODUCT_NAME}" == mya ||
         "${PRODUCT_NAME}" == testLibJSCTools ]]; then ios_family_process_jsc_tools_entitlements
+    elif [[ "${PRODUCT_NAME}" == testLibJSCToolsHelper ]]; then ios_family_process_testLibJSCToolsHelper_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 else
