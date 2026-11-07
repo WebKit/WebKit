@@ -75,6 +75,8 @@ static bool didChangeSafeAreaShouldAffectObscuredInsets;
 
 static RetainPtr<AnimatedResizeWebView> createAnimatedResizeWebView()
 {
+    didEndAnimatedResize = false;
+
     RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
     RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -183,7 +185,6 @@ TEST(AnimatedResize, AnimatedResizeBlocksViewportFitChanges)
     }];
 
     TestWebKitAPI::Util::run(&didEndAnimatedResize);
-    didEndAnimatedResize = false;
 
     // Wait for one more commit so that we see the viewport-fit state
     // change actually take place (post-resize), and ensure that it does.
@@ -783,7 +784,6 @@ TEST(AnimatedResize, AnimatedResizeDoesNotFreezeFixedElements)
     });
 
     TestWebKitAPI::Util::run(&didEndAnimatedResize);
-    didEndAnimatedResize = false;
 
     [webView waitForNextPresentationUpdate];
     EXPECT_TRUE(footerIsPinned());
