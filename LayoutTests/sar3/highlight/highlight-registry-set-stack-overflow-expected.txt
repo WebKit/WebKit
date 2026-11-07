@@ -1,0 +1,3 @@
+Tests that lazily initializing a maplike's backing map while the stack is exhausted does not crash. This test should not crash and should print PASS.
+
+PASS
