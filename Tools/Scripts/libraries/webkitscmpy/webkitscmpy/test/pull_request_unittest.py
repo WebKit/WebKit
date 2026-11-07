@@ -362,6 +362,52 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
+    def test_message_with_bug_urls_no_placeholder(self):
+        self.assertIsNone(program.PullRequest.message_with_bug_urls(
+            '[Testing] Title\nhttps://bugs.example.com/show_bug.cgi?id=1\n\nReviewed by NOBODY (OOPS!).\n',
+            'Example issue 1', ['https://bugs.example.com/show_bug.cgi?id=1'],
+        ))
+
+    def test_message_with_bug_urls(self):
+        self.assertEqual(
+            program.PullRequest.message_with_bug_urls(
+                '[Testing] Title\nNeed the bug URL (OOPS!).\n\nReviewed by NOBODY (OOPS!).\n',
+                'Example issue 1', ['https://bugs.example.com/show_bug.cgi?id=1'],
+            ), '[Testing] Title\nhttps://bugs.example.com/show_bug.cgi?id=1\n\nReviewed by NOBODY (OOPS!).\n',
+        )
+
+    def test_message_with_bug_urls_title(self):
+        self.assertEqual(
+            program.PullRequest.message_with_bug_urls(
+                'Need a short description (OOPS!).\nNeed the bug URL (OOPS!).\n\nReviewed by NOBODY (OOPS!).\n',
+                'Example issue 1', ['https://bugs.example.com/show_bug.cgi?id=1'],
+            ), 'Example issue 1\nhttps://bugs.example.com/show_bug.cgi?id=1\n\nReviewed by NOBODY (OOPS!).\n',
+        )
+
+    def test_message_with_bug_urls_existing_url(self):
+        self.assertEqual(
+            program.PullRequest.message_with_bug_urls(
+                '[Testing] Title\nNeed the bug URL (OOPS!).\nrdar://1\n\nReviewed by NOBODY (OOPS!).\n',
+                None, ['https://bugs.example.com/show_bug.cgi?id=1', 'rdar://1'],
+            ), '[Testing] Title\nhttps://bugs.example.com/show_bug.cgi?id=1\nrdar://1\n\nReviewed by NOBODY (OOPS!).\n',
+        )
+
+    def test_message_with_bug_urls_radar(self):
+        self.assertEqual(
+            program.PullRequest.message_with_bug_urls(
+                '[Testing] Title\nNeed the bug URL (OOPS!).\nInclude a Radar link (OOPS!).\n\nReviewed by NOBODY (OOPS!).\n',
+                None, ['https://bugs.example.com/show_bug.cgi?id=1', 'rdar://1'],
+            ), '[Testing] Title\nhttps://bugs.example.com/show_bug.cgi?id=1\nrdar://1\n\nReviewed by NOBODY (OOPS!).\n',
+        )
+
+    def test_message_with_bug_urls_keeps_radar_placeholder(self):
+        self.assertEqual(
+            program.PullRequest.message_with_bug_urls(
+                '[Testing] Title\nNeed the bug URL (OOPS!).\nInclude a Radar link (OOPS!).\n\nReviewed by NOBODY (OOPS!).\n',
+                None, ['https://bugs.example.com/show_bug.cgi?id=1'],
+            ), '[Testing] Title\nhttps://bugs.example.com/show_bug.cgi?id=1\nInclude a Radar link (OOPS!).\n\nReviewed by NOBODY (OOPS!).\n',
+        )
+
 
 class TestDoPullRequest(testing.PathTestCase):
     basepath = 'mock/repository'
@@ -1265,6 +1311,55 @@ No pre-PR checks to run""")
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(captured.stderr.getvalue(), '')
+
+    def _existing_commit_with_placeholder(self, message):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), MockTerminal.input('https://bugs.example.com/show_bug.cgi?id=1'):
+
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message=message,
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+            self.assertEqual(captured.stderr.getvalue(), '')
+            return repo.head.message, [line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]
+
+    def test_github_existing_branch_bugzilla_placeholder(self):
+        message, log = self._existing_commit_with_placeholder(
+            'Need a short description (OOPS!).\nNeed the bug URL (OOPS!).\n\nReviewed by NOBODY (OOPS!).\n\n* added.txt:\n',
+        )
+        self.assertEqual(
+            message,
+            'Example issue 1\nhttps://bugs.example.com/show_bug.cgi?id=1\n\nReviewed by NOBODY (OOPS!).\n\n* added.txt:\n',
+        )
+        self.assertIn('Amending commit with bug URL...', log)
+
+    def test_github_existing_branch_bugzilla_no_placeholder(self):
+        message, log = self._existing_commit_with_placeholder('[Testing] Existing commit\n')
+        self.assertNotIn('Amending commit with bug URL...', log)
+        self.assertIn('Amending commit...', log)
 
     def test_github_existing_branch_bugzilla_id(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(

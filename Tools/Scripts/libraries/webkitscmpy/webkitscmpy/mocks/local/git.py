@@ -619,6 +619,10 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True, env=kwargs.get('env', dict())),
             ), mocks.Subprocess.Route(
+                self.executable, 'commit', '--date=now', '--amend', '--edit', '-F', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(amend=True, message=self.read_message_file(args[6])),
+            ), mocks.Subprocess.Route(
                 self.executable, 'commit', '--amend', '-m', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True, message=args[4]),
@@ -1194,6 +1198,10 @@ nothing to commit, working tree clean
     def apply(self, patch=None):
         self.staged['patch.txt'] = 'added'
         return mocks.ProcessCompletion(returncode=0)
+
+    def read_message_file(self, path):
+        with open(path) as file:
+            return file.read()
 
     def commit(self, amend=False, message=None, env=None):
         env = env or dict()
