@@ -374,21 +374,24 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
     }
     borderBoxInlineSize = std::max(std::min(borderBoxInlineSize, maximum), minimum);
 
-    std::tie(marginStart, marginEnd) = inlineMargins(box, borderBoxInlineSize, spaceInlineSize, containingBlockStyle);
+    std::tie(marginStart, marginEnd) = inlineMargins(box, borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle, availableInlineSize);
     return { borderBoxInlineSize, marginStart, marginEnd };
 }
 
-std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle)
+std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<LayoutUnit> availableInlineSize)
 {
     auto containingBlockWritingMode = containingBlockStyle.writingMode();
     CheckedRef style = box.style();
     auto& marginStartLength = style->marginStart(containingBlockWritingMode);
     auto& marginEndLength = style->marginEnd(containingBlockWritingMode);
-    auto usedMargin = [&](auto& margin) {
-        return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, containingBlockInlineSize, style->usedZoomForLength());
+    auto usedMargin = [&](auto& margin, LayoutUnit percentageBasis) {
+        return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, percentageBasis, style->usedZoomForLength());
     };
-    auto marginStart = usedMargin(marginStartLength);
-    auto marginEnd = usedMargin(marginEndLength);
+    auto marginStart = usedMargin(marginStartLength, containingBlockInlineSize);
+    auto marginEnd = usedMargin(marginEndLength, containingBlockInlineSize);
+    // For a box that avoids floats, the margins that align it share the space they leave, which the percentages among them refer to, while
+    // other percentages refer to the containing block (RenderBox::computeInlineDirectionMargins with containingBlockAvailableLineWidth).
+    auto spaceInlineSize = availableInlineSize.value_or(containingBlockInlineSize);
     // The legacy -webkit-center, -webkit-left and -webkit-right values of text-align align a box without auto margins in the containing block
     // the way auto margins would (RenderBox::computeInlineDirectionMargins). -webkit-center centers the margin box, without moving it past the
     // start of the containing block.
@@ -398,21 +401,26 @@ std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const Rend
     auto isLeftToRight = containingBlockWritingMode.isBidiLTR();
     auto hasAutoMargin = marginStartLength.isAuto() || marginEndLength.isAuto();
     if (!hasAutoMargin && textAlign == Style::TextAlign::WebKitCenter) {
-        auto centeredMarginBoxStart = std::max(0_lu, (containingBlockInlineSize - borderBoxInlineSize - marginStart - marginEnd) / 2);
-        marginEnd = containingBlockInlineSize - borderBoxInlineSize - centeredMarginBoxStart - marginStart + marginEnd;
+        marginStart = usedMargin(marginStartLength, spaceInlineSize);
+        marginEnd = usedMargin(marginEndLength, spaceInlineSize);
+        auto centeredMarginBoxStart = std::max(0_lu, (spaceInlineSize - borderBoxInlineSize - marginStart - marginEnd) / 2);
+        marginEnd = spaceInlineSize - borderBoxInlineSize - centeredMarginBoxStart - marginStart + marginEnd;
         marginStart += centeredMarginBoxStart;
-    } else if (borderBoxInlineSize < containingBlockInlineSize) {
+    } else if (borderBoxInlineSize < spaceInlineSize) {
         auto pushesToEnd = !marginEndLength.isAuto() && (isLeftToRight ? textAlign == Style::TextAlign::WebKitRight : textAlign == Style::TextAlign::WebKitLeft);
         if (marginStartLength.isAuto() && marginEndLength.isAuto()) {
-            marginStart = std::max(0_lu, (containingBlockInlineSize - borderBoxInlineSize) / 2);
-            marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
-        } else if (marginEndLength.isAuto())
-            marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
-        else if (marginStartLength.isAuto() || pushesToEnd)
-            marginStart = containingBlockInlineSize - borderBoxInlineSize - marginEnd;
+            marginStart = std::max(0_lu, (spaceInlineSize - borderBoxInlineSize) / 2);
+            marginEnd = spaceInlineSize - borderBoxInlineSize - marginStart;
+        } else if (marginEndLength.isAuto()) {
+            marginStart = usedMargin(marginStartLength, spaceInlineSize);
+            marginEnd = spaceInlineSize - borderBoxInlineSize - marginStart;
+        } else if (marginStartLength.isAuto() || pushesToEnd) {
+            marginEnd = usedMargin(marginEndLength, spaceInlineSize);
+            marginStart = spaceInlineSize - borderBoxInlineSize - marginEnd;
+        }
     }
-    if (containingBlockInlineSize && ignoresEndMarginWhenOverConstrained(box, containingBlockStyle))
-        marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
+    if (spaceInlineSize && ignoresEndMarginWhenOverConstrained(box, containingBlockStyle))
+        marginEnd = spaceInlineSize - borderBoxInlineSize - marginStart;
     return { marginStart, marginEnd };
 }
 

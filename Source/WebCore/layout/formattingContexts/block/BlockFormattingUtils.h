@@ -69,7 +69,7 @@ public:
     // RenderBox::computeMinMaxLogicalWidthFromAspectRatio). None without a ratio.
     static std::optional<std::pair<LayoutUnit, LayoutUnit>> aspectRatioInlineSizeLimits(const RenderBox&, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode);
     // The start and end margins of a box whose border box inline size is already known, from the same §10.3.3 equation.
-    static std::pair<LayoutUnit, LayoutUnit> inlineMargins(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
+    static std::pair<LayoutUnit, LayoutUnit> inlineMargins(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<LayoutUnit> availableInlineSize = { });
     static bool ignoresEndMarginWhenOverConstrained(const RenderBox&, const Style::ComputedStyle& containingBlockStyle);
     // A block-level box with a justify-self other than normal, stretch or legacy is aligned in the inline axis of its containing block, which
     // sizes an auto inline size to fit its content and keeps its margins as they are (css-align-3 §6.1).
