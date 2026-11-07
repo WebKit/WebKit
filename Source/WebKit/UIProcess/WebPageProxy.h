@@ -1196,7 +1196,7 @@ public:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    bool hasModelElement() const { return m_hasModelElement; }
+    bool hasModelElement() const;
     void setHasModelElement(bool);
 #endif
 
@@ -1418,10 +1418,10 @@ public:
 
 #if ENABLE(MODEL_PROCESS)
     void requestInteractiveModelElementAtPoint(WebCore::IntPoint);
-    void didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier>);
-    void stageModeSessionDidBegin(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
-    void stageModeSessionDidUpdate(std::optional<WebCore::NodeIdentifier>, const WebCore::TransformationMatrix&);
-    void stageModeSessionDidEnd(std::optional<WebCore::NodeIdentifier>);
+    void didReceiveInteractiveModelElement(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::NodeIdentifier>);
+    void stageModeSessionDidBegin(std::optional<WebCore::FrameIdentifier>, WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
+    void stageModeSessionDidUpdate(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::NodeIdentifier>, const WebCore::TransformationMatrix&);
+    void stageModeSessionDidEnd(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::NodeIdentifier>);
 #endif
 
 #if PLATFORM(COCOA)
@@ -3289,6 +3289,11 @@ private:
     void dragEndedInFrame(const std::optional<WebCore::FrameIdentifier>&, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>)>&&);
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+    bool isValidStageModeFrame(std::optional<WebCore::FrameIdentifier>) const;
+    void requestInteractiveModelElementAtPointInFrame(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint clientPosition, WebCore::IntPoint interactionLocation);
+#endif
+
     bool canCreateFrame(WebCore::FrameIdentifier) const;
     Ref<WebPageProxy> downloadOriginatingPage(const API::Navigation*);
     Ref<WebPageProxy> navigationOriginatingPage(const FrameInfoData&);
@@ -4312,7 +4317,7 @@ private:
     bool m_registeredForFullSpeedUpdates { false };
 
 #if ENABLE(MODEL_PROCESS)
-    bool m_hasModelElement { false };
+    bool m_hasModelElementForMainFrameProcess { false };
 #endif
 
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };

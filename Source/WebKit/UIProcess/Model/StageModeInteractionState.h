@@ -30,6 +30,8 @@
 #import <simd/simd.h>
 
 namespace WebCore {
+struct FrameIdentifierType;
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 struct NodeIdentifierType;
 using NodeIdentifier = ObjectIdentifier<NodeIdentifierType>;
 }
@@ -43,6 +45,7 @@ public:
     bool isPreparingForInteraction { true };
     simd_float4x4 transform { matrix_identity_float4x4 };
     std::optional<WebCore::NodeIdentifier> nodeID;
+    std::optional<WebCore::FrameIdentifier> frameID;
 };
 } // namespace WebKit
 

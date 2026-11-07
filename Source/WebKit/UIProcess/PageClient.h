@@ -789,7 +789,7 @@ public:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    virtual void didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier>) = 0;
+    virtual void didReceiveInteractiveModelElement(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::NodeIdentifier>) = 0;
 #endif
 
     virtual void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::DOMPasteRequiresInteraction, WebCore::FrameIdentifier, const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) = 0;

@@ -56,6 +56,7 @@
 #import "RemoteFrame.h"
 #import "RemoteFrameGeometryTransformer.h"
 #import "RemoteFrameView.h"
+#import "RemoteUserInputEventData.h"
 #import "RenderObjectInlines.h"
 #import "RenderWidgetInlines.h"
 #import "ScrollingCoordinatorTypes.h"
@@ -672,7 +673,7 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 }
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
-std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoint(const IntPoint& clientPosition)
+InteractiveModelElementHitTestResult EventHandler::requestInteractiveModelElementAtPoint(const IntPoint& clientPosition, const IntPoint& interactionLocation)
 {
     Ref frame = m_frame.get();
 
@@ -695,10 +696,14 @@ std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoin
     auto documentPoint = frameView->windowToContents(syntheticMousePressEvent.position());
     auto hitTestedMouseEvent = document->prepareMouseEvent(hitType, LayoutPoint { documentPoint }, syntheticMousePressEvent);
 
-    if (RefPtr subframe = dynamicDowncast<LocalFrame>(subframeForHitTestResult(hitTestedMouseEvent))) {
-        if (std::optional<NodeIdentifier> nodeID = subframe->eventHandler().requestInteractiveModelElementAtPoint(adjustedClientPosition))
-            return nodeID;
+    RefPtr subframe = subframeForHitTestResult(hitTestedMouseEvent);
+    if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(subframe)) {
+        if (auto remoteUserInputEventData = userInputEventDataForRemoteFrame(remoteSubframe.get(), hitTestedMouseEvent.hitTestResult().doublePointInInnerNodeFrame()))
+            return *remoteUserInputEventData;
     }
+
+    if (RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe))
+        return localSubframe->eventHandler().requestInteractiveModelElementAtPoint(adjustedClientPosition, interactionLocation);
 
     RefPtr targetElement = hitTestedMouseEvent.hitTestResult().targetElement();
 
@@ -706,7 +711,7 @@ std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoin
     if (CheckedPtr controller = SpatialPortalController::interactiveControllerForHitTestedElement(targetElement.get())) {
         if (RefPtr portalElement = controller->portalElement()) {
             auto transform = TransformationMatrix::identity;
-            transform.translate(clientPosition.x(), clientPosition.y());
+            transform.translate(interactionLocation.x(), interactionLocation.y());
 
             controller->beginStageModeTransform(transform);
             return portalElement->nodeIdentifier();
@@ -721,7 +726,7 @@ std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoin
                 return std::nullopt;
 #endif
             auto transform = TransformationMatrix::identity;
-            transform.translate(clientPosition.x(), clientPosition.y());
+            transform.translate(interactionLocation.x(), interactionLocation.y());
 
             modelElement->beginStageModeTransform(transform);
             return modelElement->nodeIdentifier();

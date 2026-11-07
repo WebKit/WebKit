@@ -304,9 +304,9 @@ void PageClientImpl::didCreateContextInModelProcessForVisibilityPropagation(Laye
     [m_contentView _modelProcessDidCreateContextForVisibilityPropagation];
 }
 
-void PageClientImpl::didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier> nodeID)
+void PageClientImpl::didReceiveInteractiveModelElement(std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::NodeIdentifier> nodeID)
 {
-    [m_contentView didReceiveInteractiveModelElement:nodeID];
+    [m_contentView didReceiveInteractiveModelElement:nodeID frameID:frameID];
 }
 #endif // ENABLE(MODEL_PROCESS)
 

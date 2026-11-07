@@ -274,6 +274,7 @@
 #include <WebCore/ImageBufferParameters.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/ImageUtilities.h>
+#include <WebCore/InteractiveModelElementHitTestResult.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/KeyboardEvent.h>
@@ -6541,31 +6542,31 @@ void WebPage::modelDragEnded(NodeIdentifier nodeIdentifier)
 #endif // ENABLE(DRAG_SUPPORT)
 
 #if ENABLE(MODEL_PROCESS)
-void WebPage::requestInteractiveModelElementAtPoint(IntPoint clientPosition)
+void WebPage::requestInteractiveModelElementAtPoint(std::optional<FrameIdentifier> frameID, IntPoint clientPosition, IntPoint interactionLocation, CompletionHandler<void(InteractiveModelElementHitTestResult&&)>&& completionHandler)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
-        auto nodeID = localMainFrame->eventHandler().requestInteractiveModelElementAtPoint(clientPosition);
-        send(Messages::WebPageProxy::DidReceiveInteractiveModelElement(nodeID));
-    } else
-        send(Messages::WebPageProxy::DidReceiveInteractiveModelElement(std::nullopt));
+    RefPtr localRoot = localRootFrame(frameID);
+    if (!localRoot)
+        return completionHandler(std::nullopt);
+
+    completionHandler(localRoot->eventHandler().requestInteractiveModelElementAtPoint(clientPosition, interactionLocation));
 }
 
-void WebPage::stageModeSessionDidBegin(NodeIdentifier nodeID, const TransformationMatrix& transform)
+void WebPage::stageModeSessionDidBegin(std::optional<FrameIdentifier> frameID, NodeIdentifier nodeID, const TransformationMatrix& transform)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        localMainFrame->eventHandler().stageModeSessionDidBegin(nodeID, transform);
+    if (RefPtr localRoot = localRootFrame(frameID))
+        localRoot->eventHandler().stageModeSessionDidBegin(nodeID, transform);
 }
 
-void WebPage::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
+void WebPage::stageModeSessionDidUpdate(std::optional<FrameIdentifier> frameID, std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        localMainFrame->eventHandler().stageModeSessionDidUpdate(nodeID, transform);
+    if (RefPtr localRoot = localRootFrame(frameID))
+        localRoot->eventHandler().stageModeSessionDidUpdate(nodeID, transform);
 }
 
-void WebPage::stageModeSessionDidEnd(std::optional<NodeIdentifier> nodeID)
+void WebPage::stageModeSessionDidEnd(std::optional<FrameIdentifier> frameID, std::optional<NodeIdentifier> nodeID)
 {
-    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        localMainFrame->eventHandler().stageModeSessionDidEnd(nodeID);
+    if (RefPtr localRoot = localRootFrame(frameID))
+        localRoot->eventHandler().stageModeSessionDidEnd(nodeID);
 }
 #endif
 

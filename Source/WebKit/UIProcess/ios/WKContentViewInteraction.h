@@ -927,7 +927,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)modelInteractionPanGestureDidBeginAtPoint:(CGPoint)inputPoint;
 - (void)modelInteractionPanGestureDidUpdateWithPoint:(CGPoint)inputPoint;
 - (void)modelInteractionPanGestureDidEnd;
-- (void)didReceiveInteractiveModelElement:(std::optional<WebCore::NodeIdentifier>)nodeID;
+- (void)didReceiveInteractiveModelElement:(std::optional<WebCore::NodeIdentifier>)nodeID frameID:(std::optional<WebCore::FrameIdentifier>)frameID;
 #endif
 
 - (void)reloadContextViewForPresentedListViewController;

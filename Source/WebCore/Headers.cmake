@@ -1958,6 +1958,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ImageAnalysisQueue.h
     page/ImmediateActionStage.h
     page/InteractionRegion.h
+    page/InteractiveModelElementHitTestResult.h
     page/IntersectionObserverMarginBox.h
     page/IsLoggedIn.h
     page/LayoutMilestone.h

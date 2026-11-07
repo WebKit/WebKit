@@ -426,10 +426,10 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    RequestInteractiveModelElementAtPoint(WebCore::IntPoint clientPosition)
-    StageModeSessionDidBegin(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
-    StageModeSessionDidUpdate(std::optional<WebCore::NodeIdentifier> nodeID, WebCore::TransformationMatrix transform)
-    StageModeSessionDidEnd(std::optional<WebCore::NodeIdentifier> nodeID)
+    RequestInteractiveModelElementAtPoint(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint clientPosition, WebCore::IntPoint interactionLocation) -> (WebCore::InteractiveModelElementHitTestResult result)
+    StageModeSessionDidBegin(std::optional<WebCore::FrameIdentifier> frameID, WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
+    StageModeSessionDidUpdate(std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::NodeIdentifier> nodeID, WebCore::TransformationMatrix transform)
+    StageModeSessionDidEnd(std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::NodeIdentifier> nodeID)
 #endif
 
 #if ENABLE(MODEL_PROCESS) && ENABLE(DRAG_SUPPORT)

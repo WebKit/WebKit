@@ -87,6 +87,8 @@ fast/images/spatial-image-controls-rtl.html [ Pass ]
 http/tests/security/model-element [ Pass ]
 http/wpt/model-element [ Pass ]
 http/tests/security/model-element/model-element-crossorigin-allowed-with-all-access-header.html [ Slow ]
+# Stage mode interaction needs HAVE(CORE_RE), which is only available with the internal SDK.
+http/tests/security/model-element/model-element-stage-mode-in-iframes.html [ Skip ]
 model-element [ Pass ]
 fast/quirks/model-element-fallback-content-quirk.html [ Pass ]
 model-element/immersive [ Pass ]

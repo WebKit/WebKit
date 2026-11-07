@@ -291,6 +291,12 @@ void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
         IPC::handleMessage<Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents>(connection, decoder, this, &RemotePageProxy::setCanShortCircuitHorizontalWheelEvents);
         return;
     }
+#if ENABLE(MODEL_PROCESS)
+    if (decoder.messageName() == Messages::WebPageProxy::SetHasModelElement::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::SetHasModelElement>(connection, decoder, this, &RemotePageProxy::setHasModelElement);
+        return;
+    }
+#endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name()) {
         IPC::handleMessage<Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation>(connection, decoder, this, &RemotePageProxy::didCreateContextInWebProcessForVisibilityPropagation);

@@ -1,0 +1,94 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SiteIsolationEnabled=true ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/basic-gestures.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/root/model-element/resources/position-information-test-utils.js"></script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #overflow_container {
+            height: 300px;
+            overflow: scroll;
+            border: 2px solid black;
+        }
+
+        #overflow {
+            background: linear-gradient(180deg, rgba(255, 199, 153, 1) 0%, rgba(255, 0, 102, 1) 100%);
+            height: 600px;
+        }
+    </style>
+</head>
+<script>
+    jsTestIsAsync = true;
+    testRunner.dumpAsText();
+
+    const crossSiteModelsFrameURL = "http://localhost:8000/root/model-element/resources/models-frame.html";
+
+    function appendCrossSiteModelsFrame(container) {
+        const frame = document.createElement("iframe");
+        frame.src = crossSiteModelsFrameURL;
+        const loaded = new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+        container.appendChild(frame);
+        return loaded.then(() => frame);
+    }
+
+    addEventListener("load", async () => {
+        var modelContainer = document.getElementById("model-container");
+
+        if (window.testRunner) {
+            description(`ensurePositionInformationIsUpToDate should only be called when a scroll gesture occurs if a model
+                element exists in the page, including cross-site iframes.`);
+
+            await UIHelper.clearEnsurePositionInformationIsUpToDateTracking();
+
+            const firstFrame = await appendCrossSiteModelsFrame(modelContainer); // Cross-site frame process has one model element.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+
+            var mainFrameModel = document.createElement("model");
+            modelContainer.appendChild(mainFrameModel); // Main frame process now has one model element.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+            mainFrameModel.remove(); // Main frame process now has zero model elements, cross-site frame process still has one.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+
+            await clearModelsInFrame(firstFrame); // Page now has zero model elements.
+            await scrollAndCheckIfPositionInformationUpdated(false);
+
+            await addModelsToFrame(firstFrame, 2); // Cross-site frame process has two model elements.
+            mainFrameModel = document.createElement("model");
+            modelContainer.appendChild(mainFrameModel); // Main frame process has one model element.
+            await removeModelsFromFrame(firstFrame, 2); // Cross-site frame process has zero model elements, main frame process still has one.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+            mainFrameModel.remove(); // Page now has zero model elements.
+            await scrollAndCheckIfPositionInformationUpdated(false);
+
+            const secondFrame = await appendCrossSiteModelsFrame(modelContainer); // Cross-site frame process has one model element.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+            await navigateFrameToEmpty(secondFrame); // Page now has zero model elements.
+            await scrollAndCheckIfPositionInformationUpdated(false);
+
+            await addModelsToFrame(firstFrame, 1); // Cross-site frame process has one model element.
+            await scrollAndCheckIfPositionInformationUpdated(true);
+            firstFrame.remove();
+            secondFrame.remove(); // Page now has zero model elements.
+            await scrollAndCheckIfPositionInformationUpdated(false);
+
+            finishJSTest();
+        }
+    });
+</script>
+<body>
+    <div id="overflow_container">
+        <div id="overflow"></div>
+    </div>
+    <div id="model-container">
+    </div>
+    <div id="console"></div>
+</body>
+</html>

@@ -399,6 +399,7 @@ using BackForwardFrameItemIdentifier = ProcessQualified<ObjectIdentifier<BackFor
 using DictationContext = ObjectIdentifier<DictationContextType>;
 using DragEventTargetData = Variant<DragEventHandled, RemoteUserInputEventData>;
 using HTMLMediaElementIdentifier = ObjectIdentifier<MediaPlayerClientIdentifierType>;
+using InteractiveModelElementHitTestResult = Variant<std::optional<NodeIdentifier>, RemoteUserInputEventData>;
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 using NavigationIdentifier = ProcessQualified<ObjectIdentifier<NavigationIdentifierType>>;
@@ -1524,10 +1525,10 @@ public:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    void requestInteractiveModelElementAtPoint(WebCore::IntPoint clientPosition);
-    void stageModeSessionDidBegin(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
-    void stageModeSessionDidUpdate(std::optional<WebCore::NodeIdentifier>, const WebCore::TransformationMatrix&);
-    void stageModeSessionDidEnd(std::optional<WebCore::NodeIdentifier>);
+    void requestInteractiveModelElementAtPoint(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint clientPosition, WebCore::IntPoint interactionLocation, CompletionHandler<void(WebCore::InteractiveModelElementHitTestResult&&)>&&);
+    void stageModeSessionDidBegin(std::optional<WebCore::FrameIdentifier>, WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
+    void stageModeSessionDidUpdate(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::NodeIdentifier>, const WebCore::TransformationMatrix&);
+    void stageModeSessionDidEnd(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::NodeIdentifier>);
 #endif
 
     void beginPrinting(WebCore::FrameIdentifier, const PrintInfo&);

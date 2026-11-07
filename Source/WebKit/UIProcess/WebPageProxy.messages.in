@@ -367,10 +367,6 @@ messages -> WebPageProxy {
     DidReceiveEditDragSnapshot(RefPtr<WebCore::TextIndicator> textIndicator)
 #endif
 
-#if ENABLE(MODEL_PROCESS)
-    DidReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier> nodeID)
-#endif
-
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     [EnabledBy=SpatialPortalEnabled] PresentVolumetricScene(WebCore::NodeIdentifier nodeID, struct WebKit::VolumetricSceneContentContext contentContext) -> (bool success)
     [EnabledBy=SpatialPortalEnabled] ReconnectVolumetricSceneToContentContext(WebCore::NodeIdentifier nodeID, struct WebKit::VolumetricSceneContentContext contentContext)

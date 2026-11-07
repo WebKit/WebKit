@@ -126,6 +126,9 @@ public:
 
     bool hasNetworkRequestsInProgress() const { return m_hasNetworkRequestsInProgress; }
     bool canShortCircuitHorizontalWheelEvents() const { return m_canShortCircuitHorizontalWheelEvents; }
+#if ENABLE(MODEL_PROCESS)
+    bool hasModelElement() const { return m_hasModelElement; }
+#endif
 
     void disconnect(ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
 
@@ -151,6 +154,9 @@ private:
 
     void setNetworkRequestsInProgress(bool);
     void setCanShortCircuitHorizontalWheelEvents(bool);
+#if ENABLE(MODEL_PROCESS)
+    void setHasModelElement(bool hasModelElement) { m_hasModelElement = hasModelElement; }
+#endif
 
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
@@ -183,6 +189,9 @@ private:
 #endif
     bool m_hasNetworkRequestsInProgress { false };
     bool m_canShortCircuitHorizontalWheelEvents { true };
+#if ENABLE(MODEL_PROCESS)
+    bool m_hasModelElement { false };
+#endif
 #if ASSERT_ENABLED
     bool m_disconnected { false };
 #endif

@@ -11700,25 +11700,26 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         WebCore::TransformationMatrix transform;
         transform.translate3d(inputPoint.x, inputPoint.y, 0);
         _stageModeSession->transform = transform;
-        _page->stageModeSessionDidUpdate(_stageModeSession->nodeID, _stageModeSession->transform);
+        _page->stageModeSessionDidUpdate(_stageModeSession->frameID, _stageModeSession->nodeID, _stageModeSession->transform);
     }
 }
 
 - (void)modelInteractionPanGestureDidEnd
 {
     if (_stageModeSession && !_stageModeSession->isPreparingForInteraction)
-        _page->stageModeSessionDidEnd(_stageModeSession->nodeID);
+        _page->stageModeSessionDidEnd(_stageModeSession->frameID, _stageModeSession->nodeID);
 
     [self cleanUpStageModeSessionState];
 }
 
-- (void)didReceiveInteractiveModelElement:(std::optional<WebCore::NodeIdentifier>)nodeID
+- (void)didReceiveInteractiveModelElement:(std::optional<WebCore::NodeIdentifier>)nodeID frameID:(std::optional<WebCore::FrameIdentifier>)frameID
 {
     if (!_stageModeSession || !_stageModeSession->isPreparingForInteraction)
         return;
 
     _stageModeSession->isPreparingForInteraction = !nodeID;
     _stageModeSession->nodeID = nodeID;
+    _stageModeSession->frameID = frameID;
 }
 
 - (void)cleanUpStageModeSessionState

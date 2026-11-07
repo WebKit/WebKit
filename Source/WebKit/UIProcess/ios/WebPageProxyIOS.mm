@@ -1331,10 +1331,10 @@ void WebPageProxy::didConcludeDrop()
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier> nodeID)
+void WebPageProxy::didReceiveInteractiveModelElement(std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::NodeIdentifier> nodeID)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->didReceiveInteractiveModelElement(nodeID);
+        pageClient->didReceiveInteractiveModelElement(frameID, nodeID);
 }
 #endif
 

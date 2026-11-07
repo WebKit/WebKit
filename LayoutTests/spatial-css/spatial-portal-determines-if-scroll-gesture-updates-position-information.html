@@ -6,6 +6,7 @@
     <script src="../resources/js-test.js"></script>
     <script src="../resources/basic-gestures.js"></script>
     <script src="../resources/ui-helper.js"></script>
+    <script src="../model-element/resources/position-information-test-utils.js"></script>
     <style>
         html, body {
             padding: 0;
@@ -34,26 +35,6 @@
 <script>
     jsTestIsAsync = true;
     testRunner.dumpAsText();
-
-    async function scroll() {
-        var fromX = overflow_container.offsetLeft + 50;
-        var fromY = overflow_container.offsetTop + overflow_container.offsetHeight - 5;
-        var toX = fromX;
-        var toY = fromY - 100;
-        await touchAndDragFromPointToPoint(fromX, fromY, toX, toY);
-        await liftUpAtPoint(toX, toY);
-        overflow_container.scrollTop = 0;
-    }
-
-    async function scrollAndCheckIfPositionInformationUpdated(correctValue) {
-        await scroll();
-        didWait = await UIHelper.didCallEnsurePositionInformationIsUpToDateSinceLastCheck();
-        const msg = "didCallEnsurePositionInformationIsUpToDateSinceLastCheck was " + didWait + ", expected " + correctValue;
-        if (didWait == correctValue)
-            testPassed(msg);
-        else
-            testFailed(msg);
-    }
 
     addEventListener("load", async () => {
         var didWait;

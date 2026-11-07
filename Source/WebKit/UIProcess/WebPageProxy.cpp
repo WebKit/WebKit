@@ -267,6 +267,7 @@
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/GlobalWindowIdentifier.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/InteractiveModelElementHitTestResult.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkDecorationFilteringData.h>
 #include <WebCore/LocalDOMWindow.h>
@@ -4864,22 +4865,58 @@ void WebPageProxy::modelDragEnded(const WebCore::NodeIdentifier nodeIdentifier)
 #if ENABLE(MODEL_PROCESS)
 void WebPageProxy::requestInteractiveModelElementAtPoint(const IntPoint clientPosition)
 {
-    send(Messages::WebPage::RequestInteractiveModelElementAtPoint(clientPosition));
+    requestInteractiveModelElementAtPointInFrame(std::nullopt, clientPosition, clientPosition);
 }
 
-void WebPageProxy::stageModeSessionDidBegin(NodeIdentifier nodeID, const TransformationMatrix& transform)
+bool WebPageProxy::isValidStageModeFrame(std::optional<FrameIdentifier> frameID) const
 {
-    send(Messages::WebPage::StageModeSessionDidBegin(nodeID, transform));
+    if (!frameID)
+        return true;
+
+    RefPtr frame = WebFrameProxy::webFrame(*frameID);
+    return frame && frame->page() == this;
 }
 
-void WebPageProxy::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
+void WebPageProxy::requestInteractiveModelElementAtPointInFrame(std::optional<FrameIdentifier> frameID, IntPoint clientPosition, IntPoint interactionLocation)
 {
-    send(Messages::WebPage::StageModeSessionDidUpdate(nodeID, transform));
+    if (!hasRunningProcess() || !isValidStageModeFrame(frameID))
+        return;
+
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::RequestInteractiveModelElementAtPoint(frameID, clientPosition, interactionLocation), [weakThis = WeakPtr { *this }, frameID, interactionLocation](InteractiveModelElementHitTestResult&& result) {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+
+        WTF::switchOn(result, [&](std::optional<NodeIdentifier> nodeID) {
+            protectedThis->didReceiveInteractiveModelElement(frameID, nodeID);
+        }, [&](const RemoteUserInputEventData& remoteUserInputEventData) {
+            protectedThis->requestInteractiveModelElementAtPointInFrame(remoteUserInputEventData.targetFrameID, roundedIntPoint(remoteUserInputEventData.transformedPoint), interactionLocation);
+        });
+    });
 }
 
-void WebPageProxy::stageModeSessionDidEnd(std::optional<NodeIdentifier> nodeID)
+void WebPageProxy::stageModeSessionDidBegin(std::optional<FrameIdentifier> frameID, NodeIdentifier nodeID, const TransformationMatrix& transform)
 {
-    send(Messages::WebPage::StageModeSessionDidEnd(nodeID));
+    if (!isValidStageModeFrame(frameID))
+        return;
+
+    sendToProcessContainingFrame(frameID, Messages::WebPage::StageModeSessionDidBegin(frameID, nodeID, transform));
+}
+
+void WebPageProxy::stageModeSessionDidUpdate(std::optional<FrameIdentifier> frameID, std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
+{
+    if (!isValidStageModeFrame(frameID))
+        return;
+
+    sendToProcessContainingFrame(frameID, Messages::WebPage::StageModeSessionDidUpdate(frameID, nodeID, transform));
+}
+
+void WebPageProxy::stageModeSessionDidEnd(std::optional<FrameIdentifier> frameID, std::optional<NodeIdentifier> nodeID)
+{
+    if (!isValidStageModeFrame(frameID))
+        return;
+
+    sendToProcessContainingFrame(frameID, Messages::WebPage::StageModeSessionDidEnd(frameID, nodeID));
 }
 #endif
 
@@ -13356,9 +13393,18 @@ void WebPageProxy::setHasActiveAnimatedScrollsForAsyncScrolling(DisplayLinkObser
 #endif
 
 #if ENABLE(MODEL_PROCESS)
+bool WebPageProxy::hasModelElement() const
+{
+    bool hasModelElement = m_hasModelElementForMainFrameProcess;
+    protect(browsingContextGroup())->forEachRemotePage(*this, [&](auto& remotePageProxy) {
+        hasModelElement |= remotePageProxy.hasModelElement();
+    });
+    return hasModelElement;
+}
+
 void WebPageProxy::setHasModelElement(bool hasModelElement)
 {
-    m_hasModelElement = hasModelElement;
+    m_hasModelElementForMainFrameProcess = hasModelElement;
 }
 #endif
 
@@ -16269,7 +16315,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     protect(legacyMainFrameProcess())->processTerminated();
 
 #if ENABLE(MODEL_PROCESS)
-    m_hasModelElement = false;
+    m_hasModelElementForMainFrameProcess = false;
 #endif
 }
 

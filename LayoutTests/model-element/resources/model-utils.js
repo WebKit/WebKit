@@ -32,6 +32,17 @@ function sleepForSeconds(duration) {
     });
 }
 
+async function waitFor(predicate, description, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (!await predicate()) {
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for ${description}`);
+
+        await sleepForSeconds(0.05);
+    }
+}
+
 const epsilon = 0.001;
 
 const assert_cameras_are_equal = (actualCamera, expectedCamera, description) => {

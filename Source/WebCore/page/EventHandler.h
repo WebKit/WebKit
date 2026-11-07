@@ -153,6 +153,7 @@ enum class DragEventHandled : bool;
 
 using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 using DragEventTargetData = Variant<DragEventHandled, RemoteUserInputEventData>;
+using InteractiveModelElementHitTestResult = Variant<std::optional<NodeIdentifier>, RemoteUserInputEventData>;
 
 class EventHandler final : public CanMakeCheckedPtr<EventHandler> {
     WTF_MAKE_TZONE_ALLOCATED(EventHandler);
@@ -396,7 +397,7 @@ public:
     NODELETE static Widget* widgetForEventTarget(Element* eventTarget);
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
-    WEBCORE_EXPORT std::optional<NodeIdentifier> requestInteractiveModelElementAtPoint(const IntPoint& clientPosition);
+    WEBCORE_EXPORT InteractiveModelElementHitTestResult requestInteractiveModelElementAtPoint(const IntPoint& clientPosition, const IntPoint& interactionLocation);
     WEBCORE_EXPORT void stageModeSessionDidBegin(NodeIdentifier, const TransformationMatrix&);
     WEBCORE_EXPORT void stageModeSessionDidUpdate(std::optional<NodeIdentifier>, const TransformationMatrix&);
     WEBCORE_EXPORT void stageModeSessionDidEnd(std::optional<NodeIdentifier>);

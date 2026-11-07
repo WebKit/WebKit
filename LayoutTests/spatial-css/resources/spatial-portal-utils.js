@@ -59,17 +59,6 @@ const resolvedTransformForPortal = async (test, asset, portalTransform, portalOp
     return await waitForPortalTransform(portal, portalTransformIsResolved, `portal-transform: ${portalTransform ?? "auto"}`);
 };
 
-async function waitFor(predicate, description, timeout = 5000) {
-    const startTime = Date.now();
-
-    while (!predicate()) {
-        if (Date.now() - startTime > timeout)
-            throw new Error(`Timeout waiting for ${description}`);
-
-        await sleepForSeconds(0.05);
-    }
-}
-
 async function waitForPortalTransform(portal, predicate, description, timeout = 5000) {
     const startTime = Date.now();
 

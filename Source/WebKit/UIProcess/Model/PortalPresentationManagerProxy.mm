@@ -219,19 +219,19 @@ void PortalPresentationManagerProxy::showVolumetricScene(WebCore::NodeIdentifier
             page->updateVolumetricSceneSize(nodeID, volumeSizeInMeters);
 
         [sceneController installInputSurfaceWithBegan:makeBlockPtr([weakThis, nodeID](CGPoint location) {
-            if (RefPtr protectedThis = weakThis.get()) {
-                if (RefPtr page = protectedThis->m_page.get())
-                    page->stageModeSessionDidBegin(nodeID, stageModeTransformForLocation(location));
+            if (RefPtr protectedThis = weakThis) {
+                if (RefPtr page = protectedThis->m_page)
+                    page->stageModeSessionDidBegin(std::nullopt, nodeID, stageModeTransformForLocation(location));
             }
         }).get() changed:makeBlockPtr([weakThis, nodeID](CGPoint location) {
-            if (RefPtr protectedThis = weakThis.get()) {
-                if (RefPtr page = protectedThis->m_page.get())
-                    page->stageModeSessionDidUpdate(nodeID, stageModeTransformForLocation(location));
+            if (RefPtr protectedThis = weakThis) {
+                if (RefPtr page = protectedThis->m_page)
+                    page->stageModeSessionDidUpdate(std::nullopt, nodeID, stageModeTransformForLocation(location));
             }
         }).get() ended:makeBlockPtr([weakThis, nodeID] {
-            if (RefPtr protectedThis = weakThis.get()) {
-                if (RefPtr page = protectedThis->m_page.get())
-                    page->stageModeSessionDidEnd(nodeID);
+            if (RefPtr protectedThis = weakThis) {
+                if (RefPtr page = protectedThis->m_page)
+                    page->stageModeSessionDidEnd(std::nullopt, nodeID);
             }
         }).get()];
 
