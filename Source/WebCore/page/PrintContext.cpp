@@ -232,6 +232,18 @@ void PrintContext::begin(float width, float height)
     frame->setPrinting(true, minLayoutSize, originalPageSize, maximumShrinkFactor() / minimumShrinkFactor(), AdjustViewSize::Yes);
 }
 
+void PrintContext::begin(FloatSize pageSize, float maximumShrinkRatio)
+{
+    if (!frame())
+        return;
+
+    Ref frame = *this->frame();
+    m_isPrinting = true;
+
+    // This changes layout, so callers need to make sure that they don't paint to screen while in printing mode.
+    frame->setPrinting(true, pageSize, pageSize, maximumShrinkRatio, AdjustViewSize::Yes);
+}
+
 float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperSize)
 {
     if (!frame())

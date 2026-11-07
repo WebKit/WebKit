@@ -4104,11 +4104,42 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/print/frame_tentative.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288331"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/print/invalid.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288331"}}
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/print/margin.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+        "subtests": {
+            "test_margin_default[top]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_default[left]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_default[right]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_default[bottom]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_minimum_page_size[top]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_minimum_page_size[left]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_minimum_page_size[right]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_minimum_page_size[bottom]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_does_not_affect_page_size[default]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_does_not_affect_page_size[0]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            },
+            "test_margin_does_not_affect_page_size[2]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288331"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/print/orientation.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288331"}}

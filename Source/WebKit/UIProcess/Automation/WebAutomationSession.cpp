@@ -3234,6 +3234,27 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::printBidiPage(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, bool background, WebCore::FloatSize pageSizeInCentimeters, WebCore::FloatBoxExtent marginInCentimeters, double scale, bool shrinkToFit, Vector<std::pair<uint64_t, uint64_t>>&& pageRanges, CommandCallback<String>&& callback)
+{
+    auto page = webPageProxyForHandle(handle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    // The document is paginated in the process that hosts it, so a child navigable prints its own document.
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::PrintBidiPage(page->webPageIDInProcessForFrame(frameID), frameID, background, pageSizeInCentimeters, marginInCentimeters, scale, shrinkToFit, WTF::move(pageRanges)), CompletionHandler<void(String&&, String&&)> { [callback = WTF::move(callback)](String&& data, String&& errorType) mutable {
+        if (!errorType.isEmpty())
+            return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType)));
+
+        // An empty reply with no error means the WebContent process went away before answering.
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(data.isEmpty(), InternalError);
+
+        callback(WTF::move(data));
+    } });
+}
+
 static String logEntryLevelForMessage(const JSC::MessageType& messageType, const MessageLevel& messageLevel)
 {
     if (messageType == JSC::MessageType::Assert || messageLevel == JSC::MessageLevel::Error)
