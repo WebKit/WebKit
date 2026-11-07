@@ -705,7 +705,7 @@ void Internals::resetToConsistentState(Page& page)
 
     WTF::clearDefaultPortForProtocolMapForTesting();
     overrideUserPreferredLanguages(Vector<String>());
-    WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(false);
+    resetUsesOverlayScrollbars();
     Ref editor = localMainFrame->editor();
     if (!editor->isContinuousSpellCheckingEnabled())
         editor->toggleContinuousSpellChecking();
@@ -5094,6 +5094,11 @@ JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, con
 void Internals::setUsesOverlayScrollbars(bool enabled)
 {
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(enabled);
+}
+
+void Internals::resetUsesOverlayScrollbars()
+{
+    WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(false);
 }
 #endif
 
