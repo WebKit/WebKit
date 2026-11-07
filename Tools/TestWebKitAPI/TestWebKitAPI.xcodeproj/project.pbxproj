@@ -908,6 +908,7 @@
 				WebCore/MixedContentChecker.cpp,
 				WebCore/MonospaceFontTests.cpp,
 				WebCore/NativeImageTests.cpp,
+				WebCore/NoVarySearch.cpp,
 				WebCore/NowPlayingInfoTests.cpp,
 				WebCore/ObjectSizeNegotiationTests.cpp,
 				WebCore/ParsedContentRange.cpp,

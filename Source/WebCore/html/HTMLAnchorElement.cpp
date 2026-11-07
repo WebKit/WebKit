@@ -167,8 +167,9 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
 
 void HTMLAnchorElement::defaultEventHandler(Event& event)
 {
+    constexpr bool lowPriority { false };
     if (m_prefetchEagerness == PrefetchEagerness::Conservative && (event.type() == eventNames().keydownEvent || event.type() == eventNames().mousedownEvent || event.type() == eventNames().pointerdownEvent))
-        protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy);
+        protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy, lowPriority, m_noVarySearchHint);
     else if (m_prefetchEagerness == PrefetchEagerness::None
         && document().settings().speculationRulesPrefetchEnabled()
         && (event.type() == eventNames().keydownEvent || event.type() == eventNames().mousedownEvent || event.type() == eventNames().pointerdownEvent)) {
@@ -176,7 +177,7 @@ void HTMLAnchorElement::defaultEventHandler(Event& event)
         // instead of scanning all links on every style recalculation.
         if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protect(document()), *this)) {
             if (prefetchRule->eagerness != SpeculationRules::Eagerness::Immediate)
-                protect(document())->prefetch(href(), prefetchRule->tags, prefetchRule->referrerPolicy);
+                protect(document())->prefetch(href(), prefetchRule->tags, prefetchRule->referrerPolicy, lowPriority, prefetchRule->noVarySearchHint);
         }
     }
 
@@ -708,15 +709,16 @@ void HTMLAnchorElement::setFullURL(const URL& fullURL)
     checkForSpeculationRules();
 }
 
-void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&& referrerPolicy)
+void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&& referrerPolicy, String&& noVarySearchHint)
 {
     // Map SpeculationRules::Eagerness to the anchor's PrefetchEagerness.
     // Only Immediate triggers immediate prefetch; all others fall back to conservative behavior.
     m_prefetchEagerness = eagerness == SpeculationRules::Eagerness::Immediate ? PrefetchEagerness::Immediate : PrefetchEagerness::Conservative;
     m_speculationRulesTags = WTF::move(tags);
     m_prefetchReferrerPolicy = WTF::move(referrerPolicy);
+    m_noVarySearchHint = WTF::move(noVarySearchHint);
     if (m_prefetchEagerness == PrefetchEagerness::Immediate)
-        protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy, true);
+        protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy, true, m_noVarySearchHint);
 }
 
 String HTMLAnchorElement::prefetchEagernessForTesting() const
@@ -741,14 +743,16 @@ void HTMLAnchorElement::checkForSpeculationRules()
         m_prefetchEagerness = PrefetchEagerness::None;
         m_speculationRulesTags.clear();
         m_prefetchReferrerPolicy = std::nullopt;
+        m_noVarySearchHint = { };
         return;
     }
     if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protect(document()), *this))
-        setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy));
+        setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy), WTF::move(prefetchRule->noVarySearchHint));
     else {
         m_prefetchEagerness = PrefetchEagerness::None;
         m_speculationRulesTags.clear();
         m_prefetchReferrerPolicy = std::nullopt;
+        m_noVarySearchHint = { };
     }
 }
 

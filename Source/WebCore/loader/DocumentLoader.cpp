@@ -86,6 +86,7 @@
 #include "NavigationRequester.h"
 #include "NavigationScheduler.h"
 #include "NetworkLoadMetrics.h"
+#include "NoVarySearch.h"
 #include "OriginAccessPatterns.h"
 #include "Page.h"
 #include "Performance.h"
@@ -638,6 +639,14 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
 void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
+
+    // A prefetch reused through No-Vary-Search or a hint must have its first response, not just its last, allow the navigated URL.
+    if (m_mainResource && m_mainResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch && !m_hasCheckedPrefetchRedirect) {
+        m_hasCheckedPrefetchRedirect = true;
+        if (!equalIgnoringFragmentIdentifier(redirectResponse.url(), m_originalRequest.url()) && !NoVarySearch::obtain(redirectResponse).equivalent(redirectResponse.url(), m_originalRequest.url()))
+            m_prefetchResponseFailed = true;
+    }
+
     redirectReceived(WTF::move(request), redirectResponse, WTF::move(completionHandler));
 }
 
@@ -938,11 +947,24 @@ bool DocumentLoader::shouldClearContentSecurityPolicyForResponse(const ResourceR
     return response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull() && !m_isLoadingMultipartContent;
 }
 
-void DocumentLoader::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
+void DocumentLoader::responseReceived(const CachedResource& resource, const ResourceResponse& receivedResponse, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, m_mainResource == &resource);
 
     RefPtr frame = m_frame;
+
+    // A prefetch reused through No-Vary-Search responds with the URL it was fetched from, but the document is for the URL being navigated to.
+    std::optional<ResourceResponse> responseWithNavigationURL;
+    if (m_mainResource && m_mainResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch && !equalIgnoringFragmentIdentifier(receivedResponse.url(), m_request.url())) {
+        URL navigationURL = m_request.url();
+        navigationURL.removeFragmentIdentifier();
+        // The navigation joined this prefetch based on what the speculation rule expected; the actual header decides.
+        if (receivedResponse.httpStatusCode() > 0 && !NoVarySearch::obtain(receivedResponse).equivalent(receivedResponse.url(), m_request.url()))
+            m_prefetchResponseFailed = true;
+        responseWithNavigationURL = receivedResponse;
+        responseWithNavigationURL->setURL(WTF::move(navigationURL));
+    }
+    const ResourceResponse& response = responseWithNavigationURL ? *responseWithNavigationURL : receivedResponse;
 
     // If we joined an in-flight prefetch whose response can't serve this navigation,
     // set a flag to suppress committing it. The retry will be

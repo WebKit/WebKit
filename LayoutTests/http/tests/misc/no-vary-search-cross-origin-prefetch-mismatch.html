@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function navigate()
+{
+    window.location = "http://localhost:8000/misc/resources/no-vary-search-prefetch.py?nvs=params%3D(%22b%22)&a=2&b=1";
+}
+
+function runTest()
+{
+    // The link's own load event is suppressed for a cross-origin prefetch, so listen for it through internals.
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = "http://localhost:8000/misc/resources/no-vary-search-prefetch.py?nvs=params%3D(%22b%22)&a=1&b=1";
+    internals.addPrefetchLoadEventListener(link, navigate);
+    document.body.appendChild(link);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Navigation to a URL that differs in a significant parameter does not use the prefetch.</p>
+<p>The page is replaced by the response it was served. "Purpose: prefetch" means the navigation used the cross-origin prefetch; "Purpose: none" means it went to the server.</p>
+</body>
+</html>
