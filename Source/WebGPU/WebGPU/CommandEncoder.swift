@@ -1997,7 +1997,7 @@ extension WebGPU.Metal.CommandEncoder {
             ? 0 : min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers - destination.origin.z)
         var rowsPerImage = Optional(fromCxx: source.layout.rowsPerImage) ?? UInt32(WGPU_COPY_STRIDE_UNDEFINED)
         if rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED {
-            rowsPerImage = heightForMetal != 0 ? rowsPerImage : 1
+            rowsPerImage = heightForMetal != 0 ? heightForMetal : 1
         }
         var sourceBytesPerImage: UInt
         var didOverflow: Bool
