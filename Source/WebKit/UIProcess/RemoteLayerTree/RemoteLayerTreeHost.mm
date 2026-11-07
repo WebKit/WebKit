@@ -159,15 +159,30 @@ void RemoteLayerTreeHost::updateOrDeferInteractionRegions(RemoteLayerTreeNode& n
         return;
     }
 
-    updateLayersForInteractionRegions(node);
+    updateLayersForInteractionRegions(node, this);
 }
 
 void RemoteLayerTreeHost::updateDeferredInteractionRegions()
 {
     for (auto layerID : std::exchange(m_layersWithDeferredInteractionRegionUpdates, { })) {
         if (RefPtr node = nodeForID(layerID))
-            updateLayersForInteractionRegions(*node);
+            updateLayersForInteractionRegions(*node, this);
     }
+}
+
+static constexpr size_t interactionRegionGlowLayerPoolCapacity = 128;
+
+RetainPtr<CALayer> RemoteLayerTreeHost::takeInteractionRegionGlowLayer()
+{
+    if (m_interactionRegionGlowLayerPool.isEmpty())
+        return nullptr;
+    return m_interactionRegionGlowLayerPool.takeLast();
+}
+
+void RemoteLayerTreeHost::reclaimInteractionRegionGlowLayer(RetainPtr<CALayer>&& layer)
+{
+    if (m_interactionRegionGlowLayerPool.size() < interactionRegionGlowLayerPoolCapacity)
+        m_interactionRegionGlowLayerPool.append(WTF::move(layer));
 }
 #endif
 
@@ -518,6 +533,7 @@ void RemoteLayerTreeHost::clearLayers()
     m_rootNode = nullptr;
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     m_layersWithDeferredInteractionRegionUpdates.clear();
+    m_interactionRegionGlowLayerPool.clear();
 #endif
 }
 

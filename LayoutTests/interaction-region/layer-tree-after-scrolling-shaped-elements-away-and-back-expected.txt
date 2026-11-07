@@ -1,0 +1,4 @@
+PASS: at the top, only the three shaped elements have region layers (3 region layers: 1 rounded, 1 with masked corners, 1 with a mask, 0 plain).
+PASS: at the bottom, only the three plain elements have region layers, with no mask or rounded corners (3 region layers: 0 rounded, 0 with masked corners, 0 with a mask, 3 plain).
+PASS: back at the top, the shaped elements have their shapes again (3 region layers: 1 rounded, 1 with masked corners, 1 with a mask, 0 plain).
+
