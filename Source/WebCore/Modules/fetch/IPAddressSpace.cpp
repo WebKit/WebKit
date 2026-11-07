@@ -222,6 +222,34 @@ static std::optional<std::array<uint8_t, 16>> parseIPv6Address(StringView host)
     return bytes;
 }
 
+static bool LEGACY_NODELETE isLoopbackOrLinkLocalIPv4Address(std::span<const uint8_t, 4> bytes)
+{
+    static constexpr AddressRange ranges[] = {
+        { { 0, 0, 0, 0 }, 32, IPAddressSpace::Loopback },
+        { { 127 }, 8, IPAddressSpace::Loopback },
+        { { 198, 18 }, 15, IPAddressSpace::Loopback },
+        { { 169, 254 }, 16, IPAddressSpace::Local },
+    };
+    return classifyAddress(bytes, ranges) != IPAddressSpace::Public;
+}
+
+static bool LEGACY_NODELETE isLoopbackOrLinkLocalIPv6Address(std::span<const uint8_t, 16> bytes)
+{
+    static constexpr AddressRange ipv4MappedRange { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF }, 96, IPAddressSpace::Public };
+    if (matchesPrefix(bytes, ipv4MappedRange))
+        return isLoopbackOrLinkLocalIPv4Address(bytes.subspan<12, 4>());
+
+    if (auto embedded = nat64EmbeddedIPv4Address(bytes))
+        return isLoopbackOrLinkLocalIPv4Address(std::span<const uint8_t, 4> { *embedded });
+
+    static constexpr AddressRange ranges[] = {
+        { { }, 128, IPAddressSpace::Loopback },
+        { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 128, IPAddressSpace::Loopback },
+        { { 0xFE, 0x80 }, 10, IPAddressSpace::Local },
+    };
+    return classifyAddress(bytes, ranges) != IPAddressSpace::Public;
+}
+
 static IPAddressSpace classifyHost(StringView host)
 {
     if (host.contains(':')) {
@@ -262,6 +290,37 @@ IPAddressSpace determineIPAddressSpace(const URL& url)
 IPAddressSpace determineIPAddressSpace(const Site& site)
 {
     return determineIPAddressSpaceFromHost(site.domain().string());
+}
+
+static bool isLoopbackOrLinkLocalHost(StringView host)
+{
+    if (host.startsWith('[') && host.endsWith(']'))
+        host = host.substring(1, host.length() - 2);
+
+    if (host.endsWith('.'))
+        host = host.left(host.length() - 1);
+
+    if (SecurityOrigin::isLocalhostAddress(host))
+        return true;
+
+    if (host.endsWithIgnoringASCIICase(".local"_s))
+        return true;
+
+    if (host.contains(':')) {
+        if (auto bytes = parseIPv6Address(host))
+            return isLoopbackOrLinkLocalIPv6Address(std::span<const uint8_t, 16> { *bytes });
+        return false;
+    }
+
+    if (auto bytes = parseIPv4Address(host))
+        return isLoopbackOrLinkLocalIPv4Address(std::span<const uint8_t, 4> { *bytes });
+
+    return false;
+}
+
+bool isLoopbackOrLinkLocalAddress(const URL& url)
+{
+    return isLoopbackOrLinkLocalHost(url.host());
 }
 
 IPAddressSpace classifyIPAddressSpace(const IPAddress& address)
