@@ -877,12 +877,12 @@ void RenderBox::constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& computedMin
     }
 }
 
-LayoutUnit RenderBox::constrainLogicalWidthByMinMax(LayoutUnit logicalWidth, LayoutUnit availableWidth, const RenderBlock& cb, AllowIntrinsic allowIntrinsic) const
+LayoutUnit RenderBox::constrainLogicalWidthByMinMax(LayoutUnit logicalWidth, LayoutUnit availableWidth, const RenderBoxModelObject& containingBlock, AllowIntrinsic allowIntrinsic) const
 {
     auto& styleToUse = style();
     auto computedMaxWidth = LayoutUnit::max();
     if (!styleToUse.logicalMaxWidth().isNone() && (allowIntrinsic == AllowIntrinsic::Yes || !styleToUse.logicalMaxWidth().isIntrinsic()))
-        computedMaxWidth = computeLogicalWidthUsing(styleToUse.logicalMaxWidth(), availableWidth, cb);
+        computedMaxWidth = computeLogicalWidthUsing(styleToUse.logicalMaxWidth(), availableWidth, containingBlock);
 
     if (allowIntrinsic == AllowIntrinsic::No && styleToUse.logicalMinWidth().isIntrinsic())
         return std::min(logicalWidth, computedMaxWidth);
@@ -913,7 +913,7 @@ LayoutUnit RenderBox::constrainLogicalWidthByMinMax(LayoutUnit logicalWidth, Lay
         logicalMinWidth = CSS::Keyword::MinContent { };
         minimumSizeType = MinimumSizeIsAutomaticContentBased::Yes;
     }
-    auto computedMinWidth = computeLogicalWidthUsing(logicalMinWidth, availableWidth, cb);
+    auto computedMinWidth = computeLogicalWidthUsing(logicalMinWidth, availableWidth, containingBlock);
 
     if (styleToUse.aspectRatio().hasRatio())
         constrainLogicalMinMaxSizesByAspectRatio(computedMinWidth, computedMaxWidth, logicalWidth, minimumSizeType, ConstrainDimension::Width);
@@ -2932,12 +2932,12 @@ NODELETE static inline bool isOrthogonal(const RenderBox& renderer, const Render
 // CSS Sizing 4 §6.1: in block layout, if the parent has no block-start/end border or
 // padding and is not an independent formatting context, treat the element's margin on
 // that side as zero for the purpose of calculating the stretch size.
-static LayoutUnit marginForStretchInParentBlockAxis(const RenderBox& box, const RenderBlock& containingBlock, LayoutUnit marginOnParentBlockStart, LayoutUnit marginOnParentBlockEnd)
+static LayoutUnit marginForStretchInParentBlockAxis(const RenderBox& box, const RenderBoxModelObject& containingBlock, LayoutUnit marginOnParentBlockStart, LayoutUnit marginOnParentBlockEnd)
 {
-    if (!box.isOutOfFlowPositioned() && is<RenderBlockFlow>(containingBlock) && !containingBlock.childrenInline() && !containingBlock.createsNewFormattingContext()) {
-        if (!containingBlock.borderBefore() && !containingBlock.paddingBefore())
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(containingBlock); blockFlow && !box.isOutOfFlowPositioned() && !blockFlow->childrenInline() && !blockFlow->createsNewFormattingContext()) {
+        if (!blockFlow->borderBefore() && !blockFlow->paddingBefore())
             marginOnParentBlockStart = 0_lu;
-        if (!containingBlock.borderAfter() && !containingBlock.paddingAfter())
+        if (!blockFlow->borderAfter() && !blockFlow->paddingAfter())
             marginOnParentBlockEnd = 0_lu;
     }
     return marginOnParentBlockStart + marginOnParentBlockEnd;
@@ -2950,7 +2950,7 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretc
     auto logicalWidthResult = fillAvailableMeasure(availableLogicalWidth, marginStart, marginEnd);
 
     ASSERT(containingBlock());
-    CheckedRef containingBlock = *this->containingBlock();
+    CheckedRef<const RenderBoxModelObject> containingBlock = *this->containingBlock();
 
     // When the child is orthogonal, its inline axis maps to the parent's block axis.
     // Adjust margins per CSS Sizing 4 §6.1.
@@ -2964,8 +2964,8 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretc
 
     // Floats resolve stretch against the containing block (CSS Sizing 4, 6.1), not the space remaining after other floats.
     auto isNonFloatingBlockThatAvoidsFloats = !isFloating() && avoidsFloats();
-    if (isNonFloatingBlockThatAvoidsFloats && containingBlock->containsFloats())
-        logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
+    if (CheckedPtr block = dynamicDowncast<RenderBlock>(containingBlock); block && isNonFloatingBlockThatAvoidsFloats && block->containsFloats())
+        logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, *block));
 
     return std::max(borderAndPadding, logicalWidthResult);
 }
@@ -3057,7 +3057,7 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(const Style::FlexBas
     return computeSizingKeywordLogicalWidthUsingGeneric(logicalWidth, availableLogicalWidth, borderAndPadding);
 }
 
-template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBoxModelObject& containingBlock) const
 {
     if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
         if (logicalWidth.isAuto())
@@ -3080,8 +3080,8 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
     LayoutUnit marginEnd;
     LayoutUnit logicalWidthResult = fillAvailableMeasure(availableLogicalWidth, marginStart, marginEnd);
 
-    if (shrinkToAvoidFloats() && containingBlock.containsFloats())
-        logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
+    if (CheckedPtr block = dynamicDowncast<RenderBlock>(containingBlock); block && shrinkToAvoidFloats() && block->containsFloats())
+        logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, *block));
 
     if constexpr (std::same_as<SizeType, Style::PreferredSize> || std::same_as<SizeType, Style::FlexBasis>) {
         // In calc-size(auto, size * 2), `auto` stands for the width the box would have taken.
@@ -3109,22 +3109,22 @@ template<typename SizeType> LayoutUnit RenderBox::computeCalcSizeOnAutoLogicalWi
     return resolveCalcSizeLogicalWidth(logicalWidth.calcSize(), std::max(0_lu, autoLogicalWidth - borderAndPadding), availableLogicalWidth) + borderAndPadding;
 }
 
-LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBoxModelObject& containingBlock) const
 {
     return computeLogicalWidthUsingGeneric(logicalWidth, availableLogicalWidth, containingBlock);
 }
 
-LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::MinimumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::MinimumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBoxModelObject& containingBlock) const
 {
     return computeLogicalWidthUsingGeneric(logicalWidth, availableLogicalWidth, containingBlock);
 }
 
-LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::MaximumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::MaximumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBoxModelObject& containingBlock) const
 {
     return computeLogicalWidthUsingGeneric(logicalWidth, availableLogicalWidth, containingBlock);
 }
 
-LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::FlexBasis& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::FlexBasis& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBoxModelObject& containingBlock) const
 {
     return computeLogicalWidthUsingGeneric(logicalWidth, availableLogicalWidth, containingBlock);
 }
