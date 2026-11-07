@@ -2643,7 +2643,6 @@ animations/remove-syncing-animation.html [ Pass Failure ]
 editing/execCommand/indent-input-in-image-crash.html [ Failure ]
 
 fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
-fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
 fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
 

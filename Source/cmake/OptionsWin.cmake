@@ -59,6 +59,9 @@ endif ()
 
 WEBKIT_OPTION_BEGIN()
 
+WEBKIT_OPTION_DEFINE(USE_SKIA_OPENTYPE_SVG "Whether to use the Skia built-in support for OpenType SVG fonts." PUBLIC ON)
+WEBKIT_OPTION_DEPEND(USE_SKIA_OPENTYPE_SVG USE_SKIA)
+
 # FIXME: Most of these options should not be public.
 # TODO: Audit the features list
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS PUBLIC ON)
@@ -185,5 +188,5 @@ set(bmalloc_LIBRARY_TYPE OBJECT)
 set(WTF_LIBRARY_TYPE OBJECT)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(PAL_LIBRARY_TYPE OBJECT)
-set(WebCore_LIBRARY_TYPE SHARED)
+set(WebCore_LIBRARY_TYPE OBJECT)
 set(WebCoreTestSupport_LIBRARY_TYPE OBJECT)

@@ -36,6 +36,7 @@
     "skia": {
       "description": "Build with skia graphics backend",
       "dependencies": [
+        "expat",
         {
           "name": "harfbuzz",
           "default-features": false,
