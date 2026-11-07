@@ -435,8 +435,9 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::UsedTrackSize
     currentGrid.setAutoRepeatTracks(autoRepeatRowsCount, autoRepeatColumnsCount);
     currentGrid.setAutoRepeatTruncatedByLimit(autoRepeatRowsTruncatedByLimit, autoRepeatColumnsTruncatedByLimit);
     // The used tracks hold the leading implicit tracks and the explicit grid, whose size RenderGrid reads from style and these auto-repeated track counts.
-    ASSERT(currentGrid.numTracks(Style::GridTrackSizingDirection::Rows) >= leadingImplicitRowsCount + Style::GridPositionsResolver::explicitGridCount(renderGrid.get(), Style::GridTrackSizingDirection::Rows));
-    ASSERT(currentGrid.numTracks(Style::GridTrackSizingDirection::Columns) >= leadingImplicitColumnsCount + Style::GridPositionsResolver::explicitGridCount(renderGrid.get(), Style::GridTrackSizingDirection::Columns));
+    // Grid keeps its column count in its first row, so with no rows (an empty grid with explicit columns) only RenderGrid::numTracks knows the columns.
+    ASSERT(renderGrid->numTracks(Style::GridTrackSizingDirection::Rows) >= leadingImplicitRowsCount + Style::GridPositionsResolver::explicitGridCount(renderGrid.get(), Style::GridTrackSizingDirection::Rows));
+    ASSERT(renderGrid->numTracks(Style::GridTrackSizingDirection::Columns) >= leadingImplicitColumnsCount + Style::GridPositionsResolver::explicitGridCount(renderGrid.get(), Style::GridTrackSizingDirection::Columns));
     currentGrid.setExplicitGridStart(leadingImplicitRowsCount, leadingImplicitColumnsCount);
 
     auto emptyTrackIndexes = [](const BitVector& collapsedTracks) -> std::unique_ptr<OrderedTrackIndexSet> {

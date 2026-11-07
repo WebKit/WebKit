@@ -1,0 +1,9 @@
+L
+L
+L
+L
+f1: fieldset h 44, abspos top 37 h 5
+f2: fieldset h 44, abspos top 27 h 5
+f3: fieldset h 44, abspos top 12 h 30
+f4: fieldset h 14, abspos top 7 h 5
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-containers">
+<meta name="assert" content="An editable grid container with no grid items is at least one line tall; one with a grid item is not.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+.grid {
+    display: grid;
+    font: 20px/30px Ahem;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<div style="width: 400px">
+    <div class="grid" contenteditable data-expected-height="30"></div>
+    <div class="grid" contenteditable style="padding: 4px; border: 2px solid" data-expected-height="42"></div>
+    <div class="grid" contenteditable style="grid-template-rows: 10px 10px" data-expected-height="30"></div>
+    <div class="grid" contenteditable data-expected-height="5"><div style="height: 5px"></div></div>
+    <div class="grid" data-expected-height="0"></div>
+</div>
+</body>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#explicit-grids">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#resolved-track-list">
+<meta name="assert" content="The resolved track lists of a grid container with no grid items are its explicit tracks, with auto-fit repetitions collapsed.">
+<style>
+.grid {
+    display: grid;
+    width: 300px;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="container"></div>
+<script>
+function resolved(style) {
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    grid.style.cssText = style;
+    container.appendChild(grid);
+    const computed = getComputedStyle(grid);
+    const result = [computed.gridTemplateColumns, computed.gridTemplateRows, grid.offsetHeight];
+    grid.remove();
+    return result;
+}
+
+test(() => {
+    assert_array_equals(resolved(""), ["none", "none", 0]);
+}, "No tracks");
+
+test(() => {
+    assert_array_equals(resolved("grid-auto-rows: 100px"), ["none", "none", 0]);
+}, "grid-auto-rows creates no track");
+
+test(() => {
+    assert_array_equals(resolved("grid-template-columns: 50px 1fr; grid-template-rows: 30px 2fr; gap: 10px"), ["50px 240px", "30px 0px", 40]);
+}, "Explicit tracks");
+
+test(() => {
+    assert_array_equals(resolved("grid-template-columns: repeat(auto-fit, 50px); column-gap: 10px"), ["0px 0px 0px 0px 0px", "none", 0]);
+}, "auto-fit repetitions collapse");
+
+test(() => {
+    assert_array_equals(resolved("grid-template-columns: repeat(auto-fill, 50px); column-gap: 10px"), ["50px 50px 50px 50px 50px", "none", 0]);
+}, "auto-fill repetitions do not collapse");
+
+test(() => {
+    assert_array_equals(resolved("grid-auto-columns: 100px; grid-template-columns: 20px"), ["20px", "none", 0]);
+}, "Explicit column with grid-auto-columns");
+
+test(() => {
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    grid.style.gridAutoRows = "100px";
+    container.appendChild(grid);
+    const computed = getComputedStyle(grid);
+    assert_equals(computed.gridTemplateRows, "none");
+    assert_equals(grid.offsetHeight, 0);
+
+    const item = document.createElement("div");
+    grid.appendChild(item);
+    assert_equals(computed.gridTemplateColumns, "300px");
+    assert_equals(computed.gridTemplateRows, "100px");
+    assert_equals(grid.offsetHeight, 100);
+
+    item.remove();
+    assert_equals(computed.gridTemplateColumns, "none");
+    assert_equals(computed.gridTemplateRows, "none");
+    assert_equals(grid.offsetHeight, 0);
+    grid.remove();
+}, "Adding and removing the only grid item");
+</script>
+</body>

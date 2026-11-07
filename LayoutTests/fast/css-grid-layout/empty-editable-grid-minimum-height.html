@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<script>if (window.testRunner) testRunner.dumpAsText();</script>
+<style>
+.grid { display: grid; font: 20px/30px monospace; }
+</style>
+<!-- The minimum height of a line wins over height and max-height; this matches the FIXME in GridLayout::layout(). -->
+<div class="grid" id="height" contenteditable style="height: 10px"></div>
+<div class="grid" id="maxHeight" contenteditable style="max-height: 10px"></div>
+<pre id="out"></pre>
+<script>
+for (const id of ["height", "maxHeight"])
+    document.getElementById("out").textContent += `${id}: ${document.getElementById(id).offsetHeight}\n`;
+</script>

@@ -57,7 +57,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasNonVisibleOverflow,
     GridItemIsReplacedElement,
     GridItemIsSubgrid,
-    GridIsEmpty,
     GridHasGridTemplateAreas,
     GridHasColumnAutoFlow,
     GridHasNonFixedGaps,
@@ -344,15 +343,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (!renderGridStyle->isOverflowVisible())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasNonVisibleOverflow, reasons, reasonCollectionMode);
 
-    // The rendered legend of a fieldset is not a grid item: it sits in the border and GFC does not lay it out.
-    CheckedPtr renderedLegend = renderGrid.renderedFieldsetLegend();
-
-    CheckedPtr firstGridItem = renderGrid.firstInFlowChild();
-    if (firstGridItem && firstGridItem.get() == renderedLegend.get())
-        firstGridItem = firstGridItem->nextInFlowSibling();
-    if (!firstGridItem)
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridIsEmpty, reasons, reasonCollectionMode);
-
     // GFC currently supports grid-auto-flow: row and row dense
     // Column auto-flow is not yet supported
     auto gridAutoFlow = renderGridStyle->gridAutoFlow();
@@ -421,6 +411,8 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (gridBlockSizeIsIndefinite && hasPercentageRowTrack())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight, reasons, reasonCollectionMode);
 
+    // The rendered legend of a fieldset is not a grid item: it sits in the border and GFC does not lay it out.
+    CheckedPtr renderedLegend = renderGrid.renderedFieldsetLegend();
     for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {
         if (&gridItem.get() == renderedLegend.get())
             continue;
@@ -684,9 +676,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemIsSubgrid:
         stream << "grid item is a subgrid";
-        break;
-    case GridAvoidanceReason::GridIsEmpty:
-        stream << "grid is empty";
         break;
     case GridAvoidanceReason::GridHasGridTemplateAreas:
         stream << "grid has grid-template-areas";
