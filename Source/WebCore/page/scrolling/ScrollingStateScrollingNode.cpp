@@ -304,8 +304,10 @@ void ScrollingStateScrollingNode::mergeOrAppendScrollRequest(RequestedScrollData
     // * all ScrollRequestTypes other than ImplicitDeltaUpdate cancel ongoing animated scrolls
     // * a CancelAnimatedScroll followed by a ImplicitDeltaUpdate will become a DeltaUpdate
     // * thus, if a CancelAnimatedScroll is present, it will be the only item
-    // * the only valid two-entry combinations have an animated update as the second entry
-    // The logic needs to ensure that scrollData.identifier is always present in the new state (we must not lose the most recent identifier).
+    // * the only valid two-entry combinations have an animated update as the second entry, after a PositionUpdate or DeltaUpdate
+    // * an ImplicitDeltaUpdate never removes a pending animated update
+    // The logic needs to ensure that scrollData.identifier is always present in the new state (we must not lose the most recent identifier),
+    // and that the most recent identifier is on the last entry.
 
     auto replaceExisting = [](ScrollRequestData& scrollRequests, RequestedScrollData&& newRequest) {
         scrollRequests.resize(1);
@@ -323,9 +325,7 @@ void ScrollingStateScrollingNode::mergeOrAppendScrollRequest(RequestedScrollData
         return false;
     };
 
-    auto accumulateDelta = [](ScrollRequestData& scrollRequests, RequestedScrollData&& newRequest) {
-        ASSERT(scrollRequests.size() == 1);
-        auto& request = scrollRequests[0];
+    auto accumulateDelta = [](RequestedScrollData& request, RequestedScrollData&& newRequest) {
         switch (request.requestType) {
         case ScrollRequestType::PositionUpdate:
             request.scrollPositionOrDelta = std::get<FloatPoint>(request.scrollPositionOrDelta) + std::get<FloatSize>(newRequest.scrollPositionOrDelta);
@@ -360,7 +360,6 @@ void ScrollingStateScrollingNode::mergeOrAppendScrollRequest(RequestedScrollData
         break;
 
     case ScrollRequestType::DeltaUpdate:
-    case ScrollRequestType::ImplicitDeltaUpdate:
         ASSERT_IMPLIES(m_requestedScrollData.size() > 1, isAnimatedUpdate(m_requestedScrollData[1].requestType));
         // The delta update removes any existing animation update.
         m_requestedScrollData.resize(1);
@@ -368,21 +367,48 @@ void ScrollingStateScrollingNode::mergeOrAppendScrollRequest(RequestedScrollData
         switch (m_requestedScrollData[0].requestType) {
         case ScrollRequestType::PositionUpdate:
         case ScrollRequestType::DeltaUpdate:
-            accumulateDelta(m_requestedScrollData, WTF::move(scrollRequest));
+            accumulateDelta(m_requestedScrollData[0], WTF::move(scrollRequest));
             break;
         case ScrollRequestType::ImplicitDeltaUpdate:
             m_requestedScrollData[0].requestType = ScrollRequestType::DeltaUpdate;
-            accumulateDelta(m_requestedScrollData, WTF::move(scrollRequest));
+            accumulateDelta(m_requestedScrollData[0], WTF::move(scrollRequest));
             break;
         case ScrollRequestType::AnimatedPositionUpdate:
         case ScrollRequestType::AnimatedDeltaUpdate:
+        case ScrollRequestType::CancelAnimatedScroll:
             m_requestedScrollData[0] = WTF::move(scrollRequest);
+            break;
+        }
+        break;
+
+    case ScrollRequestType::ImplicitDeltaUpdate:
+        ASSERT_IMPLIES(m_requestedScrollData.size() > 1, isAnimatedUpdate(m_requestedScrollData[1].requestType));
+        // An implicit delta update (e.g. a scroll anchoring adjustment) must not drop a pending animated scroll.
+        switch (m_requestedScrollData[0].requestType) {
+        case ScrollRequestType::PositionUpdate:
+        case ScrollRequestType::DeltaUpdate:
+        case ScrollRequestType::ImplicitDeltaUpdate:
+            accumulateDelta(m_requestedScrollData[0], WTF::move(scrollRequest));
+            break;
+        case ScrollRequestType::AnimatedPositionUpdate:
+        case ScrollRequestType::AnimatedDeltaUpdate:
+            ASSERT(m_requestedScrollData.size() == 1);
+            // The animated update stops any ongoing animated scroll anyway.
+            scrollRequest.requestType = ScrollRequestType::DeltaUpdate;
+            m_requestedScrollData.insert(0, WTF::move(scrollRequest));
             break;
         case ScrollRequestType::CancelAnimatedScroll:
             m_requestedScrollData[0] = WTF::move(scrollRequest);
-            if (m_requestedScrollData[0].requestType == ScrollRequestType::ImplicitDeltaUpdate)
-                m_requestedScrollData[0].requestType = ScrollRequestType::DeltaUpdate;
+            m_requestedScrollData[0].requestType = ScrollRequestType::DeltaUpdate;
             break;
+        }
+
+        // Responses are handled in order, and only the one for the most recent identifier is applied.
+        if (m_requestedScrollData.size() == 2) {
+            auto& firstIdentifier = m_requestedScrollData[0].identifier;
+            auto& lastIdentifier = m_requestedScrollData[1].identifier;
+            if (firstIdentifier && lastIdentifier && *lastIdentifier < *firstIdentifier)
+                std::swap(firstIdentifier, lastIdentifier);
         }
         break;
 
