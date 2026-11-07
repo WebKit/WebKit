@@ -1,0 +1,21 @@
+<!doctype html>
+<title>CSS Masking: mask with maskContentUnits="objectBoundingBox" on a foreignObject with non-zero 'x' and 'y' renders correctly</title>
+<link rel="help" href="https://drafts.fxtf.org/css-masking-1/#the-mask">
+<link rel="help" href="https://drafts.fxtf.org/css-masking-1/#element-attrdef-mask-maskcontentunits">
+<link rel="match" href="reference/green-100x100.html">
+<!--
+  The mask content is in objectBoundingBox units, so the white rect (width 0.5)
+  covers the left half (100px) of the foreignObject's 200x100 bounding box. The
+  bounding box is positioned at the foreignObject's x/y, so the mask must align
+  with the painted content there: the green 100x100 div must remain and its
+  100px red border must be masked out, leaving a 100x100 green square.
+-->
+<svg viewBox="25 50 200 100" width="200">
+  <rect x="25" y="50" width="100" height="100" fill="red"/>
+  <mask id="m" maskContentUnits="objectBoundingBox">
+    <rect width="0.5" height="1" fill="white"/>
+  </mask>
+  <foreignObject x="25" y="50" width="200" height="100" mask="url(#m)">
+    <div style="width: 100px; height: 100px; background-color: green; border-right: 100px solid red"></div>
+  </foreignObject>
+</svg>
