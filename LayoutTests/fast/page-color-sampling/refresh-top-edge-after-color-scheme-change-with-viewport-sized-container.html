@@ -1,0 +1,105 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=false pageTopColorSamplingEnabled=false useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+    color-scheme: light;
+}
+
+:root.dark {
+    color-scheme: dark;
+}
+
+body, html {
+    font-family: system-ui;
+    margin: 0;
+}
+
+.shell {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgb(255, 99, 71);
+}
+
+:root.dark .shell {
+    background-color: rgb(0, 128, 0);
+}
+
+:root.dark .shell.translucent-overlay {
+    background-color: rgba(0, 0, 255, 0.5);
+}
+
+.click-target {
+    position: absolute;
+    top: 150px;
+    left: 100px;
+    width: 100px;
+    height: 200px;
+    z-index: 2000;
+}
+
+.tall {
+    height: 2000px;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+// A fixed container that is as large as the viewport, such as the shell of a web app, normally keeps the color it was
+// sampled with. This checks that its color is sampled again after a color scheme change.
+jsTestIsAsync = true;
+
+async function interactWithPage()
+{
+    // On iOS, a tap only counts as user interaction if something on the page handles the click.
+    const target = document.querySelector(".click-target");
+    const clicked = new Promise(resolve => target.addEventListener("click", resolve, { once: true }));
+    await UIHelper.activateElement(target);
+    await clicked;
+}
+
+async function topEdgeColorAfterUpdate()
+{
+    await UIHelper.ensurePresentationUpdate();
+    return (await UIHelper.fixedContainerEdgeColors()).top;
+}
+
+addEventListener("load", async () => {
+    await UIHelper.setObscuredInsets(50, 0, 0, 0);
+    const root = document.documentElement;
+    const shell = document.querySelector(".shell");
+
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    await interactWithPage();
+
+    root.classList.add("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(0, 128, 0)");
+
+    root.classList.remove("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    // A translucent viewport-sized overlay still keeps the previous color instead of blending its own.
+    shell.classList.add("translucent-overlay");
+    root.classList.add("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div class="shell"></div>
+<div class="tall"></div>
+<div class="click-target"></div>
+</body>
+</html>

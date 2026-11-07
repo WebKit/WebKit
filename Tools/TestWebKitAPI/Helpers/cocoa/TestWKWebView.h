@@ -252,6 +252,7 @@ NS_SWIFT_UI_ACTOR
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script inFrame:(nullable WKFrameInfo *)frame NS_SWIFT_UNAVAILABLE("Spins the run loop");
 - (nullable WKContentView *)wkContentView;
 - (void)setZoomScaleSimulatingUserTriggeredZoom:(CGFloat)zoomScale;
+- (void)sendClickAtPoint:(CGPoint)pointInView;
 @end
 #endif
 

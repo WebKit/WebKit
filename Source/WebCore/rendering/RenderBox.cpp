@@ -525,6 +525,14 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
     if (layer() && oldStyle && oldStyle->colorScheme() != newStyle.colorScheme()) {
         if (CheckedPtr scrollableArea = layer()->scrollableArea())
             scrollableArea->invalidateScrollbars();
+
+        // A page that switches between its own light and dark themes typically sets color-scheme on the root or the body,
+        // which changes the color-scheme of the fixed container that the top of the page was sampled from as well.
+        if (layer()->isViewportConstrained()) {
+            RefPtr element = this->element();
+            if (RefPtr page = document().page(); page && element)
+                page->refreshTopFixedContainerEdgeAfterColorSchemeChange(*element);
+        }
     }
 #endif
 

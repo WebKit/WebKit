@@ -1,0 +1,119 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true TopContentInsetBackgroundCanChangeAfterScrolling=false pageTopColorSamplingEnabled=false useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+    color-scheme: light;
+}
+
+:root.dark {
+    color-scheme: dark;
+}
+
+body, html {
+    font-family: system-ui;
+    margin: 0;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    z-index: 100;
+    background-color: rgb(255, 99, 71);
+}
+
+:root.dark header {
+    background-color: rgb(0, 128, 0);
+}
+
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    z-index: 1000;
+    background-color: rgb(0, 0, 255);
+    display: none;
+}
+
+.menu.visible {
+    display: block;
+}
+
+.click-target {
+    position: absolute;
+    top: 150px;
+    left: 100px;
+    width: 100px;
+    height: 200px;
+    z-index: 2000;
+}
+
+.tall {
+    height: 2000px;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+// After a color scheme change, the top edge is only updated from the container that it was sampled from before. A
+// different fixed container that covers the top at that moment, such as a menu, doesn't change it, and the header is
+// picked up again when it is found, even if that takes a while.
+jsTestIsAsync = true;
+
+// Longer than the time during which the top edge may be refreshed once the header has been found.
+const refreshWindow = 1200;
+
+async function interactWithPage()
+{
+    // On iOS, a tap only counts as user interaction if something on the page handles the click.
+    const target = document.querySelector(".click-target");
+    const clicked = new Promise(resolve => target.addEventListener("click", resolve, { once: true }));
+    await UIHelper.activateElement(target);
+    await clicked;
+}
+
+async function topEdgeColorAfterUpdate()
+{
+    await UIHelper.ensurePresentationUpdate();
+    return (await UIHelper.fixedContainerEdgeColors()).top;
+}
+
+addEventListener("load", async () => {
+    await UIHelper.setObscuredInsets(50, 0, 0, 0);
+    const root = document.documentElement;
+    const menu = document.querySelector(".menu");
+
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    await interactWithPage();
+
+    // The menu covers the header when the color scheme changes. Its own color must not be picked up.
+    menu.classList.add("visible");
+    root.classList.add("dark");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(255, 99, 71)");
+
+    // The header is found again once the menu is gone, even after longer than it takes a color to settle.
+    await UIHelper.delayFor(refreshWindow);
+    menu.classList.remove("visible");
+    topColor = await topEdgeColorAfterUpdate();
+    shouldBeEqualToString("topColor", "rgb(0, 128, 0)");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<header></header>
+<div class="menu"></div>
+<div class="tall"></div>
+<div class="click-target"></div>
+</body>
+</html>
