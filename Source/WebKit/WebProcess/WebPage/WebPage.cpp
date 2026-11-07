@@ -2631,7 +2631,7 @@ bool WebPage::suspendForProcessSwap()
     if (!currentHistoryItem)
         return false;
 
-    if (!BackForwardCache::singleton().addIfCacheable(currentHistoryItem->frameItemID(), *page))
+    if (!BackForwardCache::singleton().addIfCacheable(currentHistoryItem->frameItemID(), *page, LoadWillContinueInAnotherProcess::Yes))
         return false;
 
     // Back/forward cache does not break the opener link for the main frame (only does so for the subframes) because the
@@ -9546,7 +9546,7 @@ void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, Co
     unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
     flushDeferredDidReceiveMouseEvent();
 
-    if (!BackForwardCache::singleton().addIfCacheable(identifier, *page)) {
+    if (!BackForwardCache::singleton().addIfCacheable(identifier, *page, LoadWillContinueInAnotherProcess::Yes)) {
         WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "suspendWithFrameItem: addIfCacheable failed");
         return completionHandler(false);
     }
