@@ -55,6 +55,7 @@ protected:
     std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList() final;
 
     void releaseGraphicsContext() final;
+    bool hasGraphicsContext() const final;
 
     mutable std::unique_ptr<WebCore::BifurcatedGraphicsContext> m_context;
     const std::unique_ptr<DynamicContentScalingImageBufferBackend> m_dynamicContentScalingBackend;

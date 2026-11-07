@@ -192,6 +192,11 @@ void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier 
     MESSAGE_CHECK(imageBuffer->hasOneRef(), "ImageBuffer in use");
     // Avoid leaking cross-RemoteRenderingBackend state through context by releasing the context.
     imageBuffer->releaseGraphicsContext();
+    // A backend that cannot release its context still holds that state, which the adopting
+    // RemoteRenderingBackend would then touch from its own work queue thread.
+    // FIXME: DisplayList buffers are exempt because moving them is supported, but their recorded
+    // items and state can still reference ImageBuffers owned by this RemoteRenderingBackend.
+    MESSAGE_CHECK(!imageBuffer->hasGraphicsContext() || imageBuffer->renderingMode() == RenderingMode::DisplayList, "ImageBuffer cannot release its GraphicsContext");
     bool success = m_sharedResourceCache->addSerializedImageBuffer(serializedIdentifier, WTF::move(imageBuffer));
     MESSAGE_CHECK(success, "Duplicate SerializedImageBuffer");
 }
