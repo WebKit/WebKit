@@ -3924,7 +3924,7 @@ WebCore::DictionaryPopupInfo UnifiedPDFPlugin::dictionaryPopupInfoForSelection(P
         return selection.attributedString;
     }();
 
-    dictionaryPopupInfo.origin = rectForSelectionInRootView(selection).location();
+    dictionaryPopupInfo.origin = convertFromRootViewToMainFrameView(rectForSelectionInRootView(selection).location());
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(nsAttributedString.get());
 #else
@@ -3960,15 +3960,7 @@ bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
     if (!page)
         return false;
 
-    auto dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection, TextIndicatorPresentationTransition::Bounce);
-
-    // The text indicator is already relative to the main frame's view. The origin is converted here,
-    // not in dictionaryPopupInfoForSelection(), because the force touch path converts it separately
-    // with RemoteDictionaryPopupInfoToRootView.
-    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=326008): Produce the origin in main frame view coordinates and remove RemoteDictionaryPopupInfoToRootView.
-    dictionaryPopupInfo.origin = convertFromRootViewToMainFrameView(dictionaryPopupInfo.origin);
-
-    page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForSelection(selection, TextIndicatorPresentationTransition::Bounce)));
     return true;
 }
 
