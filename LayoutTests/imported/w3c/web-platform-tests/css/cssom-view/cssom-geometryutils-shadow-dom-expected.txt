@@ -1,0 +1,4 @@
+
+FAIL GeometryUtils follows shadow tree ancestry element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+FAIL GeometryUtils follows flat-tree slot assignment element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+

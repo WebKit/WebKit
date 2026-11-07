@@ -1,0 +1,4 @@
+
+
+FAIL GeometryUtils does not expose geometry across an A-B-A frame path assert_throws_dom: getBoxQuads result function "() => inner.getBoxQuads({relativeTo: outer})" threw object "TypeError: inner.getBoxQuads is not a function. (In 'inner.getBoxQuads({relativeTo: outer})', 'inner.getBoxQuads' is undefined)" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+

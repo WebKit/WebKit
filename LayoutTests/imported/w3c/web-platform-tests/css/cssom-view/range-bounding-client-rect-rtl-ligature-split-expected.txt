@@ -1,0 +1,4 @@
+لالاب
+
+PASS Caret positions in a RTL run that begins inside a ligature
+
