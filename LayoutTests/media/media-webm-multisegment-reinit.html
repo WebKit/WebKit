@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebM multi-segment re-initialization keeps playing the second segment</title>
+<script src="video-test.js"></script>
+<script>
+    // content/test-vp8-multisegment.webm is two complete WebM streams (two EBML headers) concatenated,
+    // re-using the same track IDs, with the second stream's cluster timecodes and duration shifted so it
+    // continues the first (segment 1 ends ~6.045s; the file runs ~12.09s). The second stream re-fires the
+    // initialization segment, driving MediaPlayerPrivateWebM::didParseInitializationData() a second time.
+    // Before the fix that re-init tore down the track buffers and renderer tracks, discarding the first
+    // segment's samples and mis-routing the second's, so playback never advanced across the boundary (no
+    // "error" fires, so waiting on a playback event would hang). Confirm playback advances past the
+    // re-initialization boundary, and bound the wait so a broken build fails fast instead of timing out.
+    async function waitForCurrentTimeToExceed(target, timeoutMs)
+    {
+        const start = performance.now();
+        while (performance.now() - start < timeoutMs) {
+            if (video.currentTime > target)
+                return true;
+            await sleepFor(200);
+        }
+        return false;
+    }
+
+    async function runTest()
+    {
+        findMediaElement();
+        waitFor(video, 'error').then(failTest);
+
+        run('video.preload = "auto"');
+        run('video.src = "content/test-vp8-multisegment.webm"');
+        await waitFor(video, 'loadedmetadata');
+        testExpected('video.videoTracks.length', 1);
+
+        run('video.play()');
+
+        // Segment 1 ends ~6.045s; reaching past it means the second segment is being played.
+        window.playbackAdvancedPastReinit = await waitForCurrentTimeToExceed(6.2, 15000);
+
+        testExpected('playbackAdvancedPastReinit', true);
+        testExpected('video.error', null);
+        endTest();
+    }
+
+    window.addEventListener('load', event => {
+        runTest().catch(failTest);
+    });
+</script>
+</head>
+<body>
+<video id="video"></video>
+</body>
+</html>
