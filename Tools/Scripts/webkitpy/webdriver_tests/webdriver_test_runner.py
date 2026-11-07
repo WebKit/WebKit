@@ -169,7 +169,7 @@ class WebDriverTestRunner(object):
         retval = 0
 
         if not results:
-            _log.info('All tests run as expected')
+            _log.info('All tests ran as expected')
             return retval
 
         _log.info('%d tests ran as expected, %d didn\'t\n' % (expected_count, failures_count + timeout_count + passed_count))
@@ -230,6 +230,8 @@ class WebDriverTestRunner(object):
         for url in options.report_urls:
             _log.info('Uploading to %s ...' % url)
             if not upload.upload(url, log_line_func=_log.info):
+                # The bots look for this message, keep it in sync with FAILED_RESULTS_UPLOAD_MESSAGE in Tools/CISupport/Shared/steps.py.
+                _log.error('Failed to upload test results to %s' % url)
                 succeeded = False
         return succeeded
 
