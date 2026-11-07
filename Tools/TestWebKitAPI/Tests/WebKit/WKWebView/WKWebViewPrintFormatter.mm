@@ -355,4 +355,68 @@ TEST(WKWebView, PrintFormatterLaunchesPrintProcess)
     EXPECT_NE(printProcess, [webView mainFrame].childFrames.firstObject.info._processIdentifier);
 }
 
+#if HAVE(PDFKIT)
+TEST(WKWebView, PrintFormatterDrawsInPrintProcess)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingPrintProcessEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 400, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    CGRect pageRect = CGRectMake(0, 0, 612, 792);
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+    [printPageRenderer setPaperRect:pageRect];
+    [printPageRenderer setPrintableRect:pageRect];
+    NSInteger numberOfPages = [printPageRenderer numberOfPages];
+    EXPECT_GE(numberOfPages, 1);
+
+    __block pid_t printProcess = 0;
+    __block bool done = false;
+    [webView _printProcessIdentifierForTesting:^(pid_t identifier) {
+        printProcess = identifier;
+        done = true;
+    }];
+    Util::run(&done);
+    EXPECT_NE(printProcess, 0);
+
+    auto drawingCounts = [&] {
+        __block std::pair<NSUInteger, NSUInteger> result;
+        __block bool gotCounts = false;
+        [webView _printProcessDrawingCountsForTesting:^(NSUInteger drawnInPrintProcess, NSUInteger drawnAfterPrintProcessFailed) {
+            result = { drawnInPrintProcess, drawnAfterPrintProcessFailed };
+            gotCounts = true;
+        }];
+        Util::run(&gotCounts);
+        return result;
+    };
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = drawingCounts();
+
+    RetainPtr data = adoptNS([[NSMutableData alloc] init]);
+    UIGraphicsBeginPDFContextToData(data.get(), pageRect, nil);
+    for (NSInteger i = 0; i < numberOfPages; ++i) {
+        UIGraphicsBeginPDFPage();
+        [printPageRenderer drawPageAtIndex:i inRect:UIGraphicsGetPDFContextBounds()];
+    }
+    UIGraphicsEndPDFContext();
+
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    RetainPtr text = [[document pageAtIndex:0] text];
+    EXPECT_TRUE([text containsString:@"Mainframe"]);
+    EXPECT_TRUE([text containsString:@"Subframe"]);
+
+    auto counts = drawingCounts();
+    EXPECT_GT(counts.first, drawnInPrintProcess);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+}
+#endif // HAVE(PDFKIT)
+
 #endif

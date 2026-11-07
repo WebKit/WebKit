@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSnapshot.h"
 
+#include "DisplayListData.h"
 #include "WebImage.h"
 #include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
@@ -264,6 +265,21 @@ std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& s
 }
 
 #endif
+
+std::optional<DisplayListData> RemoteSnapshot::createDisplayListData(FrameIdentifier rootFrameIdentifier) const
+{
+    ASSERT(isComplete());
+    RefPtr<const DisplayList::DisplayList> displayList;
+    {
+        Locker locker(m_lock);
+        auto iterator = m_frames.find(rootFrameIdentifier);
+        if (iterator != m_frames.end() && iterator->value.displayList)
+            displayList = iterator->value.displayList->displayList();
+    }
+    if (!displayList)
+        return std::nullopt;
+    return DisplayListData::create(*displayList);
+}
 
 std::optional<ShareableBitmap::Handle> RemoteSnapshot::drawToBitmap(const FloatSize& size, FrameIdentifier rootFrameIdentifier)
 {

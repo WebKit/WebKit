@@ -395,6 +395,7 @@ public:
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     PrintProcessUseCounter::Token ensurePrintProcess(WebProcessProxy::LockdownMode);
     void whenPrintProcessReady(WebProcessProxy::LockdownMode, CompletionHandler<void(WebProcessProxy*)>&&);
+    std::optional<WebCore::ProcessIdentifier> readyPrintProcessIdentifier(WebProcessProxy::LockdownMode);
     void setPrintProcessIdleTimeoutForTesting(Seconds timeout) { m_printProcessIdleTimeout = timeout; }
 #endif
 

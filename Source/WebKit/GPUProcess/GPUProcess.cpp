@@ -42,6 +42,7 @@
 #include "Logging.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteSnapshot.h"
+#include "RemoteSnapshotPDFDrawingTask.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
@@ -754,20 +755,14 @@ void GPUProcess::takeSnapshotWhenComplete(RemoteSnapshotIdentifier identifier, F
 
 #if PLATFORM(COCOA)
 
-void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier, FrameIdentifier rootFrameIdentifier, std::optional<ProcessIdentifier> printProcessIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
-    takeSnapshotWhenComplete(identifier, rootFrameIdentifier, [rootFrameIdentifier, completionHandler = WTF::move(completionHandler)](RefPtr<RemoteSnapshot>&& snapshot) mutable {
+    takeSnapshotWhenComplete(identifier, rootFrameIdentifier, [rootFrameIdentifier, printProcessIdentifier, completionHandler = WTF::move(completionHandler)](RefPtr<RemoteSnapshot>&& snapshot) mutable {
         if (!snapshot) {
             completionHandler({ });
             return;
         }
-        auto result = snapshot->drawToPDF(snapshot->size(), rootFrameIdentifier);
-        if (!result) {
-            ASSERT_NOT_REACHED();
-            completionHandler({ });
-            return;
-        }
-        completionHandler(WTF::move(*result));
+        RemoteSnapshotPDFDrawingTask::create(snapshot.releaseNonNull(), rootFrameIdentifier, WTF::move(completionHandler))->start(printProcessIdentifier);
     });
 }
 
@@ -1227,6 +1222,13 @@ void GPUProcess::runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuf
 {
     completionHandler(testDisplayListData(webFonts));
 }
+
+#if PLATFORM(COCOA)
+void GPUProcess::printProcessDrawingCountsForTesting(CompletionHandler<void(uint64_t, uint64_t)>&& completionHandler)
+{
+    completionHandler(RemoteSnapshotPDFDrawingTask::drawnInPrintProcessCountForTesting(), RemoteSnapshotPDFDrawingTask::drawnAfterPrintProcessFailedCountForTesting());
+}
+#endif
 
 void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier, IPC::MessageName invalidMessageName)
 {

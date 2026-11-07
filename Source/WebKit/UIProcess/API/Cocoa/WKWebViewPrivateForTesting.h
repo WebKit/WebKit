@@ -231,6 +231,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 // Waits for the print process with this web view's Lockdown Mode to be ready. Reports 0 if there is no such process.
 - (void)_printProcessIdentifierForTesting:(void(^)(pid_t))completionHandler;
 - (void)_setPrintProcessIdleTimeoutForTesting:(NSTimeInterval)timeout;
+- (void)_printProcessDrawingCountsForTesting:(void(^)(NSUInteger drawnInPrintProcess, NSUInteger drawnAfterPrintProcessFailed))completionHandler;
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 

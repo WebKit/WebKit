@@ -37,6 +37,9 @@ messages -> GPUProcessConnection WantsDispatchMessage {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     ResetAudioMediaStreamTrackRendererInternalUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 #endif
+#if PLATFORM(COCOA)
+    DrawDisplayListToPDF(WebKit::DisplayListData displayList, WebCore::FloatSize size) -> (RefPtr<WebCore::SharedBuffer> pdf)
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

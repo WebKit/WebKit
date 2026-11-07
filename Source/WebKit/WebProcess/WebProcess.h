@@ -519,6 +519,7 @@ public:
     bool requiresConsistentPrivacyQuirkForDomain(const URL&) const;
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled.value(); }
+    bool isPrintProcess() const { return m_isPrintProcess; }
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
     bool videoAutoplayPreviewsEnabled() const { return m_videoAutoplayPreviewsEnabled; }
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)

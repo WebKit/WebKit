@@ -170,6 +170,9 @@ public:
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
     void runDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>>&& webFonts, CompletionHandler<void(std::optional<Vector<String>>&&)>&&);
+#if PLATFORM(COCOA)
+    void printProcessDrawingCountsForTesting(CompletionHandler<void(uint64_t drawnInPrintProcess, uint64_t drawnAfterPrintProcessFailed)>&&);
+#endif
 
 #if USE(EXTENSIONKIT)
     void resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData);
@@ -297,7 +300,7 @@ private:
     void updateProcessName();
 #endif
 #if PLATFORM(COCOA)
-    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, std::optional<WebCore::ProcessIdentifier> printProcessIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
     void sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, WebCore::FrameIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #if HAVE(IOSURFACE)

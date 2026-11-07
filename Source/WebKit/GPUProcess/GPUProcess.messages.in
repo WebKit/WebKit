@@ -70,7 +70,7 @@ messages -> GPUProcess : AuxiliaryProcess {
 #endif
 
 #if PLATFORM(COCOA)
-    SinkCompletedSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result) ReplyCanDispatchOutOfOrder
+    SinkCompletedSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier, std::optional<WebCore::ProcessIdentifier> printProcessIdentifier) -> (RefPtr<WebCore::SharedBuffer> result) ReplyCanDispatchOutOfOrder
 #endif
     SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder
 #if HAVE(IOSURFACE)
@@ -103,6 +103,9 @@ messages -> GPUProcess : AuxiliaryProcess {
 
     WebProcessConnectionCountForTesting() -> (uint64_t count)
     RunDisplayListDataTestsForTesting(Vector<Ref<WebCore::SharedBuffer>> webFonts) -> (std::optional<Vector<String>> failures)
+#if PLATFORM(COCOA)
+    PrintProcessDrawingCountsForTesting() -> (uint64_t drawnInPrintProcess, uint64_t drawnAfterPrintProcessFailed)
+#endif
 
 #if USE(EXTENSIONKIT)
     ResolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)

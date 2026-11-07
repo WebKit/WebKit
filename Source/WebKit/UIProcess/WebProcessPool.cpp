@@ -1525,6 +1525,15 @@ void WebProcessPool::whenPrintProcessReady(WebProcessProxy::LockdownMode lockdow
     state.readyCallbacks.append(WTF::move(callback));
 }
 
+std::optional<WebCore::ProcessIdentifier> WebProcessPool::readyPrintProcessIdentifier(WebProcessProxy::LockdownMode lockdownMode)
+{
+    auto& state = printProcessState(lockdownMode);
+    RefPtr process = state.process;
+    if (!process || !state.isReady)
+        return std::nullopt;
+    return process->coreProcessIdentifier();
+}
+
 void WebProcessPool::shutDownPrintProcess(WebProcessProxy::LockdownMode lockdownMode)
 {
     if (RefPtr process = printProcessState(lockdownMode).process) {

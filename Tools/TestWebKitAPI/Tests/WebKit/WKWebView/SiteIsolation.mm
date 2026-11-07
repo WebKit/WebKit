@@ -21478,15 +21478,45 @@ static void computePagesForPrinting(TestWKWebView *webView)
     Util::run(&done);
 }
 
-static void createPDF(WKWebView *webView)
+static RetainPtr<NSData> createPDF(WKWebView *webView)
 {
+    __block RetainPtr<NSData> result;
     __block bool done = false;
     [webView createPDFWithConfiguration:nil completionHandler:^(NSData *data, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_NOT_NULL(data);
+        result = data;
         done = true;
     }];
     Util::run(&done);
+    return result;
+}
+
+static std::pair<NSUInteger, NSUInteger> printProcessDrawingCounts(WKWebView *webView)
+{
+    __block std::pair<NSUInteger, NSUInteger> result;
+    __block bool done = false;
+    [webView _printProcessDrawingCountsForTesting:^(NSUInteger drawnInPrintProcess, NSUInteger drawnAfterPrintProcessFailed) {
+        result = { drawnInPrintProcess, drawnAfterPrintProcessFailed };
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
+static RetainPtr<NSData> drawPagesToPDFSynchronously(TestWKWebView *webView)
+{
+    computePagesForPrinting(webView);
+    return [webView _drawPagesToPDFSynchronouslyForTesting:[[webView mainFrame].info _handle] pageCount:1];
+}
+
+static void expectPDFText(NSData *data, NSArray<NSString *> *strings)
+{
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr text = [[document pageAtIndex:0] text];
+    for (NSString *string in strings)
+        EXPECT_TRUE([text containsString:string]);
 }
 
 TEST(SiteIsolation, PrintProcessIsDedicated)
@@ -21658,6 +21688,127 @@ TEST(SiteIsolation, PrintProcessIsRelaunchedAfterCrash)
     auto newPrintProcess = printProcessIdentifier(webView.get());
     EXPECT_NE(newPrintProcess, 0);
     EXPECT_NE(newPrintProcess, printProcess);
+}
+
+TEST(SiteIsolation, PrintProcessDrawsCreatedPDF)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    RetainPtr data = createPDF(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess + 1);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+}
+
+TEST(SiteIsolation, PrintProcessDrawsLikeGPUProcess)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0;print-color-adjust:exact'><div style='width:100px;height:50px;background:rgb(255,0,0)'></div><div style='width:200px;height:50px;background:linear-gradient(to right, blue, yellow)'></div><div style='width:100px;height:50px;border:5px dashed rgb(0,0,255);border-radius:20px'></div>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0;print-color-adjust:exact'><div style='width:100px;height:50px;background:rgb(0,128,0);box-shadow:10px 10px 5px rgb(128,0,128)'></div>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto print = [&](bool enablePrintProcess) {
+        auto [webView, navigationDelegate] = loadPageForPrintProcess(server, enablePrintProcess);
+        if (enablePrintProcess) {
+            computePagesForPrinting(webView.get());
+            EXPECT_NE(printProcessIdentifier(webView.get()), 0);
+        }
+        auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+        RetainPtr data = drawPagesToPDFSynchronously(webView.get());
+        auto counts = printProcessDrawingCounts(webView.get());
+        EXPECT_EQ(counts.first, drawnInPrintProcess + (enablePrintProcess ? 1 : 0));
+        EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+        return data;
+    };
+
+    RetainPtr gpuProcessData = print(false);
+    RetainPtr printProcessData = print(true);
+    ASSERT_NOT_NULL(gpuProcessData.get());
+    ASSERT_NOT_NULL(printProcessData.get());
+    expectPDFText(printProcessData.get(), @[ @"Mainframe", @"Subframe" ]);
+
+    auto isCloseTo = [](std::array<uint8_t, 3> color, std::array<uint8_t, 3> expected) {
+        for (size_t i = 0; i < 3; ++i) {
+            if (std::abs(color[i] - expected[i]) > 2)
+                return false;
+        }
+        return true;
+    };
+    unsigned nonWhitePoints = 0;
+    bool sawMainFrameRed = false;
+    bool sawSubframeGreen = false;
+    for (CGFloat y = 5; y < 600; y += 25) {
+        for (CGFloat x = 5; x < 400; x += 25) {
+            auto point = CGPointMake(x, y);
+            auto color = pdfPageColorAtPoint(gpuProcessData.get(), 1, point);
+            ASSERT_TRUE(color);
+            EXPECT_TRUE(pdfPageHasColorAtPoint(printProcessData.get(), 1, point, *color)) << "at (" << x << ", " << y << ")";
+            if (!isCloseTo(*color, { 255, 255, 255 }))
+                ++nonWhitePoints;
+            sawMainFrameRed |= isCloseTo(*color, { 255, 0, 0 });
+            sawSubframeGreen |= isCloseTo(*color, { 0, 128, 0 });
+        }
+    }
+    EXPECT_GE(nonWhitePoints, 20u);
+    EXPECT_TRUE(sawMainFrameRed);
+    EXPECT_TRUE(sawSubframeGreen);
+}
+
+TEST(SiteIsolation, PrintProcessDrawsDuringDOMPrint)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+    RetainPtr uiDelegate = adoptNS([DeferredPrintUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
+    RetainPtr<_WKFrameHandle> frame = [uiDelegate waitForPrintFrame];
+
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:frame.get() completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+    EXPECT_NE(printProcessIdentifier(webView.get()), 0);
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:frame.get() pageCount:1];
+    [uiDelegate finishPrinting];
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess + 1);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed);
+}
+
+TEST(SiteIsolation, GPUProcessDrawsWhatPrintProcessCannot)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body>Mainframe<iframe src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body>Subframe<canvas id='canvas' width='50' height='50'></canvas><script>document.getElementById('canvas').getContext('2d').fillRect(0, 0, 50, 50)</script></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = loadPageForPrintProcess(server);
+
+    auto [drawnInPrintProcess, drawnAfterPrintProcessFailed] = printProcessDrawingCounts(webView.get());
+    RetainPtr data = createPDF(webView.get());
+    ASSERT_NOT_NULL(data.get());
+    expectPDFText(data.get(), @[ @"Mainframe", @"Subframe" ]);
+
+    auto counts = printProcessDrawingCounts(webView.get());
+    EXPECT_EQ(counts.first, drawnInPrintProcess);
+    EXPECT_EQ(counts.second, drawnAfterPrintProcessFailed + 1);
 }
 
 #endif // HAVE(PDFKIT)

@@ -1111,6 +1111,14 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     protect(_page->configuration().processPool())->setPrintProcessIdleTimeoutForTesting(Seconds { timeout });
 }
 
+- (void)_printProcessDrawingCountsForTesting:(void(^)(NSUInteger, NSUInteger))completionHandler
+{
+    Ref gpuProcess = WebKit::GPUProcessProxy::getOrCreate();
+    gpuProcess->printProcessDrawingCountsForTesting([completionHandler = makeBlockPtr(completionHandler)](uint64_t drawnInPrintProcess, uint64_t drawnAfterPrintProcessFailed) {
+        completionHandler(drawnInPrintProcess, drawnAfterPrintProcessFailed);
+    });
+}
+
 - (void)_endPrintingForTesting:(void(^)(void))completionHandler
 {
     _page->endPrinting([completionHandler = makeBlockPtr(completionHandler)] {
