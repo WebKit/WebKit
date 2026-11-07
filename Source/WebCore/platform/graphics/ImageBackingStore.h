@@ -167,15 +167,14 @@ public:
         if (!a)
             return;
 
-        auto pixel = asSRGBA(PackedColor::ARGB { destination }).resolved();
+        auto destinationColor = asSRGBA(PackedColor::ARGB { destination }).resolved();
 
-        if (a >= 255 || !pixel.alpha) {
+        if (a >= 255 || !destinationColor.alpha) {
             setPixel(destination, r, g, b, a);
             return;
         }
 
-        if (!m_premultiplyAlpha)
-            pixel = premultipliedFlooring(pixel).resolved();
+        auto pixel = (m_premultiplyAlpha ? Premultiplied { destinationColor } : premultipliedFlooring(destinationColor)).resolved();
 
         uint8_t d = 255 - a;
 
@@ -184,12 +183,9 @@ public:
         b = fastDivideBy255(b * a + pixel.blue * d);
         a += fastDivideBy255(d * pixel.alpha);
 
-        auto result = SRGBA<uint8_t> { r, g, b, a };
+        auto result = Premultiplied { SRGBA<uint8_t> { r, g, b, a }.resolved() };
 
-        if (!m_premultiplyAlpha)
-            result = unpremultiplied(result);
-
-        destination = PackedColor::ARGB { result }.value;
+        destination = m_premultiplyAlpha ? PackedColor::ARGB { result }.value : PackedColor::ARGB { unpremultiplied(result) }.value;
     }
 
     static bool isOverSize(const IntSize& size)
@@ -244,7 +240,7 @@ private:
         auto result = SRGBA<uint8_t> { r, g, b, a };
 
         if (m_premultiplyAlpha && a < 255)
-            result = premultipliedFlooring(result);
+            return PackedColor::ARGB { premultipliedFlooring(result) }.value;
 
         return PackedColor::ARGB { result }.value;
     }

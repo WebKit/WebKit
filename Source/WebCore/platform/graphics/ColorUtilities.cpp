@@ -28,38 +28,24 @@
 
 namespace WebCore {
 
-SRGBA<float> premultiplied(const SRGBA<float>& color)
-{
-    auto [r, g, b, a] = color.resolved();
-    return { r * a, g * a, b * a, a };
-}
-
-SRGBA<float> unpremultiplied(const SRGBA<float>& color)
+ResolvedPremultiplied<SRGBA<uint8_t>> premultipliedFlooring(SRGBA<uint8_t> color)
 {
     auto [r, g, b, a] = color.resolved();
     if (!a)
-        return color;
-    return makeFromComponentsClampingExceptAlpha<SRGBA<float>>(r / a, g / a, b / a, a);
-}
-
-SRGBA<uint8_t> premultipliedFlooring(SRGBA<uint8_t> color)
-{
-    auto [r, g, b, a] = color.resolved();
-    if (!a)
-        return { 0, 0, 0, 0 };
+        return Premultiplied { SRGBA<uint8_t> { 0, 0, 0, 0 }.resolved() };
     if (a == 255)
-        return color;
-    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(fastDivideBy255(r * a), fastDivideBy255(g * a), fastDivideBy255(b * a), a);
+        return Premultiplied { color.resolved() };
+    return Premultiplied { makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(fastDivideBy255(r * a), fastDivideBy255(g * a), fastDivideBy255(b * a), a).resolved() };
 }
 
-SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t> color)
+ResolvedPremultiplied<SRGBA<uint8_t>> premultipliedCeiling(SRGBA<uint8_t> color)
 {
     auto [r, g, b, a] = color.resolved();
     if (!a)
-        return { 0, 0, 0, 0 };
+        return Premultiplied { SRGBA<uint8_t> { 0, 0, 0, 0 }.resolved() };
     if (a == 255)
-        return color;
-    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(fastDivideBy255(r * a + 254), fastDivideBy255(g * a + 254), fastDivideBy255(b * a + 254), a);
+        return Premultiplied { color.resolved() };
+    return Premultiplied { makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(fastDivideBy255(r * a + 254), fastDivideBy255(g * a + 254), fastDivideBy255(b * a + 254), a).resolved() };
 }
 
 NODELETE static inline uint16_t unpremultipliedComponentByte(uint8_t c, uint8_t a)
@@ -67,12 +53,12 @@ NODELETE static inline uint16_t unpremultipliedComponentByte(uint8_t c, uint8_t 
     return (fastMultiplyBy255(c) + a - 1) / a;
 }
 
-SRGBA<uint8_t> unpremultiplied(SRGBA<uint8_t> color)
+ResolvedColorType<SRGBA<uint8_t>> unpremultiplied(ResolvedPremultiplied<SRGBA<uint8_t>> color)
 {
-    auto [r, g, b, a] = color.resolved();
+    auto [r, g, b, a] = color;
     if (!a || a == 255)
-        return color;
-    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(unpremultipliedComponentByte(r, a), unpremultipliedComponentByte(g, a), unpremultipliedComponentByte(b, a), a);
+        return SRGBA<uint8_t> { r, g, b, a }.resolved();
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(unpremultipliedComponentByte(r, a), unpremultipliedComponentByte(g, a), unpremultipliedComponentByte(b, a), a).resolved();
 }
 
 } // namespace WebCore

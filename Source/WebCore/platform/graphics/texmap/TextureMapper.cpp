@@ -277,7 +277,7 @@ void TextureMapper::drawBorder(const Color& color, float width, const FloatRect&
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
     glUseProgram(program->programID());
 
-    auto [r, g, b, a] = premultiplied(color.toColorTypeLossy<SRGBA<float>>()).resolved();
+    auto [r, g, b, a] = premultiplied(color.toColorTypeLossy<SRGBA<float>>().resolved());
     glUniform4f(program->colorLocation(), r, g, b, a);
     glLineWidth(width);
 
@@ -821,7 +821,7 @@ void TextureMapper::drawSolidColor(const FloatRect& rect, const TransformationMa
     if (clipStack().isRoundedRectClipEnabled())
         prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
 
-    auto [r, g, b, a] = premultiplied(color.toColorTypeLossy<SRGBA<float>>()).resolved();
+    auto [r, g, b, a] = premultiplied(color.toColorTypeLossy<SRGBA<float>>().resolved());
     glUniform4f(program->colorLocation(), r, g, b, a);
     if (a < 1 && isBlendingAllowed)
         flags.add(TextureMapperFlags::ShouldBlend);
@@ -1217,7 +1217,7 @@ RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>
 
         glUseProgram(program->programID());
 
-        auto [r, g, b, a] = premultiplied(dropShadowFilter.color().toColorTypeLossy<SRGBA<float>>()).resolved();
+        auto [r, g, b, a] = premultiplied(dropShadowFilter.color().toColorTypeLossy<SRGBA<float>>().resolved());
         glUniform4f(program->colorLocation(), r, g, b, a);
 
         glUniform2f(program->texelSizeLocation(), 1.f / textureSize.width(), 1.f / textureSize.height());

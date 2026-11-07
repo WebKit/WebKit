@@ -413,6 +413,48 @@ template<size_t I, typename ColorType> constexpr typename ColorType::ComponentTy
     return asColorComponents(color)[I];
 }
 
+// MARK: - Premultiplied Color Type.
+
+template<typename> inline constexpr bool IsResolvedColorType = false;
+template<typename ColorType> inline constexpr bool IsResolvedColorType<ResolvedColorType<ColorType>> = true;
+
+template<typename> inline constexpr bool IsUnresolvedColorType = false;
+template<typename ColorType> inline constexpr bool IsUnresolvedColorType<UnresolvedColorType<ColorType>> = true;
+
+// Tags a color whose non-alpha and non-hue components have been multiplied by its alpha.
+// https://drafts.csswg.org/css-color-4/#premultiplied
+template<typename ColorType> requires (IsResolvedColorType<ColorType> || IsUnresolvedColorType<ColorType>) struct Premultiplied {
+    constexpr explicit Premultiplied(const ColorType& color)
+        : m_color { color }
+    {
+    }
+
+    constexpr auto resolved() const requires IsResolvedColorType<ColorType> { return m_color; }
+    constexpr auto unresolved() const { return m_color.unresolved(); }
+
+    constexpr bool operator==(const Premultiplied&) const = default;
+
+private:
+    ColorType m_color;
+};
+
+template<typename ColorType> using ResolvedPremultiplied = Premultiplied<ResolvedColorType<ColorType>>;
+template<typename ColorType> using UnresolvedPremultiplied = Premultiplied<UnresolvedColorType<ColorType>>;
+
+template<typename ColorType> constexpr auto asColorComponents(const Premultiplied<ColorType>& color)
+{
+    return asColorComponents(color.unresolved());
+}
+
+// get<> overload (along with std::tuple_size and std::tuple_element below) to support destructuring of premultiplied colors.
+template<size_t I, typename ColorType> constexpr typename ColorType::ComponentType get(const Premultiplied<ColorType>& color)
+{
+    return asColorComponents(color)[I];
+}
+
+template<typename> inline constexpr bool IsPremultiplied = false;
+template<typename ColorType> inline constexpr bool IsPremultiplied<Premultiplied<ColorType>> = true;
+
 }
 
 namespace std {
@@ -433,6 +475,15 @@ template<size_t I, typename ColorType>
 class tuple_element<I, WebCore::UnresolvedColorType<ColorType>> {
 public:
     using type = typename WebCore::UnresolvedColorType<ColorType>::ComponentType;
+};
+
+template<typename ColorType>
+class tuple_size<WebCore::Premultiplied<ColorType>> : public std::integral_constant<size_t, 4> { };
+
+template<size_t I, typename ColorType>
+class tuple_element<I, WebCore::Premultiplied<ColorType>> {
+public:
+    using type = typename ColorType::ComponentType;
 };
 
 }

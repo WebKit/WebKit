@@ -728,6 +728,11 @@ struct RGBA {
     {
     }
 
+    constexpr explicit RGBA(ResolvedPremultiplied<SRGBA<uint8_t>> color)
+        : RGBA { color.resolved() }
+    {
+    }
+
     constexpr friend bool operator ==(RGBA lhs, RGBA rhs) { return lhs.value == rhs.value; }
 
     uint32_t value;
@@ -745,6 +750,11 @@ struct ARGB {
     }
 
     constexpr explicit ARGB(SRGBA<uint8_t> color)
+        : ARGB { color.resolved() }
+    {
+    }
+
+    constexpr explicit ARGB(ResolvedPremultiplied<SRGBA<uint8_t>> color)
         : ARGB { color.resolved() }
     {
     }

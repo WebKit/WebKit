@@ -146,7 +146,7 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
         return std::nullopt;
 
     unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(m_platformImage.get()));
-    return unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
+    return unpremultiplied(Premultiplied { asSRGBA(PackedColor::ARGB { *pixel }).resolved() });
 }
 
 void NativeImage::clearSubimages()
