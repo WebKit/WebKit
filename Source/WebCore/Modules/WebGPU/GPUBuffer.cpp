@@ -85,6 +85,9 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<G
     if (m_mapState == GPUBufferMapState::Unmapped)
         m_mapState = GPUBufferMapState::Pending;
 
+    if (RefPtr device = m_device)
+        device->addBufferToUnmap(*this);
+
     m_pendingMapPromise = makeUnique<MapAsyncPromise>(promise);
     // FIXME: Should this capture a weak pointer to |this| instead?
     m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [promise = WTF::move(promise), protectedThis = protect(*this), offset, size](bool success) mutable {
@@ -103,8 +106,11 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<G
             protectedThis->m_mappedRangeSize = size.value_or(protectedThis->m_bufferSize - protectedThis->m_mappedRangeOffset);
             promise.resolve();
         } else {
-            if (protectedThis->m_mapState == GPUBufferMapState::Pending)
+            if (protectedThis->m_mapState == GPUBufferMapState::Pending) {
                 protectedThis->m_mapState = GPUBufferMapState::Unmapped;
+                if (RefPtr device = protectedThis->m_device)
+                    device->removeBufferToUnmap(protectedThis.get());
+            }
 
             promise.reject(Exception { ExceptionCode::OperationError, "map async was not successful"_s });
         }
@@ -254,8 +260,10 @@ void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)
     m_bufferSize = 0;
     m_memoryCost.store(0, std::memory_order_relaxed);
     m_backing->destroy();
-    if (RefPtr device = m_device)
+    if (RefPtr device = m_device) {
+        device->removeBufferToUnmap(*this);
         device->didChangeBufferMemoryCost(*this);
+    }
 }
 
 }
