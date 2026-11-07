@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: AnimationManager lacks advanced multi-target support. (Animations per-target)
-
 WI.AnimationManager = class AnimationManager
 {
     constructor()
     {
         this._enabled = false;
         this._animationCollection = new WI.AnimationCollection;
-        this._animationIdMap = new Map;
+        this._animationForIdentifierForTargetMap = new Map;
+
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleMainResourceDidChange, this);
     }
@@ -93,36 +93,35 @@ WI.AnimationManager = class AnimationManager
         }
 
         this._animationCollection.clear();
-        this._animationIdMap.clear();
+        this._animationForIdentifierForTargetMap.clear();
 
         this._enabled = false;
     }
 
     // AnimationObserver
 
-    animationCreated(animationPayload)
+    animationCreated(target, animationPayload)
     {
-        console.assert(!this._animationIdMap.has(animationPayload.animationId), `Animation already exists with id ${animationPayload.animationId}.`);
+        let animationForIdentifierMap = this._animationForIdentifierForTargetMap.getOrInsert(target, new Map);
+        console.assert(!animationForIdentifierMap.has(animationPayload.animationId), `Animation already exists with id ${animationPayload.animationId}.`);
 
-        let animation = WI.Animation.fromPayload(animationPayload);
+        let animation = WI.Animation.fromPayload(target, animationPayload);
+        animationForIdentifierMap.set(animation.animationId, animation);
         this._animationCollection.add(animation);
-        this._animationIdMap.set(animation.animationId, animation);
     }
 
-    nameChanged(animationId, name)
+    nameChanged(target, animationId, name)
     {
-        let animation = this._animationIdMap.get(animationId);
-        console.assert(animation);
+        let animation = this._animationForIdentifier(target, animationId);
         if (!animation)
             return;
 
         animation.nameChanged(name);
     }
 
-    effectChanged(animationId, effect)
+    effectChanged(target, animationId, effect)
     {
-        let animation = this._animationIdMap.get(animationId);
-        console.assert(animation);
+        let animation = this._animationForIdentifier(target, animationId);
         if (!animation)
             return;
 
@@ -130,19 +129,23 @@ WI.AnimationManager = class AnimationManager
         animation.effectChanged(effect);
     }
 
-    targetChanged(animationId, effect)
+    targetChanged(target, animationId, effect)
     {
-        let animation = this._animationIdMap.get(animationId);
-        console.assert(animation);
+        let animation = this._animationForIdentifier(target, animationId);
         if (!animation)
             return;
 
         animation.targetChanged(effect);
     }
 
-    animationDestroyed(animationId)
+    animationDestroyed(target, animationId)
     {
-        let animation = this._animationIdMap.take(animationId);
+        let animationForIdentifierMap = this._animationForIdentifierForTargetMap.get(target);
+        console.assert(animationForIdentifierMap);
+        if (!animationForIdentifierMap)
+            return;
+
+        let animation = animationForIdentifierMap.take(animationId);
         console.assert(animation);
         if (!animation)
             return;
@@ -151,6 +154,26 @@ WI.AnimationManager = class AnimationManager
     }
 
     // Private
+
+    _animationForIdentifier(target, animationId)
+    {
+        let animationForIdentifierMap = this._animationForIdentifierForTargetMap.get(target);
+        console.assert(animationForIdentifierMap);
+        if (!animationForIdentifierMap)
+            return null;
+
+        let animation = animationForIdentifierMap.get(animationId);
+        console.assert(animation);
+        return animation || null;
+    }
+
+    _handleTargetRemoved(event)
+    {
+        let {target} = event.data;
+
+        for (let animation of (this._animationForIdentifierForTargetMap.take(target)?.values() || []))
+            this._animationCollection.remove(animation);
+    }
 
     _handleMainResourceDidChange(event)
     {
@@ -161,6 +184,6 @@ WI.AnimationManager = class AnimationManager
         WI.Animation.resetUniqueDisplayNameNumbers();
 
         this._animationCollection.clear();
-        this._animationIdMap.clear();
+        this._animationForIdentifierForTargetMap.clear();
     }
 };
