@@ -45,18 +45,19 @@ struct CurrentAccentColor {
     constexpr bool operator==(const CurrentAccentColor&) const = default;
 };
 
-inline WebCore::Color resolveColor(const CurrentAccentColor&, const ResolvedColors&)
-{
-    // Get the default accent color, which is a constant regardless of StyleColorOptions.
-    // Hence the StyleColorOptions can be a default empty one.
-    return CSS::colorFromKeyword(CSSValueID::Accentcolor, { });
-}
+WebCore::Color resolveColor(const CurrentAccentColor&, const ResolvedColors&);
 
 constexpr bool containsCurrentColor(const CurrentAccentColor&)
 {
-    // FIXME: will be true once we incorporate the current accent color.
     return false;
 }
+
+constexpr bool containsCurrentAccentColor(const CurrentAccentColor&)
+{
+    return true;
+}
+
+Color replaceCurrentAccentColor(const CurrentAccentColor&, const Color&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const CurrentAccentColor&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentAccentColor&);

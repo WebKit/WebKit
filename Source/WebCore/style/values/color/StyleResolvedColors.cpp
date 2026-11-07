@@ -32,8 +32,9 @@
 namespace WebCore {
 namespace Style {
 
-ResolvedColors::ResolvedColors(WebCore::Color currentColor, StyleColorOptionsPurpose purpose)
-    : m_currentColor(currentColor)
+ResolvedColors::ResolvedColors(WebCore::Color currentColor, Color accentColor, StyleColorOptionsPurpose purpose)
+    : m_currentColor(WTF::move(currentColor))
+    , m_accentColor(WTF::move(accentColor))
     , m_styleColorOptionsPurpose(purpose)
 {
 }
@@ -42,26 +43,26 @@ ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style, S
 {
     switch (purpose) {
     case StyleColorOptionsPurpose::ComputedStyle:
-        return ResolvedColors(style.color(), purpose);
+        return ResolvedColors(style.color(), style.accentColor().colorOrDefaultColor(), purpose);
     case StyleColorOptionsPurpose::Rendering:
-        return ResolvedColors(style.usedColor(), purpose);
+        return ResolvedColors(style.usedColor(), style.accentColor().colorOrDefaultColor(), purpose);
     }
 
     ASSERT_NOT_REACHED();
-    return ResolvedColors(style.color(), purpose);
+    return ResolvedColors(style.color(), style.accentColor().colorOrDefaultColor(), purpose);
 }
 
 ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style, StyleColorOptionsPurpose purpose)
 {
     switch (purpose) {
     case StyleColorOptionsPurpose::ComputedStyle:
-        return ResolvedColors(style.visitedLinkColor(), purpose);
+        return ResolvedColors(style.visitedLinkColor(), style.accentColor().colorOrDefaultColor(), purpose);
     case StyleColorOptionsPurpose::Rendering:
-        return ResolvedColors(style.usedVisitedLinkColor(), purpose);
+        return ResolvedColors(style.usedVisitedLinkColor(), style.accentColor().colorOrDefaultColor(), purpose);
     }
 
     ASSERT_NOT_REACHED();
-    return ResolvedColors(style.visitedLinkColor(), purpose);
+    return ResolvedColors(style.visitedLinkColor(), style.accentColor().colorOrDefaultColor(), purpose);
 }
 
 } // namespace Style

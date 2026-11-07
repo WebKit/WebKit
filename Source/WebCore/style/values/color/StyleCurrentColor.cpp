@@ -38,6 +38,11 @@ WebCore::Color resolveColor(const CurrentColor&, const ResolvedColors& resolvedC
     return resolvedColors.currentColor();
 }
 
+Color replaceCurrentAccentColor(const CurrentColor& color, const Color&)
+{
+    return CurrentColor { color };
+}
+
 // MARK: - Serialization
 
 void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext&, const CurrentColor&)

@@ -154,6 +154,7 @@ public:
     NODELETE static const Color& currentColor();
 
     bool containsCurrentColor() const;
+    bool containsCurrentAccentColor() const;
     NODELETE bool isCurrentColor() const;
     NODELETE bool isColorMix() const;
     NODELETE bool isContrastColor() const;
@@ -183,6 +184,10 @@ private:
 
 WebCore::Color resolveColor(const Color&, const ResolvedColors&);
 bool containsCurrentColor(const Color&);
+bool containsCurrentAccentColor(const Color&);
+
+// Replace color and sub-colors that is a CurrentAccentColor to the specified `replaced` color.
+Color replaceCurrentAccentColor(const Color&, const Color& replaced);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const Color&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);

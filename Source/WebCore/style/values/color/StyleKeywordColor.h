@@ -68,6 +68,13 @@ constexpr bool containsCurrentColor(const KeywordColor&)
     return false;
 }
 
+constexpr bool containsCurrentAccentColor(const KeywordColor&)
+{
+    return false;
+}
+
+Color replaceCurrentAccentColor(const KeywordColor&, const Color&);
+
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const KeywordColor&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const KeywordColor&);
 
