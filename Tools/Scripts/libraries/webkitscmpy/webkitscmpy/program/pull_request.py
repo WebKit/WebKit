@@ -45,6 +45,9 @@ class PullRequest(Command):
     SKIP_EWS_LABEL = 'skip-ews'
     MERGE_LABELS = ['merge-queue']
     UNSAFE_MERGE_LABELS = ['unsafe-merge-queue']
+    TITLE_STYLE_TOP_COMMIT = 'top-commit'
+    TITLE_STYLE_COMMON_PREFIX = 'common-prefix'
+    TITLE_STYLES = [TITLE_STYLE_TOP_COMMIT, TITLE_STYLE_COMMON_PREFIX]
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -136,8 +139,13 @@ class PullRequest(Command):
         parser.add_argument(
             '--update-title', '--no-update-title',
             dest='update_title', default=None,
-            help="When updating a pull request, update (or don't update) its title with the commits' common prefix (also configurable via webkitscmpy.update-title).",
+            help="When updating a pull request, update (or don't update) its title (also configurable via webkitscmpy.update-title).",
             action=arguments.NoAction,
+        )
+        parser.add_argument(
+            '--title-style',
+            dest='title_style', default=None, choices=cls.TITLE_STYLES,
+            help="Derive the pull request's title from the top commit's title or from the prefix common to all commits' titles (also configurable via webkitscmpy.title-style).",
         )
         parser.add_argument(
             '--no-issue', '--no-bug',
@@ -207,11 +215,18 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def title_for(cls, commits):
-        title = os.path.commonprefix([commit.message.splitlines()[0] for commit in commits if commit.message])
+    def title_style(cls, repository, args):
+        return getattr(args, 'title_style', None) or repository.config().get('webkitscmpy.title-style', cls.TITLE_STYLE_TOP_COMMIT)
+
+    @classmethod
+    def title_for(cls, commits, style=TITLE_STYLE_TOP_COMMIT):
+        # Commits are ordered newest first, so this is the top commit.
+        top_title = commits[0].message.splitlines()[0].strip() if commits[0].message else '???'
+        if style != cls.TITLE_STYLE_COMMON_PREFIX:
+            return top_title
+        title = os.path.commonprefix([commit.message.splitlines()[0] for commit in commits if commit.message]).strip()
         if not title:
-            title = commits[0].message.splitlines()[0] if commits[0].message else '???'
-        title = title.rstrip().lstrip()
+            return top_title
         return title[:-5].rstrip() if title.endswith('(Part') else title
 
     @classmethod
@@ -788,7 +803,7 @@ class PullRequest(Command):
             log.info("Updating pull-request for '{}'...".format(repository.branch))
             pr = remote_repo.pull_requests.update(
                 pull_request=existing_pr,
-                title=cls.title_for(commits) if args.update_title else existing_pr.title,
+                title=cls.title_for(commits, cls.title_style(repository, args)) if args.update_title else existing_pr.title,
                 commits=commits,
                 base=branch_point.branch,
                 head=repository.branch,
@@ -805,7 +820,7 @@ class PullRequest(Command):
                 sys.stderr.write("'--no-update-title' cannot be used when creating a new pull-request.\n")
                 return 1
             pr = remote_repo.pull_requests.create(
-                title=cls.title_for(commits),
+                title=cls.title_for(commits, cls.title_style(repository, args)),
                 commits=commits,
                 base=branch_point.branch,
                 head=repository.branch,
