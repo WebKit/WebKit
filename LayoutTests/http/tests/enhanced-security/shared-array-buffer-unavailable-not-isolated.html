@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that SharedArrayBuffer is not available to a page that is not cross-origin isolated in Enhanced Security.");
+
+shouldBeFalse("self.crossOriginIsolated");
+shouldBe("typeof SharedArrayBuffer", "'undefined'");
+shouldThrow("new SharedArrayBuffer(8)");
+</script>
+</body>
+</html>
