@@ -146,6 +146,23 @@ class MacTest(darwin_testcase.DarwinTest):
             port.setup_test_run()
         warm_up_runner.assert_not_called()
 
+    def test_sample_process_falls_back_to_sample_when_sudo_cannot_run(self):
+        def run_command(args):
+            if args[0] == '/usr/bin/sudo':
+                raise OSError('MOCK sudo is not available')
+            print(args)
+            return 0
+
+        port = self.make_port()
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = 'Sample file'
+        port.host.executive = MockExecutive2(run_command_fn=run_command)
+        with OutputCapture() as captured:
+            port.sample_process('test', 42)
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n",
+        )
+
     def test_32bit(self):
         port = self.make_port(options=MockOptions(architecture='x86'))
 
