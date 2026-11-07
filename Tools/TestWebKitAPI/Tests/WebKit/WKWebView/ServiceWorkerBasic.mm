@@ -1530,6 +1530,8 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_TRUE(navigationFailed);
+
+    shouldAccept = true;
 }
 
 #if WK_HAVE_C_SPI
