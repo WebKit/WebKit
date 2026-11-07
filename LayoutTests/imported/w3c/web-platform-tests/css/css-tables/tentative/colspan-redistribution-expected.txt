@@ -345,56 +345,7 @@ FAIL table 26 assert_equals:
 width expected 308 but got 344
 PASS table 27
 PASS table 28
-FAIL table 29 assert_equals:
-<table data-expected-width="532">
-  <tbody><tr>
-    <td colspan="2"><div style="width:208px">200</div></td>
-    <td><div style="width:50px">50</div></td>
-  </tr>
-  <tr>
-    <td><div style="width:50px">50</div></td>
-    <td colspan="2"><div style="width:408px">400</div></td>
-  </tr>
-  <tr>
-    <td data-expected-width="100">Auto</td>
-    <td data-expected-width="267"><div style="width:50px">Auto</div></td>
-    <td data-expected-width="133">Auto</td>
-  </tr>
-</tbody></table>
-width expected 532 but got 482
-FAIL table 30 assert_equals:
-<table data-expected-width="482">
-  <tbody><tr>
-    <td colspan="2"><div style="width:408px">400</div></td>
-    <td><div style="width:50px">50</div></td>
-  </tr>
-  <tr>
-    <td><div style="width:50px">50</div></td>
-    <td colspan="2"><div style="width:208px">200</div></td>
-  </tr>
-  <tr>
-    <td data-expected-width="200">Auto</td>
-    <td data-expected-width="200"><div style="width:50px">Auto</div></td>
-    <td data-expected-width="50">Auto</td>
-  </tr>
-</tbody></table>
-width expected 482 but got 532
-FAIL table 31 assert_equals:
-<table data-expected-width="740">
-  <tbody><tr>
-    <td colspan="3"><div style="width:316px">300</div></td>
-    <td><div style="width:50px">50</div></td>
-  </tr>
-  <tr>
-    <td><div style="width:50px">50</div></td>
-    <td colspan="3"><div style="width:616px">600</div></td>
-  </tr>
-  <tr>
-    <td data-expected-width="100">Auto</td>
-    <td data-expected-width="240"><div style="width:50px">Auto</div></td>
-    <td data-expected-width="240"><div style="width:50px">Auto</div></td>
-    <td data-expected-width="120">Auto</td>
-  </tr>
-</tbody></table>
-width expected 740 but got 690
+PASS table 29
+PASS table 30
+PASS table 31
 
