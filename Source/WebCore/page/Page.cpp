@@ -114,6 +114,7 @@
 #include "HistoryItem.h"
 #include "IDBConnectionToServer.h"
 #include "ImageAnalysisQueue.h"
+#include "ImageAnimationTimeline.h"
 #include "ImageOverlay.h"
 #include "ImageOverlayController.h"
 #include "InspectorBackendClient.h"
@@ -441,6 +442,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if PLATFORM(IOS_FAMILY)
     , m_canShowWhileLocked(pageConfiguration.canShowWhileLocked)
 #endif
+    , m_imageAnimationTimeline(ImageAnimationTimeline::normal())
     , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
     , m_activityState(pageInitialActivityState())
@@ -2972,12 +2974,20 @@ bool Page::shouldUpdateAccessibilityRegions() const
 }
 #endif
 
+bool Page::imageAnimationEnabled() const
+{
+    return m_imageAnimationTimeline->allowsAnimation();
+}
+
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::setImageAnimationEnabled(bool enabled)
 {
     // This method overrides any individually set animation play-states (so we need to do work even if `enabled` is
-    // already equal to `m_imageAnimationEnabled` because there may be individually playing or paused images).
-    m_imageAnimationEnabled = enabled;
+    // already equal to `imageAnimationEnabled()` because there may be individually playing or paused images).
+    if (enabled)
+        m_imageAnimationTimeline = ImageAnimationTimeline::normal();
+    else if (imageAnimationEnabled())
+        m_imageAnimationTimeline = ImageAnimationTimeline::createPaused();
     updatePlayStateForAllAnimations();
     chrome().client().isAnyAnimationAllowedToPlayDidChange(enabled);
 }
@@ -5615,7 +5625,7 @@ void Page::addIndividuallyPlayingAnimationElement(HTMLImageElement& element)
     m_individuallyPlayingAnimationElements.add(element);
 
     // If there were no individually playing animations prior to this addition, then the effective state of isAnyAnimationAllowedToPlay has changed.
-    if (wasEmpty && !m_imageAnimationEnabled)
+    if (wasEmpty && !imageAnimationEnabled())
         chrome().client().isAnyAnimationAllowedToPlayDidChange(true);
 }
 
@@ -5625,7 +5635,7 @@ void Page::removeIndividuallyPlayingAnimationElement(HTMLImageElement& element)
 
     // If removing this animation caused there to be no remaining individually playing animations,
     // then the effective state of isAnyAnimationAllowedToPlay has changed.
-    if (!m_individuallyPlayingAnimationElements.computeSize() && !m_imageAnimationEnabled)
+    if (!m_individuallyPlayingAnimationElements.computeSize() && !imageAnimationEnabled())
         chrome().client().isAnyAnimationAllowedToPlayDidChange(false);
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

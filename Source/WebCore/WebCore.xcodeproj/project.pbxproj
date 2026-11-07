@@ -7136,6 +7136,7 @@
 		ECA680C71E67724500731D20 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680C61E67724500731D20 /* StringUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ECB15D3681944F2886E4820B /* ObjectSizeNegotiation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5268A3FEA3789C5F09CFB72A /* ObjectSizeNegotiation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ECC2B535B9F2983B774A915F /* ImageRenditionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 89AAA5F5CEBC35EFDF20580F /* ImageRenditionOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		61BDE7D123F08B3CA4F6546E /* ImageAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 35E42335B3B2360BB0B31872 /* ImageAnimationTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDB04F3A278E5539008D3678 /* libwebrtc.dylib in Product Dependencies */ = {isa = PBXBuildFile; fileRef = EDB04F39278E5531008D3678 /* libwebrtc.dylib */; platformFilters = (ios, macos, tvos, ); };
 		EDCBD2C43FF775B2FF40A33D /* NinePieceGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 424D1B489B71DA74BDCDF10C /* NinePieceGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15942,6 +15943,8 @@
 		898785F2122E1EAC003AABDA /* JSFileReaderSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReaderSync.cpp; sourceTree = "<group>"; };
 		898785F3122E1EAC003AABDA /* JSFileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReaderSync.h; sourceTree = "<group>"; };
 		89AAA5F5CEBC35EFDF20580F /* ImageRenditionOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageRenditionOptions.h; sourceTree = "<group>"; };
+		BD885A1B5AF12425309376DB /* ImageAnimationTimeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAnimationTimeline.cpp; sourceTree = "<group>"; };
+		35E42335B3B2360BB0B31872 /* ImageAnimationTimeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageAnimationTimeline.h; sourceTree = "<group>"; };
 		89C20A7AC4BA0F7144DDF0B9 /* UnifiedSource2-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource2-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		8A00EEC72A680139006A53A2 /* EXTDepthClamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTDepthClamp.h; sourceTree = "<group>"; };
 		8A00EEC82A680139006A53A2 /* EXTDepthClamp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTDepthClamp.cpp; sourceTree = "<group>"; };
@@ -44145,6 +44148,8 @@
 				B27535420B053814002CE64F /* Image.h */,
 				72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */,
 				72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */,
+				BD885A1B5AF12425309376DB /* ImageAnimationTimeline.cpp */,
+				35E42335B3B2360BB0B31872 /* ImageAnimationTimeline.h */,
 				1BA5B0B524C398F9ED0D21D8 /* ImageContentSettings.cpp */,
 				9696F89359DB2093C05E5988 /* ImageContentSettings.h */,
 				7B0C389D2ACED2F000F1FDDC /* ImageDrawDescriptor.cpp */,
@@ -46394,6 +46399,7 @@
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				72ECA8AE2B62FBB40094F595 /* ImageAdapter.h in Headers */,
 				F46D53A1273EEFA00009FA80 /* ImageAnalysisQueue.h in Headers */,
+				61BDE7D123F08B3CA4F6546E /* ImageAnimationTimeline.h in Headers */,
 				55A336F91D821E3C0022C4C7 /* ImageBackingStore.h in Headers */,
 				31815A311F9A6C8F00FCBF89 /* ImageBitmap.h in Headers */,
 				7C7903B31F86F95C00463A70 /* ImageBitmapRenderingContext.h in Headers */,
