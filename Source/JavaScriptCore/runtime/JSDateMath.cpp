@@ -407,6 +407,23 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
     if (date == m_cachedDateString)
         return m_cachedDateStringValue;
 
+    auto parseDateImpl = [&](std::span<const Latin1Character> dateString) {
+        bool isLocalTime;
+        double value = WTF::parseES5Date(dateString, isLocalTime);
+        if (std::isnan(value))
+            value = WTF::parseDate(dateString, isLocalTime);
+
+        if (isLocalTime && JSDateMathInternal::canNarrowToInt64Milliseconds(value))
+            value -= localTimeOffset(static_cast<int64_t>(value), TimeType::LocalTime).offset;
+
+        m_cachedDateString = date;
+        m_cachedDateStringValue = value;
+        return value;
+    };
+
+    if (date.is8Bit() && date.containsOnlyASCII())
+        return parseDateImpl(date.span8());
+
     // After ICU 72, CLDR generates narrowNoBreakSpace for date time format. Thus, `new Date().toLocaleString('en-US')` starts generating
     // a string including narrowNoBreakSpaces instead of simple spaces. However since code in the wild assumes `new Date(new Date().toLocaleString('en-US'))`
     // works, we need to maintain the ability to parse string including narrowNoBreakSpaces. Rough consensus among implementaters is replacing narrowNoBreakSpaces
@@ -423,23 +440,8 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
         return std::numeric_limits<double>::quiet_NaN();
     }
 
-    auto parseDateImpl = [this] (auto dateString) {
-        bool isLocalTime;
-        double value = WTF::parseES5Date(dateString, isLocalTime);
-        if (std::isnan(value))
-            value = WTF::parseDate(dateString, isLocalTime);
-
-        if (isLocalTime && JSDateMathInternal::canNarrowToInt64Milliseconds(value))
-            value -= localTimeOffset(static_cast<int64_t>(value), TimeType::LocalTime).offset;
-
-        return value;
-    };
-
     // FIXME: expectedString is UTF-8 but parseDateImpl requires Latin1. Which is correct?
-    double value = parseDateImpl(byteCast<Latin1Character>(expectedString.value().span()));
-    m_cachedDateString = date;
-    m_cachedDateStringValue = value;
-    return value;
+    return parseDateImpl(byteCast<Latin1Character>(expectedString.value().span()));
 }
 
 // https://tc39.es/ecma402/#sec-defaulttimezone
