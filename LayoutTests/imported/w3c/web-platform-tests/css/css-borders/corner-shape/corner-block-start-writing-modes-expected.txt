@@ -1,7 +1,7 @@
 
-FAIL corner-block-start in horizontal-tb ltr assert_equals: border-top-left-radius expected "10px" but got "10px 20px"
-FAIL corner-block-start in horizontal-tb rtl assert_equals: border-top-right-radius expected "10px" but got "10px 20px"
-FAIL corner-block-start in vertical-rl ltr assert_equals: border-top-right-radius expected "10px" but got "10px 20px"
-FAIL corner-inline-start in horizontal-tb ltr assert_equals: border-top-left-radius expected "10px" but got "10px 20px"
-FAIL corner-inline-start in horizontal-tb rtl assert_equals: border-top-right-radius expected "10px" but got "10px 20px"
+PASS corner-block-start in horizontal-tb ltr
+PASS corner-block-start in horizontal-tb rtl
+PASS corner-block-start in vertical-rl ltr
+PASS corner-inline-start in horizontal-tb ltr
+PASS corner-inline-start in horizontal-tb rtl
 
