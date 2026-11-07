@@ -591,8 +591,8 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 }
 
 // What a float before a box in the block formatting context makes it need.
-// FIXME: Clearance (CSS 2.2 §9.5.2), boxes that establish a formatting context of their own beside floats (§9.5), block containers with an
-// inline direction of their own, and out-of-flow boxes between block-level boxes that would be inline-level, whose static position is where
+// FIXME: Boxes that establish a formatting context of their own beside floats (CSS 2.2 §9.5), block containers with an inline direction of
+// their own, and out-of-flow boxes between block-level boxes that would be inline-level, whose static position is where
 // a line box beside the floats would start (RenderBlockFlow::staticInlinePositionForOriginalDisplayInline).
 static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree)
 {
@@ -606,8 +606,22 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
             return BlockAvoidanceReason::ContentHasFloat;
         return { };
     }
-    if (box->style().clear() != Clear::None)
-        return BlockAvoidanceReason::ContentHasFloat;
+    // FIXME: clear on a block-level box in inline content, which the inline formatting context places, in quirks mode, where a quirk container
+    // keeps the margins at its block-start side apart, with margin-trim, which discards margins that clearance separates, and on a box inside
+    // another one with clear.
+    if (box->style().clear() != Clear::None) {
+        if (isInInlineContent || box->document().inQuirksMode())
+            return BlockAvoidanceReason::ContentHasFloat;
+        for (CheckedPtr<const RenderBlock> ancestor = dynamicDowncast<RenderBlock>(*box); ancestor; ancestor = ancestor->containingBlock()) {
+            auto marginTrim = ancestor->style().marginTrim();
+            if (marginTrim.contains(Style::MarginTrimSide::BlockStart) || marginTrim.contains(Style::MarginTrimSide::BlockEnd))
+                return BlockAvoidanceReason::ContentHasFloat;
+            if (ancestor == &rootContainer)
+                break;
+            if (ancestor != box && ancestor->style().clear() != Clear::None)
+                return BlockAvoidanceReason::ContentHasFloat;
+        }
+    }
     // Form controls avoid floats too (RenderBox::avoidsFloats).
     if (isLaidOutThroughRenderTree || box->avoidsFloats())
         return BlockAvoidanceReason::ContentHasFloat;

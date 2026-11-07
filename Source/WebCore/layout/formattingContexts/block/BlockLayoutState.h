@@ -101,6 +101,23 @@ struct ContainingBlockState {
     // The adjoining margins at the start of its content, which margin-trim at the block-end edge goes back to when all of its content collapses
     // through it.
     std::optional<AdjoiningMargins> adjoiningMarginsAtContentStart { };
+    // clear, until the block container's top is known (CSS 2.2 §9.5.2): the bottom outer edge of the lowest float it goes below, and where the
+    // margins before its block-start margin put its containing block's top, which they keep when it gets clearance.
+    struct Clearance {
+        // The floats waiting for their block container's top go with it, from the one their block containers get.
+        LayoutUnit floatsLogicalBottomFor(LayoutUnit borderBoxLogicalTop) const
+        {
+            return pendingFloatsLogicalBottomFromTop ? std::max(floatsLogicalBottom, borderBoxLogicalTop + *pendingFloatsLogicalBottomFromTop) : floatsLogicalBottom;
+        }
+
+        LayoutUnit floatsLogicalBottom { LayoutUnit::min() };
+        std::optional<LayoutUnit> pendingFloatsLogicalBottomFromTop;
+        LayoutUnit marginsBeforeLogicalBottom;
+    };
+    std::optional<Clearance> clearance { };
+    // The last in-flow children are boxes whose margins collapse through them, one of them with clearance: the margins after them do not
+    // collapse with the block container's block-end margin (CSS 2.2 §8.3.1).
+    bool endsWithClearedBoxCollapsedThrough { false };
 
     LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };
