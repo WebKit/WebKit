@@ -92,6 +92,8 @@ public:
     WEBCORE_EXPORT Ref<HistoryItem> copy() const;
 
     BackForwardItemIdentifier itemID() const { return m_itemID; }
+    // For a web process to adopt the identifier the UI process gave the item when it added it to the back/forward list.
+    void setItemID(BackForwardItemIdentifier itemID) { m_itemID = itemID; }
     BackForwardFrameItemIdentifier frameItemID() const { return m_frameItemID; }
 
     // Resets the HistoryItem to its initial state, as returned by create().
