@@ -22,7 +22,11 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 PRODUCT_NAME = MiniBrowser
-CODE_SIGN_ENTITLEMENTS = MiniBrowser.entitlements;
+// The internal entitlements add restricted entitlements, which Xcode refuses to sign without a provisioning profile.
+CODE_SIGN_ENTITLEMENTS = $(CODE_SIGN_ENTITLEMENTS_$(USE_INTERNAL_SDK));
+CODE_SIGN_ENTITLEMENTS_ = MiniBrowser.entitlements;
+CODE_SIGN_ENTITLEMENTS_NO = MiniBrowser.entitlements;
+CODE_SIGN_ENTITLEMENTS_YES = MiniBrowser-internal.entitlements;
 PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier)
 GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch
 INFOPLIST_FILE = mac/Info.plist
@@ -30,4 +34,7 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_PLATFORM_NAME))
 EXCLUDED_SOURCE_FILE_NAMES_maccatalyst = *
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Cocoa -framework PDFKit -framework UniformTypeIdentifiers -framework WebKit
+// Lets Swift sources use the same WTF_PLATFORM_* checks as the C++ and Objective-C ones.
+SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=macosx*] = $(inherited) $(SWIFT_ACTIVE_COMPILATION_CONDITIONS_$(WK_PLATFORM_NAME));
+SWIFT_ACTIVE_COMPILATION_CONDITIONS_macosx = WTF_PLATFORM_MAC;
 STRIP_STYLE = debugging;

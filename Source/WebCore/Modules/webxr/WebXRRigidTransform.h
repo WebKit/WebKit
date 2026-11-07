@@ -50,8 +50,8 @@ public:
 
     const DOMPointReadOnly& position() const;
     const DOMPointReadOnly& orientation() const;
-    NODELETE const Float32Array& matrix();
-    NODELETE const WebXRRigidTransform& inverse();
+    const Float32Array& matrix();
+    const WebXRRigidTransform& inverse();
     const TransformationMatrix& rawTransform() const;
 
     JSValueInWrappedObject& cachedMatrix() LIFETIME_BOUND { return m_cachedMatrix; }

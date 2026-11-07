@@ -31,6 +31,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/PlatformXR.h>
 #include <wtf/Ref.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -88,5 +89,10 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::XRDeviceProxy)
+    // In the Web Process, every PlatformXR::Device is an XRDeviceProxy.
+    static bool isType(const PlatformXR::Device&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR)

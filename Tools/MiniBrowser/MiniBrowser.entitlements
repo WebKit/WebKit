@@ -28,6 +28,11 @@
 		<string>com.apple.Safari.SafeBrowsing.Service</string>
 		<string>com.apple.WebKit.NetworkingDaemon</string>
 		<string>com.apple.webinspector</string>
+		<string>com.apple.CompositorServices.RemoteClient</string>
+		<string>com.apple.arkit.service.control</string>
+		<string>com.apple.arkit.service.deviceConnection</string>
+		<string>com.apple.arkit.service.handTracking</string>
+		<string>com.apple.arkit.service.streamingPrediction</string>
 	</array>
 	<key>com.apple.security.temporary-exception.sbpl</key>
 	<array>

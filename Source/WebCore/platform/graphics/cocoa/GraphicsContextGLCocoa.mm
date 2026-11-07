@@ -726,11 +726,12 @@ GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSourc
         return { };
     }
 
-    id<MTLDevice> mtlDevice = nil;
-    if (!EGL_QueryDeviceAttribEXT(eglDevice, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice))) {
+    id<MTLDevice> rawMtlDevice = nil;
+    if (!EGL_QueryDeviceAttribEXT(eglDevice, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&rawMtlDevice))) {
         addError(GCGLErrorCode::InvalidOperation);
         return { };
     }
+    RetainPtr<id<MTLDevice>> mtlDevice = rawMtlDevice;
 
     RetainPtr<id<MTLTexture>> texture = WTF::switchOn(WTF::move(source),
     [&](EGLImageSourceIOSurfaceHandle&& ioSurface) -> RetainPtr<id> {
@@ -742,7 +743,7 @@ GCGLExternalImage GraphicsContextGLCocoa::createExternalImage(ExternalImageSourc
         MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm_sRGB width:size.width() height:size.height() mipmapped:NO];
         [desc setUsage:MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget];
 
-        auto tex = adoptNS([mtlDevice newTextureWithDescriptor:desc iosurface:surface->surface() plane:0]);
+        RetainPtr tex = adoptNS([mtlDevice newTextureWithDescriptor:desc iosurface:retainPtr(surface->surface()).get() plane:0]);
         return tex;
     },
     [&](EGLImageSourceMTLSharedTextureHandle&& sharedTexture) -> RetainPtr<id> {
@@ -886,7 +887,7 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
         "GL_ANGLE_variable_rasterization_rate_metal"_s,
 #endif
-#if PLATFORM(VISION)
+#if PLATFORM(VISION) || PLATFORM(MAC)
         "GL_WEBKIT_explicit_resolve_target"_s,
 #endif
         "GL_NV_framebuffer_blit"_s,

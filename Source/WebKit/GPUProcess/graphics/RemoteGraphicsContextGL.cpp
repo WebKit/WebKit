@@ -299,7 +299,7 @@ bool RemoteGraphicsContextGL::webXREnabled() const
 bool RemoteGraphicsContextGL::webXRPromptAccepted() const
 {
 #if ENABLE(WEBXR) && PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    auto currentAcceptedValue = GPUProcess::singleton().immersiveModeProcessIdentity();
+    auto currentAcceptedValue = protect(GPUProcess::singleton())->immersiveModeProcessIdentity();
     return currentAcceptedValue && m_sharedResourceCache->resourceOwner() == *currentAcceptedValue;
 #else
     return webXREnabled();

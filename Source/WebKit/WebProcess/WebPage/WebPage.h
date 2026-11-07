@@ -2135,7 +2135,7 @@ public:
 #endif
 
 #if ENABLE(WEBXR)
-    NODELETE PlatformXRSystemProxy& xrSystemProxy() LIFETIME_BOUND;
+    PlatformXRSystemProxy& xrSystemProxy() LIFETIME_BOUND;
 #endif
 
     void prepareToRunModalJavaScriptDialog();

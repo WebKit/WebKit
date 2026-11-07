@@ -33,6 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -62,13 +63,13 @@ public:
     void update(double timestamp, const InputSourceList&);
 
     // For GC reachablitiy.
-    WebXRSession* session() const { return &m_session; }
+    WebXRSession* session() const { return m_session.ptr(); }
 
 private:
     void handleRemovedInputSources(const InputSourceList&, Vector<Ref<WebXRInputSource>>&, Vector<Ref<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
     void handleAddedOrUpdatedInputSources(double timestamp, const InputSourceList&, Vector<Ref<WebXRInputSource>>&, Vector<Ref<WebXRInputSource>>&, Vector<Ref<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
 
-    WebXRSession& m_session;
+    WeakRef<WebXRSession> m_session;
     Vector<Ref<WebXRInputSource>> m_inputSources;
 };
 
