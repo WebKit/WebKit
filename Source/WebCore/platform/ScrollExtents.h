@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FloatPoint.h"
-#include "IntPoint.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/IntPoint.h>
 #include <cstdint>
 
 namespace WebCore {
