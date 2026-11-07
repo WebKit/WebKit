@@ -2252,6 +2252,7 @@ loader/images/bitmap/BitmapImageDescriptor.cpp
 loader/images/bitmap/BitmapImageSource.cpp
 loader/images/bitmap/ImageFrameAnimator.cpp
 loader/images/bitmap/ImageFrameWorkQueue.cpp
+loader/images/bitmap/ImageFrameWorkQueuePool.cpp
 loader/images/bitmap/ImageSource.cpp
 loader/images/sizing/ImageSizingContext.cpp
 loader/images/sizing/ObjectSizeNegotiation.cpp

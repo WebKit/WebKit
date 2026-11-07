@@ -90,7 +90,7 @@ public:
         return true;
     }
 
-    bool dequeue(T& value)
+    std::optional<T> dequeue()
     {
         Locker locker { m_lock };
 
@@ -102,15 +102,26 @@ public:
 
         // The queue is closing, exit immediately.
         if (!m_open)
-            return false;
+            return std::nullopt;
 
-        // Get a copy from m_queue.first and then remove it.
-        value = m_queue.first();
-        m_queue.removeFirst();
+        T value = m_queue.takeFirst();
 
         // Notify the other threads that an item was removed from the queue.
         m_condition.notifyAll();
-        return true;
+        return WTF::move(value);
+    }
+
+    template<std::predicate<T&> Predicate>
+    size_t removeAllMatching(NOESCAPE const Predicate& predicate)
+    {
+        Locker locker { m_lock };
+
+        size_t removedCount = m_queue.removeAllMatching(predicate);
+
+        // Notify the threads waiting for an empty place that items were removed from the queue.
+        if (removedCount)
+            m_condition.notifyAll();
+        return removedCount;
     }
 
 private:

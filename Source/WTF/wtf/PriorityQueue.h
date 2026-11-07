@@ -63,6 +63,8 @@ public:
     const T& peek() const LIFETIME_BOUND { return m_buffer[0]; }
     T dequeue()
     {
+        if (m_buffer.size() == 1)
+            return m_buffer.takeLast();
         std::swap(m_buffer[0], m_buffer.last());
         T result = m_buffer.takeLast();
         siftDown(0);

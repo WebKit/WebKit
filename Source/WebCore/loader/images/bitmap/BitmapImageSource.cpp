@@ -32,6 +32,7 @@
 #include "ImageBuffer.h"
 #include "ImageDecoder.h"
 #include "ImageFrameAnimator.h"
+#include "ImageFrameWorkQueuePool.h"
 #include "ImageObserver.h"
 #include "Logging.h"
 
@@ -50,7 +51,10 @@ BitmapImageSource::BitmapImageSource(BitmapImage& bitmapImage, AlphaOption alpha
 {
 }
 
-BitmapImageSource::~BitmapImageSource() = default;
+BitmapImageSource::~BitmapImageSource()
+{
+    cancelPendingDecodingRequests();
+}
 
 ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
 {
@@ -89,13 +93,6 @@ ImageFrameAnimator* BitmapImageSource::frameAnimator() const
 
     lazyInitialize(m_frameAnimator, makeUniqueWithoutRefCountedCheck<ImageFrameAnimator>(const_cast<BitmapImageSource&>(*this)));
     return m_frameAnimator.get();
-}
-
-ImageFrameWorkQueue& BitmapImageSource::workQueue() const
-{
-    if (!m_workQueue)
-        m_workQueue = ImageFrameWorkQueue::create(const_cast<BitmapImageSource&>(*this));
-    return *m_workQueue;
 }
 
 void BitmapImageSource::encodedDataStatusChanged(EncodedDataStatus status)
@@ -150,7 +147,7 @@ void BitmapImageSource::destroyDecodedData(bool destroyAll)
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
-    if (destroyAll && isDecodingWorkQueueIdle())
+    if (destroyAll && !hasPendingDecodingRequests())
         resetData();
     else
         clearFrameBufferCache();
@@ -212,7 +209,7 @@ void BitmapImageSource::destroyNativeImageAtIndex(unsigned index, std::optional<
 bool BitmapImageSource::canDestroyDecodedData() const
 {
     // Animated images should preserve the current frame till the next one finishes decoding.
-    if (!isDecodingWorkQueueIdle())
+    if (hasPendingDecodingRequests())
         return false;
 
     // Small image should be decoded synchronously. Deleting its decoded frame is fine.
@@ -297,7 +294,7 @@ void BitmapImageSource::stopAnimation()
         return;
 
     m_frameAnimator->stopAnimation();
-    stopDecodingWorkQueue();
+    cancelPendingDecodingRequests();
 }
 
 void BitmapImageSource::resetAnimation()
@@ -352,27 +349,21 @@ bool BitmapImageSource::isLargeForDecoding() const
     return sizeInBytes > (isAnimated() ? 100 * KB : 500 * KB);
 }
 
-bool BitmapImageSource::isDecodingWorkQueueIdle() const
+bool BitmapImageSource::hasPendingDecodingRequests() const
 {
-    return !m_workQueue || m_workQueue->isIdle();
+    return sharedWorkQueuePool().hasPendingDecodingRequests(*this);
 }
 
-void BitmapImageSource::stopDecodingWorkQueue()
+void BitmapImageSource::cancelPendingDecodingRequests()
 {
-    LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoding work queue will be stopped.", __FUNCTION__, this, sourceUTF8());
-
-    if (!m_workQueue || !m_workQueue->isIdle())
-        return;
-
-    protect(m_workQueue)->stop();
+    LOG(Images, "BitmapImageSource::%s - %p - url: %s. Pending decoding requests will be cancelled.", __FUNCTION__, this, sourceUTF8());
+    for (unsigned frameIndex : sharedWorkQueuePool().cancelPendingDecodingRequests(*this))
+        destroyNativeImageAtIndex(frameIndex);
 }
 
-bool BitmapImageSource::isPendingDecodingAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
+bool BitmapImageSource::hasPendingDecodingRequestAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, ImageAnimatingState animatingState, const DecodingOptions& options) const
 {
-    if (!m_workQueue)
-        return false;
-
-    return protect(m_workQueue)->isPendingDecodingAtIndex(index, subsamplingLevel, options);
+    return sharedWorkQueuePool().hasPendingDecodingRequest(*this, index, subsamplingLevel, animatingState, options);
 }
 
 std::optional<DecodingDestination> BitmapImageSource::compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
@@ -385,7 +376,7 @@ void BitmapImageSource::decode(Function<void(DecodingStatus)>&& decodeCallback)
     m_decodeCallbacks.append(WTF::move(decodeCallback));
     unsigned index = currentFrameIndex();
 
-    if (isPendingDecodingAtIndex(index, SubsamplingLevel::Default, DecodingMode::Asynchronous)) {
+    if (hasPendingDecodingRequestAtIndex(index, SubsamplingLevel::Default, ImageAnimatingState::No, DecodingMode::Asynchronous)) {
         LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d is being decoded.", __FUNCTION__, this, sourceUTF8(), index);
         return;
     }
@@ -469,7 +460,7 @@ void BitmapImageSource::imageFrameDecodeAtIndexHasFinished(unsigned index, Subsa
 
     // Do not leave any decoding work queue idle for static images.
     if (animatingState == ImageAnimatingState::No)
-        stopDecodingWorkQueue();
+        cancelPendingDecodingRequests();
 }
 
 unsigned BitmapImageSource::currentFrameIndex() const
@@ -571,9 +562,21 @@ DecodingStatus BitmapImageSource::requestNativeImageAtIndex(unsigned index, Subs
     if (index >= m_frames.size())
         return DecodingStatus::Invalid;
 
+    RefPtr decoder = decoderIfExists();
+    if (!decoder)
+        return DecodingStatus::Invalid;
+
     LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8(), index);
 
-    protect(workQueue())->dispatch({ index, subsamplingLevel, animatingState, options });
+    sharedWorkQueuePool().dispatchRequest({
+        .source = *this,
+        .decoder = decoder.releaseNonNull(),
+        .index = index,
+        .subsamplingLevel = subsamplingLevel,
+        .animatingState = animatingState,
+        .options = options,
+        .minimumDecodingDurationForTesting = m_minimumDecodingDurationForTesting
+    });
 
     if (m_clearDecoderAfterAsyncFrameRequestForTesting)
         resetData();
@@ -587,7 +590,7 @@ std::expected<DecodingDestination, DecodingStatus> BitmapImageSource::requestNat
         return makeUnexpected(DecodingStatus::Invalid);
 
     // Never decode the same frame from two different threads.
-    if (isPendingDecodingAtIndex(index, subsamplingLevel, options)) {
+    if (hasPendingDecodingRequestAtIndex(index, subsamplingLevel, animatingState, options)) {
         LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d is being decoded.", __FUNCTION__, this, sourceUTF8(), index);
         ++m_blankDrawCountForTesting;
         return makeUnexpected(DecodingStatus::Decoding);
@@ -610,7 +613,7 @@ std::expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAt
 
     // FIXME: Remove this for CG; ImageIO should be thread safe when decoding the same frame from multiple threads.
     // Never decode the same frame from two different threads.
-    if (isPendingDecodingAtIndex(index, subsamplingLevel, options)) {
+    if (hasPendingDecodingRequestAtIndex(index, subsamplingLevel, ImageAnimatingState::No, options)) {
         LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d is being decoded.", __FUNCTION__, this, sourceUTF8(), index);
         ++m_blankDrawCountForTesting;
         return makeUnexpected(DecodingStatus::Decoding);
@@ -698,7 +701,7 @@ RefPtr<NativeImage> BitmapImageSource::primaryNativeImageForUnpremultipliedPixel
     if (index >= m_frames.size())
         return nullptr;
 
-    if (isPendingDecodingAtIndex(index, SubsamplingLevel::Default, DecodingMode::Asynchronous))
+    if (hasPendingDecodingRequestAtIndex(index, SubsamplingLevel::Default, ImageAnimatingState::No, DecodingMode::Asynchronous))
         return nullptr;
 
     auto result = protect(m_decoder)->createNativeImageAtIndex(index, SubsamplingLevel::Default, { DecodingMode::Synchronous, DecodingDestination::Base });
@@ -785,27 +788,6 @@ UTF8CString BitmapImageSource::sourceUTF8() const
     return m_bitmapImage ? protect(m_bitmapImage)->sourceUTF8() : ""_s;
 }
 
-void BitmapImageSource::setMinimumDecodingDurationForTesting(Seconds duration)
-{
-    workQueue().setMinimumDecodingDurationForTesting(duration);
-}
-
-void BitmapImageSource::dump(TextStream& ts) const
-{
-    ts.dumpProperty("source-utf8"_s, sourceUTF8());
-
-    if (m_workQueue)
-        protect(m_workQueue)->dump(ts);
-
-    if (m_frameAnimator)
-        m_frameAnimator->dump(ts);
-
-    m_descriptor.dump(ts);
-
-    ts.dumpProperty("decoded-size"_s, m_decodedSize);
-    ts.dumpProperty("decode-count-for-testing"_s, m_decodeCountForTesting);
-}
-
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
 std::optional<unsigned> BitmapImageSource::spatialLeftEyeFrameIndex() const
 {
@@ -828,5 +810,20 @@ std::optional<SpatialImageEyeProperties> BitmapImageSource::spatialEyeProperties
     return std::nullopt;
 }
 #endif
+
+void BitmapImageSource::dump(TextStream& ts) const
+{
+    ts.dumpProperty("source-utf8"_s, sourceUTF8());
+
+    sharedWorkQueuePool().dump(*this, ts);
+
+    if (m_frameAnimator)
+        m_frameAnimator->dump(ts);
+
+    m_descriptor.dump(ts);
+
+    ts.dumpProperty("decoded-size"_s, m_decodedSize);
+    ts.dumpProperty("decode-count-for-testing"_s, m_decodeCountForTesting);
+}
 
 } // namespace WebCore
