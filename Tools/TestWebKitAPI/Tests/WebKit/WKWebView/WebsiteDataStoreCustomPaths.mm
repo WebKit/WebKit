@@ -29,6 +29,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoa.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <JavaScriptCore/JSCConfig.h>
@@ -496,9 +497,8 @@ TEST(WebKit, WebsiteDataStoreIfExists)
 
 TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
 {
-    // Reset defaultDataStore before test.
     __block bool done = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -506,6 +506,7 @@ TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
 
     RetainPtr handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -556,8 +557,7 @@ TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
     [webView loadHTMLString:testString baseURL:exampleURL];
     EXPECT_WK_STREQ("database is created", getNextMessage().body);
 
-    // Clean up defaultDataStore after test.
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -565,7 +565,9 @@ TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
 
 TEST(WebKit, WebsiteDataStoreRenameOrigin)
 {
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>localStorage.setItem('testkey', 'testvalue')</script>" baseURL:[NSURL URLWithString:@"https://example.com/"]];
     
     __block bool done = false;
@@ -611,7 +613,7 @@ TEST(WebKit, WebsiteDataStoreRenameOriginRemovesSourceOriginData)
     NSSet *allTypes = [WKWebsiteDataStore allWebsiteDataTypes];
 
     __block bool done = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:allTypes modifiedSince:[NSDate distantPast] completionHandler:^{
+    [TestWebKitAPI::Util::temporaryPersistentDataStore() removeDataOfTypes:allTypes modifiedSince:[NSDate distantPast] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -619,7 +621,9 @@ TEST(WebKit, WebsiteDataStoreRenameOriginRemovesSourceOriginData)
     NSURL *exampleURL = [NSURL URLWithString:@"https://example.com/"];
     NSURL *webKitURL = [NSURL URLWithString:@"https://webkit.org/"];
 
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:TestWebKitAPI::Util::temporaryPersistentDataStore()];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:@"<script>localStorage.setItem('testkey', 'testvalue')</script>" baseURL:exampleURL];
 
     // DOMCache is not one of the renamed types, so it is what verifies that data left behind gets deleted.
@@ -1452,15 +1456,16 @@ TEST(WKWebsiteDataStore, FetchDiskCacheDataFromDifferentStores)
             connection.send(response);
         });
     });
-    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c0007a"]);
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     RetainPtr customWebsiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    auto *dataStore = TestWebKitAPI::Util::temporaryPersistentDataStore();
 
     // Clear data before test.
     auto types = [NSSet setWithObject:WKWebsiteDataTypeDiskCache];
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
-        [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+    [dataStore removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^{
+        [dataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
             EXPECT_EQ([records count], 0u);
             done = true;
         }];
@@ -1476,15 +1481,16 @@ TEST(WKWebsiteDataStore, FetchDiskCacheDataFromDifferentStores)
     }];
     TestWebKitAPI::Util::run(&done);
 
-    // Create view with default store.
+    // Create view with temporary store.
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
 
     static bool cached = false;
     while (!cached) {
         done = false;
-        [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        [dataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
             if ([records count]) {
                 EXPECT_EQ([records count], 1u);
                 EXPECT_WK_STREQ([[records firstObject] displayName], @"127.0.0.1");
@@ -1503,7 +1509,7 @@ TEST(WKWebsiteDataStore, FetchDiskCacheDataFromDifferentStores)
     TestWebKitAPI::Util::run(&done);
 
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1527,7 +1533,7 @@ TEST(WKWebsiteDataStore, FetchDiskCacheDataFromDifferentStores)
     }
 
     done = false;
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+    [dataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
         EXPECT_EQ([records count], 0u);
         done = true;
     }];
@@ -1546,7 +1552,7 @@ TEST(WKWebsiteDataStore, RemoveDiskCacheDataForOrigin)
     RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", [NSString stringWithFormat:@"%d", server.port()].UTF8String));
     RetainPtr proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nullptr));
 
-    WKWebsiteDataStore *dataStore = [WKWebsiteDataStore defaultDataStore];
+    WKWebsiteDataStore *dataStore = Util::temporaryPersistentDataStore();
     dataStore.proxyConfigurations = @[ proxyConfig.get() ];
 
     NSSet *types = [NSSet setWithObject:WKWebsiteDataTypeDiskCache];
@@ -1592,8 +1598,8 @@ TEST(WKWebsiteDataStore, RemoveDiskCacheDataForOrigin)
     }];
     Util::run(&done);
 
-    // Clean up defaultDataStore after test. The proxy has to be unset too, or later tests using the
-    // default store are routed through this test's server.
+    // Clean up the data store after test. The proxy has to be unset too, or later tests using the
+    // same store are routed through this test's server.
     done = false;
     [dataStore removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^{
         done = true;
@@ -1607,7 +1613,7 @@ TEST(WKWebsiteDataStoreConfiguration, InitWithIdentifier)
     NSString *htmlString = @"<script> \
         document.cookie = \"testkey=value; expires=Mon, 01 Jan 2035 00:00:00 GMT\"; \
     </script>";
-    NSString *uuidString = @"68753a44-4d6f-1226-9c60-0050e4c00067";
+    NSString *uuidString = @"68753a44-4d6f-1226-9c60-0050e4c0007b";
     RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:uuidString]);
     RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     NSURL *cookieStorageFile = websiteDataStoreConfiguration.get()._cookieStorageFile;
