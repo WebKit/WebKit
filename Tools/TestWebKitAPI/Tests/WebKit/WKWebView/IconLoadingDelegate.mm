@@ -98,6 +98,8 @@ static constexpr auto mainBody =
 
 TEST(IconLoading, DefaultFavicon)
 {
+    doneWithIcons = false;
+
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBody } },
         { "/favicon.ico"_s, { "Actual response is immaterial."_s } },
@@ -228,7 +230,7 @@ TEST(IconLoading, IconLoadCancelledCallback2)
 
     // Even though loading has already been stopped (and therefore IconLoaders were cancelled),
     // we should still get the callback.
-    static bool iconCallbackCalled;
+    bool iconCallbackCalled = false;
     iconDelegate.get()->savedCallback([iconCallbackCalled = &iconCallbackCalled](NSData *data) {
         EXPECT_EQ(data.length, (unsigned long)0);
 
