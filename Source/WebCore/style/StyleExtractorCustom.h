@@ -1321,14 +1321,14 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::CaretColor> {
 template<CSSPropertyID propertyID> Ref<CSSValue> extractCSSValue(ExtractorState& state)
 {
     return PropertyExtractorAdaptor<propertyID> { }.computedValue(state, [&](auto&& value) {
-        return createCSSValue(state.pool, state.style, value);
+        return createCSSValue(state.pool, state.style, value, state.valueType);
     });
 }
 
 template<CSSPropertyID propertyID> void extractSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     PropertyExtractorAdaptor<propertyID> { }.computedValue(state, [&](auto&& value) {
-        serializationForCSS(builder, context, state.style, value);
+        serializationForCSS(builder, context, state.style, value, state.valueType);
     });
 }
 

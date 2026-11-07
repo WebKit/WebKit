@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PseudoElementIdentifier.h"
+#include "StyleValueTypes.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 
@@ -40,7 +41,7 @@ namespace Style {
 class ComputedStyle;
 
 struct ExtractorState {
-    enum class PropertyValueType : bool { Resolved, Computed };
+    using PropertyValueType = Style::PropertyValueType;
     PropertyValueType valueType;
 
     const CheckedRef<const Style::ComputedStyle> style;
