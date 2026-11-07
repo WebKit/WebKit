@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-switch-simple</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 2)');
+        await sourceBufferAppend(1, [[0, 3], [3, 6], [6, 9]]);
+        await showEnqueuedSamples();
+
+        await sourceBufferAppend(2, [[0, 3], [3, 6]]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+        consoleWrite("<br>The first GOP was already partially enqueued so it must stay in the old generation, followed by the second GOP of the new generation.")
+        await showEnqueuedSamples();
+        await showBufferedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
