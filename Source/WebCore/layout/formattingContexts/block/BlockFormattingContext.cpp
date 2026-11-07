@@ -31,6 +31,7 @@
 #include "BlockItemsBuilder.h"
 #include "BlockStepSizing.h"
 #include "Element.h"
+#include "FloatingContext.h"
 #include "InlineContentConstrainer.h"
 #include "LocalFrameViewInlines.h"
 #include "OutOfFlowGeometry.h"
@@ -191,6 +192,9 @@ void BlockFormattingContext::layoutBlockItems(const BlockItemList& blockItems, B
         case BlockItem::Type::IndependentFormattingContextRoot:
             handleIndependentFormattingContextRoot(box, result);
             handleBlockLevelBoxEnd(box);
+            break;
+        case BlockItem::Type::Float:
+            handleFloat(box, result);
             break;
         case BlockItem::Type::OutOfFlowBox:
             handleOutOfFlowBox(box, result);
@@ -362,9 +366,9 @@ static PlacedFloats::Item intrudingFloat(const PlacedFloats::Item& floatItem, La
     return { position, geometry, localTopLeft, RefPtr { floatItem.shape() } };
 }
 
-// The border box of the innermost block container in the root, from its top when it is known, and otherwise from where the margins collapsed so
-// far put it: the floats placed from there wait for it (placePendingFloats).
-LayoutSize BlockFormattingContext::inlineContentOffsetInRoot(const ContainingBlockState& blockContainerState)
+// The border box of a block container being laid out in the root, from its top when it is known, and otherwise from where the margins collapsed
+// so far put it: the floats placed from there wait for it (placePendingFloats).
+LayoutSize BlockFormattingContext::borderBoxOffsetInRoot(const ContainingBlockState& blockContainerState)
 {
     auto borderBoxLogicalTop = [&] {
         if (auto borderBoxLogicalTop = blockContainerState.borderBoxLogicalTop)
@@ -378,12 +382,10 @@ LayoutSize BlockFormattingContext::inlineContentOffsetInRoot(const ContainingBlo
     return { blockContainerState.borderBoxLogicalLeftInRoot, borderBoxLogicalTop() };
 }
 
-// The floats in the inline content of the innermost block container, in the coordinates of its border box, that the block formatting context
-// does not have yet: the content placed them before a block-level box in it, or after the last one.
-void BlockFormattingContext::addInlineContentFloats(const PlacedFloats::List& floats)
+// The floats placed in a block container, in the coordinates of the root, that the block formatting context does not have yet. While the
+// block container's top is not known, they wait for it.
+void BlockFormattingContext::addFloats(PlacedFloats::List&& floats, const ContainingBlockState& blockContainerState)
 {
-    auto& blockContainerState = m_blockLayoutState.containingBlockStates().last();
-    auto offsetInRoot = inlineContentOffsetInRoot(blockContainerState);
     auto& placedFloats = m_blockLayoutState.ensurePlacedFloats(root().layoutBox());
     auto& pendingFloats = m_blockLayoutState.pendingFloats();
     auto pendingFloatCount = size_t { 0 };
@@ -400,11 +402,22 @@ void BlockFormattingContext::addInlineContentFloats(const PlacedFloats::List& fl
         });
         if (isPlaced)
             continue;
-        placedFloats.add(movedFloat(floatItem, offsetInRoot, floatBox.get()));
+        placedFloats.add(WTF::move(floatItem));
         addedFloats.append(*floatBox);
     }
     if (!blockContainerState.borderBoxLogicalTop && !addedFloats.isEmpty())
-        pendingFloats.append({ blockContainerState.blockContainer, WTF::move(addedFloats), offsetInRoot.height(), isPlacedAgainstOtherFloats });
+        pendingFloats.append({ blockContainerState.blockContainer, WTF::move(addedFloats), borderBoxOffsetInRoot(blockContainerState).height(), isPlacedAgainstOtherFloats });
+}
+
+// The floats in the inline content of the innermost block container, in the coordinates of its border box: the content placed them before a
+// block-level box in it, or after the last one.
+void BlockFormattingContext::addInlineContentFloats(const PlacedFloats::List& floats)
+{
+    auto& blockContainerState = m_blockLayoutState.containingBlockStates().last();
+    auto offsetInRoot = borderBoxOffsetInRoot(blockContainerState);
+    addFloats(WTF::map(floats, [&](auto& floatItem) {
+        return movedFloat(floatItem, offsetInRoot, floatItem.layoutBox());
+    }), blockContainerState);
 }
 
 void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer, BlockLayoutResult& result)
@@ -442,7 +455,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     if (hasFloats) {
         if (!blockContainerState.borderBoxLogicalTop && LayoutIntegration::BlockIntegrationUtils::inlineContentMakesLineBoxesBeforeBlockLevelBoxes(inlineContentRoot))
             resolveBorderBoxLogicalTops(blockContainerState);
-        offsetInRoot = inlineContentOffsetInRoot(blockContainerState);
+        offsetInRoot = borderBoxOffsetInRoot(blockContainerState);
         if (placedFloats) {
             for (auto& floatItem : placedFloats->list())
                 intrudingFloats.append(intrudingFloat(floatItem, -offsetInRoot, root().writingMode()));
@@ -533,7 +546,7 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
     // Without a top, the block container's margins still collapse with what is after the box, which collapsed through.
     auto& blockContainerStateAfterLayout = containingBlockStates.last();
     // The lines after the box avoid the floats in it too, and the ones from outside the block container, from where its top is now.
-    auto offsetInRoot = inlineContentOffsetInRoot(blockContainerStateAfterLayout);
+    auto offsetInRoot = borderBoxOffsetInRoot(blockContainerStateAfterLayout);
     auto floats = PlacedFloats::List { };
     for (auto& floatItem : m_blockLayoutState.ensurePlacedFloats(root().layoutBox()).list()) {
         auto inlineContentFloat = inlineContentFloats.list().findIf([&](auto& inlineContentFloat) {
@@ -633,9 +646,9 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
 // The inline size of a box laid out through the render tree that its own formatting context decides: of a table (CSS 2.2 §17.5.2), of a
 // replaced element (§10.3.4), of a frameset, which takes the size of the viewport (RenderFrameSet::layout), of a MathML box, which takes the
 // width of its content, or centers it in the stretch-fit inline size with display: block (RenderMathMLRow::layoutBlock,
-// RenderMathMLMath::layoutBlock), of a box that fits its content, like a button (RenderBox::sizesLogicalWidthToFitContent), or that has a
-// sizing keyword inline size, which it resolves with its own intrinsic sizes (css-sizing-3 §5.1), and of an orthogonal box, for which it is
-// the block size (css-writing-modes-4 §7.3).
+// RenderMathMLMath::layoutBlock), of a box that fits its content, like a float or a button (RenderBox::sizesLogicalWidthToFitContent), or
+// that has a sizing keyword inline size, which it resolves with its own intrinsic sizes (css-sizing-3 §5.1), and of an orthogonal box, for
+// which it is the block size (css-writing-modes-4 §7.3).
 static bool decidesItsOwnInlineSize(const RenderBox& box, WritingMode writingMode)
 {
 #if ENABLE(MATHML)
@@ -681,6 +694,37 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
     boxState.borderAndPaddingBefore = geometry.borderAndPaddingBefore();
     boxState.isLaidOutThroughRenderTree = true;
     return layoutResult.legendMarginBefore;
+}
+
+void BlockFormattingContext::handleFloat(const RenderBox& box, BlockLayoutResult& result)
+{
+    ASSERT(m_blockLayoutState.containingBlockStates().last().blockContainer.ptr() == box.parent());
+    // Its own formatting context lays it out at its shrink-to-fit inline size (CSS 2.2 §10.3.5).
+    auto boxState = containingBlockStateAtBlockStart(box);
+    layoutIndependentFormattingContextThroughRenderTree(box, boxState);
+    auto& geometry = boxState.geometry;
+    auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
+    // Its auto margins are zero, and none of its margins collapse or fill the containing block (CSS 2.2 §10.3.5, §10.6.6).
+    CheckedRef style = box.style();
+    auto writingMode = containingBlockState.blockContainer->writingMode();
+    auto margin = [&](auto& length) {
+        return length.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(length, containingBlockState.inlineRange.size(), style->usedZoomForLength());
+    };
+    geometry.setHorizontalMargin({ margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)) });
+    geometry.setVerticalMargin({ margin(style->marginBefore(writingMode)), margin(style->marginAfter(writingMode)) });
+
+    // It goes no higher than where it would be if it were not floating, below the margins before it, unless they still collapse with the
+    // containing block's top, which it then goes to (CSS 2.2 §9.5.1 rules 4 and 5, RenderBlockFlow::adjustFloatingBlock).
+    auto containingBlockOffsetInRoot = borderBoxOffsetInRoot(containingBlockState);
+    auto marginBoxLogicalTop = containingBlockState.borderBoxLogicalTop ? m_blockLayoutState.marginCollapse().collapsedLogicalBottom() - *containingBlockState.borderBoxLogicalTop : containingBlockState.borderAndPaddingBefore;
+    geometry.setTop(marginBoxLogicalTop + geometry.marginBefore());
+    auto& placedFloats = m_blockLayoutState.ensurePlacedFloats(root().layoutBox());
+    auto& rootState = m_blockLayoutState.containingBlockStates().first();
+    auto floatingContext = FloatingContext { root().layoutBox(), placedFloats, { }, rootState.geometry.borderBoxWidth() };
+    auto containingBlock = FloatingContext::ContainingBlock { toLayoutPoint(containingBlockOffsetInRoot), { containingBlockState.inlineRange.min(), containingBlockState.inlineRange.size() } };
+    geometry.setTopLeft(floatingContext.positionForFloat(box.layoutBox(), geometry, containingBlock));
+    addFloats({ floatingContext.makeFloatItem(box.layoutBox(), geometry, containingBlock) }, containingBlockState);
+    result.boxes.append({ box, WTF::move(geometry), { }, { }, { }, false, false, true });
 }
 
 void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayoutResult& result)
@@ -1109,6 +1153,11 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
                 break;
             }
             addContribution(blockContainerSizes.last(), outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box))));
+            break;
+        case BlockItem::Type::Float:
+            // FIXME: Floats among block-level boxes, side by side in the max-content inline size (RenderBlockFlow::computeBlockIntrinsicLogicalWidths),
+            // which coverage keeps out (canComputeContentInlineSizes).
+            ASSERT_NOT_REACHED();
             break;
         case BlockItem::Type::OutOfFlowBox:
             // Out-of-flow boxes do not contribute to the intrinsic sizes of their parent (css-sizing-3 §5.2).

@@ -2912,7 +2912,19 @@ static void paintFloat(RenderBox& renderer, PaintInfo& paintInfo, const LayoutPo
 Vector<CheckedRef<RenderBox>> RenderBlockFlow::floatsPlacedByBlockFormattingContext() const
 {
     auto floats = Vector<CheckedRef<RenderBox>> { };
-    if (m_floatingObjects || !m_lineLayout || m_lineLayout->floatsInContent().isEmpty())
+    if (m_floatingObjects)
+        return floats;
+    if (!childrenInline()) {
+        // The floats among the block-level children, which the render tree path lists when it has any.
+        if (!settings().blockFormattingContextIntegrationEnabled())
+            return floats;
+        for (CheckedPtr child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (child->isFloating())
+                floats.append(*child);
+        }
+        return floats;
+    }
+    if (!m_lineLayout || m_lineLayout->floatsInContent().isEmpty())
         return floats;
     // In tree order, which the placed floats are not in once a negative margin puts a float past another one (PlacedFloats::add).
     for (CheckedPtr descendant = firstChild(); descendant;) {

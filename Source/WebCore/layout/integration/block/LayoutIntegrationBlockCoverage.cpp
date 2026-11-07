@@ -339,6 +339,12 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
         }
+        // FIXME: A float among block-level boxes, which goes beside the floats before it in the max-content inline size
+        // (RenderBlockFlow::computeBlockIntrinsicLogicalWidths).
+        if (descendant != &box && descendant->isFloating()) {
+            if (CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*descendant->parent()); parentBlockContainer && !parentBlockContainer->childrenInline())
+                return false;
+        }
         // FIXME: A block-level box in inline content, which the inline formatting context measures through the render tree
         // (LineBuilder::handleBlockContent).
         if (CheckedPtr element = dynamicDowncast<RenderElement>(*descendant); element && element != &box && element->isBlockLevelBox() && element->parent()->isInlineBox())
@@ -556,17 +562,13 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
     return outOfFlowBoxesInLeafAvoidanceReason(box, rootContainer);
 }
 
-// A float in inline content, which the inline formatting context places (CSS 2.2 §9.5.1) and its own formatting context lays out through the
-// render tree. The block formatting context keeps the floats in the logical coordinates of its root, whose inline direction every block
-// container on the way has.
-// FIXME: Block-level floats, an initial letter, which the inline formatting context sinks into the lines after it, and floats in a line-clamp
-// container, which hides those after the clamp point.
+// A float, which the inline formatting context places in inline content and the block formatting context among block-level boxes (CSS 2.2
+// §9.5.1), and its own formatting context lays out through the render tree. The block formatting context keeps the floats in the logical
+// coordinates of its root, whose inline direction every block container on the way has.
+// FIXME: An initial letter, which the inline formatting context sinks into the lines after it, and floats in a line-clamp container, which
+// hides those after the clamp point.
 static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox& floatBox, const RenderBlockFlow& rootContainer)
 {
-    CheckedPtr parent = floatBox.parent();
-    CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*parent);
-    if (!parent->isInlineBox() && !(parentBlockContainer && parentBlockContainer->childrenInline()))
-        return BlockAvoidanceReason::ContentHasFloat;
     CheckedRef style = floatBox.style();
     if (style->pseudoElementType() == PseudoElementType::FirstLetter && style->initialLetter().drop())
         return BlockAvoidanceReason::ContentHasFloat;

@@ -47,6 +47,9 @@ public:
         InlineContent,
         // A box whose content is laid out in a formatting context of its own; to this one it is a single box.
         IndependentFormattingContextRoot,
+        // A float among block-level boxes, which this formatting context places (CSS 2.2 §9.5.1), and whose content is laid out in a formatting
+        // context of its own.
+        Float,
         // An absolutely or fixed positioned box: it only gets its static position here (CSS 2.2 §10.3.7, §10.6.4).
         OutOfFlowBox
     };
