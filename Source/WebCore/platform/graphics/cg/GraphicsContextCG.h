@@ -111,14 +111,6 @@ public:
 
     void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, RasterDrawingOptions = { }) final;
 
-    using GraphicsContext::scale;
-    void scale(const FloatSize&) final;
-    void rotate(float angleInRadians) final;
-    void translate(float x, float y) final;
-
-    void concatCTM(const AffineTransform&) final;
-    void setCTM(const AffineTransform&) override;
-
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
 
     void drawFocusRing(const Path&, float outlineWidth, const Color&, float zoomFactor) final;
@@ -138,19 +130,26 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void didUpdateState(GraphicsContextState&) final;
-
     virtual bool canUseShadowBlur() const;
 
     FloatRect roundToDevicePixels(const FloatRect&) const;
 
-    // Returns the platform context for draws.
+    // Returns the platform context for draws. Any pending GraphicsContextState changes are
+    // applied first, since a draw must observe the current state.
     const RetainPtr<CGContextRef>& contextForDraw() const
     {
         ASSERT(m_cgContext);
         m_hasDrawn = true;
+        // Applying the pending state does not change the observable state of the context.
+        if (m_state.changes())
+            const_cast<GraphicsContextCG&>(*this).updatePlatformContextState();
         return m_cgContext;
     }
+
+    // Returns the platform context for purposes of context state change, not draws. Pending
+    // GraphicsContextState changes are not applied, so this must not be used by anything that
+    // observes the state.
+    NODELETE const RetainPtr<CGContextRef>& contextForState() const;
 
     // Returns false if there has not been any potential draws since last call.
     // Returns true if there has been potential draws since last call.
@@ -161,6 +160,12 @@ public:
 #endif
 
 private:
+    // Applying the pending state does not change the observable state of the context, so this is
+    // usable from the const accessors.
+    void updatePlatformContextStateIfNeeded() const;
+    void updatePlatformContextState();
+    void willChangeCTM() final;
+
     void setCGDropShadow(const std::optional<GraphicsDropShadow>&, bool shadowsIgnoreTransforms);
     void clearCGDropShadow();
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
@@ -174,9 +179,6 @@ private:
 #if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
     void paintGradientInCGLayer(Gradient&, const AffineTransform& gradientSpaceTransform, const FloatRect& contentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip);
 #endif
-
-    // Returns the platform context for purposes of context state change, not draws.
-    NODELETE const RetainPtr<CGContextRef>& contextForState() const;
 
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<ColorSpace> m_colorSpace;

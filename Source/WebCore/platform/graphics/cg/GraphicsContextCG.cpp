@@ -328,8 +328,15 @@ static GraphicsContext::IsDeferred isDeferredForCGContext(CGContextRef cgContext
     return GraphicsContext::IsDeferred::Yes;
 }
 
+static AffineTransform ctmForCGContext(CGContextRef cgContext)
+{
+    if (!cgContext)
+        return { };
+    return CGContextGetCTM(cgContext);
+}
+
 GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source, std::optional<RenderingMode> knownRenderingMode)
-    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
+    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext), ctmForCGContext(cgContext))
     , m_cgContext(cgContext)
     , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
     , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
@@ -337,13 +344,14 @@ GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource sou
     , m_strokesArcsLikeFills(CGIOSurfaceContextUsingWebKitBehavior(cgContext))
 #endif
 {
-    if (!cgContext)
-        return;
-    // Make sure the context starts in sync with our state.
-    didUpdateState(m_state);
 }
 
-GraphicsContextCG::~GraphicsContextCG() = default;
+GraphicsContextCG::~GraphicsContextCG()
+{
+    // Leave the platform context with the state of this context, for the code that continues to use it.
+    if (m_cgContext)
+        updatePlatformContextStateIfNeeded();
+}
 
 bool GraphicsContextCG::hasPlatformContext() const
 {
@@ -380,6 +388,12 @@ const ColorSpace& GraphicsContextCG::colorSpace() const
 
 void GraphicsContextCG::save(GraphicsContextState::Purpose purpose)
 {
+    // Apply the state before saving, so that the state pushed on the stack describes the gstate
+    // saved below. This has to happen before GraphicsContext::save(), because
+    // Purpose::TransparencyLayer resets the properties CG resets for a layer without marking them
+    // as changed, and a pending change to them would otherwise reach the context as the reset
+    // value instead of the value the layer has to be composited with.
+    updatePlatformContextStateIfNeeded();
     GraphicsContext::save(purpose);
     CGContextSaveGState(contextForState());
 }
@@ -1196,6 +1210,12 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
 {
     GraphicsContext::beginTransparencyLayer(opacity);
 
+    // CG composites the layer using the alpha, style and blend mode that are in effect when the
+    // layer begins, and resets them for the layer contents. Purpose::TransparencyLayer resets
+    // them in our state to match, without marking them as changed, so any pending change to them
+    // has to reach the context before that happens.
+    updatePlatformContextStateIfNeeded();
+
     save(GraphicsContextState::Purpose::TransparencyLayer);
 
     const RetainPtr<CGContextRef>& context = contextForDraw();
@@ -1344,75 +1364,89 @@ void GraphicsContextCG::setCGStyle(const std::optional<GraphicsStyle>& style, bo
     );
 }
 
-void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
+void GraphicsContextCG::updatePlatformContextStateIfNeeded() const
 {
-    auto changes = state.changes();
+    if (m_state.changes())
+        const_cast<GraphicsContextCG&>(*this).updatePlatformContextState();
+}
+
+void GraphicsContextCG::updatePlatformContextState()
+{
+    auto changes = m_state.changes();
     if (!changes)
         return;
 
+    // Consume the changes up front: applying them below must not recurse back here, either
+    // via platformContext() or by re-entering through one of the appliers.
+    m_state.didApplyChanges();
+
     if (changes.contains(GraphicsContextState::Change::ShadowsIgnoreTransforms)) {
-        if (state.dropShadow())
+        if (m_state.dropShadow())
             changes.add(GraphicsContextState::Change::DropShadow);
-        if (state.style())
+        if (m_state.style())
             changes.add(GraphicsContextState::Change::Style);
     }
 
     const RetainPtr<CGContextRef>& context = contextForDraw();
 
+    // Apply the CTM first, since the drop shadow and the style are set in base space.
+    if (changes.contains(GraphicsContextState::Change::CTM)) {
+        CGContextSetCTM(context, m_state.ctm());
+        m_userToDeviceTransformKnownToBeIdentity = false;
+    }
+
     for (auto change : changes) {
         switch (change) {
         case GraphicsContextState::Change::FillBrush:
-            if (!state.fillBrush().hasPatternOrGradient())
-                setCGFillColor(context, state.fillBrush().color(), colorSpace());
+            if (!m_state.fillBrush().hasPatternOrGradient())
+                setCGFillColor(context, m_state.fillBrush().color(), colorSpace());
             break;
 
         case GraphicsContextState::Change::StrokeThickness:
-            CGContextSetLineWidth(context, std::max(state.strokeThickness(), 0.f));
+            CGContextSetLineWidth(context, std::max(m_state.strokeThickness(), 0.f));
             break;
 
         case GraphicsContextState::Change::StrokeBrush:
-            if (!state.strokeBrush().hasPatternOrGradient())
-                CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(state.strokeBrush().color(), colorSpace()).get());
+            if (!m_state.strokeBrush().hasPatternOrGradient())
+                CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(m_state.strokeBrush().color(), colorSpace()).get());
             break;
 
         case GraphicsContextState::Change::CompositeMode:
-            setCGBlendMode(context, state.compositeMode().operation, state.compositeMode().blendMode);
+            setCGBlendMode(context, m_state.compositeMode().operation, m_state.compositeMode().blendMode);
             break;
 
         case GraphicsContextState::Change::DropShadow:
-            setCGDropShadow(state.dropShadow(), state.shadowsIgnoreTransforms());
+            setCGDropShadow(m_state.dropShadow(), m_state.shadowsIgnoreTransforms());
             break;
 
         case GraphicsContextState::Change::Style:
-            setCGStyle(state.style(), state.shadowsIgnoreTransforms());
+            setCGStyle(m_state.style(), m_state.shadowsIgnoreTransforms());
             break;
 
         case GraphicsContextState::Change::Alpha:
-            CGContextSetAlpha(context, state.alpha());
+            CGContextSetAlpha(context, m_state.alpha());
             break;
 
         case GraphicsContextState::Change::ImageInterpolationQuality:
-            CGContextSetInterpolationQuality(context, toCGInterpolationQuality(state.imageInterpolationQuality()));
+            CGContextSetInterpolationQuality(context, toCGInterpolationQuality(m_state.imageInterpolationQuality()));
             break;
 
         case GraphicsContextState::Change::TextDrawingMode:
-            CGContextSetTextDrawingMode(context, cgTextDrawingMode(state.textDrawingMode()));
+            CGContextSetTextDrawingMode(context, cgTextDrawingMode(m_state.textDrawingMode()));
             break;
 
         case GraphicsContextState::Change::ShouldAntialias:
-            CGContextSetShouldAntialias(context, state.shouldAntialias());
+            CGContextSetShouldAntialias(context, m_state.shouldAntialias());
             break;
 
         case GraphicsContextState::Change::ShouldSmoothFonts:
-            CGContextSetShouldSmoothFonts(context, state.shouldSmoothFonts());
+            CGContextSetShouldSmoothFonts(context, m_state.shouldSmoothFonts());
             break;
 
         default:
             break;
         }
     }
-
-    state.didApplyChanges();
 }
 
 void GraphicsContextCG::setMiterLimit(float limit)
@@ -1537,34 +1571,12 @@ void GraphicsContextCG::setLineJoin(LineJoin join)
     }
 }
 
-void GraphicsContextCG::scale(const FloatSize& size)
+void GraphicsContextCG::willChangeCTM()
 {
-    CGContextScaleCTM(contextForDraw(), size.width(), size.height());
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::rotate(float angle)
-{
-    CGContextRotateCTM(contextForDraw(), angle);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::translate(float x, float y)
-{
-    CGContextTranslateCTM(contextForDraw(), x, y);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::concatCTM(const AffineTransform& transform)
-{
-    CGContextConcatCTM(contextForDraw(), transform);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::setCTM(const AffineTransform& transform)
-{
-    CGContextSetCTM(contextForDraw(), transform);
-    m_userToDeviceTransformKnownToBeIdentity = false;
+    // The drop shadow and the style are converted to base space using the CTM in effect when they
+    // are applied, so a pending change to them has to reach the context before the CTM changes.
+    if (m_state.changes().containsAny({ GraphicsContextState::Change::DropShadow, GraphicsContextState::Change::Style, GraphicsContextState::Change::ShadowsIgnoreTransforms }))
+        updatePlatformContextState();
 }
 
 AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
@@ -1572,14 +1584,18 @@ AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
     // The CTM usually includes the deviceScaleFactor except in WebKit 1 when the
     // content is non-composited, since the scale factor is integrated at a lower
     // level. To guarantee the deviceScale is included, we can use this CG API.
-    if (includeScale == DefinitelyIncludeDeviceScale)
-        return CGContextGetUserSpaceToDeviceSpaceTransform(contextForDraw());
+    if (includeScale == DefinitelyIncludeDeviceScale) {
+        updatePlatformContextStateIfNeeded();
+        return CGContextGetUserSpaceToDeviceSpaceTransform(contextForState());
+    }
 
-    return CGContextGetCTM(contextForDraw());
+    return GraphicsContext::getCTM(includeScale);
 }
 
 FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect) const
 {
+    // Apply a pending CTM change, which also invalidates m_userToDeviceTransformKnownToBeIdentity.
+    updatePlatformContextStateIfNeeded();
     CGAffineTransform deviceMatrix;
     if (!m_userToDeviceTransformKnownToBeIdentity) {
         deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(contextForState());
@@ -1694,6 +1710,8 @@ void GraphicsContextCG::beginPage(const FloatRect& pageRect)
 
     ASSERT(!stackSize());
     m_state = GraphicsContextState { GraphicsContextState::basicChangeFlags, coreInterpolationQuality(context.get()) };
+    // Beginning a page resets the platform state, including the CTM.
+    didChangePlatformCTM(CGContextGetCTM(context.get()));
     didUpdateState(m_state);
     m_userToDeviceTransformKnownToBeIdentity = false;
 }

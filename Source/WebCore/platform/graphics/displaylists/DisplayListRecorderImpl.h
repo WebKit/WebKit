@@ -56,6 +56,8 @@ public:
 
     void save(GraphicsContextState::Purpose) final;
     void restore(GraphicsContextState::Purpose) final;
+    void saveTransform() final;
+    void restoreTransform() final;
     void translate(float x, float y) final;
     void rotate(float angle) final;
     void scale(const FloatSize&) final;

@@ -49,6 +49,8 @@ public:
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    void saveTransform() final;
+    void restoreTransform() final;
 
     void drawRect(const FloatRect&, float borderThickness = 1) final;
     void drawLine(const FloatPoint&, const FloatPoint&) final;
@@ -151,9 +153,11 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void didUpdateState(GraphicsContextState&) final;
-
 private:
+    // The child contexts are kept in sync lazily, before any operation that needs them to
+    // observe the current state. They apply the state to their platform contexts in turn.
+    void updatePlatformContextStateIfNeeded();
+
     void verifyStateSynchronization();
 
     bool m_hasLoggedAboutDesynchronizedState { false };

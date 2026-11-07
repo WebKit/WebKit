@@ -64,8 +64,6 @@ public:
 
     void replayStateOnCanvas(SkCanvas&) const;
 
-    void didUpdateState(GraphicsContextState&) final;
-
     void setLineCap(LineCap) final;
     void setLineDash(const DashArray&, float) final;
     void setLineJoin(LineJoin) final;
@@ -95,6 +93,7 @@ public:
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
+    void restoreTransform() final;
 
     void translate(float, float) final;
     void rotate(float) final;
@@ -102,7 +101,6 @@ public:
     void scale(const FloatSize&) final;
     void concatCTM(const AffineTransform&) final;
     void setCTM(const AffineTransform&) final;
-    AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
 
     void beginTransparencyLayer(float) final;
     void beginTransparencyLayer(CompositeOperator, BlendMode) final;
@@ -181,6 +179,7 @@ private:
         bool isLayer { false };
         std::optional<CompositeMode> compositeMode;
         float alpha { 1.0f };
+        AffineTransform ctm;
 
         // State replay (only populated when m_enableStateReplayTracking).
         SkMatrix matrix;

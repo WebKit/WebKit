@@ -130,6 +130,16 @@ void RemoteGraphicsContext::concatCTM(const AffineTransform& ctm)
     context().concatCTM(ctm);
 }
 
+void RemoteGraphicsContext::saveTransform()
+{
+    context().saveTransform();
+}
+
+void RemoteGraphicsContext::restoreTransform()
+{
+    context().restoreTransform();
+}
+
 void RemoteGraphicsContext::setFillPackedColor(PackedColor::RGBA color)
 {
     context().setFillColor(asSRGBA(color));

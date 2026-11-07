@@ -81,18 +81,22 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
         // conservatively.
         CGAffineTransform savedTextMatrix = CGContextGetTextMatrix(cgContext.get());
 
-        WebCore::GraphicsContextCG graphicsContext { cgContext.get() };
+        {
+            WebCore::GraphicsContextCG graphicsContext { cgContext.get() };
 
-        // WebCore requires a flipped graphics context.
-        bool flipped = [nsContext isFlipped];
-        if (!flipped)
-            CGContextScaleCTM(cgContext.get(), 1, -1);
+            // WebCore requires a flipped graphics context.
+            bool flipped = [nsContext isFlipped];
+            if (!flipped) {
+                graphicsContext.saveTransform();
+                graphicsContext.scale({ 1, -1 });
+            }
 
-        graphicsContext.setFillColor(WebCore::colorFromCocoaColor(textColor));
-        webCoreFont.drawText(graphicsContext, run, WebCore::FloatPoint(point.x, flipped ? point.y : -point.y));
+            graphicsContext.setFillColor(WebCore::colorFromCocoaColor(textColor));
+            webCoreFont.drawText(graphicsContext, run, WebCore::FloatPoint(point.x, flipped ? point.y : -point.y));
 
-        if (!flipped)
-            CGContextScaleCTM(cgContext.get(), 1, -1);
+            if (!flipped)
+                graphicsContext.restoreTransform();
+        }
 
         CGContextSetTextMatrix(cgContext.get(), savedTextMatrix);
     } else {

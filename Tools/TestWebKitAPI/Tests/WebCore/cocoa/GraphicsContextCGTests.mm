@@ -358,6 +358,40 @@ TEST(GraphicsContextTests, ScaleFactorForDrawingHandlesDegenerateSourceRect)
     }
 }
 
+TEST(GraphicsContextTests, CTMIsAppliedToPlatformContext)
+{
+    auto colorSpace = ColorSpace::SRGB();
+    RetainPtr cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, protect(colorSpace.platformColorSpace()).get(), kCGImageAlphaPremultipliedLast));
+    CGContextTranslateCTM(cgContext.get(), 1, 2);
+    auto initialCTM = AffineTransform { CGContextGetCTM(cgContext.get()) };
+    {
+        GraphicsContextCG ctx(cgContext.get());
+        EXPECT_EQ(initialCTM, ctx.getCTM());
+
+        ctx.translate(3, 4);
+        ctx.scale(2);
+        auto ctm = ctx.getCTM();
+        EXPECT_EQ(AffineTransform(initialCTM).translate(3, 4).scale(2), ctm);
+        EXPECT_EQ(ctm, AffineTransform { CGContextGetCTM(protect(ctx.platformContext()).get()) });
+
+        ctx.save();
+        ctx.rotate(1);
+        ctx.restore();
+        EXPECT_EQ(ctm, ctx.getCTM());
+        EXPECT_EQ(ctm, AffineTransform { CGContextGetCTM(protect(ctx.platformContext()).get()) });
+
+        ctx.saveTransform();
+        ctx.rotate(1);
+        ctx.clip({ 0, 0, 1, 1 });
+        ctx.restoreTransform();
+        EXPECT_EQ(ctm, ctx.getCTM());
+        EXPECT_EQ(ctm, AffineTransform { CGContextGetCTM(protect(ctx.platformContext()).get()) });
+
+        ctx.translate(5, 6);
+    }
+    EXPECT_EQ(AffineTransform(initialCTM).translate(3, 4).scale(2).translate(5, 6), AffineTransform { CGContextGetCTM(cgContext.get()) });
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)

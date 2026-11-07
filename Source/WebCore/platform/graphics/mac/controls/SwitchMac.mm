@@ -82,7 +82,7 @@ static RefPtr<ImageBuffer> createTrackStateImage(GraphicsContext& context, RefPt
     auto coreUIPresentation = (__bridge NSString *)(isInActiveWindow ? kCUIPresentationStateActiveKey : kCUIPresentationStateInactive);
     auto coreUIDirection = (__bridge NSString *)(isInlineFlipped ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight);
 
-    CGContextStateSaver stateSaver(cgContext.get());
+    GraphicsContextStateSaver stateSaver(trackImage->context());
 
     // FIXME: clipping in context() might not always be accurate for context().platformContext().
     trackImage->context().clipToImageBuffer(*trackMaskImage, drawingTrackRect);
@@ -118,7 +118,8 @@ static RefPtr<ImageBuffer> createTrackStateImage(GraphicsContext& context, RefPt
             SwitchMacUtilities::rotateContextForVerticalWritingMode(trackImage->context(), drawingTrackRect);
         }
 
-        [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext.get() options:@{
+        // Get the platform context again, so that it has the transforms above applied.
+        [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:protect(trackImage->context().platformContext()).get() options:@{
             (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchOnOffLabel,
             // FIXME: Below does not pass kCUIStatePressed like NSCoreUIStateForSwitchState does,
             // as passing that does not appear to work correctly. Might be related to

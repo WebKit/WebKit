@@ -50,16 +50,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContext);
 
-GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState::ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
+GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState::ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality, const AffineTransform& initialCTM)
     : m_state(changeFlags, imageInterpolationQuality)
     , m_isDeferred(isDeferred)
 {
+    m_state.setAppliedCTM(initialCTM);
 }
 
-GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState& state)
+GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState& state, const AffineTransform& initialCTM)
     : m_state(state)
     , m_isDeferred(isDeferred)
 {
+    m_state.setAppliedCTM(initialCTM);
 }
 
 GraphicsContext::~GraphicsContext()
@@ -70,7 +72,7 @@ GraphicsContext::~GraphicsContext()
 
 void GraphicsContext::save(GraphicsContextState::Purpose purpose)
 {
-    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
+    ASSERT(purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer || purpose == GraphicsContextState::Purpose::Transform);
     m_stack.append(m_state);
     m_state.repurpose(purpose);
 }
@@ -82,16 +84,106 @@ void GraphicsContext::restore(GraphicsContextState::Purpose purpose)
         return;
     }
 
-    ASSERT_UNUSED(purpose, purpose == m_state.purpose());
-    ASSERT_UNUSED(purpose, purpose == GraphicsContextState::Purpose::SaveRestore || purpose == GraphicsContextState::Purpose::TransparencyLayer);
+    ASSERT(purpose == m_state.purpose());
 
-    m_state = m_stack.last();
-    m_stack.removeLast();
+    if (purpose == GraphicsContextState::Purpose::Transform) {
+        willChangeCTM();
+        m_state.restoreTransform(m_stack.takeLast());
+        didUpdateState(m_state);
+    } else
+        m_state = m_stack.takeLast();
 
     // Make sure we deallocate the state stack buffer when it goes empty.
     // Canvas elements will immediately save() again, but that goes into inline capacity.
     if (m_stack.isEmpty())
         m_stack.clear();
+}
+
+bool GraphicsContext::canRestoreTransform() const
+{
+    return !m_stack.isEmpty() && m_state.purpose() == GraphicsContextState::Purpose::Transform;
+}
+
+void GraphicsContext::saveTransform()
+{
+    GraphicsContext::save(GraphicsContextState::Purpose::Transform);
+}
+
+void GraphicsContext::restoreTransform()
+{
+    if (!canRestoreTransform()) {
+        LOG_ERROR("ERROR void GraphicsContext::restoreTransform() no matching saveTransform()");
+        return;
+    }
+    GraphicsContext::restore(GraphicsContextState::Purpose::Transform);
+}
+
+void GraphicsContext::scale(const FloatSize& size)
+{
+    updateCTMForScale(size);
+}
+
+void GraphicsContext::rotate(float angleInRadians)
+{
+    updateCTMForRotate(angleInRadians);
+}
+
+void GraphicsContext::translate(float x, float y)
+{
+    updateCTMForTranslate(x, y);
+}
+
+void GraphicsContext::concatCTM(const AffineTransform& transform)
+{
+    updateCTMForConcatCTM(transform);
+}
+
+bool GraphicsContext::updateCTMForScale(const FloatSize& size)
+{
+    willChangeCTM();
+    if (!m_state.scaleCTM(size))
+        return false;
+    didUpdateState(m_state);
+    return true;
+}
+
+bool GraphicsContext::updateCTMForRotate(float angleInRadians)
+{
+    willChangeCTM();
+    if (!m_state.rotateCTM(angleInRadians))
+        return false;
+    didUpdateState(m_state);
+    return true;
+}
+
+bool GraphicsContext::updateCTMForTranslate(float x, float y)
+{
+    willChangeCTM();
+    if (!m_state.translateCTM(x, y))
+        return false;
+    didUpdateState(m_state);
+    return true;
+}
+
+bool GraphicsContext::updateCTMForConcatCTM(const AffineTransform& transform)
+{
+    willChangeCTM();
+    if (!m_state.concatCTM(transform))
+        return false;
+    didUpdateState(m_state);
+    return true;
+}
+
+void GraphicsContext::setCTM(const AffineTransform& transform)
+{
+    willChangeCTM();
+    m_state.setCTM(transform);
+    didUpdateState(m_state);
+}
+
+AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
+{
+    return m_state.ctm();
 }
 
 void GraphicsContext::unwindStateStack(unsigned count)
@@ -104,6 +196,9 @@ void GraphicsContext::unwindStateStack(unsigned count)
             break;
         case GraphicsContextState::Purpose::TransparencyLayer:
             endTransparencyLayer();
+            break;
+        case GraphicsContextState::Purpose::Transform:
+            restoreTransform();
             break;
         default:
             ASSERT_NOT_REACHED();

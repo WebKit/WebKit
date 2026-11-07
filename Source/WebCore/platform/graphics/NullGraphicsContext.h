@@ -60,7 +60,9 @@ private:
     bool invalidatingImagesWithAsyncDecodes() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes; }
     bool detectingContentfulPaint() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::DetectingContentfulPaint; }
 
+#if !USE(CG) && !USE(SKIA)
     void didUpdateState(GraphicsContextState&) final { }
+#endif
 
     void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, RasterDrawingOptions) final { }
 
@@ -106,6 +108,8 @@ private:
     void clipOut(const FloatRect&) final { }
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final { }
+    void saveTransform() final { }
+    void restoreTransform() final { }
 
     void drawRaisedEllipse(const FloatRect&, const Color&, const Color&) final { }
 
