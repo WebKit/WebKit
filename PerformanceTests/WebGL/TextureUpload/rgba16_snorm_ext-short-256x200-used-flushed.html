@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/webgl-formats.js"></script>
+<script src="../resources/texture-upload.js"></script>
+<script>
+runTextureUpload({ internalFormat: "RGBA16_SNORM_EXT", type: "SHORT", width: 256, height: 200, state: "used-flushed" });
+</script>
+</body>
+</html>
