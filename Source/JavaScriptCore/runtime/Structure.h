@@ -343,6 +343,12 @@ public:
         return !typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence();
     }
 
+    // A cached private field or brand addition skips [[IsExtensible]], so the structure alone has to answer it.
+    bool privateElementAdditionsAreCacheable() const
+    {
+        return isStructureExtensible() && !typeInfo().overridesIsExtensible();
+    }
+
     bool needImpurePropertyWatchpoint()
     {
         return propertyAccessesAreCacheable()

@@ -1,7 +1,7 @@
 let assert = {
     sameValue: function (actual, expected) {
         if (actual !== expected)
-            throw new Error("Expected: " + actual + " bug got: " + expected);
+            throw new Error("Expected: " + expected + " but got: " + actual);
     },
 
     throws: function (expectedError, op) {
@@ -10,7 +10,9 @@ let assert = {
         } catch(e) {
             if (!(e instanceof expectedError))
                 throw new Error("Expected to throw: " + expectedError + " but threw: " + e);
+            return;
         }
+        throw new Error("Expected to throw: " + expectedError + " but did not throw");
     }
 };
 
@@ -30,14 +32,16 @@ assert.throws(TypeError, function () {
 
 Object.seal(c1);
 
+// Sealing does not apply to private names, so a brand installed beforehand keeps working.
 assert.sameValue(c1.access(), 'test');
 assert.throws(TypeError, function () {
     c1.access.call({});
 });
 
-// Perform a set brand transition on frozen object
-let sealedObject = {};
-Object.freeze(sealedObject);
+// A private brand cannot be installed on a non-extensible object:
+// https://github.com/tc39/proposal-nonextensible-applies-to-private
+let sealedObject = { x: 1 };
+Object.seal(sealedObject);
 
 class Base {
     constructor() {
@@ -51,12 +55,16 @@ class D extends Base {
     static access(o) {
         return o.#m();
     }
+
+    static has(o) {
+        return #m in o;
+    }
 }
 
-let d = new D();
-
-assert.sameValue(D.access(d), 'test D');
 assert.throws(TypeError, function () {
-    D.access({});
+    new D();
 });
-
+assert.sameValue(D.has(sealedObject), false);
+assert.throws(TypeError, function () {
+    D.access(sealedObject);
+});
