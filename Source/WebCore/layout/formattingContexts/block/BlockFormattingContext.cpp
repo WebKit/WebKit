@@ -628,6 +628,160 @@ static std::optional<LayoutUnit> blockStepSize(const RenderBox& box)
     return Style::evaluate<LayoutUnit>(*blockStepSize, style->usedZoomForLength());
 }
 
+static bool decidesItsOwnInlineSize(const RenderBox&, WritingMode);
+
+// A box that establishes a formatting context of its own, a table or a block-level replaced element goes beside the floats before it without
+// overlapping their margin boxes, or below them (CSS 2.2 §9.5): like RenderBlockFlow::getClearDelta, from where the margins put it, its
+// hypothetical position, and then at the bottom of one float after the other, until it fits the space the floats leave beside its border box.
+// An auto inline size stretches into that space (css-sizing-3 §4.2), and the block size depends on it, so the box is laid out again when the
+// space is narrower below the top: at most twice for each position. A box that goes below its hypothetical position has clearance: its margins
+// no longer collapse with the ones before it (CSS 2.2 §8.3.1, RenderBlockFlow::clearFloatsIfNeeded). Returns the block size of its content.
+template<typename LayoutContent>
+std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const RenderBox& box, ContainingBlockState& boxState, LayoutUnit marginsBeforeLogicalBottom, const LayoutContent& layoutContent)
+{
+    auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
+    auto hypotheticalBorderBoxLogicalTop = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+    // The floats waiting for their block container's top are where that top would be at the box's hypothetical position.
+    auto& pendingFloats = m_blockLayoutState.pendingFloats();
+    auto floats = PlacedFloats { root().layoutBox() };
+    for (auto& floatItem : m_blockLayoutState.placedFloats()->list()) {
+        auto pending = pendingFloats.findIf([&](auto& pending) {
+            return pending.floatBoxes.containsIf([&](auto& floatBox) {
+                return floatBox.ptr() == floatItem.layoutBox();
+            });
+        });
+        floats.add(pending == notFound ? floatItem : movedFloat(floatItem, { 0_lu, hypotheticalBorderBoxLogicalTop - pendingFloats[pending].provisionalBorderBoxLogicalTop }, floatItem.layoutBox()));
+    }
+    auto& rootState = m_blockLayoutState.containingBlockStates().first();
+    auto floatingContext = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() };
+
+    // The space the floats leave in the content box of the containing block, in the coordinates of the root.
+    auto contentBoxStart = containingBlockState.borderBoxLogicalLeftInRoot + containingBlockState.inlineRange.min();
+    auto contentBoxEnd = contentBoxStart + containingBlockState.inlineRange.size();
+    auto spaceBetween = [&](LayoutUnit top, LayoutUnit bottom) {
+        auto constraints = floatingContext.constraints(top, bottom, FloatingContext::MayBeAboveLastFloat::Yes);
+        return std::pair { constraints.start ? std::max(contentBoxStart, constraints.start->x) : contentBoxStart, constraints.end ? std::min(contentBoxEnd, constraints.end->x) : contentBoxEnd };
+    };
+
+    // Its inline size and margins in a space, and where its border box starts in it, like RenderBlockFlow::determineLogicalLeftPositionForChild:
+    // auto margins share the space (RenderBox::computeLogicalWidth with containingBlockAvailableLineWidth), and otherwise a float may sit in
+    // the start margin. A stretch-fit size, of an auto inline size too, goes to the end of the space, or to the end margin
+    // (RenderBox::shrinkLogicalWidthToAvoidFloats), while percentages still refer to the containing block.
+    CheckedRef style = box.style();
+    auto writingMode = root().writingMode();
+    CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
+    auto& marginStartLength = style->marginStart(containingBlockStyle->writingMode());
+    auto& marginEndLength = style->marginEnd(containingBlockStyle->writingMode());
+    auto hasAutoInlineMargin = marginStartLength.isAuto() || marginEndLength.isAuto();
+    auto marginStart = hasAutoInlineMargin ? 0_lu : Style::evaluateMinimum<LayoutUnit>(marginStartLength, containingBlockState.inlineRange.size(), style->usedZoomForLength());
+    auto marginEnd = hasAutoInlineMargin ? 0_lu : Style::evaluateMinimum<LayoutUnit>(marginEndLength, containingBlockState.inlineRange.size(), style->usedZoomForLength());
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
+    auto isLaidOutThroughRenderTree = !blockContainer || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*blockContainer);
+    auto hasOwnInlineSize = isLaidOutThroughRenderTree && decidesItsOwnInlineSize(box, writingMode);
+    struct Placement {
+        BoxGeometry geometry;
+        LayoutUnit spaceStart;
+        LayoutUnit spaceEnd;
+    };
+    auto placementIn = [&](LayoutUnit spaceStart, LayoutUnit spaceEnd) {
+        auto geometry = boxState.geometry;
+        if (!hasOwnInlineSize) {
+            auto availableInlineSize = std::min(contentBoxEnd - marginEnd, spaceEnd) - std::max(contentBoxStart + marginStart, spaceStart) + marginStart + marginEnd;
+            computeInlineSizeAndMargins(box, containingBlockState, geometry, availableInlineSize);
+        }
+        return Placement { WTF::move(geometry), spaceStart, spaceEnd };
+    };
+    // The box laid out for a placement, and its border box block size.
+    auto laidOutState = std::optional<ContainingBlockState> { };
+    auto laidOutContentBlockSize = std::optional<LayoutUnit> { };
+    auto layoutFor = [&](const Placement& placement) {
+        if (laidOutState && (hasOwnInlineSize || laidOutState->geometry.borderBoxWidth() == placement.geometry.borderBoxWidth()))
+            return laidOutState->geometry.borderBoxHeight();
+        auto state = containingBlockStateFor(box, placement.geometry, containingBlockState);
+        state.margins = boxState.margins;
+        laidOutContentBlockSize = layoutContent(state).first;
+        if (!state.isLaidOutThroughRenderTree)
+            computeBlockSize(box, laidOutContentBlockSize.value_or(0_lu), containingBlockState, state.geometry);
+        laidOutState = WTF::move(state);
+        return laidOutState->geometry.borderBoxHeight();
+    };
+    // Whether the border box fits the space beside the floats at a position, for its whole block size, which it is laid out for. Floats
+    // further down narrow that space, which an auto inline size then stretches into, once more at most.
+    auto placementAt = [&](LayoutUnit top) -> std::pair<Placement, bool> {
+        auto [spaceStart, spaceEnd] = spaceBetween(top, top);
+        auto placement = placementIn(spaceStart, spaceEnd);
+        auto blockSize = layoutFor(placement);
+        for (auto attempt = 0; attempt < 2; ++attempt) {
+            auto [rangeStart, rangeEnd] = spaceBetween(top, top + blockSize);
+            if (rangeStart == placement.spaceStart && rangeEnd == placement.spaceEnd)
+                break;
+            placement = placementIn(rangeStart, rangeEnd);
+            blockSize = layoutFor(placement);
+        }
+        std::tie(placement.spaceStart, placement.spaceEnd) = spaceBetween(top, top + blockSize);
+        if (placement.spaceStart == contentBoxStart && placement.spaceEnd == contentBoxEnd)
+            return { WTF::move(placement), true };
+        // Beside a float at the end, the start margin takes the part of the space that the floats at the start leave in it.
+        auto spaceInlineSize = placement.spaceEnd - placement.spaceStart;
+        auto borderBoxInlineSize = laidOutState->geometry.borderBoxWidth();
+        if (placement.spaceEnd >= contentBoxEnd)
+            return { WTF::move(placement), borderBoxInlineSize <= spaceInlineSize };
+        auto usedMarginStart = !hasAutoInlineMargin ? marginStart : hasOwnInlineSize ? BlockFormattingUtils::inlineMargins(box, borderBoxInlineSize, spaceInlineSize, containingBlockStyle).first : placement.geometry.marginStart();
+        auto floatsAtStart = placement.spaceStart - contentBoxStart;
+        auto marginStartInSpace = std::max(usedMarginStart, floatsAtStart) - floatsAtStart;
+        return { WTF::move(placement), marginStartInSpace + borderBoxInlineSize <= spaceInlineSize };
+    };
+    auto nextFloatLogicalBottom = [&](LayoutUnit top) -> std::optional<LayoutUnit> {
+        auto bottom = std::optional<LayoutUnit> { };
+        for (auto& floatItem : floats.list()) {
+            auto floatBottom = floatItem.absoluteRectWithMargin().bottom();
+            if (floatBottom > top && (!bottom || floatBottom < *bottom))
+                bottom = floatBottom;
+        }
+        return bottom;
+    };
+
+    auto borderBoxLogicalTop = hypotheticalBorderBoxLogicalTop;
+    // Its clear comes first (RenderBlockFlow::getClearDelta).
+    if (box.layoutBox().hasFloatClear()) {
+        if (auto floatsLogicalBottom = floatingContext.blockEndOfFloatsToClear(box.layoutBox()))
+            borderBoxLogicalTop = std::max(borderBoxLogicalTop, *floatsLogicalBottom);
+    }
+    auto [placement, fits] = placementAt(borderBoxLogicalTop);
+    while (!fits) {
+        auto nextTop = nextFloatLogicalBottom(borderBoxLogicalTop);
+        if (!nextTop)
+            break;
+        borderBoxLogicalTop = *nextTop;
+        std::tie(placement, fits) = placementAt(borderBoxLogicalTop);
+    }
+    layoutFor(placement);
+    boxState = WTF::move(*laidOutState);
+    auto& geometry = boxState.geometry;
+    // The layout for an earlier space of the same inline size stays, with the margins in this one.
+    if (!hasOwnInlineSize)
+        geometry.setHorizontalMargin({ placement.geometry.marginStart(), placement.geometry.marginEnd() });
+    else {
+        // Its own formatting context decided its inline size (layoutIndependentFormattingContextThroughRenderTree): the margins are in the space.
+        auto spaceInlineSize = hasAutoInlineMargin ? placement.spaceEnd - placement.spaceStart : containingBlockState.inlineRange.size();
+        auto [usedMarginStart, usedMarginEnd] = BlockFormattingUtils::inlineMargins(box, geometry.borderBoxWidth(), spaceInlineSize, containingBlockStyle);
+        geometry.setHorizontalMargin({ hasAutoInlineMargin ? usedMarginStart : marginStart, hasAutoInlineMargin ? usedMarginEnd : marginEnd });
+    }
+    // Its end margin still takes what makes the equality true in the containing block, past the floats (RenderBox::computeLogicalWidth).
+    if (containingBlockState.inlineRange.size() && BlockFormattingUtils::ignoresEndMarginWhenOverConstrained(box, containingBlockStyle))
+        geometry.setHorizontalMargin({ geometry.marginStart(), containingBlockState.inlineRange.size() - geometry.borderBoxWidth() - geometry.marginStart() });
+    auto borderBoxStart = hasAutoInlineMargin ? placement.spaceStart + geometry.marginStart() : std::max(contentBoxStart + marginStart, placement.spaceStart);
+    geometry.setLeft(borderBoxStart - containingBlockState.borderBoxLogicalLeftInRoot);
+    // Below the hypothetical position the floats put it, as clearance would (resolveBorderBoxLogicalTops).
+    if (borderBoxLogicalTop > hypotheticalBorderBoxLogicalTop) {
+        if (pendingFloats.isEmpty())
+            boxState.clearance = ContainingBlockState::Clearance { borderBoxLogicalTop, { }, marginsBeforeLogicalBottom };
+        else
+            boxState.clearance = ContainingBlockState::Clearance { LayoutUnit::min(), borderBoxLogicalTop - hypotheticalBorderBoxLogicalTop, marginsBeforeLogicalBottom };
+    }
+    return laidOutContentBlockSize;
+}
+
 void BlockFormattingContext::handleIndependentFormattingContextRoot(const RenderBox& box, BlockLayoutResult& result)
 {
     auto rootState = containingBlockStateAtBlockStart(box);
@@ -636,39 +790,59 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     // so do those of a fieldset, once its own layout has placed its legend, whose block-start margin it takes (RenderBlock::marginBefore).
     auto stepSize = blockStepSize(box);
     auto collapsesMarginsOnceLaidOut = stepSize || box.isFieldset();
-    if (!collapsesMarginsOnceLaidOut) {
-        m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore());
-        resolveBorderBoxLogicalTops(rootState);
-    }
+
+    // A block formatting context root the block formatting context lays out adds the boxes in its content to the result, which another layout
+    // of it replaces.
+    auto resultBoxCount = result.boxes.size();
+    auto resultOutOfFlowBoxCount = result.outOfFlowBoxes.size();
+    auto layoutContent = [&](ContainingBlockState& state) {
+        result.boxes.shrink(resultBoxCount);
+        result.outOfFlowBoxes.shrink(resultOutOfFlowBoxCount);
+        auto contentBlockSize = std::optional<LayoutUnit> { };
+        auto legendMarginBefore = LayoutUnit { };
+        CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
+        if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root)) {
+            legendMarginBefore = layoutIndependentFormattingContextThroughRenderTree(box, state);
+            contentBlockSize = state.geometry.contentBoxHeight();
+        } else if (!root->firstChild())
+            contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box);
+        else {
+            LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
+            // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own, with its own
+            // text-box-trim only, whose start trim a block-start border or padding keeps from the content after it too.
+            auto blockLayoutState = BlockLayoutState { { } };
+            if (root->style().textBoxTrim() != TextBoxTrim::None) {
+                auto textBoxTrimState = m_blockLayoutState.textBoxTrimState();
+                if (textBoxTrimState.trimsFirstFormattedLine && state.geometry.borderAndPaddingBefore()) {
+                    textBoxTrimState.trimsFirstFormattedLine = false;
+                    m_blockLayoutState.setTextBoxTrimState(textBoxTrimState);
+                }
+                blockLayoutState.setLastFormattedLineRoots(Vector { m_blockLayoutState.lastFormattedLineRoots() });
+                blockLayoutState.setTextBoxTrimState(textBoxTrimStateFor(*root, textBoxTrimState));
+            }
+            auto horizontalConstraints = HorizontalConstraints { state.inlineRange.min(), state.inlineRange.size() };
+            auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, state.borderAndPaddingBefore }, state.contentBoxBlockSize, state.fillAvailableBlockSize, state.replacedElementAvailableBlockSize, state.relayoutChildren }, state.geometry);
+            result.boxes.appendVector(WTF::move(rootResult.boxes));
+            contentBlockSize = rootResult.intrinsicContentBlockSize;
+            result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
+        }
+        return std::pair { contentBlockSize, legendMarginBefore };
+    };
 
     auto contentBlockSize = std::optional<LayoutUnit> { };
     auto legendMarginBefore = LayoutUnit { };
-    CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
-    if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root)) {
-        legendMarginBefore = layoutIndependentFormattingContextThroughRenderTree(box, rootState);
-        contentBlockSize = rootState.geometry.contentBoxHeight();
-    } else if (!root->firstChild())
-        contentBlockSize = BlockFormattingUtils::emptyEditableContentBlockSize(box);
-    else {
-        LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
-        // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own, with its own
-        // text-box-trim only, whose start trim a block-start border or padding keeps from the content after it too.
-        auto blockLayoutState = BlockLayoutState { { } };
-        if (root->style().textBoxTrim() != TextBoxTrim::None) {
-            auto state = m_blockLayoutState.textBoxTrimState();
-            if (state.trimsFirstFormattedLine && rootState.geometry.borderAndPaddingBefore()) {
-                state.trimsFirstFormattedLine = false;
-                m_blockLayoutState.setTextBoxTrimState(state);
-            }
-            blockLayoutState.setLastFormattedLineRoots(Vector { m_blockLayoutState.lastFormattedLineRoots() });
-            blockLayoutState.setTextBoxTrimState(textBoxTrimStateFor(*root, state));
+    auto isLaidOut = false;
+    if (!collapsesMarginsOnceLaidOut) {
+        auto marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+        m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore());
+        if (auto* placedFloats = m_blockLayoutState.placedFloats(); placedFloats && !placedFloats->isEmpty()) {
+            contentBlockSize = placeBesideFloats(box, rootState, marginsBeforeLogicalBottom, layoutContent);
+            isLaidOut = true;
         }
-        auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
-        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.fillAvailableBlockSize, rootState.replacedElementAvailableBlockSize, rootState.relayoutChildren }, rootState.geometry);
-        result.boxes.appendVector(WTF::move(rootResult.boxes));
-        contentBlockSize = rootResult.intrinsicContentBlockSize;
-        result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
+        resolveBorderBoxLogicalTops(rootState);
     }
+    if (!isLaidOut)
+        std::tie(contentBlockSize, legendMarginBefore) = layoutContent(rootState);
 
     if (stepSize) {
         auto& geometry = rootState.geometry;
@@ -1010,7 +1184,7 @@ static IntrinsicWidthConstraints aspectRatioContentInlineSizes(const RenderBox& 
     return { std::max(aspectRatioContentBoxInlineSize, contentSizes.minimum), std::max(aspectRatioContentBoxInlineSize, contentSizes.maximum) };
 }
 
-void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
+void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, const ContainingBlockState& containingBlockState, BoxGeometry& geometry, std::optional<LayoutUnit> availableInlineSize) const
 {
     CheckedRef style = box.style();
     auto writingMode = root().writingMode();
@@ -1044,7 +1218,7 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     auto aspectRatioInlineSizeLimits = std::optional<std::pair<LayoutUnit, LayoutUnit>> { };
     if (!style->logicalWidth(writingMode).isSpecified())
         aspectRatioInlineSizeLimits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), writingMode);
-    auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes, aspectRatioInlineSizeLimits, aspectRatioBorderBoxInlineSize);
+    auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes, aspectRatioInlineSizeLimits, aspectRatioBorderBoxInlineSize, availableInlineSize);
     geometry.setContentBoxWidth(borderBoxInlineSize - geometry.horizontalBorderAndPadding());
     // Unlike border and padding, start and end margins follow the direction of the containing block.
     geometry.setHorizontalMargin({ marginStart, marginEnd });
