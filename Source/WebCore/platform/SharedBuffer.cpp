@@ -59,6 +59,8 @@ static constexpr bool useUnixDomainSockets = false;
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FragmentedSharedBuffer);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedBufferBuilder);
 
 std::optional<Ref<FragmentedSharedBuffer>> FragmentedSharedBuffer::fromIPCData(IPCData&& ipcData)

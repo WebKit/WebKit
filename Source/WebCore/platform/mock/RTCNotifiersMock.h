@@ -32,6 +32,7 @@
 #include "RTCPeerConnectionHandlerClient.h"
 #include "TimerEventBasedMock.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ class RTCSessionDescriptionRequest;
 class RTCVoidRequest;
 
 class SessionRequestNotifier : public MockNotifier {
+    WTF_MAKE_TZONE_ALLOCATED(SessionRequestNotifier);
 public:
     SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&&, RefPtr<RTCSessionDescriptionDescriptor>&&, const String& = emptyString());
 
@@ -53,6 +55,7 @@ private:
 };
 
 class VoidRequestNotifier : public MockNotifier {
+    WTF_MAKE_TZONE_ALLOCATED(VoidRequestNotifier);
 public:
     VoidRequestNotifier(RefPtr<RTCVoidRequest>&&, bool, const String& = emptyString());
 
@@ -65,6 +68,7 @@ private:
 };
 
 class IceConnectionNotifier : public MockNotifier {
+    WTF_MAKE_TZONE_ALLOCATED(IceConnectionNotifier);
 public:
     IceConnectionNotifier(RTCPeerConnectionHandlerClient*, RTCIceConnectionState, RTCIceGatheringState);
 
@@ -77,6 +81,7 @@ private:
 };
 
 class SignalingStateNotifier : public MockNotifier {
+    WTF_MAKE_TZONE_ALLOCATED(SignalingStateNotifier);
 public:
     SignalingStateNotifier(RTCPeerConnectionHandlerClient*, RTCSignalingState);
 
@@ -88,6 +93,7 @@ private:
 };
 
 class RemoteDataChannelNotifier : public MockNotifier {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteDataChannelNotifier);
 public:
     RemoteDataChannelNotifier(RTCPeerConnectionHandlerClient*);
 
@@ -98,6 +104,7 @@ private:
 };
 
 class DataChannelStateNotifier : public MockNotifier {
+    WTF_MAKE_TZONE_ALLOCATED(DataChannelStateNotifier);
 public:
     DataChannelStateNotifier(RTCDataChannelHandlerClient*, RTCDataChannelState);
 

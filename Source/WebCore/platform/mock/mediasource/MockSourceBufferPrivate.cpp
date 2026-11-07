@@ -41,10 +41,14 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/NativePromise.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockSourceBufferPrivate);
+
 class MockMediaSample final : public MediaSample {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockMediaSample);
 public:
     NODELETE static Ref<MockMediaSample> create(const MockSampleBox& box) { return adoptRef(*new MockMediaSample(box)); }
     virtual ~MockMediaSample() = default;
@@ -115,6 +119,7 @@ Ref<MediaSample> MockMediaSample::createCopyWithAdjustedStartTime(const MediaTim
 }
 
 class MockMediaDescription final : public MediaDescription {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockMediaDescription);
 public:
     static Ref<MockMediaDescription> create(const MockTrackBox& box) { return adoptRef(*new MockMediaDescription(box)); }
     virtual ~MockMediaDescription() = default;

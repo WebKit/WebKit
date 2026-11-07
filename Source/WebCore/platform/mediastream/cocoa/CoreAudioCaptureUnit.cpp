@@ -64,6 +64,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreAudioCaptureUnit);
+
 const UInt32 outputBus = 0;
 const UInt32 inputBus = 1;
 

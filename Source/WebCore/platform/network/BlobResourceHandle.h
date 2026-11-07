@@ -33,12 +33,14 @@
 
 #include <WebCore/BlobResourceHandleBase.h>
 #include <WebCore/ResourceHandle.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ResourceHandleClient;
 
 class BlobResourceHandle final : public BlobResourceHandleBase, public ResourceHandle  {
+    WTF_MAKE_TZONE_ALLOCATED(BlobResourceHandle);
 public:
     NODELETE static Ref<BlobResourceHandle> createAsync(BlobData*, const ResourceRequest&, ResourceHandleClient*);
 

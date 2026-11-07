@@ -35,6 +35,7 @@
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -63,6 +64,7 @@ public:
 
 class MediaStreamTrackPrivateSourceObserverSourceProxy;
 class MediaStreamTrackPrivateSourceObserver : public ThreadSafeRefCounted<MediaStreamTrackPrivateSourceObserver, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackPrivateSourceObserver);
 public:
     WEBCORE_EXPORT ~MediaStreamTrackPrivateSourceObserver();
     static Ref<MediaStreamTrackPrivateSourceObserver> create(Ref<RealtimeMediaSource>&& source, std::function<void(Function<void()>&&)>&& postTask) { return adoptRef(*new MediaStreamTrackPrivateSourceObserver(WTF::move(source), WTF::move(postTask))); }
@@ -95,6 +97,7 @@ class MediaStreamTrackPrivate final
     , public LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackPrivate);
 public:
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });

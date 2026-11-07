@@ -33,6 +33,7 @@
 #include <wtf/MediaTime.h>
 #include <wtf/NativePromise.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ class MockMediaPlayerMediaSource final
     : public MediaPlayerPrivateInterface
     , public RefCounted<MockMediaPlayerMediaSource>
     , public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
+    WTF_MAKE_TZONE_ALLOCATED(MockMediaPlayerMediaSource);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

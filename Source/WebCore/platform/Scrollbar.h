@@ -30,6 +30,7 @@
 #include <WebCore/Timer.h>
 #include <WebCore/Widget.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -39,6 +40,7 @@ class PlatformMouseEvent;
 class ScrollableArea;
 
 class Scrollbar : public Widget {
+    WTF_MAKE_TZONE_ALLOCATED(Scrollbar);
 public:
     // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
     WEBCORE_EXPORT static Ref<Scrollbar> createNativeScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth);

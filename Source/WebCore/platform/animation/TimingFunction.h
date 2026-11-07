@@ -26,6 +26,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -109,6 +110,7 @@ private:
 };
 
 class CubicBezierTimingFunction final : public TimingFunction {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CubicBezierTimingFunction, WEBCORE_EXPORT);
 public:
     enum class TimingFunctionPreset : uint8_t { Ease, EaseIn, EaseOut, EaseInOut, Custom };
 

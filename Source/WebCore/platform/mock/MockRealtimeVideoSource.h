@@ -41,6 +41,7 @@
 #include <atomic>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,6 +51,7 @@ class GraphicsContext;
 enum class VideoFrameRotation : uint16_t;
 
 class MockRealtimeVideoSource : public RealtimeVideoCaptureSource {
+    WTF_MAKE_TZONE_ALLOCATED(MockRealtimeVideoSource);
 public:
     static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     virtual ~MockRealtimeVideoSource();

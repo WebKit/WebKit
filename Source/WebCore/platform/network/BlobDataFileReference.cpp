@@ -28,8 +28,11 @@
 
 #include "File.h"
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobDataFileReference);
 
 BlobDataFileReference::BlobDataFileReference(const String& path, const String& replacementPath)
     : m_path(path)

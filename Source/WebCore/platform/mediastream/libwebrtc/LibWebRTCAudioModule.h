@@ -33,6 +33,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -50,6 +51,7 @@ class IncomingAudioMediaStreamTrackRendererUnit;
 
 // LibWebRTCAudioModule is pulling streamed data to ensure audio data is passed to the audio track.
 class LibWebRTCAudioModule : public webrtc::AudioDeviceModule, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<LibWebRTCAudioModule, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCAudioModule);
 public:
     static Ref<LibWebRTCAudioModule> create() { return adoptRef(*new LibWebRTCAudioModule()); }
     ~LibWebRTCAudioModule();

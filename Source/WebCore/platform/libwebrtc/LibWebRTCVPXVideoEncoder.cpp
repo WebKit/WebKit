@@ -73,6 +73,7 @@ static WorkQueue& vpxEncoderQueueSingleton()
 }
 
 class LibWebRTCVPXInternalVideoEncoder : public ThreadSafeRefCounted<LibWebRTCVPXInternalVideoEncoder> , public webrtc::EncodedImageCallback {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(LibWebRTCVPXInternalVideoEncoder);
 public:
     NODELETE static Ref<LibWebRTCVPXInternalVideoEncoder> create(LibWebRTCVPXVideoEncoder::Type type, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoEncoder(type, WTF::move(descriptionCallback), WTF::move(outputCallback))); }
     ~LibWebRTCVPXInternalVideoEncoder() = default;

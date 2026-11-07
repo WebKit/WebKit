@@ -29,6 +29,7 @@
 
 #include <WebCore/MediaPlaybackTarget.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ enum class MediaPlaybackTargetMockState : uint8_t {
 };
 
 class MediaPlaybackTargetMock final : public MediaPlaybackTarget {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlaybackTargetMock);
 public:
     using State = MediaPlaybackTargetMockState;
 

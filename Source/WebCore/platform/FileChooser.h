@@ -32,6 +32,7 @@
 #include <WebCore/IntRect.h>
 #include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -75,6 +76,7 @@ public:
 };
 
 class FileChooser : public RefCounted<FileChooser> {
+    WTF_MAKE_TZONE_ALLOCATED(FileChooser);
 public:
     static Ref<FileChooser> create(FileChooserClient&, const FileChooserSettings&);
     WEBCORE_EXPORT ~FileChooser();

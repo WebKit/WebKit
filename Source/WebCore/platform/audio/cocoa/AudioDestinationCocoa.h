@@ -33,6 +33,7 @@
 #include <AudioUnit/AudioUnit.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ using CreateAudioDestinationCocoaOverride = Ref<AudioDestination>(*)(const Audio
 
 // An AudioDestination using CoreAudio's default output AudioUnit
 class AudioDestinationCocoa : public AudioDestinationResampler, public AudioUnitRenderer, public ThreadSafeRefCounted<AudioDestinationCocoa, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioDestinationCocoa);
 public:
     WEBCORE_EXPORT AudioDestinationCocoa(const CreationOptions&);
     WEBCORE_EXPORT virtual ~AudioDestinationCocoa();

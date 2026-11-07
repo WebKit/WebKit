@@ -27,6 +27,7 @@
 
 #include "AudioHardwareListener.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -36,6 +37,7 @@
 namespace WebCore {
 
 class AudioHardwareListenerMac : public RefCountedAndCanMakeWeakPtr<AudioHardwareListenerMac>, public AudioHardwareListener {
+    WTF_MAKE_TZONE_ALLOCATED(AudioHardwareListenerMac);
 public:
     static Ref<AudioHardwareListenerMac> create(Client&);
     virtual ~AudioHardwareListenerMac();

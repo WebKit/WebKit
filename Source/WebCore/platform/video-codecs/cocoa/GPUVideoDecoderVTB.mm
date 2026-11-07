@@ -85,6 +85,7 @@ static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescr
 }
 
 class GPUVideoDecoderVTBQueue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUVideoDecoderVTBQueue> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GPUVideoDecoderVTBQueue);
 public:
     NODELETE static Ref<GPUVideoDecoderVTBQueue> create(uint8_t reorderQueueMaxSize) { return adoptRef(*new GPUVideoDecoderVTBQueue(reorderQueueMaxSize)); }
     NODELETE void setReorderQueueMaxSize(uint8_t);

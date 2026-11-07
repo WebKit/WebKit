@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #if ENABLE(WEB_AUDIO)
 
 #include <WebCore/AudioDestination.h>
@@ -36,6 +37,7 @@ namespace WebCore {
 class SharedAudioDestinationAdapter;
 
 class SharedAudioDestination final : public AudioDestination, public ThreadSafeRefCounted<SharedAudioDestination, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(SharedAudioDestination);
 public:
     using AudioDestinationCreationFunction = Function<Ref<AudioDestination>(const CreationOptions&)>;
     NODELETE WEBCORE_EXPORT static Ref<SharedAudioDestination> create(const CreationOptions&, AudioDestinationCreationFunction&&);

@@ -26,9 +26,13 @@
 #include "config.h"
 #include "MediaPlaybackTargetMock.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlaybackTargetMock);
 
 Ref<MediaPlaybackTargetMock> MediaPlaybackTargetMock::create(const String& mockDeviceName, State mockState)
 {
