@@ -487,7 +487,7 @@ egl::Error DisplayWgpu::createWgpuDevice()
         mInstance.get(), &requestAdapterOptions, requestAdapterCallback);
 
     WGPUWaitStatus status = mProcTable.instanceWaitAny(mInstance.get(), 1, &futureWaitInfo, -1);
-    if (webgpu::IsWgpuError(status))
+    if (webgpu::IsWgpuError(status) || adapterResult.status != WGPURequestAdapterStatus_Success)
     {
         std::ostringstream err;
         err << "Failed to get WebGPU adapter: " << adapterResult.message;
@@ -498,9 +498,20 @@ egl::Error DisplayWgpu::createWgpuDevice()
 
     std::vector<WGPUFeatureName> requiredFeatures;  // empty for now
 
+    // Request everything the adapter supports instead of the WebGPU default limits, which are
+    // lower than what the hardware supports (e.g. 8192 for maxTextureDimension2D, 256 for
+    // maxTextureArrayLayers and 16 for maxInterStageShaderVariables). The GL caps are derived from
+    // the device's limits.
+    WGPULimits requiredLimits = WGPU_LIMITS_INIT;
+    if (mProcTable.adapterGetLimits(mAdapter.get(), &requiredLimits) != WGPUStatus_Success)
+    {
+        return egl::Error(EGL_BAD_ALLOC, "Failed to get WebGPU adapter limits");
+    }
+
     WGPUDeviceDescriptor deviceDesc = WGPU_DEVICE_DESCRIPTOR_INIT;
     deviceDesc.requiredFeatureCount = requiredFeatures.size();
     deviceDesc.requiredFeatures     = requiredFeatures.data();
+    deviceDesc.requiredLimits       = &requiredLimits;
     deviceDesc.uncapturedErrorCallbackInfo.callback =
         [](WGPUDevice const *device, WGPUErrorType type, struct WGPUStringView message,
            void *userdata1, void *userdata2) {
@@ -537,7 +548,7 @@ egl::Error DisplayWgpu::createWgpuDevice()
         mProcTable.adapterRequestDevice(mAdapter.get(), &deviceDesc, requestDeviceCallback);
 
     status = mProcTable.instanceWaitAny(mInstance.get(), 1, &futureWaitInfo, -1);
-    if (webgpu::IsWgpuError(status))
+    if (webgpu::IsWgpuError(status) || deviceResult.status != WGPURequestDeviceStatus_Success)
     {
         std::ostringstream err;
         err << "Failed to get WebGPU device: " << deviceResult.message;
