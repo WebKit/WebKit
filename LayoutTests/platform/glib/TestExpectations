@@ -4210,6 +4210,8 @@ fast/webgpu [ Skip ]
 # WebGL video-format tests: the baselines record macOS (AVFoundation/VideoToolbox) decoder and
 # GraphicsContextGLCocoa upload behaviour. Enable with GStreamer baselines.
 webgl/video-formats [ Skip ]
+fast/mediastream/video-frame-rotation-webgl-rotation-disabled.html [ Skip ]
+fast/mediastream/video-frame-rotation-webgl-rotation-enabled.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 http/wpt/webcodecs/webgpu-importExternalTexture-videoFrame-I420.html [ Skip ]
 inspector/canvas/console-record-webgpu.html [ Skip ]
