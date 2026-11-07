@@ -116,6 +116,10 @@ class PullRequest(Command):
             help='Make a pull request against a specific remote',
         )
         parser.add_argument(
+            '--into', dest='into', type=str, default=None,
+            help='Make a pull request against a specific branch, even if that branch shares history with the default branch',
+        )
+        parser.add_argument(
             '--checks', '--no-checks',
             dest='checks', default=None,
             help='Explicitly enable or disable automatic pre-flight checks',
@@ -246,6 +250,46 @@ class PullRequest(Command):
         return True
 
     @classmethod
+    def branch_point_for_target(cls, repository, args, into):
+        if repository.dev_branches.match(into):
+            sys.stderr.write("'{}' is a development branch, cannot make a pull request into it\n".format(into))
+            return None
+
+        remotes = [args.remote] if args.remote else repository.source_remotes()
+        source_remote = next(iter(
+            remote for remote in remotes if into in repository.branches_for(remote=remote)
+        ), None)
+        if not source_remote:
+            sys.stderr.write("'{}' does not exist on {}\n".format(
+                into, "'{}'".format(args.remote) if args.remote else 'any source remote',
+            ))
+            return None
+        if source_remote != repository.default_remote:
+            args.remote = source_remote
+
+        # The target branch may have been rebased, so rebasing on it could replay commits it no longer contains
+        if args.rebase:
+            sys.stderr.write("'--into' is incompatible with '--rebase'\n")
+            return None
+        args.rebase = False
+
+        # Intersect with the default branch so the pull request contains every commit on the target branch
+        merge_base = run(
+            [repository.executable(), 'merge-base', 'HEAD', 'remotes/{}/{}'.format(source_remote, repository.default_branch)],
+            cwd=repository.root_path,
+            capture_output=True,
+            encoding='utf-8',
+        )
+        if merge_base.returncode:
+            sys.stderr.write("Failed to find intersection with '{}'\n".format(repository.default_branch))
+            return None
+
+        # The intersection is on the default branch, which takes priority when resolving a commit's branch
+        branch_point = repository.commit(hash=merge_base.stdout.strip(), include_log=False, include_identifier=False)
+        branch_point.branch = into
+        return branch_point
+
+    @classmethod
     def pull_request_branch_point(cls, repository, args, name_prefix=None, **kwargs):
         if args.redact and len(repository.source_remotes()) <= 1:
             sys.stderr.write('No secure remotes found in the current checkout\n')
@@ -255,12 +299,16 @@ class PullRequest(Command):
             sys.stderr.write("'--remote={}' is incompatible with '--redacted'\n".format(args.remote))
             return None
 
-        branch_point = repository.branch_point()
+        into = getattr(args, 'into', None)
+        if into:
+            branch_point = cls.branch_point_for_target(repository, args, into)
+        else:
+            branch_point = repository.branch_point()
         if not branch_point:
             sys.stderr.write('Failed to determine where pull-request diverged from production branch\n')
             return None
         source_remote = args.remote
-        if not source_remote:
+        if not source_remote and not into:
             bp_remotes = set(repository.branches_for(hash=branch_point.hash, remote=None).keys())
             if len(bp_remotes) == 1:
                 # If there is only one remote, that means the branch point doesn't exist on any remote

@@ -481,6 +481,73 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_into(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            # 'eng/pr-branch' contains every commit on 'branch-a', which intersects with 'main'
+            repo.commits['eng/pr-branch'] = repo.commits['branch-a'] + [
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier='2.3@eng/pr-branch',
+                    timestamp=int(time.time()),
+                    message='[Testing] Targeting branch-a',
+                ),
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            with patch.object(program.PullRequest, 'title_for', wraps=program.PullRequest.title_for) as title_for:
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '--into', 'branch-a', '-v', '--no-history'),
+                    path=self.path,
+                ))
+            self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).base, 'branch-a')
+            self.assertEqual(
+                [commit.hash for commit in title_for.call_args[0][0]],
+                [commit.hash for commit in reversed(repo.commits['eng/pr-branch'][1:])],
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | [Testing] Targeting branch-a'!\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_github_into_missing(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch', '--into', 'branch-z', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'branch-z' does not exist on any source remote\n"
+            'Failed to determine where pull-request diverged from production branch\n',
+        )
+
+    def test_github_into_rebase(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch', '--into', 'branch-a', '--rebase', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'--into' is incompatible with '--rebase'\n"
+            'Failed to determine where pull-request diverged from production branch\n',
+        )
+
     def test_github_draft(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
