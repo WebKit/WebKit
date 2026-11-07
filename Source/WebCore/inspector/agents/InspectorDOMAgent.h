@@ -47,6 +47,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace Inspector {
@@ -87,7 +88,56 @@ enum class PlatformEventModifier : uint8_t;
 
 struct Styleable;
 
-class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler, public CanMakeWeakPtr<InspectorDOMAgent>, public CanMakeCheckedPtr<InspectorDOMAgent> {
+#if ENABLE(VIDEO)
+class InspectorMediaEventTracker final : public CanMakeWeakPtr<InspectorMediaEventTracker>, public CanMakeCheckedPtr<InspectorMediaEventTracker> {
+    WTF_MAKE_NONCOPYABLE(InspectorMediaEventTracker);
+    WTF_MAKE_TZONE_ALLOCATED(InspectorMediaEventTracker);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorMediaEventTracker);
+public:
+    class Client : public AbstractCanMakeCheckedPtr {
+    public:
+        virtual ~Client() = default;
+
+        virtual Inspector::Protocol::DOM::NodeId pushNodePathForMediaEvent(Node&) = 0;
+        virtual void mediaEventDidFire(Inspector::Protocol::DOM::NodeId, const String& eventName, RefPtr<JSON::Object>&& data) = 0;
+        virtual void powerEfficientPlaybackStateDidChange(Inspector::Protocol::DOM::NodeId, bool isPowerEfficient) = 0;
+    };
+
+    explicit InspectorMediaEventTracker(Client&);
+    ~InspectorMediaEventTracker();
+
+    static bool isInLocalFrameTree(Node&);
+
+    void addEventListenersToNode(Node&);
+    void eventDidResetAfterDispatch(const Event&);
+
+    enum class RemoveEventListeners : bool { No, Yes };
+    void reset(RemoveEventListeners);
+
+private:
+    friend class EventFiredCallback;
+    void handleEvent(Event&);
+    void mediaMetricsTimerFired();
+
+    const CheckedRef<Client> m_client;
+    RefPtr<EventListener> m_eventFiredCallback;
+    WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_instrumentedNodes;
+    HashSet<const Event*> m_dispatchedEvents;
+
+    Timer m_mediaMetricsTimer;
+    struct MediaMetrics {
+        unsigned displayCompositedFrames { 0 };
+        bool isPowerEfficient { false };
+    };
+    WeakHashMap<HTMLMediaElement, MediaMetrics> m_mediaMetrics;
+};
+#endif // ENABLE(VIDEO)
+
+class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler
+#if ENABLE(VIDEO)
+    , public InspectorMediaEventTracker::Client
+#endif
+    , public CanMakeWeakPtr<InspectorDOMAgent>, public CanMakeCheckedPtr<InspectorDOMAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorDOMAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorDOMAgent);
@@ -248,7 +298,10 @@ public:
 
 private:
 #if ENABLE(VIDEO)
-    void mediaMetricsTimerFired();
+    // InspectorMediaEventTracker::Client
+    Inspector::Protocol::DOM::NodeId pushNodePathForMediaEvent(Node&) final;
+    void mediaEventDidFire(Inspector::Protocol::DOM::NodeId, const String& eventName, RefPtr<JSON::Object>&& data) final;
+    void powerEfficientPlaybackStateDidChange(Inspector::Protocol::DOM::NodeId, bool isPowerEfficient) final;
 #endif
 
     void highlightMousedOverNode();
@@ -313,23 +366,7 @@ private:
     Timer m_destroyedNodesTimer;
 
 #if ENABLE(VIDEO)
-    Timer m_mediaMetricsTimer;
-    struct MediaMetrics {
-        unsigned displayCompositedFrames { 0 };
-        bool isPowerEfficient { false };
-
-        MediaMetrics() { }
-
-        MediaMetrics(unsigned displayCompositedFrames)
-            : displayCompositedFrames(displayCompositedFrames)
-        {
-        }
-    };
-
-    // The pointer key for this map should not be used for anything other than matching.
-    WeakHashMap<HTMLMediaElement, MediaMetrics> m_mediaMetrics;
-
-    RefPtr<EventListener> m_eventFiredCallback;
+    InspectorMediaEventTracker m_mediaEventTracker;
 #endif
 
     struct InspectorEventListener {
@@ -366,9 +403,6 @@ private:
         }
     };
 
-    friend class EventFiredCallback;
-
-    HashSet<const Event*> m_dispatchedEvents;
     HashMap<Inspector::Protocol::DOM::EventListenerId, InspectorEventListener> m_eventListenerEntries;
     Inspector::Protocol::DOM::EventListenerId m_lastEventListenerId { 1 };
 
