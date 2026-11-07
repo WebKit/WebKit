@@ -51,11 +51,11 @@ FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& objec
 
     CheckedPtr renderer = dynamicDowncast<RenderElement>(object);
     if (!renderer)
-        return SVGLengthContext::resolveRectangle(filterElement.get(), filterElement->filterUnits(), object.objectBoundingBox());
+        return SVGLengthContext::resolveRectangle(filterElement.get(), filterElement->filterUnits(), object.objectBoundingBoxForResources());
 
     RefPtr contextElement = dynamicDowncast<SVGElement>(renderer->element());
 
-    return SVGLengthContext::resolveRectangle(contextElement.get(), filterElement.get(), filterElement->filterUnits(), object.objectBoundingBox());
+    return SVGLengthContext::resolveRectangle(contextElement.get(), filterElement.get(), filterElement->filterUnits(), object.objectBoundingBoxForResources());
 }
 
 void RenderSVGResourceFilter::invalidateFilter()

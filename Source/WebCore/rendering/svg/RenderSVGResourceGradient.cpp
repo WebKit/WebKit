@@ -101,7 +101,7 @@ bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObje
         m_gradientColorFilter = style.appleColorFilter();
     }
 
-    auto objectBoundingBox = targetRenderer.objectBoundingBox();
+    auto objectBoundingBox = targetRenderer.objectBoundingBoxForResources();
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         // Gradient is not applicable on 1d objects (empty objectBoundingBox), unless 'gradientUnits' is equal to 'userSpaceOnUse'.
         if (objectBoundingBox.isEmpty())

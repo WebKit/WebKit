@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<title>SVGGraphicsElement.prototype.getBBox on text content child elements</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/types.html#__svg__SVGGraphicsElement__getBBox">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/coords.html#BoundingBoxes">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<svg width="800" height="800" font-family="Ahem" font-size="100">
+  <defs>
+    <path id="line" d="M 0 780 H 800"/>
+  </defs>
+  <text id="text" x="0" y="80">A<tspan id="tspan">BC</tspan>D</text>
+  <text id="siblings-text" x="0" y="180"><tspan id="first">AB</tspan><tspan id="second">CD</tspan></text>
+  <text id="nested-text" x="0" y="280">A<tspan id="outer">B<tspan id="inner">C</tspan>D</tspan>E</text>
+  <text id="moved-text" x="0" y="380">A<tspan id="moved" x="500" y="480">BC</tspan></text>
+  <text id="empty-text" x="0" y="580">A<tspan id="empty"></tspan>B</text>
+  <text id="link-text" x="0" y="680">A<a id="link" href="#">BC</a>D</text>
+  <text id="path-text"><textPath id="text-path" href="#line">AB</textPath></text>
+</svg>
+<script>
+// Ahem at font-size 100 has an advance of 100 per glyph, an ascent of 80 and a
+// descent of 20, so every glyph cell is the 100x100 square sitting 80 above the
+// baseline.
+function assert_bbox(id, expected) {
+  const bbox = document.getElementById(id).getBBox();
+  for (const property of ['x', 'y', 'width', 'height'])
+    assert_equals(bbox[property], expected[property], property);
+}
+
+test(() => {
+  assert_bbox('text', {x: 0, y: 0, width: 400, height: 100});
+}, 'getBBox on a text element covers all of its glyphs');
+
+test(() => {
+  assert_bbox('tspan', {x: 100, y: 0, width: 200, height: 100});
+}, 'getBBox on a tspan covers its own glyphs, not the whole text element');
+
+test(() => {
+  assert_bbox('first', {x: 0, y: 100, width: 200, height: 100});
+  assert_bbox('second', {x: 200, y: 100, width: 200, height: 100});
+}, 'two tspans in the same text element report different boxes');
+
+test(() => {
+  assert_bbox('outer', {x: 100, y: 200, width: 300, height: 100});
+}, 'getBBox on a tspan includes the glyphs of a nested tspan');
+
+test(() => {
+  assert_bbox('inner', {x: 200, y: 200, width: 100, height: 100});
+}, 'getBBox on a nested tspan covers its own glyphs');
+
+test(() => {
+  assert_bbox('moved', {x: 500, y: 400, width: 200, height: 100});
+}, 'getBBox on a tspan follows its own x and y');
+
+test(() => {
+  assert_bbox('empty', {x: 0, y: 0, width: 0, height: 0});
+}, 'getBBox on a tspan with no text is empty');
+
+test(() => {
+  assert_bbox('link', {x: 100, y: 600, width: 200, height: 100});
+}, 'getBBox on an a element inside a text element covers its own glyphs');
+
+test(() => {
+  const bbox = document.getElementById('text-path').getBBox();
+  assert_approx_equals(bbox.x, 0, 0.01, 'x');
+  assert_approx_equals(bbox.y, 700, 0.01, 'y');
+  assert_approx_equals(bbox.width, 200, 0.01, 'width');
+  assert_approx_equals(bbox.height, 100, 0.01, 'height');
+}, 'getBBox on a textPath covers its own glyphs');
+</script>
