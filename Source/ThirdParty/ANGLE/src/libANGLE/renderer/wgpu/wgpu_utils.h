@@ -435,7 +435,7 @@ RenderPassEncoderHandle CreateRenderPass(const DawnProcTable *wgpu,
                                          webgpu::CommandEncoderHandle commandEncoder,
                                          const webgpu::PackedRenderPassDescriptor &desc);
 
-void GenerateCaps(const WGPULimits &limitWgpu,
+void GenerateCaps(const DisplayWgpu &display,
                   gl::Caps *glCaps,
                   gl::TextureCapsMap *glTextureCapsMap,
                   gl::Extensions *glExtensions,
