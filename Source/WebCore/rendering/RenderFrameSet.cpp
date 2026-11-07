@@ -410,8 +410,8 @@ FrameEdgeInfo RenderFrameSet::edgeInfo() const
 {
     FrameEdgeInfo result(frameSetElement().noResize(), true);
     
-    int rows = frameSetElement().totalRows();
-    int cols = frameSetElement().totalCols();
+    size_t rows = m_rows.m_sizes.size();
+    size_t cols = m_cols.m_sizes.size();
     if (rows && cols) {
         result.setPreventResize(FrameEdge::Left, m_cols.m_preventResize[0]);
         result.setAllowBorder(FrameEdge::Left, m_cols.m_allowBorder[0]);
