@@ -195,7 +195,9 @@ static std::optional<VideoDecoderConfiguration> decoderConfiguration(const Video
         return { };
 
     auto configuration = videoDecoderConfiguration(info);
-    if (!configuration || !VideoDecoder::isVPXSupported() || isHardwareDecodable(info))
+    if (!configuration || !VideoDecoder::isVPXSupported())
+        return { };
+    if (!filters.contains(MediaSamplesDecoder::Filter::ForceSoftware) && isHardwareDecodable(info))
         return { };
     return configuration;
 }

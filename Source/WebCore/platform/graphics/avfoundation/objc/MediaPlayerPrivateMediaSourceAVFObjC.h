@@ -342,7 +342,7 @@ private:
     void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) final;
     std::optional<MediaPlayerIdentifier> identifier() const final { return m_playerIdentifier; }
 
-    static Ref<AudioVideoRenderer> createRenderer(LoggerHelper&, HTMLMediaElementIdentifier, MediaPlayerIdentifier);
+    static Ref<AudioVideoRenderer> createRenderer(LoggerHelper&, HTMLMediaElementIdentifier, MediaPlayerIdentifier, VideoRendererPreferences);
 
     void dispatchToRendererQueue(Function<void(AudioVideoRenderer&)>&&);
 

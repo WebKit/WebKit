@@ -42,7 +42,6 @@ RefPtr<MediaSample> MediaSamplesBlock::toMediaSample(const MediaSample* referenc
     RetainPtr cmSample = referenceSample ? referenceSample->platformSample().cmSampleBuffer() : nullptr;
     RetainPtr description = cmSample ? PAL::CMSampleBufferGetFormatDescription(cmSample.get()) : nullptr;
     auto result = toCMSampleBuffer(*this, description.get());
-    ASSERT(!!result);
     return result ? RefPtr { MediaSampleAVFObjC::create(result->get(), trackID()) } : nullptr;
 #else
     UNUSED_PARAM(referenceSample);
