@@ -1,6 +1,6 @@
 
 PASS selectedcontent stays up to date after an ancestor of the select is removed.
 PASS selectedcontent stays up to date after an ancestor of the select is moved.
-PASS selectedcontent moved into a select that becomes multiple before the microtask runs is not updated.
+FAIL selectedcontent moved into a select that becomes multiple before the microtask runs is not updated. assert_equals: selectedcontent should not be updated once its select has the multiple attribute. expected "one" but got "<option>two</option>"
 
 

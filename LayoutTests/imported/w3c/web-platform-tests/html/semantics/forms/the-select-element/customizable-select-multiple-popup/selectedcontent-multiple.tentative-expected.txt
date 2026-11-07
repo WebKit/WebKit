@@ -1,6 +1,10 @@
 
+span one
+span two
 
+span one
+span two
 
-FAIL <selectedcontent> should support <select multiple>. assert_equals: The innerHTML of <selectedcontent> should initially match the innerHTML of the initially selected options. expected "<div>\n    <span class=\"one\">span</span> one\n  </div><div>\n    <span class=\"two\">span</span> two\n  </div>" but got ""
-FAIL <selectedcontent> should update in response to user interaction. assert_equals: The innerHTML of <selectedcontent> should initially match the innerHTML of the initially selected options. expected "<div>\n    <span class=\"one\">span</span> one\n  </div><div>\n    <span class=\"two\">span</span> two\n  </div>" but got ""
+FAIL <selectedcontent> should support <select multiple>. assert_equals: The innerHTML of <selectedcontent> should initially match the innerHTML of the initially selected options. expected "<div>\n    <span class=\"one\">span</span> one\n  </div><div>\n    <span class=\"two\">span</span> two\n  </div>" but got "<option class=\"one\" value=\"one\" selected=\"\">\n    <span class=\"one\">span</span> one\n  </option><option class=\"two\" value=\"two\" selected=\"\">\n    <span class=\"two\">span</span> two\n  </option><option class=\"three\" value=\"three\">\n    <span class=\"three\">span</span> three\n  </option>"
+FAIL <selectedcontent> should update in response to user interaction. assert_equals: The innerHTML of <selectedcontent> should initially match the innerHTML of the initially selected options. expected "<div>\n    <span class=\"one\">span</span> one\n  </div><div>\n    <span class=\"two\">span</span> two\n  </div>" but got "<option class=\"one\" value=\"one\" selected=\"\">\n    <span class=\"one\">span</span> one\n  </option><option class=\"two\" value=\"two\" selected=\"\">\n    <span class=\"two\">span</span> two\n  </option><option class=\"three\" value=\"three\">\n    <span class=\"three\">span</span> three\n  </option>"
 

@@ -1,4 +1,4 @@
 
 
-FAIL <selectedcontent> should be up to date after form restoration. assert_equals: Selectedcontent element should contain selected options. expected "<div>one</div><div>two</div>" but got ""
+FAIL <selectedcontent> should be up to date after form restoration. assert_array_equals: Selecting two options should work. lengths differ, expected array [Element node <option class="one">one</option>, Element node <option class="two">two</option>] length 2, got [] length 0
 
