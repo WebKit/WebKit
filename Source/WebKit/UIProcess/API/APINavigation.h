@@ -36,6 +36,7 @@
 #include "WebContentMode.h"
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/AgentClusterAssignment.h>
+#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -208,6 +209,9 @@ public:
     void setUnpartitionedStorageSite(std::optional<WebCore::RegistrableDomain>&& site) { m_unpartitionedStorageSite = WTF::move(site); }
     const std::optional<WebCore::RegistrableDomain>& unpartitionedStorageSite() const LIFETIME_BOUND { return m_unpartitionedStorageSite; }
 
+    void setBrowsingContextGroupSwitchDecisionForEmptyDocument(WebCore::BrowsingContextGroupSwitchDecision decision) { m_browsingContextGroupSwitchDecisionForEmptyDocument = decision; }
+    WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecisionForEmptyDocument() const { return m_browsingContextGroupSwitchDecisionForEmptyDocument; }
+
     // The most recent assignment handed out for this navigation, and the origin it was computed for.
     void setAgentClusterAssignment(const WebCore::SecurityOriginData&, const WebCore::AgentClusterAssignment&, RefPtr<WebKit::AgentClusterKeyingReservation>&& = nullptr);
     void clearAgentClusterKeyingReservation();
@@ -284,6 +288,7 @@ private:
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     std::optional<WebCore::RegistrableDomain> m_unpartitionedStorageSite;
+    WebCore::BrowsingContextGroupSwitchDecision m_browsingContextGroupSwitchDecisionForEmptyDocument { WebCore::BrowsingContextGroupSwitchDecision::StayInGroup };
     WebCore::SecurityOriginData m_agentClusterOrigin;
     std::optional<WebCore::AgentClusterAssignment> m_agentClusterAssignment;
     RefPtr<WebKit::AgentClusterKeyingReservation> m_agentClusterKeyingReservation;

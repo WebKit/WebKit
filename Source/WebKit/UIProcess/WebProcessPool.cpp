@@ -2665,8 +2665,14 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         }
 
         RefPtr navigationOriginatorFrame = navigation.originatingFrameInfo() ? WebFrameProxy::webFrame(navigation.originatingFrameInfo()->frameID) : nullptr;
-        if (navigationOriginatorFrame)
-            return { navigationOriginatorFrame->process(), nullptr, "Frame is navigating to about:blank or about:srcdoc from a cross site origin. Switching to process that originated navigation."_s };
+        if (navigationOriginatorFrame) {
+            Ref originatorProcess = navigationOriginatorFrame->process();
+            // The originator's process belongs to the browsing context group the navigation leaves. When the originator shares the
+            // main frame's process, the web process enforces the opener policy against the document the navigation replaces.
+            if (navigation.browsingContextGroupSwitchDecisionForEmptyDocument() != BrowsingContextGroupSwitchDecision::StayInGroup && originatorProcess.ptr() != sourceProcess.ptr())
+                return { createNewProcess(), nullptr, "Main frame is navigating to about:blank with an opener policy that requires a new browsing context group"_s };
+            return { WTF::move(originatorProcess), nullptr, "Frame is navigating to about:blank or about:srcdoc from a cross site origin. Switching to process that originated navigation."_s };
+        }
     }
 
     // A data: URL document inherits the Document-Isolation-Policy of the document that started the navigation.

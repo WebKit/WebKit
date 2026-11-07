@@ -232,6 +232,7 @@
 #include <WebCore/ChromeClient.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/ContentFilter.h>
+#include <WebCore/CrossOriginOpenerPolicy.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/CryptoKey.h>
 #include <WebCore/DOMPasteAccess.h>
@@ -6221,6 +6222,29 @@ std::expected<WebPageProxy::DataStoreUpdateResult, WebCore::ResourceError> WebPa
 }
 #endif
 
+// https://html.spec.whatwg.org/multipage/origin.html#coop-enforce
+// A navigation to an empty document gets no response from the network process, which enforces the opener policy of other navigations.
+static BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecisionForEmptyDocument(const WebFrameProxy& mainFrame, const API::Navigation& navigation)
+{
+    if (navigation.substituteData() || !SecurityPolicy::shouldInheritSecurityOriginFromOwner(navigation.currentRequest().url()))
+        return BrowsingContextGroupSwitchDecision::StayInGroup;
+
+    auto& navigationAction = navigation.lastNavigationAction();
+    if (!navigationAction || !navigationAction->requester)
+        return BrowsingContextGroupSwitchDecision::StayInGroup;
+
+    // For a popup's initial about:blank document, this is the opener policy it inherited from its opener.
+    auto documentSecurityPolicy = mainFrame.documentSecurityPolicy();
+    auto activeDocumentCOOP = documentSecurityPolicy ? documentSecurityPolicy->crossOriginOpenerPolicy.value : CrossOriginOpenerPolicyValue::UnsafeNone;
+    auto& requester = *navigationAction->requester;
+    auto responseCOOP = crossOriginOpenerPolicyForEmptyDocument(requester);
+    auto isInitialAboutBlank = mainFrame.isShowingInitialAboutBlank() ? IsInitialAboutBlank::Yes : IsInitialAboutBlank::No;
+    if (!coopValuesRequireBrowsingContextGroupSwitch(isInitialAboutBlank, activeDocumentCOOP, mainFrame.securityOrigin(), responseCOOP.value, requester.securityOrigin))
+        return BrowsingContextGroupSwitchDecision::StayInGroup;
+
+    return responseCOOP.value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP ? BrowsingContextGroupSwitchDecision::NewIsolatedGroup : BrowsingContextGroupSwitchDecision::NewSharedGroup;
+}
+
 Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForNavigation(WebFrameProxy& frame, API::Navigation& navigation, WebsiteDataStore& websiteDataStore, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
     // Browsing context group can only be changed for main frame navigation.
@@ -6256,6 +6280,9 @@ Ref<BrowsingContextGroup> WebPageProxy::browsingContextGroupForNavigation(WebFra
     // it should get a fresh group here too.
     if (protect(preferences())->siteIsolationEnabled() && !navigation.targetItem() && m_mainFrame && mainFrameSiteChanges && !requestedSite.isEmpty() && !protect(m_browsingContextGroup)->hasMultiplePages())
         return BrowsingContextGroup::create(CrossOriginMode::Shared);
+
+    if (auto decision = navigation.browsingContextGroupSwitchDecisionForEmptyDocument(); decision != BrowsingContextGroupSwitchDecision::StayInGroup)
+        return BrowsingContextGroup::create(decision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup ? CrossOriginMode::Isolated : CrossOriginMode::Shared);
 
     return carriedOverGroup(m_browsingContextGroup.copyRef());
 }
@@ -6441,6 +6468,12 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
     }
 
     navigation.setUnpartitionedStorageSite(unpartitionedStorageSiteForNavigation(frame, navigation.currentRequest().url()));
+
+    // Without site isolation, the web process emulates the switch, which reaches every window of the group since they share its process.
+    auto emptyDocumentSwitchDecision = BrowsingContextGroupSwitchDecision::StayInGroup;
+    if (RefPtr mainFrame = m_mainFrame; mainFrame && frame.isMainFrame() && preferences->siteIsolationEnabled())
+        emptyDocumentSwitchDecision = browsingContextGroupSwitchDecisionForEmptyDocument(*mainFrame, navigation);
+    navigation.setBrowsingContextGroupSwitchDecisionForEmptyDocument(emptyDocumentSwitchDecision);
 
     Ref browsingContextGroup = browsingContextGroupForNavigation(frame, navigation, websiteDataStore, processSwapRequestedByClient);
 
