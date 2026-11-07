@@ -48,12 +48,7 @@ public:
     virtual ExceptionOr<void> setBaseVal(const StringOrTrustedScriptURL&);
 
 protected:
-    SVGAnimatedString(SVGElement* contextElement, const IsHrefProperty& isHrefProperty = IsHrefProperty::No)
-        : SVGAnimatedPrimitiveProperty<String>(contextElement)
-        , m_isHrefProperty(isHrefProperty)
-    {
-
-    }
+    SVGAnimatedString(SVGElement* contextElement, const IsHrefProperty& = IsHrefProperty::No);
 
 private:
     IsHrefProperty m_isHrefProperty;

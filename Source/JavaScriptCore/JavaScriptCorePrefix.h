@@ -87,7 +87,9 @@
 #include "UnlinkedMetadataTableInlines.h"
 #include "VM.h"
 #include "WeakGCMapInlines.h"
+#if !defined(BUILDING_WITH_CMAKE) || !PLATFORM(MAC)
 #include <chrono>
+#endif
 #include <functional>
 #include <list>
 #include <memory>
@@ -126,6 +128,17 @@
 #endif
 
 #ifdef __cplusplus
+#if defined(BUILDING_WITH_CMAKE)
+#if PLATFORM(MAC)
+#include "VMInlines.h"
+#include "WasmModuleInformation.h"
+#include "WasmCalleeGroup.h"
+#include "CyclicModuleRecord.h"
+#include "WasmVirtualAddress.h"
+#include "WebAssemblyBuiltin.h"
+#endif // PLATFORM(MAC)
+#endif // defined(BUILDING_WITH_CMAKE)
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())
 #endif

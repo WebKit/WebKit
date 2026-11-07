@@ -40,10 +40,16 @@
 #include "WebPreferencesDefinitions.h"
 #include "WebProcess.h"
 
+#if !defined(__OBJC__) || !PLATFORM(MAC)
 #include <JavaScriptCore/AssemblyHelpers.h>
+#endif
+#if !defined(__OBJC__) || !PLATFORM(MAC)
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#endif
 #include <JavaScriptCore/JSGlobalObject.h>
+#if !defined(__OBJC__) || !PLATFORM(MAC)
 #include <JavaScriptCore/JSObjectInlines.h>
+#endif
 
 #include <WebCore/Document.h>
 #include <WebCore/GraphicsContext.h>
@@ -58,6 +64,16 @@
 #include <CoreAudio/CoreAudio.h>
 #include <simd/simd.h>
 #endif
+
+#if PLATFORM(MAC)
+#if !defined(__OBJC__)
+#include "RemoteLayerTreeDrawingArea.h"
+#include <WebCore/DocumentInlines.h>
+#include "WebSWContextManagerConnection.h"
+#include <WebCore/JSNodeCustom.h>
+#include <WebCore/LocalFrameInlines.h>
+#endif
+#endif // PLATFORM(MAC)
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())

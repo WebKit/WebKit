@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+GraphicsLayerContentsDisplayDelegate::GraphicsLayerContentsDisplayDelegate() = default;
 GraphicsLayerContentsDisplayDelegate::~GraphicsLayerContentsDisplayDelegate() = default;
 
 #if USE(CA)
