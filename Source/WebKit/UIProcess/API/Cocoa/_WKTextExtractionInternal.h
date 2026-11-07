@@ -141,6 +141,7 @@ typedef NS_ENUM(NSInteger, WKTextExtractionEditableType) {
 @end
 
 @interface WKTextExtractionItem : NSObject
+- (instancetype)init NS_UNAVAILABLE;
 @property (nonatomic, readonly) NSArray<WKTextExtractionItem *> *children;
 @property (nonatomic, readonly) CGRect rectInWebView;
 @property (nonatomic, readonly) WKTextExtractionEventListenerTypes eventListeners;

@@ -37,6 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_UI_ACTOR
 @interface WKIntelligenceSmartReplyTextEffectCoordinator : NSObject <WKIntelligenceTextEffectCoordinating>
 
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
 // FIXME: (rdar://142275772) Remove these duplicate protocol method declarations when Swift is able to properly synthesize their Swift names.
 
 - (void)startAnimationForRange:(NSRange)range completion:(NS_SWIFT_UI_ACTOR void (^)(void))completion;
