@@ -1,0 +1,9 @@
+Runs only when TestKey is not passed to --disabled-keys.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS message is "echo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

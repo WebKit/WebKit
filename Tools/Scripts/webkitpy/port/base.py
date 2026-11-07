@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -1166,6 +1166,12 @@ class Port(object):
 
     def allowed_hosts(self):
         return self.get_option("allowed_host", [])
+
+    def requested_disabled_keys(self):
+        return {key for value in self.get_option('disabled_keys', None) or [] for key in (item.strip() for item in value.split(',')) if key}
+
+    def disabled_keys(self):
+        return sorted(key for key in self.requested_disabled_keys() if re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', key))
 
     def internal_feature(self):
         return self.get_option("internal_feature", [])

@@ -391,6 +391,7 @@ class Manager(object):
         overall_initial_results = None
         overall_retry_results = None
         overall_enabled_pixel_tests_in_retry = False
+        overall_skipped_by_disabled_keys = 0
         overall_start_time = time.time()
         max_child_processes_for_run = 1
         all_uploads = []
@@ -594,10 +595,12 @@ class Manager(object):
                     self._port, driver_expectations, initial_results, retry_results, enabled_pixel_tests_in_retry
                 )
                 self._save_json_files(summarized_results_for_driver, initial_results, subdirectory)
+                self._write_skipped_by_disabled_keys(initial_results)
 
             self._runner.stop_servers()
 
             if initial_results:
+                overall_skipped_by_disabled_keys += len(initial_results.skipped_by_disabled_keys())
                 if overall_initial_results:
                     overall_initial_results = overall_initial_results.merge(initial_results)
                 else:
@@ -626,7 +629,7 @@ class Manager(object):
                 overall_retry_results.results_by_name[test_name] = result
 
         end_time = time.time()
-        result = self._end_test_run(overall_start_time, end_time, overall_initial_results, overall_retry_results, overall_enabled_pixel_tests_in_retry)
+        result = self._end_test_run(overall_start_time, end_time, overall_initial_results, overall_retry_results, overall_enabled_pixel_tests_in_retry, overall_skipped_by_disabled_keys)
 
         if self._options.report_urls and all_uploads:
             self._printer.writeln('\n')
@@ -690,7 +693,7 @@ class Manager(object):
 
         return (initial_results, retry_results, enabled_pixel_tests_in_retry)
 
-    def _end_test_run(self, start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry):
+    def _end_test_run(self, start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry, skipped_by_disabled_keys):
         if initial_results is None:
             _log.error('No results generated')
             return test_run_results.RunDetails(exit_code=-1)
@@ -709,7 +712,7 @@ class Manager(object):
             if device_type not in flat_expectations:
                 flat_expectations[device_type] = exp
         summarized_results = test_run_results.summarize_results(self._port, flat_expectations, initial_results, retry_results, enabled_pixel_tests_in_retry)
-        self._printer.print_results(end_time - start_time, initial_results, summarized_results)
+        self._printer.print_results(end_time - start_time, initial_results, summarized_results, skipped_by_disabled_keys)
 
         if self._options.check_pre_existing_failures:
             results = retry_results if retry_results else initial_results
@@ -889,6 +892,14 @@ class Manager(object):
         else:
             jsonp_string = "ADD_RESULTS({});".format(json_string)
         self._filesystem.write_text_file(full_results_path, jsonp_string)
+
+    def _write_skipped_by_disabled_keys(self, initial_results):
+        if not self._port.disabled_keys():
+            return
+        self._filesystem.write_text_file(
+            self._filesystem.join(self._results_directory, 'skipped-by-disabled-keys.txt'),
+            ''.join('{}\t{}\n'.format(test_name, key) for test_name, key in sorted(initial_results.skipped_by_disabled_keys().items())),
+        )
 
     def _copy_results_html_file(self, filename, destination_path):
         base_dir = self._port.harness_resources_dir()

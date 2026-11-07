@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -605,7 +605,7 @@ private:
     void installUserScript(const TestInvocation&);
 
     void ensureViewSupportsOptionsForTest(const TestInvocation&);
-    TestOptions testOptionsForTest(const TestCommand&) const;
+    TestOptions testOptionsForTest(const TestCommand&, TestFeatures testHeaderFeatures) const;
     TestFeatures platformSpecificFeatureDefaultsForTest(const TestCommand&) const;
     TestFeatures platformSpecificFeatureOverridesDefaultsForTest(const TestCommand&) const;
 
@@ -813,6 +813,7 @@ private:
     bool m_enableAllExperimentalFeatures { true };
     std::vector<std::string> m_paths;
     std::set<std::string> m_allowedHosts;
+    std::set<std::string> m_disabledKeys;
     std::set<std::string> m_localhostAliases;
     TestFeatures m_globalFeatures;
 

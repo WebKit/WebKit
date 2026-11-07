@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -222,6 +222,32 @@ class PortTest(unittest.TestCase):
         self.assertTrue(('FOO' in environment) & ('BAR' in environment))
         self.assertEqual(environment['FOO'], 'BAR')
         self.assertEqual(environment['BAR'], 'FOO')
+
+    def test_disabled_keys_default_is_empty(self):
+        port = self.make_port()
+        self.assertEqual(port.disabled_keys(), [])
+
+    def test_disabled_keys_union_of_repeated_comma_separated_values(self):
+        port = self.make_port(options=optparse.Values({'disabled_keys': ['KeyB,KeyC', 'KeyA', 'KeyC']}))
+        self.assertEqual(port.disabled_keys(), ['KeyA', 'KeyB', 'KeyC'])
+
+    def test_disabled_keys_ignores_empty_items(self):
+        port = self.make_port(options=optparse.Values({'disabled_keys': ['TestKey,', ',Other_Key_2']}))
+        self.assertEqual(port.disabled_keys(), ['Other_Key_2', 'TestKey'])
+
+    def test_disabled_keys_strips_whitespace_around_items(self):
+        port = self.make_port(options=optparse.Values({'disabled_keys': ['KeyB, KeyA', ' KeyC ']}))
+        self.assertEqual(port.disabled_keys(), ['KeyA', 'KeyB', 'KeyC'])
+        self.assertEqual(port.requested_disabled_keys() - set(port.disabled_keys()), set())
+
+    def test_disabled_keys_drops_invalid_keys(self):
+        for value in ['Key-5', 'Key 5', 'Key5;Key6', 'K\u00c4Y5', '3SAR', '5']:
+            port = self.make_port(options=optparse.Values({'disabled_keys': [value + ',TestKey']}))
+            self.assertEqual(port.disabled_keys(), ['TestKey'])
+
+    def test_disabled_keys_accepts_underscore_leading_keys(self):
+        port = self.make_port(options=optparse.Values({'disabled_keys': ['_Key,_,SAR3']}))
+        self.assertEqual(port.disabled_keys(), ['SAR3', '_', '_Key'])
 
     def test__merge_sanitizer_options(self):
         merge = Port._merge_sanitizer_options
