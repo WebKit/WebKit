@@ -631,6 +631,24 @@ static std::optional<LayoutUnit> blockStepSize(const RenderBox& box)
     return Style::evaluate<LayoutUnit>(*blockStepSize, style->usedZoomForLength());
 }
 
+// The floats placed so far, where the ones waiting for their block container's top are where that top would be at the hypothetical position
+// of the next box, where the margins so far put it.
+PlacedFloats BlockFormattingContext::floatsAtHypotheticalPosition() const
+{
+    auto hypotheticalBorderBoxLogicalTop = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+    auto& pendingFloats = m_blockLayoutState.pendingFloats();
+    auto floats = PlacedFloats { root().layoutBox() };
+    for (auto& floatItem : m_blockLayoutState.placedFloats()->list()) {
+        auto pending = pendingFloats.findIf([&](auto& pending) {
+            return pending.floatBoxes.containsIf([&](auto& floatBox) {
+                return floatBox.ptr() == floatItem.layoutBox();
+            });
+        });
+        floats.add(pending == notFound ? floatItem : movedFloat(floatItem, { 0_lu, hypotheticalBorderBoxLogicalTop - pendingFloats[pending].provisionalBorderBoxLogicalTop }, floatItem.layoutBox()));
+    }
+    return floats;
+}
+
 static bool decidesItsOwnInlineSize(const RenderBox&, WritingMode);
 
 // A box that establishes a formatting context of its own, a table or a block-level replaced element goes beside the floats before it without
@@ -644,17 +662,8 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
     auto hypotheticalBorderBoxLogicalTop = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
-    // The floats waiting for their block container's top are where that top would be at the box's hypothetical position.
     auto& pendingFloats = m_blockLayoutState.pendingFloats();
-    auto floats = PlacedFloats { root().layoutBox() };
-    for (auto& floatItem : m_blockLayoutState.placedFloats()->list()) {
-        auto pending = pendingFloats.findIf([&](auto& pending) {
-            return pending.floatBoxes.containsIf([&](auto& floatBox) {
-                return floatBox.ptr() == floatItem.layoutBox();
-            });
-        });
-        floats.add(pending == notFound ? floatItem : movedFloat(floatItem, { 0_lu, hypotheticalBorderBoxLogicalTop - pendingFloats[pending].provisionalBorderBoxLogicalTop }, floatItem.layoutBox()));
-    }
+    auto floats = floatsAtHypotheticalPosition();
     auto& rootState = m_blockLayoutState.containingBlockStates().first();
     auto floatingContext = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() };
 
@@ -990,11 +999,27 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
     // parent still waits for its top, that is its content box top, which its block-start margins collapse with.
     auto staticBlockPosition = parentState.borderBoxLogicalTop ? m_blockLayoutState.marginCollapse().collapsedLogicalBottom() - *parentState.borderBoxLogicalTop : parentState.borderAndPaddingBefore;
 
-    // A box that was inline-level before it got blockified goes where text-align puts the start of a line (RenderBlockFlow::staticInlinePositionForOriginalDisplayInline).
-    auto& inlineRange = parentState.inlineRange;
+    // A box that was inline-level before it got blockified goes where text-align puts the start of a line, beside the floats at its static
+    // position (RenderBlockFlow::staticInlinePositionForOriginalDisplayInline).
+    auto lineRange = [&] {
+        auto& inlineRange = parentState.inlineRange;
+        auto* placedFloats = m_blockLayoutState.placedFloats();
+        if (!placedFloats || placedFloats->isEmpty())
+            return inlineRange;
+        auto& rootState = m_blockLayoutState.containingBlockStates().first();
+        auto floats = floatsAtHypotheticalPosition();
+        auto staticBlockPositionInRoot = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+        auto constraints = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() }.constraints(staticBlockPositionInRoot, staticBlockPositionInRoot, FloatingContext::MayBeAboveLastFloat::Yes);
+        auto contentBoxStart = parentState.borderBoxLogicalLeftInRoot + inlineRange.min();
+        auto contentBoxEnd = contentBoxStart + inlineRange.size();
+        auto lineStart = constraints.start ? std::max(contentBoxStart, constraints.start->x) : contentBoxStart;
+        auto lineEnd = constraints.end ? std::min(contentBoxEnd, constraints.end->x) : contentBoxEnd;
+        return LayoutRange { lineStart - parentState.borderBoxLogicalLeftInRoot, lineEnd - lineStart };
+    };
     auto staticInlinePosition = [&] {
         if (!box.style().originalDisplay().isInlineType())
-            return inlineRange.min();
+            return parentState.inlineRange.min();
+        auto inlineRange = lineRange();
         switch (parentStyle->textAlign()) {
         case Style::TextAlign::Left:
         case Style::TextAlign::WebKitLeft:
