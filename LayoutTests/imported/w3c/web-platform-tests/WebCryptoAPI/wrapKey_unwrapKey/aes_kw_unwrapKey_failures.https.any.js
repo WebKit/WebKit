@@ -32,7 +32,11 @@ promise_test(async (t) => {
     return promise_rejects_dom(t, "OperationError", unwrapKey(kek, tamperedKeyBytes));
 }, "AES-KW unwrapKey with a tampered wrapped key");
 
-promise_test(async (t) => {
-    const kek = await importKek();
-    return promise_rejects_dom(t, "OperationError", unwrapKey(kek, wrappedKeyBytes.slice(0, 16)));
-}, "AES-KW unwrapKey with a wrapped key shorter than 24 bytes");
+for (const keyLength of [128, 192, 256]) {
+    for (const wrappedKeyLength of [0, 1, 2, 3, 4, 5, 6, 7, 8, 16, 20, 23, 25, 31, 33]) {
+        promise_test(async (t) => {
+            const kek = await crypto.subtle.importKey("raw", new Uint8Array(keyLength / 8), "AES-KW", false, ["unwrapKey"]);
+            return promise_rejects_dom(t, "OperationError", unwrapKey(kek, new Uint8Array(wrappedKeyLength)));
+        }, `AES-KW with a ${keyLength}-bit key rejects wrapped key of length ${wrappedKeyLength} with OperationError`);
+    }
+}

@@ -34,9 +34,6 @@ namespace WebCore {
 
 static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    if (data.size() % 8)
-        return std::nullopt;
-
     AESKey aesKey;
     if (!aesKey.setKey(key, AES_ENCRYPT))
         return std::nullopt;
@@ -50,9 +47,6 @@ static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, c
 
 static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    if (data.size() % 8 || !data.size())
-        return std::nullopt;
-
     AESKey aesKey;
     if (!aesKey.setKey(key, AES_DECRYPT))
         return std::nullopt;
