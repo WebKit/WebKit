@@ -30,4 +30,4 @@ shouldThrow(() => {
     }
     let d = new D();
     d.m();
-}, `TypeError: Cannot access private method or acessor (evaluating 'this.#x')`);
+}, `TypeError: Cannot access private method or accessor (evaluating 'this.#x')`);

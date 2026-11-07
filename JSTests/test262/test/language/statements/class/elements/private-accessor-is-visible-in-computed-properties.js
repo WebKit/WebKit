@@ -28,5 +28,5 @@ assert.throws(TypeError, function() {
 
     [this.#f] = 'Test262';
   }
-}, 'access to a private acessor from ordinary object');
+}, 'access to a private accessor from ordinary object');
 

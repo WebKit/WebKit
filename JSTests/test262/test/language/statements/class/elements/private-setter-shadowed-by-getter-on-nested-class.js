@@ -40,7 +40,7 @@ let innerB = new c.B();
 
 assert.throws(TypeError, function() {
   innerB.method(innerB);
-}, 'invalid [[Set]] of an acessor without setter');
+}, 'invalid [[Set]] of an accessor without setter');
 
 c.method('outer class');
 assert.sameValue(c._v, 'outer class');

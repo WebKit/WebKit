@@ -537,7 +537,7 @@ void ImpureGetter::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 DEFINE_VISIT_CHILDREN(ImpureGetter);
 
 static JSC_DECLARE_CUSTOM_GETTER(customGetterValueGetter);
-static JSC_DECLARE_CUSTOM_GETTER(customGetterAcessorGetter);
+static JSC_DECLARE_CUSTOM_GETTER(customGetterAccessorGetter);
 
 class CustomGetter : public JSNonFinalObject {
 public:
@@ -582,7 +582,7 @@ public:
         }
         
         if (propertyName == PropertyName(Identifier::fromString(vm, "customGetterAccessor"_s))) {
-            slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, customGetterAcessorGetter);
+            slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, customGetterAccessorGetter);
             return true;
         }
         
@@ -606,7 +606,7 @@ JSC_DEFINE_CUSTOM_GETTER(customGetterValueGetter, (JSGlobalObject* globalObject,
     return JSValue::encode(jsNumber(100));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(customGetterAcessorGetter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(customGetterAccessorGetter, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
