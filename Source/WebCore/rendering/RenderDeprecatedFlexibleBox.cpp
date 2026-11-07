@@ -777,6 +777,7 @@ void RenderDeprecatedFlexibleBox::layoutSingleClampedFlexItem()
     setBorderBoxHeight(childBoxBottom + paddingBottom() + borderBottom());
     updateLogicalHeight();
 
+    updateInFlowDescendantTransformsAfterLayout();
     computeInFlowOverflow(flippedContentBoxRect());
 
     endAndCommitUpdateScrollInfoAfterLayoutTransaction();

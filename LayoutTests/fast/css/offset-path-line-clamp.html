@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<style>
+#container {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    width: 200px;
+    background: red;
+    font: 50px/50px monospace;
+}
+#target {
+    width: 200px;
+    color: transparent;
+    background: green;
+    offset-path: ray(90deg closest-side);
+    offset-position: 50% 50%;
+    offset-distance: 0;
+}
+</style>
+<p>Test passes if there is a green rectangle and no red.</p>
+<!-- A single child with only text takes the clamped-only layout path. -->
+<div id="container"><div id="target">X</div></div>
+</html>
