@@ -1,0 +1,42 @@
+HTML-AAM tests for invalidly nested heading elements
+
+Equivalent ARIA patterns tested in /wai-aria/heading/invalid-nesting.tentative.html.
+
+Accessible names and roles
+
+Invalid h2
+
+Invalid h3
+
+Invalid h6
+
+Chocolate
+
+Peanut butter
+
+No heading ancestors
+
+One
+
+Two
+
+Three
+
+
+PASS Label: h1 with invalid h2 descendant should not inherit accname from the text contents of the contained h2, and should still convey heading role
+PASS Label: Invalidly nested h2 should have accname matching its text contents, and should still convey heading role
+PASS Label: h4 with invalid h3 descendant should not inherit accname from the text contents of the contained h3, and should still convey heading role
+PASS Label: Invalidly nested h3 should have accname matching its text contents, and should still convey heading role
+PASS Label: h5 with invalid h6 descendant should not inherit accname from the text contents of the contained h6, and should still convey heading role
+PASS Label: Invalidly nested h6 should have accname matching its text contents, and should still convey heading role
+PASS Label: h1 with text contents and invalid h2 descendant should not accumulate accname from the text contents of the contained h2, and should still convey heading role
+PASS Role: h1 with invalid h2 descendant should not inherit accname from the text contents of the contained h2, and should still convey heading role
+PASS Role: Invalidly nested h2 should have accname matching its text contents, and should still convey heading role
+PASS Role: h4 with invalid h3 descendant should not inherit accname from the text contents of the contained h3, and should still convey heading role
+PASS Role: Invalidly nested h3 should have accname matching its text contents, and should still convey heading role
+PASS Role: h5 with invalid h6 descendant should not inherit accname from the text contents of the contained h6, and should still convey heading role
+PASS Role: Invalidly nested h6 should have accname matching its text contents, and should still convey heading role
+PASS Role: h1 with text contents and invalid h2 descendant should not accumulate accname from the text contents of the contained h2, and should still convey heading role
+PASS h2 invalidly nested inside h1 should not, after parsing, have any DOM ancestor with a heading role
+PASS h3 invalidly nested inside h1 > h2 should not, after parsing, have any DOM ancestor with a heading role
+

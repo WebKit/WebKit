@@ -1,0 +1,63 @@
+Tentative test for the expected role mappings of the img element to ensure it is exposed with the correct role when the src, srcset, both or neither attributes are specified.
+
+The computedrole mappings are defined in HTML-AAM.
+
+Merge the outcome of this test into roles.html in the appropriate alphabetical order, when it is no longer considered tentative:
+
+Image role:
+
+
+Presentation / None / Generic role
+
+
+
+PASS el-img-no-src-or-srcset-but-name-from-alt
+PASS el-img-no-src-or-srcset-but-name-from-title
+PASS el-img-no-src-or-srcset-but-name-from-aria-label
+PASS el-img-no-src-or-srcset-but-name-from-aria-labelledby
+FAIL el-img-srcset-no-src-no-name assert_equals: <img data-testname="el-img-srcset-no-src-no-name" data-expectedrole="image" class="ex" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="> expected "image" but got "none"
+FAIL el-img-srcset-and-empty-src-no-name assert_equals: <img data-testname="el-img-srcset-and-empty-src-no-name" data-expectedrole="image" class="ex" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" src=""> expected "image" but got "none"
+FAIL el-img-srcset-broken-value-and-empty-src-no-name assert_equals: <img data-testname="el-img-srcset-broken-value-and-empty-src-no-name" data-expectedrole="image" class="ex" src="" srcset="..."> expected "image" but got "none"
+FAIL el-img-src-broken-value-and-empty-srcset-no-name assert_equals: <img data-testname="el-img-src-broken-value-and-empty-srcset-no-name" data-expectedrole="image" class="ex" srcset="" src="..."> expected "image" but got "none"
+PASS el-img-empty-src-with-name-from-title
+PASS el-img-empty-srcset-with-name-from-title
+PASS el-img-empty-src-with-name-from-alt
+PASS el-img-empty-srcset-with-name-from-alt
+PASS el-img-empty-src-with-name-from-aria-label
+PASS el-img-empty-srcset-with-name-from-aria-label
+PASS el-img-empty-src-with-name-from-aria-labelledby
+PASS el-img-empty-srcset-with-name-from-aria-labelledby
+PASS el-img-srcset-empty-alt-and-name-from-aria-label
+PASS el-img-srcset-empty-alt-and-name-from-aria-labelledby
+PASS el-img-empty-alt-aria-label
+PASS el-img-empty-alt-aria-labelledby
+PASS el-img-empty-alt-aria-label-empty
+PASS el-img-empty-alt-aria-label-whitespace
+PASS el-img-empty-alt-aria-labelledby-non-existing
+PASS el-img-empty-alt-aria-labelledby-empty
+PASS el-img-empty-alt-aria-labelledby-whitespace
+PASS el-img-empty-alt-title
+PASS el-img-empty-alt-title-empty
+PASS el-img-empty-alt-title-whitespace
+PASS el-img-no-src-srcset-and-no-name
+PASS el-img-empty-src-and-no-name
+PASS el-img-empty-srcset-and-no-name
+PASS el-img-empty-src-and-srcset-and-no-name
+PASS el-img-empty-alt-no-src-or-srcset
+PASS el-img-empty-title-no-src-or-srcset
+PASS el-img-empty-alt-no-src-srcset-title-empty
+PASS el-img-empty-alt-no-src-srcset-title-whitespace
+PASS el-img-empty-alt-srcset-invalid-value
+PASS el-img-whitespace-alt-aria-label-empty
+PASS el-img-whitespace-alt-aria-label-whitespace
+PASS el-img-whitespace-alt-aria-labelledby-non-existing
+PASS el-img-whitespace-alt-aria-labelledby-empty
+PASS el-img-whitespace-alt-aria-labelledby-whitespace
+PASS el-img-whitespace-alt-title
+PASS el-img-whitespace-alt-title-empty
+PASS el-img-whitespace-alt-title-whitespace
+PASS el-img-whitespace-alt-no-src-or-srcset
+PASS el-img-whitespace-alt-no-src-srcset-title-empty
+PASS el-img-whitespace-alt-no-src-srcset-title-whitespace
+PASS el-img-whitespace-alt-srcset-invalid-value
+
