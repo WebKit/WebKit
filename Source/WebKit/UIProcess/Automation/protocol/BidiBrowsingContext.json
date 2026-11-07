@@ -345,6 +345,17 @@
             ]
         },
         {
+            "name": "historyUpdated",
+            "description": "Event fired when the URL or state of a navigable's active document changes without a navigation, e.g. via pushState or replaceState.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-historyUpdated",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/history_updated",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string", "description": "The URL of the navigable's active document after the update." }
+            ]
+        },
+        {
             "name": "domContentLoaded",
             "description": "Event fired when the DOMContentLoaded event occurs in a navigable.",
             "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-domContentLoaded",
