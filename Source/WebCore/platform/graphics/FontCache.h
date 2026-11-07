@@ -36,6 +36,7 @@
 #include <WebCore/FontSelector.h>
 #include <WebCore/FontTaggedSettings.h>
 #include <WebCore/SystemFallbackFontCache.h>
+#include <WebCore/SystemFontDatabase.h>
 #include <WebCore/Timer.h>
 #include <array>
 #include <limits.h>
@@ -205,6 +206,8 @@ public:
 #if PLATFORM(COCOA)
     FontFamilySpecificationCoreTextCache& fontFamilySpecificationCoreTextCache() LIFETIME_BOUND { return m_fontFamilySpecificationCoreTextCache; }
     SystemFontDatabaseCoreText& systemFontDatabaseCoreText() LIFETIME_BOUND { return m_systemFontDatabaseCoreText; }
+#else
+    SystemFontDatabase& systemFontDatabase() LIFETIME_BOUND { return m_systemFontDatabase; }
 #endif
 
     bool useBackslashAsYenSignForFamily(const AtomString& family);
@@ -277,6 +280,8 @@ private:
     SystemFontDatabaseCoreText m_systemFontDatabaseCoreText;
 
     friend class ComplexTextController;
+#else
+    SystemFontDatabase m_systemFontDatabase;
 #endif
 
 #if USE(FREETYPE)

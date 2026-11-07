@@ -26,9 +26,18 @@
 #include "config.h"
 #include "SystemFontDatabase.h"
 
+#include "FontCache.h"
+
 namespace WebCore {
 
 SystemFontDatabase::SystemFontDatabase() = default;
+
+#if !PLATFORM(COCOA)
+SystemFontDatabase& SystemFontDatabase::singleton()
+{
+    return FontCache::forCurrentThread().systemFontDatabase();
+}
+#endif
 
 auto SystemFontDatabase::systemFontShorthandInfo(FontShorthand fontShorthand) -> const SystemFontShorthandInfo& {
     if (auto& entry = m_systemFontShorthandCache[fontShorthand])
