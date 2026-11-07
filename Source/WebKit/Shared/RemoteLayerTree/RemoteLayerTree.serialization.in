@@ -81,6 +81,7 @@ header: "RemoteLayerTreeTransaction.h"
 #endif
     ShadowPathChanged
     DisplayOnlyImageChanged
+    HidesFromScreenCaptureChanged
 };
 
 header: "RemoteLayerBackingStore.h"
@@ -246,6 +247,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 #endif
     [OptionalTupleBit=WebKit::LayerChange::ShadowPathChanged] WebCore::Path shadowPath;
     [OptionalTupleBit=WebKit::LayerChange::DisplayOnlyImageChanged] Markable<WebKit::RemoteSnapshotIdentifier> displayOnlyImage;
+    [OptionalTupleBit=WebKit::LayerChange::HidesFromScreenCaptureChanged] bool hidesFromScreenCapture;
 };
 
 using WebKit::LayerHostingContextID = uint32_t;

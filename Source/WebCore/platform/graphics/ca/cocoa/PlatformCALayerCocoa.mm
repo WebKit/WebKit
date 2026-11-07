@@ -1020,6 +1020,13 @@ void PlatformCALayerCocoa::setShadowPath(const Path& path)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+void PlatformCALayerCocoa::setHidesFromScreenCapture(bool hides)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer _web_setHidesFromScreenCapture:hides];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
 void PlatformCALayerCocoa::setAntialiasesEdges(bool antialiases)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

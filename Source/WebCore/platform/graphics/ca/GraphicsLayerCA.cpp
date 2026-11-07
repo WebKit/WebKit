@@ -994,6 +994,15 @@ void GraphicsLayerCA::setIsBackdropRoot(bool isBackdropRoot)
     noteLayerPropertyChanged(BackdropRootChanged);
 }
 
+void GraphicsLayerCA::setHidesFromScreenCapture(bool hides)
+{
+    if (hides == hidesFromScreenCapture())
+        return;
+
+    GraphicsLayer::setHidesFromScreenCapture(hides);
+    noteLayerPropertyChanged(HidesFromScreenCaptureChanged);
+}
+
 void GraphicsLayerCA::setBackdropFiltersRect(const FloatRoundedRect& backdropFiltersRect)
 {
     if (backdropFiltersRect == m_backdropFiltersRect)
@@ -2348,6 +2357,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & BackdropRootChanged)
         updateBackdropRoot();
 
+    if (m_uncommittedChanges & HidesFromScreenCaptureChanged)
+        updateHidesFromScreenCapture();
+
     if (m_uncommittedChanges & BackdropFiltersRectChanged)
         updateBackdropFiltersRect();
 
@@ -2892,6 +2904,11 @@ void GraphicsLayerCA::updateBackdropFiltersRect()
 void GraphicsLayerCA::updateBackdropRoot()
 {
     protect(m_layer)->setIsBackdropRoot(isBackdropRoot());
+}
+
+void GraphicsLayerCA::updateHidesFromScreenCapture()
+{
+    protect(m_layer)->setHidesFromScreenCapture(hidesFromScreenCapture());
 }
 
 void GraphicsLayerCA::updateBlendMode()
@@ -4862,6 +4879,7 @@ ASCIILiteral GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::TonemappingEnabledChanged: return "TonemappingEnabledChanged"_s;
 #endif
     case LayerChange::ShadowPathChanged: return "ShadowPathChanged"_s;
+    case LayerChange::HidesFromScreenCaptureChanged: return "HidesFromScreenCaptureChanged"_s;
     }
     ASSERT_NOT_REACHED();
     return ""_s;
@@ -5057,6 +5075,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | SeparatedChanged
 #endif
         | ShadowPathChanged
+        | HidesFromScreenCaptureChanged
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         | CoverageRectChanged);
 #else

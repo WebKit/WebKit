@@ -1006,6 +1006,12 @@ void PlatformCALayerRemote::setShadowPath(const WebCore::Path& path)
     m_properties.notePropertiesChanged(LayerChange::ShadowPathChanged);
 }
 
+void PlatformCALayerRemote::setHidesFromScreenCapture(bool hides)
+{
+    m_properties.hidesFromScreenCapture = hides;
+    m_properties.notePropertiesChanged(LayerChange::HidesFromScreenCaptureChanged);
+}
+
 void PlatformCALayerRemote::setAntialiasesEdges(bool antialiases)
 {
     if (antialiases == m_properties.antialiasesEdges)

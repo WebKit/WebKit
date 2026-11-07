@@ -224,6 +224,14 @@ symbols = [
     "CABackingStoreCollectBlocking",
 ]
 
+[[temporary-usage]]
+request = "rdar://191997444"
+cleanup = "rdar://191997690"
+selectors = [
+    { name = "disableUpdateMask", class = "?" },
+    { name = "setDisableUpdateMask:", class = "?" },
+]
+
 [[not-web-essential]]
 # This is not really a permanent exception request; it's a bug to change
 # audit-spi to stop tracking WebPrivacy as SPI and instead treat it as a

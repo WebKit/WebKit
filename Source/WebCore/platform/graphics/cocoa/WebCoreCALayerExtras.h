@@ -41,6 +41,7 @@
 - (BOOL)_web_maskContainsPoint:(CGPoint)point;
 - (BOOL)_web_maskMayIntersectRect:(CGRect)rect;
 - (void)_web_clearContents;
+- (void)_web_setHidesFromScreenCapture:(BOOL)hides;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 - (void)_web_clearDynamicContentScalingDisplayListIfNeeded;

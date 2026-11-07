@@ -293,6 +293,8 @@ public:
     virtual Path shadowPath() const = 0;
     virtual void setShadowPath(const Path&) = 0;
 
+    virtual void setHidesFromScreenCapture(bool) = 0;
+
     virtual void setAntialiasesEdges(bool) = 0;
 
     virtual MediaPlayerVideoGravity videoGravity() const = 0;

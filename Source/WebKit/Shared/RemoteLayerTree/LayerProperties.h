@@ -65,6 +65,7 @@ enum class LayerChangeIndex : size_t {
 #endif
     ShadowPathChanged,
     DisplayOnlyImageChanged,
+    HidesFromScreenCaptureChanged,
 };
 
 enum class LayerChange : uint64_t {
@@ -127,6 +128,7 @@ enum class LayerChange : uint64_t {
 #endif
     ShadowPathChanged                   = 1LLU << static_cast<size_t>(LayerChangeIndex::ShadowPathChanged),
     DisplayOnlyImageChanged             = 1LLU << static_cast<size_t>(LayerChangeIndex::DisplayOnlyImageChanged),
+    HidesFromScreenCaptureChanged       = 1LLU << static_cast<size_t>(LayerChangeIndex::HidesFromScreenCaptureChanged),
 };
 
 struct RemoteLayerBackingStoreOrProperties {
@@ -232,6 +234,7 @@ struct LayerProperties {
     WebCore::Path shadowPath;
     // Resolved by the UI process, which holds the rendering.
     Markable<RemoteSnapshotIdentifier> displayOnlyImage;
+    bool hidesFromScreenCapture { false };
 };
 
 }
