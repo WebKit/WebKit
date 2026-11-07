@@ -218,6 +218,14 @@ void WebInspectorBackendClient::hideHighlight()
 #endif
 }
 
+void WebInspectorBackendClient::setFrameHighlightsNeedDisplay()
+{
+    for (auto entry : m_frameHighlightOverlays) {
+        if (RefPtr overlay { entry.value })
+            overlay->setNeedsDisplay();
+    }
+}
+
 RefPtr<PageOverlay> WebInspectorBackendClient::ensureHighlightOverlayForFrame(LocalFrame& frame)
 {
     RefPtr page = m_page.get();

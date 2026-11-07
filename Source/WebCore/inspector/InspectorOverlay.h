@@ -119,6 +119,14 @@ struct InspectorOverlayHighlight {
         Vector<InspectorOverlayLabel> labels;
     };
 
+    struct ShapeOutside {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ShapeOutside);
+
+        std::optional<FloatQuad> boundingQuad;
+        std::optional<Path> marginPath;
+        Path shapePath;
+    };
+
     void setDataFromConfig(const Config& config)
     {
         contentColor = config.content;
