@@ -1069,11 +1069,16 @@ class Git(Scm):
         hash = match.group('hash')
 
         branch_point = None
-        # A commit is often on multiple branches, the canonical branch is the one with the highest priority
-        if self._is_on_default_branch(hash):
-            branch = default_branch
-        if branch != default_branch:
-            branch = self.prioritize_branches(self.branches_for(hash), self.branch)
+        # Avoid merge-base and branch listing for commits on the default or production branches which are already in our cache
+        cached_commit = Commit._parse_identifier(self.cache.to_identifier(hash=hash, populate=False)) if self.cache else None
+        if self.cache and cached_commit and cached_commit[2] and self.cache.is_cacheable(cached_commit[2]):
+            branch_point, identifier, branch = cached_commit
+        else:
+            # A commit is often on multiple branches, the canonical branch is the one with the highest priority
+            if self._is_on_default_branch(hash):
+                branch = default_branch
+            if branch != default_branch:
+                branch = self.prioritize_branches(self.branches_for(hash), self.branch)
 
         if not identifier and include_identifier and branch:
             cached_identifier = self.cache.to_identifier(hash=hash, branch=branch) if self.cache else None

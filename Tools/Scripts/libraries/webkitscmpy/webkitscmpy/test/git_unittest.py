@@ -164,6 +164,28 @@ class TestGit(testing.PathTestCase):
                 }, local.Git(self.path).info(),
             )
 
+    def test_commit_cached_hash_leaves_default_branch_without_identifier(self):
+        with mocks.local.Git(self.path) as mock, MockTime, LoggerCapture():
+            # A commit on main which was never pushed
+            unpushed = '5d697791f2e1fb3991e441fbd79f412fcff93c75'
+            mock.commits['main'].append(Commit(
+                hash=unpushed, branch='main', identifier='6@main',
+                author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                timestamp=int(time.time()), message='[Testing] Existing commit\n',
+            ))
+            mock.head = mock.commits['main'][-1]
+            repository = local.Git(self.path)
+            repository.cache.populate(branch='main')
+            self.assertEqual('6@main', str(repository.commit(hash=unpushed)))
+
+            # `git-webkit pr` moves the commit to a new branch with `git checkout -b`...
+            run([local.Git.executable(), 'checkout', '-b', 'eng/pull-request'], cwd=self.path, capture_output=True)
+            # ...then runs `git branch -f main remotes/origin/main`, which the mock doesn't implement
+            mock.commits['main'].pop()
+
+            self.assertEqual('eng/pull-request', local.Git(self.path, cached=False).commit(hash=unpushed, include_identifier=False).branch)
+            self.assertEqual('eng/pull-request', repository.commit(hash=unpushed, include_identifier=False).branch)
+
     def test_commit_revision(self):
         with mocks.local.Git(self.path), MockTime, LoggerCapture():
             with self.assertRaises(local.Git.Exception):
@@ -182,6 +204,38 @@ class TestGit(testing.PathTestCase):
             # Out-of-bounds commit
             with self.assertRaises(local.Git.Exception):
                 self.assertEqual(None, local.Git(self.path).commit(revision=10))
+
+    def test_commit_cached_default_branch(self):
+        with mocks.local.Git(self.path, git_svn=True, remote='git@example.org:{}'.format(self.path)), MockTime, LoggerCapture():
+            repository = local.Git(self.path)
+            repository.cache.populate(branch='main')
+
+            with patch.object(local.Git, '_is_on_default_branch', side_effect=AssertionError('asked git for the branch')):
+                self.assertEqual('4@main', str(repository.commit(hash='bae5d1e9')))
+                self.assertEqual('4@main', str(repository.commit(identifier='4@main')))
+                self.assertEqual('4@main', str(repository.commit(revision=8)))
+                self.assertEqual('4@main', str(repository.find('r8')))
+
+    def test_commit_cached_other_branch(self):
+        with mocks.local.Git(self.path), MockTime, LoggerCapture():
+            repository = local.Git(self.path)
+            repository.cache.populate(branch='branch-a')
+            branch_hash = repository.find('2.2@branch-a').hash
+
+            with patch.object(local.Git, '_is_on_default_branch', return_value=False) as is_on_default_branch:
+                self.assertEqual('2.2@branch-a', str(repository.commit(hash=branch_hash)))
+                is_on_default_branch.assert_called()
+
+    def test_commit_cached_production_branch(self):
+        with mocks.local.Git(self.path), MockTime, LoggerCapture():
+            repository = local.Git(self.path, cached=True, prod_branches=re.compile(r'branch-[ab]'))
+            repository.cache.populate(branch='branch-a')
+            branch_hash = repository.cache.to_hash(identifier='2.2@branch-a')
+
+            with patch.object(local.Git, '_is_on_default_branch', side_effect=AssertionError('asked git for the branch')), \
+                    patch.object(local.Git, 'branches_for', side_effect=AssertionError('asked git for the branch')):
+                self.assertEqual('2.2@branch-a', str(repository.commit(hash=branch_hash)))
+                self.assertEqual('2.2@branch-a', str(repository.commit(identifier='2.2@branch-a')))
 
     def test_commit_hash(self):
         for mock in [mocks.local.Git(self.path), mocks.local.Git(self.path, git_svn=True)]:
