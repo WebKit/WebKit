@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=match href="focus-ring-contained-rects-expected.html">
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+.ring {
+    outline-style: auto;
+    position: absolute;
+    width: 200px;
+    height: 120px;
+    padding: 10px;
+    font: 10px/12px monospace;
+    color: transparent;
+}
+
+.offset {
+    outline-offset: 4px;
+}
+</style>
+</head>
+<body>
+<!-- Many lines and child blocks inside the border box: the ring is the border box ring. -->
+<div class="ring" style="left: 20px; top: 20px;">
+line<br>line<br>line<br>line<br>line<br>line<br>line<br>line
+<div>block line<br>block line</div>
+</div>
+
+<!-- Same with outline-offset, so containment is tested on the inflated rects. -->
+<div class="ring offset" style="left: 300px; top: 20px;">
+line<br>line<br>line<br>line<br>line<br>line<br>line<br>line
+<div>block line<br>block line</div>
+</div>
+</body>
+</html>

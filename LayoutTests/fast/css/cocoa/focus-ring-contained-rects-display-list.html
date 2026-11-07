@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+.ring {
+    outline-style: auto;
+    will-change: transform;
+    position: absolute;
+    width: 200px;
+    height: 120px;
+    padding: 10px;
+}
+
+.offset {
+    outline-offset: 4px;
+}
+
+.line {
+    display: inline-block;
+    width: 100px;
+    height: 10px;
+}
+
+.child {
+    width: 100px;
+    height: 20px;
+}
+
+.wide-child {
+    width: 300px;
+    height: 20px;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("load", async () => {
+    const rings = document.querySelectorAll(".ring");
+    if (window.internals) {
+        for (const ring of rings)
+            internals.setElementUsesDisplayListDrawing(ring, true);
+    }
+
+    await UIHelper.renderingUpdate();
+
+    let output = "";
+    for (const ring of rings) {
+        output += ring.id + ":\n";
+        if (window.internals) {
+            for (const match of internals.displayListForElement(ring).matchAll(/\(draw-focus-ring-rects\s*\(rects (.*)\)/g))
+                output += match[1] + "\n";
+        }
+        ring.remove();
+    }
+    document.getElementById("output").textContent = output;
+    testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+<!-- Lines and a child block inside the border box: only the border box rect should be recorded. -->
+<div id="contained" class="ring" style="left: 20px; top: 20px;">
+<span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span>
+<div class="child"></div>
+</div>
+
+<!-- Same with outline-offset, so containment is checked on the inflated rects. -->
+<div id="contained-with-offset" class="ring offset" style="left: 300px; top: 20px;">
+<span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span>
+<div class="child"></div>
+</div>
+
+<!-- A child block that overflows the border box changes the ring, so its rect must still be recorded.
+It comes first so its position doesn't depend on line heights. -->
+<div id="overflowing-child" class="ring" style="left: 20px; top: 220px;">
+<div class="wide-child"></div>
+<span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span>
+</div>
+
+<div id="overflowing-child-with-offset" class="ring offset" style="left: 20px; top: 420px;">
+<div class="wide-child"></div>
+<span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span>
+</div>
+
+<pre id="output"></pre>
+</body>
+</html>
