@@ -1,0 +1,12 @@
+Test that Page.searchInResources does not crash under Site Isolation when a resource was served from the memory cache during style resolution.
+
+
+
+== Running test suite: SiteIsolation.Page.SearchInResources.MemoryCache
+-- Running test case: SiteIsolation.Page.SearchInResources.MemoryCache.ImageDuringStyleResolution
+PASS: Image should be reported through Network.requestServedFromMemoryCache.
+PASS: Should return an array of results.
+FOUND: site-isolation/inspector/page/resources/search-in-resources-memory-cache-image.svg (1) in child frame
+FOUND: site-isolation/inspector/page/resources/search-in-resources-memory-cache-image.svg (1) in main frame
+FOUND: site-isolation/inspector/page/search-in-resources-memory-cache-same-origin-iframe.html (1) in main frame
+
