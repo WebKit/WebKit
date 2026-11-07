@@ -246,6 +246,26 @@
       '424',
       '427',
       'Foo::Arrow::otherArrow const volatile'
+    ],
+    [
+      '440',
+      '443',
+      'RawString::afterMultiLineRawString'
+    ],
+    [
+      '448',
+      '451',
+      'RawString::afterEmptyDelimiterRawString'
+    ],
+    [
+      '456',
+      '459',
+      'RawString::afterSingleLineRawString'
+    ],
+    [
+      '464',
+      '467',
+      'RawString::afterTwoRawStringsOnOneLine'
     ]
   ]
 }
