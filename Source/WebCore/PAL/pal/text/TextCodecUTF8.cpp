@@ -480,13 +480,24 @@ upConvertTo16Bit:
 
 Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string)
 {
+    auto bytes = tryEncodeUTF8(string);
+    RELEASE_ASSERT(bytes);
+    return WTF::move(*bytes);
+}
+
+std::optional<Vector<uint8_t>> TextCodecUTF8::tryEncodeUTF8(StringView string)
+{
     // The buffer size is string.length() * maxBytesPerUnit, where maxBytesPerUnit is the
     // worst-case UTF-8 bytes per input code unit.
     // - 8-bit (Latin1) strings: max 2 UTF-8 bytes per character (for 0x80-0xFF).
     // - 16-bit strings: max 3 UTF-8 bytes per code unit (BMP characters use 1 code unit
     //   and up to 3 bytes; non-BMP use 2 code units and 4 bytes, i.e. only 2 per unit).
+    // A long enough string needs a buffer larger than a Vector can hold, so report the
+    // failure rather than crashing.
     size_t maxBytesPerUnit = string.is8Bit() ? 2 : 3;
-    Vector<uint8_t> bytes(WTF::checkedProduct<size_t>(string.length(), maxBytesPerUnit));
+    Vector<uint8_t> bytes;
+    if (!bytes.tryGrow(WTF::checkedProduct<size_t>(string.length(), maxBytesPerUnit)))
+        return std::nullopt;
     size_t bytesWritten = 0;
     for (auto character : string.codePoints())
         U8_APPEND_UNSAFE(bytes, bytesWritten, character);
