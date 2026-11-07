@@ -1252,7 +1252,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
         auto margin = [&](auto& margin) {
             return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, 0_lu, style->usedZoomForLength());
         };
-        return margin(style->marginStart(writingMode)) + margin(style->marginEnd(writingMode));
+        return std::pair { margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)) };
     };
     auto outerInlineSizes = [&](const RenderBox& box, IntrinsicWidthConstraints contentSizes) -> IntrinsicWidthConstraints {
         CheckedRef style = box.style();
@@ -1338,47 +1338,102 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
             minimum = std::max(minimum, sizes->minimum);
             maximum = std::max(maximum, sizes->maximum);
         }
-        auto outerSpace = borderAndPadding + inlineMargins(box);
+        auto [marginStart, marginEnd] = inlineMargins(box);
+        auto outerSpace = borderAndPadding + marginStart + marginEnd;
         return { minimum + outerSpace, maximum + outerSpace };
     };
-    auto addContribution = [](IntrinsicWidthConstraints& containerSizes, IntrinsicWidthConstraints contribution) {
-        containerSizes.minimum = std::max(containerSizes.minimum, contribution.minimum);
-        containerSizes.maximum = std::max(containerSizes.maximum, contribution.maximum);
+
+    // Each block container collects the contributions of its children between its start and end. In the max-content inline size, the floats
+    // among them go side by side, and so does a box after them that avoids floats, with its content when it is inline, while another box
+    // goes below them (RenderBlock::computeBlockIntrinsicLogicalWidths).
+    struct BlockContainerSizes {
+        CheckedRef<const RenderBox> blockContainer;
+        IntrinsicWidthConstraints sizes { };
+        LayoutUnit leftFloatsMaximum { };
+        LayoutUnit rightFloatsMaximum { };
+    };
+    auto addContribution = [&](BlockContainerSizes& container, const RenderBox& box, IntrinsicWidthConstraints contribution) {
+        auto avoidsFloats = box.avoidsFloats() || (box.isAnonymousBlock() && box.childrenInline());
+        auto& sizes = container.sizes;
+        if (box.isFloating() || avoidsFloats) {
+            auto floatsMaximum = container.leftFloatsMaximum + container.rightFloatsMaximum;
+            auto clear = box.usedStyle().clear();
+            if (clear == UsedClear::Left || clear == UsedClear::Both) {
+                sizes.maximum = std::max(sizes.maximum, floatsMaximum);
+                container.leftFloatsMaximum = { };
+            }
+            if (clear == UsedClear::Right || clear == UsedClear::Both) {
+                sizes.maximum = std::max(sizes.maximum, floatsMaximum);
+                container.rightFloatsMaximum = { };
+            }
+        }
+        sizes.minimum = std::max(sizes.minimum, contribution.minimum);
+        if (box.isFloating()) {
+            (box.usedStyle().floating() == UsedFloat::Left ? container.leftFloatsMaximum : container.rightFloatsMaximum) += contribution.maximum;
+            return;
+        }
+        auto maximum = contribution.maximum;
+        if (avoidsFloats) {
+            // A float may sit in a positive margin, and a negative one overlaps it. The margins go on the sides the direction of the containing
+            // block of the block container being measured gives them, as on the render tree path.
+            auto [marginStart, marginEnd] = inlineMargins(box);
+            CheckedPtr containingBlock = container.blockContainer->containingBlock();
+            auto isLeftToRight = !containingBlock || containingBlock->writingMode().isLogicalLeftInlineStart();
+            auto [marginLeft, marginRight] = isLeftToRight ? std::pair { marginStart, marginEnd } : std::pair { marginEnd, marginStart };
+            auto besideFloats = [](LayoutUnit floatsMaximum, LayoutUnit margin) {
+                return margin > 0 ? std::max(floatsMaximum, margin) : floatsMaximum + margin;
+            };
+            maximum = contribution.maximum - marginStart - marginEnd + besideFloats(container.leftFloatsMaximum, marginLeft) + besideFloats(container.rightFloatsMaximum, marginRight);
+            maximum = std::max(maximum, container.leftFloatsMaximum + container.rightFloatsMaximum);
+        } else
+            sizes.maximum = std::max(sizes.maximum, container.leftFloatsMaximum + container.rightFloatsMaximum);
+        container.leftFloatsMaximum = { };
+        container.rightFloatsMaximum = { };
+        sizes.maximum = std::max(sizes.maximum, maximum);
+    };
+    auto contentSizes = [](BlockContainerSizes&& container) {
+        auto sizes = container.sizes;
+        sizes.maximum = std::max(sizes.maximum, container.leftFloatsMaximum + container.rightFloatsMaximum);
+        return sizes;
+    };
+    auto withMargins = [&](const RenderBox& box, IntrinsicWidthConstraints contributions) -> IntrinsicWidthConstraints {
+        auto [marginStart, marginEnd] = inlineMargins(box);
+        return { contributions.minimum + marginStart + marginEnd, contributions.maximum + marginStart + marginEnd };
     };
 
-    // Each block container collects the contributions of its children between its start and end.
-    auto blockContainerSizes = Vector<IntrinsicWidthConstraints> { { } };
+    auto blockContainerSizes = Vector<BlockContainerSizes> { { blockContainer } };
     for (auto& blockItem : BlockItemsBuilder { blockContainer }.build()) {
         CheckedRef box = blockItem.renderer();
         switch (blockItem.type()) {
         case BlockItem::Type::BlockContainerStart:
-            blockContainerSizes.constructAndAppend();
+            blockContainerSizes.append({ box });
             break;
-        case BlockItem::Type::InlineContent:
-            addContribution(blockContainerSizes.last(), LayoutIntegration::BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(downcast<RenderBlockFlow>(box)));
+        case BlockItem::Type::InlineContent: {
+            auto inlineContentSizes = LayoutIntegration::BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(downcast<RenderBlockFlow>(box));
+            auto& sizes = blockContainerSizes.last().sizes;
+            sizes.minimum = std::max(sizes.minimum, inlineContentSizes.minimum);
+            sizes.maximum = std::max(sizes.maximum, inlineContentSizes.maximum);
             break;
+        }
         case BlockItem::Type::BlockContainerEnd: {
-            auto contentSizes = blockContainerSizes.takeLast();
-            if (auto sizes = containedIntrinsicInlineSizes(box))
-                contentSizes = *sizes;
-            addContribution(blockContainerSizes.last(), outerInlineSizes(box, contentSizes));
+            auto sizes = contentSizes(blockContainerSizes.takeLast());
+            if (auto containedSizes = containedIntrinsicInlineSizes(box))
+                sizes = *containedSizes;
+            addContribution(blockContainerSizes.last(), box, outerInlineSizes(box, sizes));
             break;
         }
         case BlockItem::Type::IndependentFormattingContextRoot:
             if (LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(box)) {
                 // Its own formatting context measures a box it lays out, against the size of the containing block only where coverage keeps
                 // it out (canComputeContentInlineSizes).
-                auto contributions = LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(box);
-                auto margins = inlineMargins(box);
-                addContribution(blockContainerSizes.last(), { contributions.minimum + margins, contributions.maximum + margins });
+                addContribution(blockContainerSizes.last(), box, withMargins(box, LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(box)));
                 break;
             }
-            addContribution(blockContainerSizes.last(), outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box))));
+            addContribution(blockContainerSizes.last(), box, outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box))));
             break;
         case BlockItem::Type::Float:
-            // FIXME: Floats among block-level boxes, side by side in the max-content inline size (RenderBlockFlow::computeBlockIntrinsicLogicalWidths),
-            // which coverage keeps out (canComputeContentInlineSizes).
-            ASSERT_NOT_REACHED();
+            // Its own formatting context lays it out, and measures it (handleFloat).
+            addContribution(blockContainerSizes.last(), box, withMargins(box, LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(box)));
             break;
         case BlockItem::Type::OutOfFlowBox:
             // Out-of-flow boxes do not contribute to the intrinsic sizes of their parent (css-sizing-3 §5.2).
@@ -1386,7 +1441,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
         }
     }
     ASSERT(blockContainerSizes.size() == 1);
-    auto sizes = blockContainerSizes.first();
+    auto sizes = contentSizes(blockContainerSizes.takeLast());
     sizes.minimum = std::max(0_lu, sizes.minimum);
     sizes.maximum = std::max(sizes.minimum, sizes.maximum);
     return sizes;
