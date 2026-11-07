@@ -478,7 +478,7 @@ bool RemoteLayerBackingStore::performDelegatedLayerDisplay()
 void RemoteLayerBackingStore::dirtyRepaintCounterIfNecessary()
 {
     Ref layer = m_layer.get();
-    if (layer->owner()->platformCALayerShowRepaintCounter(layer.ptr())) {
+    if (layer->owner() && layer->owner()->platformCALayerShowRepaintCounter(layer.ptr())) {
         IntRect indicatorRect(0, 0, 52, 28);
         m_dirtyRegion.unite(indicatorRect);
     }
@@ -488,7 +488,8 @@ void RemoteLayerBackingStore::paintContents()
 {
     Ref layer = m_layer.get();
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << layer->layerID() << " paintContents() - has dirty region " << !hasEmptyDirtyRegion());
-    if (layer->owner()->platformCALayerDelegatesDisplay(layer.ptr()))
+
+    if (!layer->owner() || layer->owner()->platformCALayerDelegatesDisplay(layer.ptr()))
         return;
 
     if (hasEmptyDirtyRegion()) {
