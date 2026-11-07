@@ -118,6 +118,9 @@ public:
     // The block container separates margins. Unless it is the quirk container itself (its block-start border and padding), this ends the
     // quirk container's block-start side.
     void endQuirkContainerBlockStartSide(const ContainingBlockState& blockContainerState);
+    // Clearance separates the block-start margin of the block container from the margins before it, its containing block's included (CSS 2.2
+    // §8.3.1).
+    static void separateFromContainingBlockMarginBefore(ContainingBlockState& blockContainerState);
 
 private:
     // The margins that collapse with the block-start edge of the block container collapse with its containing block's too, and so does its

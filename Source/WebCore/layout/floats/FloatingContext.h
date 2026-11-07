@@ -64,6 +64,9 @@ public:
         std::optional<LayoutUnit> clearance;
     };
     std::optional<BlockAxisPositionWithClearance> blockAxisPositionWithClearance(const Box&, const BoxGeometry&, const ContainingBlock&) const;
+    // The bottom outer edge of the lowest float that a box with clear goes below (CSS 2.2 §9.5.2), in the coordinates of the formatting context
+    // root, if there is one.
+    std::optional<LayoutUnit> blockEndOfFloatsToClear(const Box&) const;
 
     bool isEmpty() const { return m_placedFloats.list().isEmpty(); }
 
