@@ -1,0 +1,6 @@
+
+PASS tiltX and tiltY are preserved when both are provided
+PASS tiltX and tiltY with mixed signs are preserved when both are provided
+PASS azimuthAngle and altitudeAngle are preserved when both are provided
+PASS All four values are preserved when all are provided
+
