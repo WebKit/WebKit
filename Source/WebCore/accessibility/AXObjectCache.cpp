@@ -113,6 +113,7 @@
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineRunAndOffset.h"
 #include "KeyboardEvent.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MathMLElement.h"
@@ -4995,8 +4996,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
             for (auto& id : ids) {
                 if (RefPtr ownsTarget = protect(element->treeScope())->elementByIdResolvingReferenceTarget(id)) {
                     CheckedPtr renderer = ownsTarget->renderer();
-                    if (CheckedPtr containingBlock = renderer ? renderer->containingBlock() : nullptr)
-                        setDirtyStitchGroups(*containingBlock);
+                    if (CheckedPtr formattingContextRoot = renderer ? LayoutIntegration::LineLayout::blockContainer(*renderer) : nullptr)
+                        setDirtyStitchGroups(*formattingContextRoot);
                 }
             }
         };

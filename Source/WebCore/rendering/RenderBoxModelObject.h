@@ -38,6 +38,8 @@ enum class BleedAvoidance : uint8_t {
     BackgroundOverBorder
 };
 
+enum class StretchingMode { Normal, Explicit };
+
 class BorderEdge;
 class BorderShape;
 class GraphicsContext;
@@ -91,6 +93,9 @@ public:
 
     LayoutSize offsetForInFlowPosition() const;
 
+    // Only flex and grid containers stretch the boxes they contain.
+    virtual bool willStretchItem(const RenderBox&, LogicalBoxAxis, StretchingMode = StretchingMode::Normal) const { return false; }
+
     // IE extensions. Used to calculate offsetWidth/Height. Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).
     virtual LayoutUnit offsetLeft() const;
@@ -108,6 +113,7 @@ public:
     LayoutRect borderBoundingBox() const { return { { }, borderBoxRectInContainer().size() }; }
     virtual LayoutRect visualOverflowRect() const;
     virtual LayoutRect firstFragmentBorderBoxRect() const;
+    LayoutRect firstFragmentBorderBoxRectFromBlockStart() const;
     virtual LayoutUnit paddingBoxLogicalWidth() const;
     virtual LayoutUnit paddingBoxLogicalHeight() const;
     virtual LayoutUnit paddingBoxWidth() const;
