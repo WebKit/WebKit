@@ -1863,17 +1863,16 @@ static bool expectedBranchArithTaken(BranchArith op, MacroAssembler::ResultCondi
         int32_t result32 = 0;
         overflow = isAdd ? __builtin_add_overflow(lhs, imm, &result32) : __builtin_sub_overflow(lhs, imm, &result32);
         uint32_t unsignedResult = 0;
-        carry = __builtin_add_overflow(static_cast<uint32_t>(lhs), static_cast<uint32_t>(imm), &unsignedResult);
+        carry = isAdd ? __builtin_add_overflow(static_cast<uint32_t>(lhs), static_cast<uint32_t>(imm), &unsignedResult) : __builtin_sub_overflow(static_cast<uint32_t>(lhs), static_cast<uint32_t>(imm), &unsignedResult);
         result = result32;
     } else {
         int64_t lhs = static_cast<int64_t>(value);
         overflow = isAdd ? __builtin_add_overflow(lhs, static_cast<int64_t>(imm), &result) : __builtin_sub_overflow(lhs, static_cast<int64_t>(imm), &result);
         uint64_t unsignedResult = 0;
-        carry = __builtin_add_overflow(static_cast<uint64_t>(lhs), static_cast<uint64_t>(static_cast<int64_t>(imm)), &unsignedResult);
+        carry = isAdd ? __builtin_add_overflow(static_cast<uint64_t>(lhs), static_cast<uint64_t>(static_cast<int64_t>(imm)), &unsignedResult) : __builtin_sub_overflow(static_cast<uint64_t>(lhs), static_cast<uint64_t>(static_cast<int64_t>(imm)), &unsignedResult);
     }
     switch (cond) {
     case MacroAssembler::Carry:
-        RELEASE_ASSERT(isAdd);
         return carry;
     case MacroAssembler::Overflow:
         return overflow;
@@ -1928,17 +1927,81 @@ static void checkBranchArithImmediate(BranchArith op, int32_t imm, MacroAssemble
 
 void testBranchAddSubImmediateSetsFlags()
 {
-    // Carry after a subtraction means "no borrow" on ARM64 but "borrow" on x86, so it is only checked for additions.
-    const MacroAssembler::ResultCondition addConditions[] = { MacroAssembler::Carry, MacroAssembler::Overflow, MacroAssembler::Signed, MacroAssembler::PositiveOrZero, MacroAssembler::Zero, MacroAssembler::NonZero };
-    const MacroAssembler::ResultCondition subConditions[] = { MacroAssembler::Overflow, MacroAssembler::Signed, MacroAssembler::PositiveOrZero, MacroAssembler::Zero, MacroAssembler::NonZero };
+    const MacroAssembler::ResultCondition conditions[] = { MacroAssembler::Carry, MacroAssembler::Overflow, MacroAssembler::Signed, MacroAssembler::PositiveOrZero, MacroAssembler::Zero, MacroAssembler::NonZero };
 
     for (auto op : { BranchArith::Add32, BranchArith::Sub32, BranchArith::Add64, BranchArith::Sub64 }) {
-        bool isAdd = op == BranchArith::Add32 || op == BranchArith::Add64;
-        auto conditions = isAdd ? std::span<const MacroAssembler::ResultCondition> { addConditions } : std::span<const MacroAssembler::ResultCondition> { subConditions };
         for (int32_t imm : { 0, 1, -1 }) {
             for (auto cond : conditions) {
                 for (int32_t flagsPreset : { 0, 1 })
                     checkBranchArithImmediate(op, imm, cond, flagsPreset);
+            }
+        }
+    }
+}
+
+enum class BranchSubForm { Sub32TwoOperand, Sub32ThreeOperand, Sub64TwoOperand, Sub64ThreeOperand, Neg32, Neg64 };
+
+void testBranchSubAndNegCarryIsBorrow()
+{
+    const uint64_t values[] = { 0, 1, 2, ~0ULL, 0xffffffffULL, 0x7fffffffULL, 0x80000000ULL, 0x7fffffffffffffffULL, 0x8000000000000000ULL, 0x123456789abcdef0ULL };
+
+    for (auto form : { BranchSubForm::Sub32TwoOperand, BranchSubForm::Sub32ThreeOperand, BranchSubForm::Sub64TwoOperand, BranchSubForm::Sub64ThreeOperand, BranchSubForm::Neg32, BranchSubForm::Neg64 }) {
+        for (int32_t flagsPreset : { 0, 1 }) {
+            auto code = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR2);
+                jit.compare32(MacroAssembler::Equal, GPRInfo::argumentGPR2, CCallHelpers::TrustedImm32(flagsPreset), GPRInfo::argumentGPR2);
+                CCallHelpers::Jump taken;
+                switch (form) {
+                case BranchSubForm::Sub32TwoOperand:
+                    taken = jit.branchSub32(MacroAssembler::Carry, GPRInfo::argumentGPR1, GPRInfo::argumentGPR0);
+                    break;
+                case BranchSubForm::Sub32ThreeOperand:
+                    taken = jit.branchSub32(MacroAssembler::Carry, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
+                    break;
+                case BranchSubForm::Sub64TwoOperand:
+                    taken = jit.branchSub64(MacroAssembler::Carry, GPRInfo::argumentGPR1, GPRInfo::argumentGPR0);
+                    break;
+                case BranchSubForm::Sub64ThreeOperand:
+                    taken = jit.branchSub64(MacroAssembler::Carry, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
+                    break;
+                case BranchSubForm::Neg32:
+                    taken = jit.branchNeg32(MacroAssembler::Carry, GPRInfo::argumentGPR0);
+                    break;
+                case BranchSubForm::Neg64:
+                    taken = jit.branchNeg64(MacroAssembler::Carry, GPRInfo::argumentGPR0);
+                    break;
+                }
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                taken.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            for (uint64_t a : values) {
+                for (uint64_t b : values) {
+                    bool expected = false;
+                    switch (form) {
+                    case BranchSubForm::Sub32TwoOperand:
+                    case BranchSubForm::Sub32ThreeOperand:
+                        expected = static_cast<uint32_t>(a) < static_cast<uint32_t>(b);
+                        break;
+                    case BranchSubForm::Sub64TwoOperand:
+                    case BranchSubForm::Sub64ThreeOperand:
+                        expected = a < b;
+                        break;
+                    case BranchSubForm::Neg32:
+                        expected = !!static_cast<uint32_t>(a);
+                        break;
+                    case BranchSubForm::Neg64:
+                        expected = !!a;
+                        break;
+                    }
+                    CHECK_EQ(invoke<int>(code, a, b), static_cast<int>(expected));
+                }
             }
         }
     }
@@ -10315,6 +10378,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testShiftAndAdd());
     RUN(testLogicalAndShiftImmediates());
     RUN(testBranchAddSubImmediateSetsFlags());
+    RUN(testBranchSubAndNegCarryIsBorrow());
     RUN(testStore64Imm64AddressPointer());
     RUN(testLoad64ExtendedAddress());
 
