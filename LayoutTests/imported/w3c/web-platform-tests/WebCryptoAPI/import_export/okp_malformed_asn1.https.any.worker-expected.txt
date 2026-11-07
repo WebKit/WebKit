@@ -1,0 +1,14 @@
+
+FAIL Ed25519 rejects malformed pkcs8 assert_unreached: Should have rejected: invalid outer ASN.1 tag Reached unreachable code
+FAIL Ed25519 rejects malformed spki assert_unreached: Should have rejected: invalid outer ASN.1 tag Reached unreachable code
+FAIL X25519 rejects malformed pkcs8 assert_unreached: Should have rejected: invalid outer ASN.1 tag Reached unreachable code
+FAIL X25519 rejects malformed spki assert_unreached: Should have rejected: invalid outer ASN.1 tag Reached unreachable code
+PASS Ed25519 accepts a valid 32-byte leading-zero SPKI public value
+PASS Ed25519 rejects a 31-byte SPKI public value
+PASS Ed25519 rejects a 33-byte SPKI public value
+PASS Ed25519 rejects a leading-zero 33-byte SPKI public value
+PASS X25519 accepts a valid 32-byte leading-zero SPKI public value
+PASS X25519 rejects a 31-byte SPKI public value
+PASS X25519 rejects a 33-byte SPKI public value
+PASS X25519 rejects a leading-zero 33-byte SPKI public value
+

@@ -1,7 +1,13 @@
 
 PASS EdDSA Ed25519 verification
+PASS EdDSA Ed25519 verification with altered signature during call
 PASS EdDSA Ed25519 verification with altered signature after call
+PASS EdDSA Ed25519 verification with transferred signature during call
+PASS EdDSA Ed25519 verification with transferred signature after call
+PASS EdDSA Ed25519 with altered data during call
 PASS EdDSA Ed25519 with altered data after call
+PASS EdDSA Ed25519 with transferred data during call
+PASS EdDSA Ed25519 with transferred data after call
 PASS EdDSA Ed25519 using privateKey to verify
 PASS EdDSA Ed25519 using publicKey to sign
 PASS EdDSA Ed25519 no verify usage

@@ -1,0 +1,8 @@
+
+PASS exportKey() with a HKDF key throws NotSupportedError
+PASS wrapKey() with a HKDF key throws NotSupportedError
+PASS exportKey() with a PBKDF2 key throws NotSupportedError
+PASS wrapKey() with a PBKDF2 key throws NotSupportedError
+PASS exportKey() with a non-extractable AES-CBC key throws InvalidAccessError
+PASS wrapKey() with a non-extractable AES-CBC key throws InvalidAccessError
+

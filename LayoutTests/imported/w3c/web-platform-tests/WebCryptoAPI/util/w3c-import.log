@@ -10,9 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/util/ec_key_fixtures.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/util/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/util/okp_key_fixtures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/util/rsa_key_fixtures.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/util/worker-report-crypto-subtle-presence.js

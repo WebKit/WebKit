@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/aes-cbc.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/aes-ctr.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/aes-gcm.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/aes-kw.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/ecdh.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/ecdsa.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/ed25519.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/hmac.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/rsa-oaep.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/rsa-pss.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/rsassa-pkcs1-v1_5.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/serialization.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/serialization/x25519.https.any.js

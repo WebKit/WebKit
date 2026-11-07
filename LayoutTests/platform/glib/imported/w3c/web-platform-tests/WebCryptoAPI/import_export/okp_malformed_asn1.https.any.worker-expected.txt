@@ -1,0 +1,14 @@
+
+PASS Ed25519 rejects malformed pkcs8
+PASS Ed25519 rejects malformed spki
+PASS X25519 rejects malformed pkcs8
+PASS X25519 rejects malformed spki
+PASS Ed25519 accepts a valid 32-byte leading-zero SPKI public value
+PASS Ed25519 rejects a 31-byte SPKI public value
+PASS Ed25519 rejects a 33-byte SPKI public value
+PASS Ed25519 rejects a leading-zero 33-byte SPKI public value
+PASS X25519 accepts a valid 32-byte leading-zero SPKI public value
+PASS X25519 rejects a 31-byte SPKI public value
+PASS X25519 rejects a 33-byte SPKI public value
+PASS X25519 rejects a leading-zero 33-byte SPKI public value
+
