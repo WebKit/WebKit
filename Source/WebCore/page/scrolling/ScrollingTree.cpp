@@ -97,7 +97,7 @@ bool ScrollingTree::isUserScrollInProgressAtEventLocation(const PlatformWheelEve
     return false;
 }
 
-OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(const PlatformWheelEvent& wheelEvent)
+OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(const PlatformWheelEvent& wheelEvent, Locker<Lock>& treeStateLocker)
 {
     RefPtr rootNode = m_rootNode;
     if (!rootNode)
@@ -115,6 +115,19 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
 
         if (isSynchronousDispatchRegion)
             return { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
+    }
+
+    if (m_treeState.hostedFramesHaveEventTrackingRegions) {
+        std::optional<ScrollingNodeID> hostedRootNodeID;
+        {
+            DropLockForScope dropTreeStateLock { treeStateLocker };
+            Locker treeLocker { m_treeLock };
+            hostedRootNodeID = hostedRootNodeIDWithNonFastScrollableRegionAtPoint(position);
+        }
+        if (hostedRootNodeID) {
+            LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::computeWheelProcessingSteps: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in the non-fast region of hosted root node " << *hostedRootNodeID);
+            return { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
+        }
     }
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
@@ -147,7 +160,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
     if (wheelEvent.isGestureStart() || wheelEvent.isNonGestureEvent())
         m_treeState.gestureState = std::nullopt;
 
-    auto processingSteps = computeWheelProcessingSteps(wheelEvent);
+    auto processingSteps = computeWheelProcessingSteps(wheelEvent, locker);
 
     m_latchingController.receivedWheelEvent(wheelEvent, processingSteps, m_allowLatching);
 
@@ -310,6 +323,11 @@ OptionSet<EventListenerRegionType> ScrollingTree::eventListenerRegionTypesForPoi
     return { };
 }
 #endif
+
+std::optional<ScrollingNodeID> ScrollingTree::hostedRootNodeIDWithNonFastScrollableRegionAtPoint(FloatPoint) const
+{
+    return std::nullopt;
+}
 
 void ScrollingTree::traverseScrollingTree(NOESCAPE const VisitorFunction& visitorFunction)
 {
@@ -547,7 +565,34 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
 {
     SetForScope inCommitTreeState(m_inCommitTreeState, true);
     Locker locker { m_treeLock };
-    return commitTreeStateInternal(WTF::move(scrollingStateTree), hostingContextIdentifier);
+    bool succeeded { commitTreeStateInternal(WTF::move(scrollingStateTree), hostingContextIdentifier) };
+
+    bool hostedFramesHaveEventTrackingRegions { findHostedRootNode([](auto& hostedRootNode) {
+        return !hostedRootNode.eventTrackingRegions().isEmpty();
+    }) };
+
+    Locker treeStateLocker { m_treeStateLock };
+    m_treeState.hostedFramesHaveEventTrackingRegions = hostedFramesHaveEventTrackingRegions;
+    return succeeded;
+}
+
+RefPtr<ScrollingTreeFrameScrollingNode> ScrollingTree::hostedRootNodeForFrame(FrameIdentifier frameID) const
+{
+    return findHostedRootNode([frameID](auto& hostedRootNode) {
+        return hostedRootNode.frameIdentifier() == frameID;
+    });
+}
+
+RefPtr<ScrollingTreeFrameScrollingNode> ScrollingTree::findHostedRootNode(NOESCAPE const Function<bool(const ScrollingTreeFrameScrollingNode&)>& predicate) const
+{
+    for (auto& frameHostingNode : m_hostedSubtrees.values()) {
+        for (auto& child : frameHostingNode->children()) {
+            RefPtr hostedRootNode { dynamicDowncast<ScrollingTreeFrameScrollingNode>(child) };
+            if (hostedRootNode && predicate(*hostedRootNode))
+                return hostedRootNode;
+        }
+    }
+    return nullptr;
 }
 
 bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* stateNode, CommitTreeState& state)

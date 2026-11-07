@@ -1,0 +1,95 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+body { margin: 0; height: 3000px; }
+iframe { position: absolute; left: 10px; top: 10px; width: 400px; height: 300px; border: 0; }
+iframe.lower { top: 210px; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<script>
+description("Tests that wheel events over a listbox in a cross-site iframe scroll the listbox, not the iframe or the page.");
+jsTestIsAsync = true;
+
+let iframe;
+
+function loadIframe(src, isLower)
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (!event.data.loaded)
+                return;
+            removeEventListener('message', listener);
+            resolve();
+        });
+        iframe?.remove();
+        iframe = document.createElement('iframe');
+        if (isLower)
+            iframe.className = 'lower';
+        iframe.src = src;
+        document.body.appendChild(iframe);
+    });
+}
+
+function sendToIframe(message)
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (event.data.listScrollTop === undefined)
+                return;
+            removeEventListener('message', listener);
+            resolve(event.data);
+        });
+        iframe.contentWindow.postMessage(message, '*');
+    });
+}
+
+async function runCase(name, origin, query, mainScrollPosition)
+{
+    scrollTo(0, mainScrollPosition);
+    await loadIframe(`${origin}/site-isolation/scrolling/resources/listbox-iframe.html?${query}`, mainScrollPosition > 0);
+    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
+
+    let state = await sendToIframe('query');
+    const iframeScrollPosition = state.scrollY;
+    const iframeRect = iframe.getBoundingClientRect();
+    eventSender.mouseMoveTo(iframeRect.left + state.listRect.x + state.listRect.width / 2, iframeRect.top + state.listRect.y + state.listRect.height / 2);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -200, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    for (let i = 0; i < 20 && !state.listScrollTop && state.scrollY == iframeScrollPosition && scrollY == mainScrollPosition; ++i) {
+        await UIHelper.renderingUpdate();
+        state = await sendToIframe('query');
+    }
+
+    if (state.listScrollTop > 0 && state.scrollY == iframeScrollPosition && scrollY == mainScrollPosition)
+        testPassed(`${name}: scrolled the listbox`);
+    else
+        testFailed(`${name}: listScrollTop=${state.listScrollTop} iframeScrollY=${state.scrollY} mainScrollY=${scrollY}`);
+
+    if ((await sendToIframe('region')).hasNonFastRegion)
+        testPassed(`${name}: the scrolling state tree has a synchronous wheel region`);
+    else
+        testFailed(`${name}: the scrolling state tree has no synchronous wheel region`);
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+    const crossSiteOrigin = 'http://localhost:8000';
+    await runCase('cross-site iframe', crossSiteOrigin, '', 0);
+    await runCase('cross-site iframe that cannot scroll', crossSiteOrigin, 'short', 0);
+    await runCase('cross-site iframe with a passive wheel listener on the listbox', crossSiteOrigin, 'wheelListener', 0);
+    await runCase('cross-site iframe in a scrolled page', crossSiteOrigin, '', 100);
+    await runCase('scrolled cross-site iframe', crossSiteOrigin, 'scrolled', 0);
+    await runCase('same-site iframe', 'http://127.0.0.1:8000', '', 0);
+    iframe.remove();
+    finishJSTest();
+};
+</script>
+</body>

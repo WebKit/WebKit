@@ -672,6 +672,16 @@ void ScrollingTreeScrollingNode::scrollbarMinimumThumbLengthDidChange(ScrollbarO
         tree->scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(scrollingNodeID(), orientation, minimumThumbLength);
 }
 
+bool ScrollingTreeScrollingNode::allowsHorizontalScrolling() const
+{
+    return m_scrollableAreaParameters.allowsHorizontalScrolling;
+}
+
+bool ScrollingTreeScrollingNode::allowsVerticalScrolling() const
+{
+    return m_scrollableAreaParameters.allowsVerticalScrolling;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)
