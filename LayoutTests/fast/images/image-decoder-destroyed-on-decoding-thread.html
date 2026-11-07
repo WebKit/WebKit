@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        description('Ensure that dropping the ImageDecoder of an mp4 image while an asynchronous frame request is outstanding does not destroy the decoder on the image decoding thread.');
+
+        if (window.internals)
+            internals.clearMemoryCache();
+
+        // setClearDecoderAfterAsyncFrameRequestForTesting() makes BitmapImageSource::resetData()
+        // drop the ImageDecoder right after the asynchronous frame request has been dispatched, so
+        // the last reference to it is the one held by the decoding WorkQueue. When the request queue
+        // is closed and the decoding loop exits, the decoder has to be handed back to the main
+        // thread to be destroyed there: RemoteImageDecoderAVF::~RemoteImageDecoderAVF() removes
+        // itself from the decoder registry of RemoteImageDecoderAVFManager, which is only ever
+        // accessed on the main thread and holds weak pointers which are not thread safe. Several
+        // images are used so the registry grows and shrinks while the decoding threads are
+        // destroying their decoders.
+        const imageCount = 16;
+
+        var images = [];
+
+        function loadImage(url)
+        {
+            return new Promise(resolve => {
+                const image = new Image;
+                image.onload = () => resolve(image);
+                image.onerror = () => resolve(null);
+                image.src = url;
+            });
+        }
+
+        (async () => {
+            const urls = [];
+            for (let index = 0; index < imageCount; ++index) {
+                // A distinct URL per image ensures a distinct ImageDecoder per image.
+                urls.push(`../../../fast/images/resources/animated-red-green-blue.mp4?index=${index}`);
+            }
+
+            images = (await Promise.all(urls.map(loadImage))).filter(image => image);
+            shouldBe('images.length', 'imageCount');
+
+            for (const image of images) {
+                if (window.internals)
+                    internals.setClearDecoderAfterAsyncFrameRequestForTesting(image, true);
+            }
+
+            // Requesting all the frames in the same turn closes all the request queues in the same
+            // window, so the decoder destructions pile up together.
+            await Promise.allSettled(images.map(image => image.decode()));
+
+            testPassed('Destroying the image decoders did not crash.');
+            finishJSTest();
+        })();
+    </script>
+</body>
+</html>
