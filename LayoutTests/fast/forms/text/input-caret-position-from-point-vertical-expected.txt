@@ -1,0 +1,12 @@
+
+
+PASS Caret position from a point in a horizontal-tb <input type=text>
+PASS Caret position from a point in a vertical-lr <input type=text>
+PASS Caret position from a point in a vertical-rl <input type=text>
+PASS Caret position from a point in a horizontal-tb <input type=search>
+PASS Caret position from a point in a vertical-lr <input type=search>
+PASS Caret position from a point in a vertical-rl <input type=search>
+PASS Caret position from a point in a horizontal-tb <input type=password>
+PASS Caret position from a point in a vertical-lr <input type=password>
+PASS Caret position from a point in a vertical-rl <input type=password>
+

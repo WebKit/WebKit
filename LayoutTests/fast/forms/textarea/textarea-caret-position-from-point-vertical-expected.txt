@@ -1,0 +1,27 @@
+
+
+PASS Caret position from a point on the character in a horizontal-tb textarea without overflow
+PASS Caret position from a point on the character in a horizontal-tb textarea scrolled to 0% in the block direction
+PASS Caret position from a point on the character in a horizontal-tb textarea scrolled to 50% in the block direction
+PASS Caret position from a point on the character in a horizontal-tb textarea scrolled to 100% in the block direction
+PASS Caret position from a point on the character in a vertical-lr textarea without overflow
+PASS Caret position from a point on the character in a vertical-lr textarea scrolled to 0% in the block direction
+PASS Caret position from a point on the character in a vertical-lr textarea scrolled to 50% in the block direction
+PASS Caret position from a point on the character in a vertical-lr textarea scrolled to 100% in the block direction
+PASS Caret position from a point on the character in a vertical-rl textarea without overflow
+PASS Caret position from a point on the character in a vertical-rl textarea scrolled to 0% in the block direction
+PASS Caret position from a point on the character in a vertical-rl textarea scrolled to 50% in the block direction
+PASS Caret position from a point on the character in a vertical-rl textarea scrolled to 100% in the block direction
+PASS Caret position from a point on the end of line in a horizontal-tb textarea without overflow
+PASS Caret position from a point on the end of line in a horizontal-tb textarea scrolled to 0% in the block direction
+PASS Caret position from a point on the end of line in a horizontal-tb textarea scrolled to 50% in the block direction
+PASS Caret position from a point on the end of line in a horizontal-tb textarea scrolled to 100% in the block direction
+PASS Caret position from a point on the end of line in a vertical-lr textarea without overflow
+PASS Caret position from a point on the end of line in a vertical-lr textarea scrolled to 0% in the block direction
+PASS Caret position from a point on the end of line in a vertical-lr textarea scrolled to 50% in the block direction
+PASS Caret position from a point on the end of line in a vertical-lr textarea scrolled to 100% in the block direction
+PASS Caret position from a point on the end of line in a vertical-rl textarea without overflow
+PASS Caret position from a point on the end of line in a vertical-rl textarea scrolled to 0% in the block direction
+PASS Caret position from a point on the end of line in a vertical-rl textarea scrolled to 50% in the block direction
+PASS Caret position from a point on the end of line in a vertical-rl textarea scrolled to 100% in the block direction
+

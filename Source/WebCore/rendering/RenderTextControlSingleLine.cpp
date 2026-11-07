@@ -297,16 +297,8 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     //  - we hit the <input> element (e.g. we're over the border or padding), or
     //  - we hit regions not in any decoration buttons.
     RefPtr container = containerElement();
-    if (result.innerNode()->isDescendantOf(innerTextElement().get()) || result.innerNode() == &inputElement() || (container && container == result.innerNode())) {
-        LayoutPoint pointInParent = locationInContainer.point();
-        if (container && innerBlockElement()) {
-            if (innerBlockElement()->renderBox())
-                pointInParent -= toLayoutSize(innerBlockElement()->renderBox()->location());
-            if (container->renderBox())
-                pointInParent -= toLayoutSize(container->renderBox()->location());
-        }
-        hitInnerTextElement(result, pointInParent, accumulatedOffset);
-    }
+    if (result.innerNode()->isDescendantOf(innerTextElement().get()) || result.innerNode() == &inputElement() || (container && container == result.innerNode()))
+        hitInnerTextElement(result, locationInContainer.point(), accumulatedOffset);
     return true;
 }
 

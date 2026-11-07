@@ -18,24 +18,24 @@ FAIL Caret position should be correct in move right with line granularity for ve
       text2
     " but got Text node "
       text1"
-FAIL Caret position should be correct in move left with line granularity for vertical-lr div when selection was top to bottom assert_equals: expected 12 but got 10
-FAIL Caret position should be correct in move left with line granularity for vertical-lr div when selection was bottom to top assert_equals: expected 7 but got 10
+FAIL Caret position should be correct in move left with line granularity for vertical-lr div when selection was top to bottom assert_equals: expected 12 but got 7
+PASS Caret position should be correct in move left with line granularity for vertical-lr div when selection was bottom to top
 FAIL Caret position should be correct in move right with paragraph granularity for vertical-lr div when selection was top to bottom assert_equals: expected 12 but got 7
 PASS Caret position should be correct in move right with paragraph granularity for vertical-lr div when selection was bottom to top
-FAIL Caret position should be correct in move left with paragraph granularity for vertical-lr div when selection was top to bottom assert_equals: expected 12 but got 10
-FAIL Caret position should be correct in move left with paragraph granularity for vertical-lr div when selection was bottom to top assert_equals: expected 7 but got 10
+FAIL Caret position should be correct in move left with paragraph granularity for vertical-lr div when selection was top to bottom assert_equals: expected 12 but got 7
+PASS Caret position should be correct in move left with paragraph granularity for vertical-lr div when selection was bottom to top
 FAIL Caret position should be correct in move left with line granularity for vertical-rl div when selection was top to bottom assert_equals: expected 12 but got 7
 FAIL Caret position should be correct in move left with line granularity for vertical-rl div when selection was bottom to top assert_equals: expected Text node "
       text2
     " but got Text node "
       text1"
-FAIL Caret position should be correct in move right with line granularity for vertical-rl div when selection was top to bottom assert_equals: expected 12 but got 10
-FAIL Caret position should be correct in move right with line granularity for vertical-rl div when selection was bottom to top assert_equals: expected 7 but got 10
+FAIL Caret position should be correct in move right with line granularity for vertical-rl div when selection was top to bottom assert_equals: expected 12 but got 7
+PASS Caret position should be correct in move right with line granularity for vertical-rl div when selection was bottom to top
 FAIL Caret position should be correct in move left with paragraph granularity for vertical-rl div when selection was top to bottom assert_equals: expected 12 but got 7
 FAIL Caret position should be correct in move left with paragraph granularity for vertical-rl div when selection was bottom to top assert_equals: expected Text node "
       text2
     " but got Text node "
       text1"
-FAIL Caret position should be correct in move right with paragraph granularity for vertical-rl div when selection was top to bottom assert_equals: expected 12 but got 10
-FAIL Caret position should be correct in move right with paragraph granularity for vertical-rl div when selection was bottom to top assert_equals: expected 7 but got 10
+FAIL Caret position should be correct in move right with paragraph granularity for vertical-rl div when selection was top to bottom assert_equals: expected 12 but got 7
+PASS Caret position should be correct in move right with paragraph granularity for vertical-rl div when selection was bottom to top
 
