@@ -14899,7 +14899,7 @@ void SpeculativeJIT::compileEnumeratorNextUpdateIndexAndMode(Node* node)
 
         // Has the same structure as the enumerator.
         load32(Address(baseGPR, JSCell::structureIDOffset()), newIndex.gpr());
-        speculationCheck(BadCache, JSValueSource(), node, branch32(NotEqual, newIndex.gpr(), Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+        speculationCheck(BadCache, JSValueSource(), node, branch32(NotEqual, newIndex.gpr(), Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDForNamesOffset())));
 
         load32(Address(enumeratorGPR, JSPropertyNameEnumerator::flagsOffset()), newIndex.gpr());
         and32(TrustedImm32(JSPropertyNameEnumerator::enumerationModeMask), newIndex.gpr());
@@ -15009,7 +15009,7 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
         operationCases.append(branchTest32(Zero, modeGPR, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode)));
 
         load32(Address(baseGPR, JSCell::structureIDOffset()), resultGPR);
-        operationCases.append(branch32(NotEqual, resultGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+        operationCases.append(branch32(NotEqual, resultGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDForNamesOffset())));
 
         moveTrueTo(resultGPR);
         Jump done = jump();
@@ -17707,7 +17707,7 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
                     NotEqual,
                     scratchGPR,
                     Address(
-                        enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset()));
+                        enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDForNamesAndOffsetsOffset()));
                 genericOrRecoverCase.append(badStructure);
 
                 // Compute the offset
