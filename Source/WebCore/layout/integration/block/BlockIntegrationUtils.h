@@ -121,10 +121,11 @@ public:
     InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, std::optional<LayoutUnit> contentBoxBlockSize, LayoutUnit replacedElementAvailableBlockSize, LayoutUnit orthogonalFlowAvailableInlineSpace, bool relayoutChildren, const Layout::BlockLayoutState&, const Layout::PlacedFloats::List& intrudingFloats, Layout::BlockFormattingContext&, Layout::BlockLayoutResult&);
     // Whether the inline content of a block container has floats, outside of the boxes in it that establish formatting contexts.
     static bool inlineContentHasFloats(const RenderBlockFlow&);
-    // Whether the inline content of a block container makes line boxes, which separate its block-start margin from what follows (CSS 2.2
-    // §8.3.1), before the inline formatting context lays it out: text other than collapsible white space, a forced line break, an atomic or
-    // block-level box, or an inline box with an inline-axis margin, border or padding (CSS 2.2 §9.4.2). Floats and out-of-flow boxes do not.
-    static bool inlineContentMakesLineBoxes(const RenderBlockFlow&);
+    // Whether the inline content of a block container makes line boxes before its first block-level box, which separate its block-start margin
+    // from what follows (CSS 2.2 §8.3.1), before the inline formatting context lays it out: text other than collapsible white space, a forced
+    // line break, an atomic inline-level box, or an inline box with an inline-axis margin, border or padding (CSS 2.2 §9.4.2). Floats and
+    // out-of-flow boxes do not.
+    static bool inlineContentMakesLineBoxesBeforeBlockLevelBoxes(const RenderBlockFlow&);
     // The geometry its parent formatting context gave a block formatting context root, which its renderer has before its content is laid out.
     static Layout::BoxGeometry rootGeometry(const RenderBlockFlow&);
     // The min-content and max-content inline sizes of the inline content of a block container (css-sizing-3 §5.1), from the inline formatting

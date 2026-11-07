@@ -124,8 +124,9 @@ public:
     BlockLayoutResult layout(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
     // A block-level box in the inline content of the innermost block container being laid out, on the line the inline formatting context
     // reached it on, below lineCount lines with content, of which lineCountForLineClamp count towards the line-clamp budget with the lines of
-    // the block-level boxes before it. It and its content join the result.
-    BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, size_t lineCountForLineClamp, BlockLayoutResult&);
+    // the block-level boxes before it. It and its content join the result. The floats the inline formatting context placed so far, in the
+    // coordinates of the block container's border box, are the ones the box and the lines after it avoid.
+    BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, size_t lineCountForLineClamp, PlacedFloats& inlineContentFloats, BlockLayoutResult&);
     // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
     // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4), and against its default anchor
