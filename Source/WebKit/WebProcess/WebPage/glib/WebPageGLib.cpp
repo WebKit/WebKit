@@ -39,6 +39,8 @@
 #include "WebProcessExtensionManager.h"
 #include <WebCore/DocumentView.h>
 #include <WebCore/Editor.h>
+#include <WebCore/FocusController.h>
+#include <WebCore/FrameSelection.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/LocalFrameInlines.h>
@@ -49,6 +51,7 @@
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/Range.h>
 #include <WebCore/Settings.h>
+#include <WebCore/Text.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/UserAgent.h>
 #include <WebCore/VisiblePosition.h>
@@ -123,6 +126,118 @@ void WebPage::sendMessageToWebProcessExtension(UserMessage&& message)
     sendMessageToWebProcessExtensionWithReply(WTF::move(message), [](UserMessage&&) { });
 }
 
+static RefPtr<LocalFrame> targetFrameForEditing(WebPage& page)
+{
+    RefPtr targetFrame = page.corePage()->focusController().focusedOrMainFrame();
+    if (!targetFrame)
+        return nullptr;
+
+    Editor& editor = targetFrame->editor();
+    if (!editor.canEdit())
+        return nullptr;
+
+    if (editor.hasComposition()) {
+        // We should verify the parent node of this IME composition node are
+        // editable because JavaScript may delete a parent node of the composition
+        // node. In this case, WebKit crashes while deleting texts from the parent
+        // node, which doesn't exist any longer.
+        if (auto range = editor.compositionRange()) {
+            if (!range->startContainer().isContentEditable())
+                return nullptr;
+        }
+    }
+    return targetFrame;
+}
+
+void WebPage::cancelComposition(const String& compositionString)
+{
+    if (RefPtr targetFrame = targetFrameForEditing(*this))
+        protect(targetFrame->editor())->confirmComposition(compositionString);
+}
+
+enum class SurrogatePairDirection : bool { Backward, Forward };
+
+// A boundary found by counting UTF-16 code units, as input methods do, can split a surrogate pair.
+static BoundaryPoint moveOutOfSurrogatePair(const BoundaryPoint& point, SurrogatePairDirection direction)
+{
+    RefPtr text = dynamicDowncast<Text>(point.container);
+    if (!text || !point.offset || point.offset >= text->length())
+        return point;
+    auto& data = text->data();
+    if (!U16_IS_LEAD(data[point.offset - 1]) || !U16_IS_TRAIL(data[point.offset]))
+        return point;
+    return { point.container.copyRef(), direction == SurrogatePairDirection::Backward ? point.offset - 1 : point.offset + 1 };
+}
+
+void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
+{
+    RefPtr targetFrame = targetFrameForEditing(*this);
+    if (!targetFrame)
+        return;
+
+    auto& selection = targetFrame->selection().selection();
+    if (selection.isNone())
+        return;
+
+    auto selectionStart = selection.visibleStart();
+    auto surroundingStart = startOfEditableContent(selectionStart);
+    auto surroundingRange = makeSimpleRange(surroundingStart, endOfEditableContent(selectionStart));
+    auto cursorPositionRange = makeSimpleRange(surroundingStart, selectionStart);
+    if (!surroundingRange || !cursorPositionRange)
+        return;
+
+    auto cursorPosition = WebCore::characterCount(*cursorPositionRange);
+    if (offset < -static_cast<int64_t>(cursorPosition))
+        return;
+
+    auto characterRange = WebCore::CharacterRange(cursorPosition + offset, characterCount);
+    auto deletionRange = resolveCharacterRange(*surroundingRange, characterRange);
+
+    CheckedRef frameSelection = targetFrame->selection();
+    targetFrame->editor().setIgnoreSelectionChanges(true);
+    if (deletionRange.collapsed()) {
+        auto caret = moveOutOfSurrogatePair(deletionRange.start, SurrogatePairDirection::Forward);
+        frameSelection->setSelection(VisibleSelection(VisiblePosition(makeDeprecatedLegacyPosition(caret))));
+    } else {
+        // Delete exactly the requested range. An input method can delete a part of a grapheme cluster, like a combining
+        // mark, which a validated selection would extend to the end of the cluster.
+        VisibleSelection selectionToDelete;
+        selectionToDelete.setWithoutValidation(makeDeprecatedLegacyPosition(moveOutOfSurrogatePair(deletionRange.start, SurrogatePairDirection::Backward)),
+            makeDeprecatedLegacyPosition(moveOutOfSurrogatePair(deletionRange.end, SurrogatePairDirection::Forward)));
+        frameSelection->setSelection(selectionToDelete);
+        targetFrame->editor().deleteSelectionWithSmartDelete(false);
+        // Don't leave the range selected when nothing could be deleted.
+        if (!frameSelection->selection().isCaret())
+            frameSelection->setSelection(VisibleSelection(frameSelection->selection().visibleStart()));
+    }
+    targetFrame->editor().setIgnoreSelectionChanges(false);
+    sendEditorStateUpdate();
+}
+
+// The input method only uses the text near the selection, and sending the whole editable content would
+// take time linear in its length on every change. The Wayland text-input protocols truncate it to 4000 bytes anyway.
+static constexpr unsigned maxSurroundingTextLength = 1000;
+
+static BoundaryPoint surroundingTextStart(const BoundaryPoint& editableStart, const BoundaryPoint& position)
+{
+    // An empty range that starts before a child node is not handled by BackwardsCharacterIterator:
+    // it walks out of the editable content, through the text before it.
+    if (editableStart == position)
+        return editableStart;
+
+    BackwardsCharacterIterator iterator({ editableStart, position });
+    if (!iterator.atEnd())
+        iterator.advance(maxSurroundingTextLength);
+    if (iterator.atEnd())
+        return editableStart;
+    return moveOutOfSurrogatePair(iterator.range().end, SurrogatePairDirection::Forward);
+}
+
+static BoundaryPoint surroundingTextEnd(const BoundaryPoint& position, const BoundaryPoint& editableEnd)
+{
+    return moveOutOfSurrogatePair(resolveCharacterLocation({ position, editableEnd }, maxSurroundingTextLength), SurrogatePairDirection::Backward);
+}
+
 void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
 {
     if (!result.hasPostLayoutAndVisualData() || !frame.view() || frame.view()->needsLayout())
@@ -161,21 +276,23 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 
     if (selection.isContentEditable()) {
         auto selectionStart = selection.visibleStart();
-        auto surroundingStart = startOfEditableContent(selectionStart);
-        auto surroundingRange = makeSimpleRange(surroundingStart, endOfEditableContent(selectionStart));
+        auto editableRange = makeSimpleRange(startOfEditableContent(selectionStart), endOfEditableContent(selectionStart));
         auto compositionRange = frame.editor().compositionRange();
-        if (surroundingRange && compositionRange && contains<ComposedTree>(*surroundingRange, *compositionRange)) {
-            auto beforeText = plainText({ surroundingRange->start, compositionRange->start });
-            postLayoutData.surroundingContext = makeString(beforeText, plainText({ compositionRange->end, surroundingRange->end }));
+        if (editableRange && compositionRange && contains<ComposedTree>(*editableRange, *compositionRange)) {
+            auto surroundingStart = surroundingTextStart(editableRange->start, compositionRange->start);
+            auto surroundingEnd = surroundingTextEnd(compositionRange->end, editableRange->end);
+            auto beforeText = plainText({ surroundingStart, compositionRange->start });
+            postLayoutData.surroundingContext = makeString(beforeText, plainText({ compositionRange->end, surroundingEnd }));
             postLayoutData.surroundingContextCursorPosition = beforeText.length();
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
-        } else {
-            auto cursorPositionRange = makeSimpleRange(surroundingStart, selectionStart);
-            auto selectionPositionRange = makeSimpleRange(surroundingStart, selection.visibleEnd());
-            postLayoutData.surroundingContext = surroundingRange ? plainText(*surroundingRange) : emptyString();
-            postLayoutData.surroundingContextCursorPosition = cursorPositionRange ? characterCount(*cursorPositionRange) : 0;
-            postLayoutData.surroundingContextSelectionPosition = selectionPositionRange ? characterCount(*selectionPositionRange): 0;
-        }
+        } else if (auto selectionRange = makeSimpleRange(selectionStart, selection.visibleEnd()); editableRange && selectionRange) {
+            auto surroundingStart = surroundingTextStart(editableRange->start, selectionRange->start);
+            auto surroundingEnd = surroundingTextEnd(selectionRange->end, editableRange->end);
+            postLayoutData.surroundingContext = plainText({ surroundingStart, surroundingEnd });
+            postLayoutData.surroundingContextCursorPosition = characterCount({ surroundingStart, selectionRange->start });
+            postLayoutData.surroundingContextSelectionPosition = characterCount({ surroundingStart, selectionRange->end });
+        } else
+            postLayoutData.surroundingContext = emptyString();
     }
 }
 
