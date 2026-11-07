@@ -5,14 +5,17 @@ import sys
 from typing import Any, Callable, Optional, Sequence
 
 from .analyze import analyze
-from .cycle_analysis import (
-    DEFAULT_MIN_LENGTH,
-    DEFAULT_RESOLUTION,
-    analyze_frame_cycle,
-)
 from .dump import dump
 from .histogram import delta_histogram
 from .summary import summary
+from .timeline import (
+    DEFAULT_MAX_ROWS,
+    DEFAULT_RESOLUTION,
+    DEFAULT_ROW_REFRESHES,
+    FRAME_INTERVAL,
+    UPDATE_LATENCY,
+    timeline,
+)
 from .utils import UsageError
 
 TIMESPAN_HELP = (
@@ -92,71 +95,85 @@ def build_parser() -> argparse.ArgumentParser:
         help="Explain how to read the report.",
     )
 
-    cycle_analysis_parser = _add_subcommand(
+    timeline_parser = _add_subcommand(
         subparsers,
-        "cycle-analysis",
-        "Visualize individual frame cycles",
-        analyze_frame_cycle,
+        "timeline",
+        "Draw what the main thread and the compositor did over time, with the"
+        " frames numbered",
+        timeline,
     )
-    cycle_analysis_parser.add_argument(
+    timeline_parser.add_argument(
         "capture_file", metavar="CAPTURE_FILE", help="Path to a .capture file"
     )
-    cycle_analysis_parser.add_argument(
+    timeline_window = timeline_parser.add_mutually_exclusive_group()
+    timeline_window.add_argument(
         "-t",
         "--timespan",
         type=str,
         default="-",
         help=TIMESPAN_HELP,
     )
-    cycle_analysis_parser.add_argument(
-        "-n",
-        "--max-cycles",
-        type=int,
-        default=40,
-        help="Maximum number of cycles to draw",
+    timeline_window.add_argument(
+        "--frames",
+        type=str,
+        default=None,
+        help='Window of the frames "<first>-<last>", numbered from 1 over the whole'
+        " capture, or a single frame to draw one row around",
     )
-    cycle_analysis_parser.add_argument(
+    timeline_parser.add_argument(
+        "--worst",
+        choices=[FRAME_INTERVAL, UPDATE_LATENCY],
+        default=None,
+        help="Draw a row around each of the worst events instead, worst first: the"
+        " longest active frame intervals, or the rendering updates slowest to reach"
+        " the screen",
+    )
+    timeline_parser.add_argument(
+        "--row-length",
+        type=float,
+        default=None,
+        help="Milliseconds per row (default: {} refresh intervals)".format(
+            DEFAULT_ROW_REFRESHES
+        ),
+    )
+    timeline_parser.add_argument(
+        "-n",
+        "--max-rows",
+        type=int,
+        default=DEFAULT_MAX_ROWS,
+        help="Maximum number of rows to draw",
+    )
+    timeline_parser.add_argument(
         "-r",
         "--resolution",
         type=float,
-        default=DEFAULT_RESOLUTION,
-        help="Milliseconds per cell",
+        default=None,
+        help="Milliseconds per cell (default: {}, coarser where a --worst row would"
+        " not fit in --max-cells)".format(DEFAULT_RESOLUTION),
     )
-    cycle_analysis_parser.add_argument(
-        "--order",
-        choices=["first", "slowest"],
-        default="first",
-        help="Draw the first cycles or the slowest ones",
-    )
-    cycle_analysis_parser.add_argument(
-        "--min-duration",
-        type=float,
-        default=0.0,
-        help="Only draw cycles at least this long, in milliseconds",
-    )
-    cycle_analysis_parser.add_argument(
-        "--min-length",
-        type=float,
-        default=DEFAULT_MIN_LENGTH,
-        help="Shortest bar to draw, in milliseconds",
-    )
-    cycle_analysis_parser.add_argument(
+    timeline_parser.add_argument(
         "--max-cells",
         type=int,
         default=400,
         help="Truncate bars longer than this many cells",
     )
-    cycle_analysis_parser.add_argument(
+    timeline_parser.add_argument(
         "--no-tile-lane",
         dest="tile_lane",
         action="store_false",
-        help="Omit the second lane showing threaded tile painting",
+        help="Omit the tiles lane showing threaded tile painting",
     )
-    cycle_analysis_parser.add_argument(
+    timeline_parser.add_argument(
         "--color",
         choices=["auto", "always", "never"],
         default="auto",
         help="Colorize the bars",
+    )
+    timeline_parser.add_argument(
+        "-e",
+        "--explain",
+        action="store_true",
+        help="Explain the terms the timeline uses, after it",
     )
 
     histogram_parser = _add_subcommand(

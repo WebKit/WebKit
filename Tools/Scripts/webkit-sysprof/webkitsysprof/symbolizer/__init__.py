@@ -1,14 +1,6 @@
-"""Resolves an address within a mapped file to the ELF function that covers it.
-
-The capture itself carries no symbols, only which file was mapped where (see
-`dump`'s use of the MAP frames the parser collects). This reads that file's own ELF
-symbol table off disk, which is only possible where the exact binary the capture was
-recorded against is still reachable at (or, via a `MountTranslator`, translatable to)
-the path it was mapped from -- e.g. a capture taken on the machine it is now being
-dumped on, or a WebKit binary recorded while running inside a container whose bind
-mount for that path this machine still has mounted elsewhere (see ../mounts). Where
-neither can be read or parsed, resolution quietly gives up, and `dump` falls back to
-naming the file and offset instead.
+"""Resolves a file offset in a mapped file to its ELF function, reading the
+binary from disk at its recorded path or a `MountTranslator` translation of it.
+Returns None when the file is unavailable, and `dump` falls back to file+offset.
 """
 
 import bisect
@@ -28,11 +20,9 @@ _SHT_SYMTAB = 2
 _SHT_DYNSYM = 11
 _STT_FUNC = 2
 
-# Sysprof's own local ELF reader (contrib/elfparser/elfparser.c's read_table() and
-# elf_parser_lookup_symbol()) only trusts a symbol defined in the file's literal
-# ".text" section, of this type and one of these ordinary bindings; matching that
-# here keeps this from resolving a frame sysprof itself would only show as "In File
-# ...+0x..." for, e.g. one in .text.unlikely or a PLT stub.
+# Like sysprof's contrib/elfparser/elfparser.c (read_table(),
+# elf_parser_lookup_symbol()), only FUNC symbols with these bindings in the literal
+# ".text" section are used.
 _STB_LOCAL = 0
 _STB_GLOBAL = 1
 _STB_WEAK = 2
@@ -42,33 +32,23 @@ _EHDR_SIZE = 64
 
 
 class ElfSymbolizer:
-    """Resolves file offsets against whatever ELF files it is asked about.
-
-    Reads and parses a given file's symbol table at most once: the first resolve()
-    against a (pid, path) loads it, and every later one, successful or not, reuses
-    what was found (or the fact that nothing was).
-    """
+    """Resolves file offsets in ELF files, caching each (pid, path) result,
+    including failures."""
 
     def __init__(self, mount_translator: Optional[MountTranslator] = None) -> None:
-        self._symbols_by_path: Dict[Tuple[Optional[int], str], Optional["_ElfSymbols"]] = {}
+        self._symbols_by_path: Dict[
+            Tuple[Optional[int], str], Optional["_ElfSymbols"]
+        ] = {}
         self._mount_translator = mount_translator
 
     def resolve(
         self, path: str, file_offset: int, pid: Optional[int] = None
     ) -> Optional[Tuple[Any, str]]:
-        """The (identity, text) sysprof's own ELF reader would give this file offset,
-        or None. `identity` is the same for every offset resolved to the same table
-        entry, and different for every other resolution this or any other symbolizer
-        makes, so a caller collapsing consecutive identical frames (the way sysprof
-        itself does) can compare identities without caring what the display text is.
+        """(identity, text) as sysprof's ELF reader would give it, or None.
+        `identity` is unique per symbol table entry, for collapsing repeated frames.
 
-        Identity and display text are always keyed by `path` exactly as given, even
-        where the file actually read from disk was found via `pid`'s mount
-        namespace translation (see ../mounts.MountTranslator): what changes is only
-        where the bytes came from, not what a caller should treat this as the same
-        file as. `pid` is only ever used to pick which process's mount namespace to
-        translate `path` through; passing none (the default) just means no
-        translation is attempted beyond `path` itself.
+        Results are keyed by `path` as given even if a translated path was read.
+        `pid` only selects the mount namespace for translation.
         """
         cache_key = (pid, path)
         if cache_key not in self._symbols_by_path:
@@ -86,8 +66,6 @@ class _ElfSymbols:
         segments: List[Tuple[int, int, int]],
         text_range: Optional[Tuple[int, int]],
     ) -> None:
-        # Sorted by address, so the function covering a given one is found by
-        # bisecting rather than scanning every symbol the file has.
         entries = sorted(entries)
         self._addresses = [entry[0] for entry in entries]
         self._entries = entries
@@ -99,9 +77,7 @@ class _ElfSymbols:
         if address is None or not self._entries or self._text_range is None:
             return None
 
-        # Sysprof's own ELF reader (contrib/elfparser/elfparser.c's
-        # elf_parser_lookup_symbol()) rejects anything past the end of the .text
-        # section outright, before ever looking at which symbol would have matched.
+        # elf_parser_lookup_symbol() rejects addresses past the end of .text.
         _text_start, text_end = self._text_range
         if address > text_end:
             return None
@@ -112,11 +88,8 @@ class _ElfSymbols:
 
         symbol_address, size, name = self._entries[index]
         offset = address - symbol_address
-        # A non-zero size caps how far a symbol reaches; a symbol of unknown size
-        # (common for hand-written assembly) is not capped at all and, via the
-        # bisect above, reaches until whichever symbol comes next (or .text's own
-        # end, already checked above) — the same as sysprof's own reader treats it,
-        # rather than only ever covering the exact address it was recorded at.
+        # A zero-size symbol (common in assembly) extends to the next one, as in
+        # sysprof's reader.
         if size and offset >= size:
             return None
 
@@ -125,10 +98,7 @@ class _ElfSymbols:
         return (path, symbol_address), text
 
     def _address_of(self, file_offset: int) -> Optional[int]:
-        # A file offset is where a stack address landed within the file on disk; a
-        # symbol's address is where the linker placed it in the file's own address
-        # space. A loadable segment is what ties the two together, since it is
-        # written with both its place in the file and the address it loads at.
+        # Map a file offset to a link-time address via the PT_LOAD segments.
         for segment_offset, segment_size, segment_address in self._segments:
             if segment_offset <= file_offset < segment_offset + segment_size:
                 return segment_address + (file_offset - segment_offset)
@@ -144,9 +114,7 @@ def _load_elf_symbols(
                 with mmap.mmap(fileobj.fileno(), 0, access=mmap.ACCESS_READ) as data:
                     return _parse_elf_symbols(data)
         except (OSError, ValueError):
-            # ValueError is what mmap raises on an empty file; either way, a
-            # candidate this tool cannot even open is no different from one with
-            # nothing to resolve, so the next candidate (if any) is tried instead.
+            # mmap raises ValueError on an empty file.
             continue
     return None
 
@@ -154,13 +122,7 @@ def _load_elf_symbols(
 def _candidate_paths(
     path: str, pid: Optional[int], mount_translator: Optional[MountTranslator]
 ) -> List[str]:
-    """`path` itself, tried first since it is already correct outside of any
-    container (or from inside whichever one recorded it), followed by whatever
-    `pid`'s own mount namespace translates it to (see ../mounts.MountTranslator),
-    most specific match first, for a path that is only reachable that way -- e.g.
-    a WebKit binary a container bind-mounted from a real directory this machine
-    still has mounted somewhere, just not at that same container-internal path.
-    """
+    """`path` first, then its mount namespace translations for `pid`."""
     candidates = [path]
     if mount_translator is not None and pid is not None:
         for translated in mount_translator.translate(pid, path):
@@ -169,12 +131,8 @@ def _candidate_paths(
     return candidates
 
 
-# elf_demangle() in sysprof's own contrib/elfparser/elfparser.c tries Rust
-# demangling first (legacy Rust manglings can otherwise partially demangle as C++)
-# and only then abi::__cxa_demangle(); WebKit has no Rust in it, so this only ever
-# needs the second half of that -- the same routine libstdc++ itself uses, loaded
-# once and reused for every symbol name rather than shelling out to c++filt per
-# name.
+# sysprof's elf_demangle() tries Rust before abi::__cxa_demangle(). WebKit has no
+# Rust, so only __cxa_demangle is loaded, once, instead of running c++filt per name.
 def _load_cxa_demangle() -> Optional[Tuple[Any, Any]]:
     try:
         libstdcxx = ctypes.CDLL("libstdc++.so.6")
@@ -200,12 +158,8 @@ _demangle_cache: Dict[str, str] = {}
 
 
 def _demangle(name: str) -> str:
-    """The demangled form of `name`, exactly like sysprof-elf.c's own
-    sysprof_elf_get_symbol_at_address_internal() -- which only ever attempts this
-    for a name starting with the Itanium C++ mangling prefix -- would show, or
-    `name` unchanged where demangling does not apply, isn't available on this
-    machine, or fails (e.g. a name an unrelated convention also happened to start
-    with "_Z").
+    """Demangles "_Z" names like sysprof-elf.c's
+    sysprof_elf_get_symbol_at_address_internal(). Returns `name` unchanged on failure.
     """
     if _CXA_DEMANGLE is None or not name.startswith("_Z"):
         return name
@@ -214,7 +168,9 @@ def _demangle(name: str) -> str:
 
     demangle, free = _CXA_DEMANGLE
     status = ctypes.c_int()
-    result = demangle(name.encode("utf-8", "surrogateescape"), None, None, ctypes.byref(status))
+    result = demangle(
+        name.encode("utf-8", "surrogateescape"), None, None, ctypes.byref(status)
+    )
     demangled = name
     if result:
         try:
@@ -232,8 +188,7 @@ def _parse_elf_symbols(data: Any) -> Optional[_ElfSymbols]:
     if len(data) < _EHDR_SIZE or bytes(data[:4]) != _ELF_MAGIC:
         return None
     if data[4] != _ELFCLASS64 or data[5] != _ELFDATA2LSB:
-        # 32-bit and big-endian ELF are not handled; dump() falls back to naming the
-        # file and offset for those instead of resolving a symbol.
+        # 32-bit and big-endian ELF are not supported.
         return None
 
     try:
@@ -256,11 +211,7 @@ def _parse_elf_symbols(data: Any) -> Optional[_ElfSymbols]:
             for section in sections
         ]
 
-        # Sysprof's own ELF reader never resolves anything in a file with no
-        # literal ".text" section at all (elf_parser_lookup_symbol() bails out
-        # before even looking at the symbol table), and only ever trusts a symbol
-        # defined in that exact section; matching that here is what
-        # _read_symbols() below filters candidates against.
+        # Like elf_parser_lookup_symbol(), resolve nothing without a ".text".
         text_index = None
         for index, name in enumerate(section_names):
             if name == ".text":
@@ -273,9 +224,8 @@ def _parse_elf_symbols(data: Any) -> Optional[_ElfSymbols]:
         text_section = sections[text_index]
         text_range = (text_section["addr"], text_section["addr"] + text_section["size"])
 
-        # A stripped shared library keeps only .dynsym, the exported subset of a full
-        # .symtab; prefer .symtab where both exist, since it also carries the local
-        # (static) functions that never made it into .dynsym.
+        # Prefer .symtab, which also has static functions. Stripped libraries only
+        # have .dynsym.
         symtab = None
         wanted = ((_SHT_SYMTAB, ".symtab"), (_SHT_DYNSYM, ".dynsym"))
         for wanted_type, wanted_name in wanted:

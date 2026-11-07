@@ -1,18 +1,23 @@
 import argparse
 import json
-from pathlib import Path
-
-import unittest
-
 import tempfile
+import unittest
+from pathlib import Path
 
 from .helpers import (
     SysprofTestCase,
     approx,
     build_minimal_elf,
+    composition,
+    frame_complete,
+    presented,
     mark,
+    rendering_update,
+    requested,
+    scheduled,
     stacktrace,
     stacktrace_data,
+    steady_animation,
     sysprof_data,
 )
 
@@ -20,13 +25,24 @@ from webkitsysprof import summary, dump, analyze, histogram
 from webkitsysprof.__main__ import main
 from webkitsysprof.utils import (
     UsageError,
-    display_refreshes,
     check_timespan_holds_data,
     msec_to_nsec,
     trim_marks_by_name_to_timespan,
 )
 
+from webkitsysprof.updates import UPDATE_PHASES
+
 SAMPLE_CAPTURE_FILE = str(Path(__file__).parent / "assets" / "sample.syscap")
+RU, ANIMATION = "RenderingUpdate", "Animation"
+
+
+def asking_for_a_frame(begin, end, request_at):
+    """A rendering update that asks for a composition while the compositor idles."""
+    return [
+        rendering_update(begin, end),
+        scheduled(request_at, "Idle", reasons=(RU,)),
+        requested(request_at + 0.01),
+    ]
 
 
 class SubcommandsTest(SysprofTestCase):
@@ -107,15 +123,14 @@ class SubcommandsTest(SysprofTestCase):
         stdout = self.stdout()
         self.assertIn("Timespan: 0.0000 - 4.4673 [s]", stdout)
         self.assertIn("vblanks: 35", stdout)
-        self.assertIn("Frame cycle:", stdout)
-        self.assertIn("- cycles: 2", stdout)
-        # The explanations are opt-in, so the report itself stays diffable.
-        self.assertNotIn(
-            "Theoretical FPS is the number of DidRenderFrame marks", stdout
-        )
-        self.assertNotIn(
-            "A frame cycle starts when a LayerTreeHostRenderingUpdate", stdout
-        )
+        self.assertIn("Compositions:", stdout)
+        self.assertIn("- compositions: 2", stdout)
+        self.assertIn("| update-driven | RenderingUpdate | 2 | 100.00% |", stdout)
+        self.assertIn("Rendering updates:", stdout)
+        self.assertIn("- updates: 3, asked for a composition: 2, composited: 2", stdout)
+        # Explanations are opt-in, keeping the report diffable.
+        self.assertNotIn("A composition is a RenderLayerTree", stdout)
+        self.assertNotIn("A rendering update is a", stdout)
 
     def test_analyze_text_with_explanations(self):
         args = argparse.Namespace(
@@ -124,11 +139,50 @@ class SubcommandsTest(SysprofTestCase):
         analyze.analyze(args)
 
         stdout = self.stdout()
-        self.assertIn("Theoretical FPS is the number of DidRenderFrame marks", stdout)
         self.assertIn(
-            "A frame cycle starts when a LayerTreeHostRenderingUpdate begins", stdout
+            "Frame intervals are measured against the refresh interval", stdout
         )
-        self.assertIn("StyleRecalc is an umbrella mark", stdout)
+        self.assertIn("A composition is a RenderLayerTree", stdout)
+        self.assertIn("- active frame interval: a frame interval in which", stdout)
+        self.assertIn("- update-to-frame latency: from update begin", stdout)
+        self.assertIn("Compositor time replays", stdout)
+        self.assertIn("A rendering update is a LayerTreeHostRenderingUpdate", stdout)
+        self.assertIn("StyleRecalc wraps RenderTreeBuild", stdout)
+
+    def test_analyze_json_explanations_mirror_the_report(self):
+        args = argparse.Namespace(
+            capture_file=SAMPLE_CAPTURE_FILE, format="json", timespan="-", explain=False
+        )
+        analyze.analyze(args)
+        report = json.loads(self.stdout())
+        args.explain = True
+        analyze.analyze(args)
+        start = len(json.dumps(report)) + 1
+        explained = json.loads(self.stdout()[start:])
+
+        def is_statistics(value):
+            return isinstance(value, dict) and {"n", "median"} <= set(value)
+
+        def check(value, explanation, path):
+            # A string explains a whole subtree, such as a statistics dict.
+            if isinstance(explanation, str):
+                return
+            if isinstance(value, list):
+                for item in value:
+                    check(item, explanation[0], path + "[]")
+                return
+            self.assertIsInstance(value, dict, path)
+            if set(explanation) == {"<pid>"}:
+                for pid, item in value.items():
+                    check(item, explanation["<pid>"], path + "." + pid)
+                return
+            # A mark the capture lacks has no statistics, so allow fewer keys.
+            self.assertLessEqual(set(value), set(explanation), path)
+            for key, item in value.items():
+                if not is_statistics(item):
+                    check(item, explanation[key], path + "." + key)
+
+        check(report, explained, "report")
 
     def test_analyze_json_percentiles_stay_within_the_data_range(self):
         args = argparse.Namespace(
@@ -137,6 +191,7 @@ class SubcommandsTest(SysprofTestCase):
         analyze.analyze(args)
 
         report = json.loads(self.stdout())
+        updates = report["rendering_updates"]["per_process"]["2501"]
         all_statistics = (
             [
                 statistics
@@ -144,18 +199,24 @@ class SubcommandsTest(SysprofTestCase):
                 for statistics in mark.values()
             ]
             + [
-                report["frame_cycle"]["duration_statistics"],
-                report["frame_cycle"]["resolved_duration_statistics"],
-                # The ones the text report prints percentiles of inline.
-                report["rendering"]["vblank_interval_statistics"],
-                report["rendering"]["vblanks_per_rendering_update"]["statistics"],
-                report["rendering"]["frame_compositions_per_vblank_statistics"],
+                row[key]
+                for row in report["compositions"]["by_combination"]
+                for key in row
+                if key.endswith("_statistics")
             ]
-            + list(report["frame_cycle"]["phase_statistics"].values())
+            + [
+                report["rendering"]["vblank_interval_statistics"],
+                report["compositions"]["per_process"]["2501"][
+                    "active_interval_statistics"
+                ],
+                updates["update_interval_statistics"],
+                updates["refresh_intervals_statistics"],
+                updates["latency_statistics"],
+            ]
+            + list(updates["phase_statistics"].values())
         )
 
-        # Extrapolating past the samples used to yield a P25 below the minimum, a P99
-        # above the maximum and negative durations.
+        # Extrapolation used to yield percentiles outside [min, max].
         for statistics in all_statistics:
             for percentile in statistics.get("percentiles", {}).values():
                 self.assertTrue(statistics["min"] <= percentile <= statistics["max"])
@@ -171,34 +232,33 @@ class SubcommandsTest(SysprofTestCase):
         self.assertEqual(int(report["document"]["timespan"]["begin"]), 0)
         self.assertEqual(int(report["document"]["timespan"]["end"]), 4467)
         self.assertEqual(report["rendering"]["vblanks"], 35)
-        self.assertEqual(report["frame_cycle"]["cycles"], 2)
-        self.assertEqual(report["frame_cycle"]["resolved_duration_statistics"]["n"], 2)
         self.assertEqual(
-            set(report["frame_cycle"]["phase_statistics"]),
-            {
-                "rendering_update",
-                "waiting_for_compositing",
-                "compositing",
-                "idle",
-            },
+            report["rendering"]["reference_interval_source"], "WaylandFramePresented"
         )
+        self.assertEqual(report["compositions"]["compositions"], 2)
+        self.assertEqual(report["compositions"]["by_class"]["update"], 2)
+        process = report["compositions"]["per_process"]["2501"]
+        self.assertEqual(process["replay_mismatches"], 0)
+        updates = report["rendering_updates"]["per_process"]["2501"]
+        self.assertEqual(
+            (updates["updates"], updates["asked"], updates["composited"]), (3, 2, 2)
+        )
+        self.assertEqual(set(updates["phase_statistics"]), set(UPDATE_PHASES))
+        # The old frame cycle section is gone.
+        self.assertNotIn("frame_cycle", report)
 
-    def test_analyze_json_frame_cycle_phases_add_up_to_cycle_duration(self):
+    def test_analyze_json_update_phases_add_up_to_the_latency(self):
         args = argparse.Namespace(
             capture_file=SAMPLE_CAPTURE_FILE, format="json", timespan="-", explain=False
         )
         analyze.analyze(args)
 
-        frame_cycle = json.loads(self.stdout())["frame_cycle"]
+        updates = json.loads(self.stdout())["rendering_updates"]["per_process"]["2501"]
         phases_mean = sum(
-            statistics["mean"]
-            for statistics in frame_cycle["phase_statistics"].values()
+            statistics["mean"] for statistics in updates["phase_statistics"].values()
         )
-        # Against the cycles the phases came from, not all of them: the two differ as
-        # soon as one cycle cannot be split into phases.
         self.assertEqual(
-            phases_mean,
-            approx(frame_cycle["resolved_duration_statistics"]["mean"], rel=1e-6),
+            phases_mean, approx(updates["latency_statistics"]["mean"], rel=1e-6)
         )
 
     def test_analyze_json_statistics_cover_all_relevant_marks(self):
@@ -211,14 +271,12 @@ class SubcommandsTest(SysprofTestCase):
         self.assertEqual(set(statistics), set(analyze.MARKS_RELEVANT_FOR_STATISTICS))
         self.assertEqual(statistics["CompositingUpdate"]["duration"]["n"], 7)
         self.assertEqual(statistics["RenderTreeBuild"]["duration"]["n"], 3)
-        # Tile geometry depends on the rendering backend, so only check that the
-        # dirty area was extracted from every PaintTile message.
+        # Tile geometry depends on the backend, so only check extraction.
         self.assertEqual(statistics["PaintTile"]["dirty_pixels"]["n"], 80)
         self.assertGreater(statistics["PaintTile"]["dirty_pixels"]["min"], 0)
 
     def test_analyze_with_a_timespan_holding_vblanks_but_no_rendering_update(self):
-        # The window has vblanks, so the no-vblanks early return does not save it, and
-        # trimming drops the first rendering update for reaching past the window end.
+        # The window has vblanks, but the first update begins after it.
         args = argparse.Namespace(
             capture_file=SAMPLE_CAPTURE_FILE,
             format="text",
@@ -228,12 +286,15 @@ class SubcommandsTest(SysprofTestCase):
         analyze.analyze(args)
 
         stdout = self.stdout()
-        self.assertIn("- cycles: 0", stdout)
-        self.assertIn("no two consecutive LayerTreeHostRenderingUpdate marks", stdout)
+        self.assertIn("- compositions: 0", stdout)
+        self.assertIn(
+            "- compositor time:\n  - unknown: 100.0% (before first message", stdout
+        )
+        self.assertIn("- updates: 0", stdout)
 
-    def test_analyze_json_leaves_out_a_cycle_reaching_past_the_timespan(self):
-        # The only cycle of this window begins at 371.6 ms and ends at 524.2 ms, so it
-        # is no frame of the window and must not be timed as one.
+    def test_analyze_json_pairs_an_update_with_a_frame_past_the_timespan(self):
+        # The update begins at 371.6 ms and its frame comes at 524.1 ms. Pairing
+        # runs over the whole capture.
         args = argparse.Namespace(
             capture_file=SAMPLE_CAPTURE_FILE,
             format="json",
@@ -242,14 +303,14 @@ class SubcommandsTest(SysprofTestCase):
         )
         analyze.analyze(args)
 
-        frame_cycle = json.loads(self.stdout())["frame_cycle"]
-        self.assertEqual(frame_cycle["cycles"], 0)
-        self.assertEqual(frame_cycle["coverage"], approx(0.0))
+        report = json.loads(self.stdout())
+        self.assertEqual(report["compositions"]["compositions"], 0)
+        updates = report["rendering_updates"]["per_process"]["2501"]
+        self.assertEqual((updates["updates"], updates["composited"]), (1, 1))
 
-    def test_analyze_resolves_a_cycle_whose_compositing_marks_trimming_drops(self):
-        # The cycle 524.2 -> 560.8 ms lies within this window, but composites in
-        # RenderLayerTree 549.8 -> 571.1, which reaches past the window end and is
-        # trimmed away. Reconstructing from the untrimmed capture keeps it.
+    def test_analyze_keeps_a_composition_whose_marks_trimming_drops(self):
+        # The frame at 560.7 ms is inside, but its RenderLayerTree (549.8 to 571.1)
+        # is trimmed. Matching runs on the untrimmed capture.
         args = argparse.Namespace(
             capture_file=SAMPLE_CAPTURE_FILE,
             format="json",
@@ -258,16 +319,12 @@ class SubcommandsTest(SysprofTestCase):
         )
         analyze.analyze(args)
 
-        frame_cycle = json.loads(self.stdout())["frame_cycle"]
-        self.assertEqual(frame_cycle["cycles"], 2)
-        self.assertEqual(frame_cycle["resolved_duration_statistics"]["n"], 2)
-        # Without that mark the composition looks as if it ended with PaintToGLContext
-        # at 560.6 ms, just inside its cycle, so the overrun would go unnoticed.
-        self.assertEqual(frame_cycle["overrunning_composition_statistics"]["n"], 2)
+        compositions = json.loads(self.stdout())["compositions"]
+        self.assertEqual(compositions["compositions"], 2)
+        (row,) = compositions["by_combination"]
+        self.assertEqual(row["duration_statistics"]["min"], approx(21.344, abs=0.001))
 
     def test_analyze_rejects_a_timespan_it_cannot_honour(self):
-        # Silently analyzing the whole capture, or a window the argument never asked
-        # for, reads as a result for the requested window.
         for timespan in [
             "abc",
             "0-1e3",
@@ -275,7 +332,7 @@ class SubcommandsTest(SysprofTestCase):
             "5000-",
             "5000-6000",
             "",
-            # Of no length, so it encloses nothing to analyze.
+            # Empty.
             "0-0",
             "500-500",
         ]:
@@ -302,52 +359,43 @@ class SubcommandsTest(SysprofTestCase):
         analyze.analyze(args)
 
         report = json.loads(self.stdout())
-        # The rates divide by the analyzed duration, so a window stretching past the
-        # capture would water every one of them down.
+        # Rates divide by the analyzed duration.
         self.assertEqual(int(report["document"]["timespan"]["end"]), 4467)
         self.assertEqual(
-            report["rendering"]["theoretical_fps"], approx(0.448, abs=0.001)
+            report["compositions"]["per_process"]["2501"]["average_frame_rate"],
+            approx(0.448, abs=0.001),
         )
 
-    def test_vblanks_per_rendering_update_does_not_depend_on_the_mark_order(self):
-        # The walk needs the updates in begin order, which the grouping does not grant.
+    def test_the_report_does_not_depend_on_the_mark_order(self):
+        # Grouping by name does not guarantee time order.
         parsed = analyze.parse(SAMPLE_CAPTURE_FILE, marks=True, counters=False)
         data = analyze.sysprof_data_with_marks_by_name(parsed)
-        in_parse_order = analyze._prepare_rendering_report(
-            data, display_refreshes(data)
-        )
+        in_parse_order = analyze._prepare_report(data, data)
 
         for marks in data["marks"].values():
             marks.reverse()
-        self.assertEqual(
-            analyze._prepare_rendering_report(data, display_refreshes(data))[
-                "vblanks_per_rendering_update"
-            ],
-            in_parse_order["vblanks_per_rendering_update"],
-        )
-        self.assertEqual(
-            analyze._prepare_rendering_report(data, display_refreshes(data))[
-                "vblank_interval_statistics"
-            ],
-            in_parse_order["vblank_interval_statistics"],
-        )
+        reversed_order = analyze._prepare_report(data, data)
+        for section in ("rendering", "compositions", "rendering_updates"):
+            self.assertEqual(reversed_order[section], in_parse_order[section])
 
     def test_a_capture_of_no_length_reports_no_rate(self):
-        # A window of no length is rejected, but a capture of no length is the
-        # capture's own doing and still has to be reported on.
-        data = sysprof_data([mark("DidRenderFrame", 0, 0)], begin_msec=0, end_msec=0)
+        # Unlike an empty window, an empty capture is still reported on.
+        data = sysprof_data(
+            composition(0, 0) + [mark("LayerTreeHostRenderingUpdate", 0, 0)],
+            begin_msec=0,
+            end_msec=0,
+        )
 
         report = analyze._prepare_report(data, data)
 
-        frame_cycle = report["frame_cycle"]
-        # No cycle and no duration to divide, rather than a cycle of zero length that
-        # fits in zero vblank intervals and covers 0% of nothing.
-        self.assertEqual(frame_cycle["cycles"], 0)
-        self.assertIsNone(frame_cycle["implied_fps"])
-        self.assertIsNone(frame_cycle["vblank_intervals_per_cycle"])
-        self.assertIsNone(frame_cycle["coverage"])
-        # No duration to divide frames by either.
-        self.assertIsNone(report["rendering"]["theoretical_fps"])
+        process = report["compositions"]["per_process"]["1"]
+        self.assertIsNone(process["average_frame_rate"])
+        self.assertIsNone(process["typical_frame_rate"])
+        self.assertIsNone(report["rendering"]["reference_interval"])
+        analyze._render_text_report(report)
+        self.assertIn(
+            "- average frame rate: - (over the analyzed duration)", self.stdout()
+        )
 
     def test_delta_histogram_deltas_come_from_the_requested_mark(self):
         parsed = histogram.parse(SAMPLE_CAPTURE_FILE, marks=True, counters=False)
@@ -389,127 +437,116 @@ class SubcommandsTest(SysprofTestCase):
         analyze.analyze(args)
 
         rendering = json.loads(self.stdout())["rendering"]
-        # 35 vblanks are 34 intervals, and the ones after the last composition are
-        # samples too. Counting only up to it used to report 15 and a mean twice as
-        # high as the capture actually composited.
         self.assertEqual(rendering["vblanks"], 35)
-        self.assertEqual(rendering["frame_compositions_per_vblank_statistics"]["n"], 34)
-        self.assertEqual(
-            rendering["frame_compositions_per_vblank_statistics"]["mean"],
-            approx(2 / 34),
-        )
+        self.assertEqual(rendering["vblank_interval_statistics"]["n"], 34)
 
-    def test_frame_compositions_outside_the_vblank_range_are_left_out(self):
-        vblanks = [mark("DisplayLinkUpdate", msec, msec) for msec in (0, 16, 32)]
-        compositions = [
-            mark("DidRenderFrame", msec, msec) for msec in (5, 40, 45, 50, 55)
-        ]
-
-        # The four compositions after the last vblank belong to no interval between
-        # two refreshes. Booking them into the last one made up a burst that the
-        # capture never had.
-        self.assertEqual(
-            analyze._calculate_frame_compositions_per_vblank(vblanks, compositions),
+    def test_compositions_are_broken_down_by_their_combination_of_reasons(self):
+        marks = []
+        for i, reasons in enumerate(
             [
-                1,
-                0,
-            ],
-        )
+                (ANIMATION,),
+                (ANIMATION,),
+                (ANIMATION,),
+                (RU,),
+                (RU, ANIMATION),
+                (ANIMATION, RU),
+                (),
+                None,
+            ]
+        ):
+            marks += composition(10 + i * 20, 11 + i * 20, reasons)
+        data = sysprof_data(marks)
+        report = analyze._prepare_report(data, data)
 
-    def test_frame_rendering_reasons_bucket_a_frame_that_named_none(self):
-        def did_render_frame(message, msec=0):
-            return {
-                "name": "DidRenderFrame",
-                "message": message,
-                "duration": 0,
-                "end_time": msec_to_nsec(msec),
-            }
-
-        data = {
-            "document": {"timespan": {"begin": 0, "end": msec_to_nsec(1000)}},
-            "marks": {
-                "DidRenderFrame": [
-                    did_render_frame("reasons: Scrolling"),
-                    did_render_frame("reasons: Scrolling, AsyncScrolling", 1),
-                    did_render_frame("reasons: ", 2),
-                    did_render_frame("reasons: ", 3),
-                ]
-            },
-        }
-
-        # The reasons of a frame are one bucket, however many it names, and the
-        # frames that named none share one of their own.
+        compositions = report["compositions"]
+        # By class, then by count.
         self.assertEqual(
-            analyze._prepare_rendering_report(data, display_refreshes(data))[
-                "frame_rendering_reasons"
+            [
+                (row["class"], row["combination"], row["n"])
+                for row in compositions["by_combination"]
             ],
-            {"Scrolling": 1, "Scrolling, AsyncScrolling": 1, "_none": 2},
+            [
+                ("update", "RenderingUpdate + Animation", 2),
+                ("update", "RenderingUpdate", 1),
+                ("compositor", "Animation", 3),
+                ("no_reason", "no reason", 1),
+                ("unrecorded", "unrecorded", 1),
+            ],
+        )
+        # A combined composition counts toward each of its reasons.
+        self.assertEqual(compositions["by_reason"], {RU: 3, ANIMATION: 5})
+
+        analyze._render_text_report(report)
+        stdout = self.stdout()
+        self.assertIn("update-driven: 3, compositor-driven: 3", stdout)
+        self.assertIn("- no reason (unexpected): 1", stdout)
+        self.assertIn("- unrecorded: 1", stdout)
+        self.assertIn(
+            "- by reason (a composition with several reasons counts toward each):"
+            " RenderingUpdate 3, Animation 5",
+            stdout,
         )
 
-    def test_cycle_analysis_draws_a_bar_per_cycle_through_the_command_line(self):
-        main(["cycle-analysis", "--color", "never", SAMPLE_CAPTURE_FILE])
+    def test_timeline_draws_the_lanes_through_the_command_line(self):
+        main(["timeline", "--color", "never", "-n", "5", SAMPLE_CAPTURE_FILE])
 
         stdout = self.stdout()
-        self.assertIn("Frame cycles: 2 in the analyzed window, 2 shown", stdout)
-        # Two lanes per cycle, and the legend that says what the glyphs mean.
-        self.assertEqual(stdout.count(" main \u2595"), 2)
-        self.assertEqual(stdout.count(" tiles \u2595"), 2)
+        self.assertIn("Timeline: rows of 100.002 ms across the analyzed window", stdout)
+        for lane in ("frame", "main", "comp", "tiles"):
+            self.assertEqual(stdout.count(" {} \u2595".format(lane)), 5)
+        self.assertIn("update 1 at 371.6 ms: frame 1 after 152.490 ms", stdout)
         self.assertIn("style resolution", stdout)
 
-    def test_cycle_analysis_says_so_where_there_is_nothing_to_draw(self):
-        main(["cycle-analysis", "-t", "0-370", SAMPLE_CAPTURE_FILE])
-        # The capture holds the updates, the window cut through them, and saying it
-        # holds none would send the reader looking for marks that are there.
+        # Explanations are opt-in.
+        self.assertNotIn("How to read the timeline", stdout)
+
+        main(["timeline", "--worst", "update-latency", SAMPLE_CAPTURE_FILE])
+        self.assertIn("reached the screen with frame 1", self.stdout())
+
+    def test_timeline_explains_its_terms_through_the_command_line(self):
+        main(["timeline", "--color", "never", "-n", "1", "-e", SAMPLE_CAPTURE_FILE])
+
         stdout = self.stdout()
-        self.assertIn("No frame cycles found in the selected timespan", stdout)
-        self.assertIn("widen --timespan", stdout)
+        self.assertIn("How to read the timeline", stdout)
+        self.assertIn(
+            "missed refreshes: round(interval / refresh interval) - 1", stdout
+        )
 
-    def test_cycle_analysis_says_so_where_the_selection_matches_nothing(self):
-        main(["cycle-analysis", "--min-duration", "10000", SAMPLE_CAPTURE_FILE])
-        self.assertIn("No frame cycles match the selection", self.stdout())
-
-    def test_cycle_analysis_rejects_a_timespan_it_cannot_honour(self):
-        for timespan in ["0-0", "5000-6000", "abc"]:
-            with self.subTest(timespan=timespan), self.assertRaises(SystemExit):
-                main(["cycle-analysis", "-t", timespan, SAMPLE_CAPTURE_FILE])
-
-    def test_cycle_analysis_rejects_options_that_draw_nothing(self):
-        # A usage error like every other one the tool reports, rather than a
-        # traceback or a bar of one nonsense cell.
+    def test_timeline_rejects_options_that_draw_nothing(self):
         for option in [
             ["--resolution", "0"],
             ["--resolution", "-1"],
-            # Accepted by float(), and every comparison with one of them is False,
-            # so they reach the drawing and raise there unless rejected here.
+            # Accepted by float() but fail every comparison.
             ["--resolution", "nan"],
             ["--resolution", "inf"],
-            ["--min-length", "nan"],
-            ["--min-duration", "nan"],
-            # Shorter than the nanosecond a capture is timed in, which rounds the
-            # length of a cell to zero and draws every bar as idle.
+            # Rounds to a zero nanosecond cell.
             ["--resolution", "0.0000004"],
-            ["--max-cycles", "0"],
-            ["--max-cycles", "-1"],
+            ["--max-rows", "0"],
             ["--max-cells", "0"],
-            ["--min-duration", "-1"],
-            ["--min-length", "-1"],
+            ["--row-length", "0"],
+            ["--row-length", "nan"],
+            # Rounds to a zero nanosecond row, which never advances.
+            ["--row-length", "0.0000004"],
+            ["--frames", "0"],
+            ["--frames", "99999"],
+            ["--frames", "1", "-t", "0-100"],
+            ["--worst", "slowest"],
+            ["-t", "0-0"],
+            ["-t", "5000-6000"],
         ]:
             with self.subTest(option=option), self.assertRaises(SystemExit):
-                main(["cycle-analysis"] + option + [SAMPLE_CAPTURE_FILE])
+                main(["timeline"] + option + [SAMPLE_CAPTURE_FILE])
 
     def test_explain_reaches_the_report_through_the_command_line(self):
-        # Through main(), so that renaming the flag or its dest cannot quietly stop the
-        # explanations from being printed.
+        # Through main(), to catch a renamed flag or dest.
         main(["analyze", "-e", SAMPLE_CAPTURE_FILE])
 
         stdout = self.stdout()
-        self.assertIn(
-            "A frame cycle starts when a LayerTreeHostRenderingUpdate begins", stdout
-        )
-        self.assertIn("StyleRecalc is an umbrella mark", stdout)
+        self.assertIn("A composition is a RenderLayerTree", stdout)
+        self.assertIn("StyleRecalc wraps RenderTreeBuild", stdout)
 
     def test_a_capture_of_its_own_broken_timespan_is_no_usage_error(self):
-        # No -t was passed, so nothing the user typed can be at fault.
+        # No -t was passed, so the user is not at fault.
         data = {"document": {"timespan": {"begin": 0, "end": -5}}, "marks": {}}
         self.assertEqual(
             trim_marks_by_name_to_timespan(data, None, None)["document"]["timespan"][
@@ -524,11 +561,9 @@ class SubcommandsTest(SysprofTestCase):
         self.assertEqual(
             extract({"message": "dirty tiles: 40", "duration": 0})["tiles"], 40
         )
-        # A mark that carries no message at all leaves the statistic out, rather
-        # than reporting a number read from somewhere else.
         self.assertIsNone(extract({"message": "", "duration": 0})["tiles"])
 
-    def test_explaining_an_empty_frame_cycle_section_still_explains_it(self):
+    def test_explaining_an_empty_section_still_explains_it(self):
         args = argparse.Namespace(
             capture_file=SAMPLE_CAPTURE_FILE,
             format="text",
@@ -538,23 +573,19 @@ class SubcommandsTest(SysprofTestCase):
         analyze.analyze(args)
 
         stdout = self.stdout()
-        self.assertIn("- cycles: 0", stdout)
-        # An empty section is what raises the question the explanation answers.
-        self.assertIn(
-            "A frame cycle starts when a LayerTreeHostRenderingUpdate begins", stdout
-        )
+        self.assertIn("- updates: 0", stdout)
+        self.assertIn("A rendering update is a LayerTreeHostRenderingUpdate", stdout)
+        self.assertIn("A composition is a RenderLayerTree", stdout)
 
     def test_a_broken_capture_is_no_usage_error_even_with_a_timespan(self):
-        # -t 0- asks for exactly the capture's own range, so nothing the user typed
-        # can be at fault when that range runs backwards or is of no length.
+        # The capture's own range is at fault, not the user's -t.
         check_timespan_holds_data(0, msec_to_nsec(-5), 0, None)
         check_timespan_holds_data(0, msec_to_nsec(-5), None, None)
         check_timespan_holds_data(0, 0, 0, msec_to_nsec(5))
 
     def test_a_window_meeting_the_capture_at_one_point_is_rejected(self):
         capture = (msec_to_nsec(100), msec_to_nsec(200))
-        # Clamped to the capture, either of these encloses a single instant, which
-        # is no duration to divide by and no range for a mark to fall inside.
+        # Clamped to the capture, each encloses a single instant.
         with self.assertRaises(UsageError):
             check_timespan_holds_data(*capture, msec_to_nsec(200), None)
         with self.assertRaises(UsageError):
@@ -572,11 +603,11 @@ class SubcommandsTest(SysprofTestCase):
         percentiles = json.loads(self.stdout())["statistics"]["StyleRecalc"][
             "duration"
         ]["percentiles"]
-        # Read by consumers since before the frame cycle section existed.
+        # Consumers rely on these keys.
         self.assertEqual(sorted(percentiles), ["25", "50", "75", "99"])
 
     def test_delta_histogram_keeps_the_processes_apart(self):
-        # Two processes rendering at 16 ms, offset by 8 ms from one another.
+        # Two processes at 16 ms, offset by 8 ms. Merged, deltas would read 8 ms.
         marks = []
         for i in range(5):
             marks.append(
@@ -587,58 +618,90 @@ class SubcommandsTest(SysprofTestCase):
             )
         data = sysprof_data(marks, end_msec=100)
 
-        # Merged, the deltas would read 8 ms and the histogram would peak at half the
-        # frame interval of either process.
         deltas = histogram._delta_times_ms(data, "LayerTreeHostRenderingUpdate")
         self.assertEqual(deltas, [approx(16.0)] * 8)
 
-    def test_composition_overrun_says_nothing_where_nothing_was_analyzed(self):
-        frame_cycle = {
-            "cycles": 9,
-            "processes": 1,
-            "duration_statistics": {"n": 9, "min": 1, "max": 1, "median": 1, "mean": 1},
-            "resolved_duration_statistics": {},
-            "phase_statistics": {phase: {} for phase in analyze.PHASES},
-            "overrunning_composition_statistics": {},
-            "implied_fps": 1.0,
-            "coverage": 0.5,
-            "capture_vblank_interval": 16.0,
-            "vblank_intervals_per_cycle": 1.0,
-            "vblank_intervals_per_cycle_unknown": None,
-        }
-
-        analyze._render_frame_cycle_numbers(frame_cycle)
-
-        stdout = self.stdout()
-        # "in none of 0 analyzed cycles" would read as a measurement never made.
-        self.assertIn("- composition overrunning the cycle: -", stdout)
-        # The note explains shares, and every phase here reads as -.
-        self.assertNotIn("need not total 100%", stdout)
-
-    def test_an_update_ending_on_the_first_refresh_spans_it(self):
-        vblanks = [mark("DisplayLinkUpdate", msec, msec) for msec in (100, 116, 132)]
-        update = [mark("LayerTreeHostRenderingUpdate", 90, 100)]
-
-        # It ran up to that refresh, so it spanned one, and both ends of the range
-        # are read the same way.
-        self.assertEqual(
-            analyze._calculate_vblanks_per_rendering_update(vblanks, update), [1]
+    def test_conditional_lines_only_appear_where_there_is_something_to_say(self):
+        clean = sysprof_data(
+            steady_animation(100, 5)
+            + asking_for_a_frame(300, 310, 309)
+            + composition(309.1, 310, (RU,))
+            + [frame_complete(320, "InProgress")]
         )
+        analyze._render_text_report(analyze._prepare_report(clean, clean))
+        stdout = self.stdout()
+        for line in [
+            "aborted:",
+            "replay mismatches:",
+            "suspended stretches:",
+            "stalled:",
+            "uncomposited:",
+            "pending at capture end:",
+            "pairing:",
+            "no reason (unexpected):",
+            "unrecorded:",
+            "- other:",
+        ]:
+            self.assertNotIn(line, stdout)
 
-    def test_refreshes_that_composited_nothing_are_samples_of_nothing(self):
-        vblanks = [
-            mark("DisplayLinkUpdate", i * 16, i * 16, "WebKit (UI)", pid=1)
-            for i in range(60)
-        ]
-        data = sysprof_data(vblanks, end_msec=1000)
+    def test_a_probable_suspension_is_reported(self):
+        data = sysprof_data(
+            [presented(1), scheduled(10, "Idle", reasons=("Animation",))]
+            + composition(50, 51)
+            + [frame_complete(60, "InProgress")]
+        )
+        analyze._render_text_report(analyze._prepare_report(data, data))
+        self.assertIn("suspended stretches: 0, probably suspended: 1", self.stdout())
 
-        rendering = analyze._prepare_rendering_report(data, vblanks)
+    def test_a_process_with_only_state_messages_reports_its_compositor_time(self):
+        data = sysprof_data([scheduled(10, "Idle", reasons=("Animation",))])
+        analyze._render_text_report(analyze._prepare_report(data, data))
+        self.assertIn("- compositor time:\n  - ", self.stdout())
 
-        # A capture that composited nothing is not a capture without refreshes: every
-        # interval held no composition, which is 59 samples of zero.
-        statistics = rendering["frame_compositions_per_vblank_statistics"]
-        self.assertEqual(statistics["n"], 59)
-        self.assertEqual(statistics["max"], 0)
+    def test_a_capture_whose_rlts_all_aborted_says_so(self):
+        data = sysprof_data([mark("RenderLayerTree", 10, 11)])
+        analyze._render_text_report(analyze._prepare_report(data, data))
+        stdout = self.stdout()
+        self.assertIn(
+            "- no RenderLayerTree of the capture holds a DidRenderFrame", stdout
+        )
+        self.assertIn("- aborted: 1", stdout)
+
+    def test_conditional_lines_say_what_went_wrong(self):
+        broken = sysprof_data(
+            steady_animation(100, 5)
+            + [mark("RenderLayerTree", 300, 301)]
+            + [scheduled(116.2, "Idle", reasons=(ANIMATION,))]
+            + asking_for_a_frame(400, 410, 409)
+        )
+        analyze._render_text_report(analyze._prepare_report(broken, broken))
+        stdout = self.stdout()
+        self.assertIn("- aborted: 1", stdout)
+        self.assertIn("- replay mismatches: 1 of", stdout)
+        self.assertIn("messages in the whole capture", stdout)
+        self.assertIn("- pending at capture end: 1", stdout)
+
+    def test_several_processes_are_reported_one_by_one(self):
+        data = sysprof_data(
+            steady_animation(100, 4, pid=1) + steady_animation(108, 4, pid=2)
+        )
+        report = analyze._prepare_report(data, data)
+        analyze._render_text_report(report)
+        stdout = self.stdout()
+        self.assertIn("- [1] typical frame rate:", stdout)
+        self.assertIn("- [2] typical frame rate:", stdout)
+        self.assertIn("| pid | class", stdout)
+        # Each process's rows share out its own compositions.
+        shares = [row["share"] for row in report["compositions"]["by_combination"]]
+        self.assertEqual(shares, [1.0, 1.0])
+        # Merged, the rate would read doubled.
+        for pid in (1, 2):
+            self.assertEqual(
+                report["compositions"]["per_process"][str(pid)][
+                    "active_interval_statistics"
+                ]["median"],
+                approx(16.0),
+            )
 
     def test_dump_csv_carries_every_column_of_a_row(self):
         args = argparse.Namespace(
@@ -650,10 +713,8 @@ class SubcommandsTest(SysprofTestCase):
         self.assertEqual(header, "group;pid;name;message;time;duration;end_time")
 
     def test_collapsed_stacktraces_resolve_addresses_against_the_process_maps(self):
-        # Leaf (innermost, first in the raw stack) resolves against a known map; the
-        # root (outermost, last in the raw stack), covered by no map and no bundled
-        # symbol, resolves to nothing and is dropped, the same as Sysprof itself
-        # drops a frame it cannot say anything at all about.
+        # The leaf (first raw address) hits a map. The root is covered by nothing
+        # and dropped, as in Sysprof.
         data = stacktrace_data(
             [stacktrace(100, 100, [0x1050, 0x9999])],
             maps={
@@ -675,9 +736,7 @@ class SubcommandsTest(SysprofTestCase):
         )
 
     def test_collapsed_stacktraces_drop_a_frame_covered_by_nothing_at_all(self):
-        # No map, no bundled symbol: Sysprof's own address-layout lookup finds
-        # nothing to even name the file, so the address is dropped rather than
-        # shown as a bare address a reader could not recognize or search for.
+        # As in Sysprof, rather than shown as a bare address.
         data = stacktrace_data([stacktrace(1, 1, [0x10])], processes={1: "app"})
 
         self.assertEqual(
@@ -685,39 +744,31 @@ class SubcommandsTest(SysprofTestCase):
         )
 
     def test_collapsed_stacktraces_drop_the_earlier_of_two_overlapping_maps(self):
-        # Reproduces exactly what sample.syscap's own ld-linux-aarch64.so.1 mapping
-        # does to every address only it covers: it overlaps a second, later-starting
-        # mapping ([vdso] there), and Sysprof's own SysprofAddressLayout drops the
-        # earlier-starting of the two (see find_duplicates() in
-        # sysprof-address-layout.c) rather than keep both, so an address inside the
-        # earlier one but outside the later one resolves to nothing.
+        # Like ld-linux-aarch64.so.1 and [vdso] in sample.syscap. find_duplicates()
+        # in sysprof-address-layout.c drops the earlier-starting map.
         data = stacktrace_data(
             [stacktrace(1, 1, [0x1050])],
             maps={
                 1: [
-                    # Starts first and is the wider of the two: dropped.
+                    # Dropped.
                     {
                         "start": 0x1000,
                         "end": 0x2000,
                         "offset": 0,
                         "filename": "/lib/loader.so",
                     },
-                    # Starts second, inside the first one's range: kept.
+                    # Kept.
                     {"start": 0x1800, "end": 0x1900, "offset": 0, "filename": "[vdso]"},
                 ]
             },
             processes={1: "app"},
         )
 
-        # 0x1050 is covered only by the dropped mapping, so nothing resolves it.
         self.assertEqual(
             dump._collapsed_stacktraces_to_rows(data), [{"stack": "app", "count": 1}]
         )
 
     def test_collapsed_stacktraces_offset_by_the_maps_own_file_offset(self):
-        # A file mapped at a non-zero offset (e.g. a later segment of a shared
-        # library) must have that offset folded back in, or the resolved address
-        # would point elsewhere in the file than where the sample actually was.
         data = stacktrace_data(
             [stacktrace(1, 1, [0x2100])],
             maps={
@@ -739,9 +790,7 @@ class SubcommandsTest(SysprofTestCase):
         )
 
     def test_collapsed_stacktraces_resolve_a_symbol_when_the_mapped_file_exists(self):
-        # Unlike the two tests above, the mapped file here is a real one on disk, so
-        # this exercises the whole path down into webkitsysprof.symbolizer rather
-        # than just the "In File" fallback dump falls back to without it.
+        # A real file on disk, so this goes through webkitsysprof.symbolizer.
         with tempfile.TemporaryDirectory() as tempdir:
             library = str(Path(tempdir) / "libfoo.so")
             Path(library).write_bytes(build_minimal_elf([("my_function", 0x100, 0x50)]))
@@ -767,9 +816,7 @@ class SubcommandsTest(SysprofTestCase):
             )
 
     def test_collapsed_stacktraces_resolve_via_the_capture_s_own_bundled_symbols(self):
-        # The capture's own "__symbols__" bundle (parsed by webkitsysprof.parser,
-        # see parser_unittest.py) needs no map and no local file at all: sysprof
-        # resolved this at record time, against whatever it saw mapped then.
+        # The "__symbols__" bundle was resolved at record time and needs no map.
         data = stacktrace_data(
             [stacktrace(100, 100, [0x1020])],
             processes={100: "app"},
@@ -782,9 +829,7 @@ class SubcommandsTest(SysprofTestCase):
         )
 
     def test_collapsed_stacktraces_prefer_bundled_symbols_over_the_map_fallback(self):
-        # An address the bundle covers is resolved from it even where the sample's
-        # maps would otherwise resolve to a real local ELF file, since the bundle is
-        # what sysprof itself trusted at record time.
+        # The bundle is what sysprof trusted at record time.
         with tempfile.TemporaryDirectory() as tempdir:
             library = str(Path(tempdir) / "libfoo.so")
             Path(library).write_bytes(
@@ -813,14 +858,8 @@ class SubcommandsTest(SysprofTestCase):
             )
 
     def test_collapsed_stacktraces_resolve_kernel_context_frames_via_kallsyms(self):
-        # 0xffffffffffffff80 is PERF_CONTEXT_KERNEL: everything after it in the raw
-        # (innermost-first) stack, until it ends or another marker appears, is a
-        # kernel address and is resolved against the capture's bundled
-        # /proc/kallsyms rather than the pid's own userspace maps/symbols, which a
-        # kernel address would never fall inside. The stack never returns to user
-        # space (no trailing marker), so it also gets the "- - Kernel - -" boundary
-        # a stack that made it back out would get from a later marker instead (see
-        # test_collapsed_stacktraces_turn_context_switch_markers_into_pseudo_frames).
+        # Addresses after PERF_CONTEXT_KERNEL (0xffffffffffffff80) resolve against
+        # kallsyms. With no marker back to user space, the boundary is added anyway.
         data = stacktrace_data(
             [stacktrace(1, 1, [0xFFFFFFFFFFFFFF80, 0xFFFF8000805E7240])],
             processes={1: "app"},
@@ -850,12 +889,8 @@ class SubcommandsTest(SysprofTestCase):
     def test_collapsed_stacktraces_add_a_kernel_boundary_when_the_unwind_never_returns(
         self,
     ):
-        # A stack that enters the kernel and never gets back out (very common: a
-        # kernel unwind frequently cannot walk back into whatever userspace code was
-        # interrupted) reproduces the exact shape Sysprof's own callgraph shows for
-        # this case: AllProcesses -> WPEWebProcess -> "Kernel Context Switch" ->
-        # el0t_64_sync -> ... with nothing in between the process and the boundary,
-        # since there is no userspace frame at all to put there.
+        # Kernel unwinds often cannot walk back into user space. Sysprof shows
+        # these directly under the process, as here.
         data = stacktrace_data(
             [stacktrace(2501, 2501, [0xFFFFFFFFFFFFFF80, 0x10, 0x20])],
             processes={2501: "WPEWebProcess"},
@@ -874,26 +909,17 @@ class SubcommandsTest(SysprofTestCase):
 
     def test_collapsed_stacktraces_turn_context_switch_markers_into_pseudo_frames(self):
         # 0xffffffffffffff80 is PERF_CONTEXT_KERNEL and 0xfffffffffffffe00 is
-        # PERF_CONTEXT_USER, markers sysprof splices into the stack to say what
-        # follows is in the kernel (or back in user space), not real addresses.
-        # Sysprof's own callgraph turns a marker into a "- - <Context> - -"
-        # pseudo-frame naming the context it *leaves* (so the one between the
-        # kernel and user portions here reads "- - Kernel - -", not "- - User - -"),
-        # except for a marker right at the start of the stack, which is dropped
-        # since nothing preceded it to leave. What falls between two markers is
-        # resolved as whatever context they say it is in: 0x30, in kernel context
-        # here, is routed to the (empty, in this test) kallsyms table and falls
-        # back to "In Kernel+0x30" rather than the plain "0x30" a userspace address
-        # with nothing to resolve it against would show.
+        # PERF_CONTEXT_USER. As in Sysprof, a marker becomes a pseudo-frame naming
+        # the context it leaves, except a leading one. 0x30 is in kernel context.
         data = stacktrace_data(
             [
                 stacktrace(
                     1,
                     1,
                     [
-                        0xFFFFFFFFFFFFFF80,  # Dropped: the very first address.
+                        0xFFFFFFFFFFFFFF80,  # Leading, dropped.
                         0x30,
-                        0xFFFFFFFFFFFFFE00,  # "- - Kernel - -": leaves kernel context.
+                        0xFFFFFFFFFFFFFE00,  # Leaves kernel context.
                     ],
                 )
             ],
@@ -908,23 +934,17 @@ class SubcommandsTest(SysprofTestCase):
     def test_collapsed_stacktraces_name_a_mid_stack_marker_by_the_context_it_leaves(
         self,
     ):
-        # Reproduces the shape sysprof's own GUI shows for this exact capture's own
-        # syscall stacks: "- - Kernel - -" marking the drop into the kernel,
-        # directly under the process, with nothing in between, because the
-        # unwind's one userspace address is covered by no map or bundled symbol at
-        # all and is dropped, the same as Sysprof's own callgraph shows AllProcesses
-        # -> WPEWebProcess -> "Kernel Context Switch" -> el0t_64_sync -> ... with no
-        # frame of its own between the process and the boundary.
+        # The shape Sysprof shows for syscall stacks in sample.syscap.
         data = stacktrace_data(
             [
                 stacktrace(
                     1,
                     1,
                     [
-                        0xFFFFFFFFFFFFFF80,  # Dropped: the very first address.
-                        0x10,  # Innermost kernel frame.
-                        0xFFFFFFFFFFFFFE00,  # "- - Kernel - -": leaves kernel context.
-                        0x20,  # Outermost user frame, resolved by nothing, dropped.
+                        0xFFFFFFFFFFFFFF80,  # Leading, dropped.
+                        0x10,
+                        0xFFFFFFFFFFFFFE00,  # Leaves kernel context.
+                        0x20,  # Unresolved user frame, dropped.
                     ],
                 )
             ],
@@ -958,7 +978,7 @@ class SubcommandsTest(SysprofTestCase):
             symbols={1: [(0x10, 0x11, "func_a"), (0x20, 0x21, "func_b")]},
         )
 
-        # Sorted by stack, like stackcollapse-perf.pl's own output.
+        # Sorted, like stackcollapse-perf.pl.
         self.assertEqual(
             dump._collapsed_stacktraces_to_rows(data),
             [
@@ -968,10 +988,7 @@ class SubcommandsTest(SysprofTestCase):
         )
 
     def test_collapsed_stacktraces_collapse_consecutive_identical_frames(self):
-        # sysprof_document_symbolize_traceable() only counts a resolved symbol if it
-        # differs from the one right before it, so several raw addresses landing in
-        # a row inside the same bundled range (recursion, or a few samples of one
-        # tight loop) must read as that one frame, not the same name repeated.
+        # As in sysprof_document_symbolize_traceable().
         data = stacktrace_data(
             [stacktrace(1, 1, [0x10, 0x18, 0x20])],
             processes={1: "app"},
@@ -986,9 +1003,7 @@ class SubcommandsTest(SysprofTestCase):
     def test_collapsed_stacktraces_do_not_collapse_different_symbols_with_one_name(
         self,
     ):
-        # Two distinct symbols that merely demangle to an identical name (e.g. a
-        # class's two constructor overloads) are not the same frame, so collapsing
-        # must compare by resolved range/identity, never by the display string.
+        # E.g. C1 and C2 constructors. Collapsing compares identity, not text.
         data = stacktrace_data(
             [stacktrace(1, 1, [0x10, 0x20])],
             processes={1: "app"},
@@ -1006,14 +1021,11 @@ class SubcommandsTest(SysprofTestCase):
         )
 
     def test_collapsed_stacktraces_show_unwindable_for_a_lone_context_switch(self):
-        # sysprof_callgraph_add_traceable()'s "corrupted unwind" case: a traceable
-        # whose only content is a single context-switch marker (so nothing real was
-        # captured at all) is shown as a distinct "Unwindable" frame instead of an
-        # empty stack, so it reads as a broken/empty recording rather than as if the
-        # process simply had no stack of its own.
+        # The "corrupted unwind" case of sysprof_callgraph_add_traceable(), a stack
+        # holding only PERF_CONTEXT_USER.
         data = stacktrace_data(
             [stacktrace(1, 1, [0xFFFFFFFFFFFFFE00])],
-            processes={1: "app"},  # PERF_CONTEXT_USER
+            processes={1: "app"},
         )
 
         self.assertEqual(
@@ -1024,10 +1036,7 @@ class SubcommandsTest(SysprofTestCase):
     def test_collapsed_stacktraces_do_not_show_unwindable_for_a_lone_kernel_switch(
         self,
     ):
-        # The "Unwindable" substitution is specific to sysprof_callgraph_add_traceable
-        # checking `final_context == SYSPROF_ADDRESS_CONTEXT_USER`; a stack that
-        # starts and stays in the kernel (nothing to unwind back out of) still gets
-        # its ordinary "- - Kernel - -" boundary instead.
+        # sysprof_callgraph_add_traceable() only substitutes for a user context.
         data = stacktrace_data(
             [stacktrace(1, 1, [0xFFFFFFFFFFFFFF80])],
             processes={1: "app"},  # PERF_CONTEXT_KERNEL
@@ -1039,11 +1048,7 @@ class SubcommandsTest(SysprofTestCase):
         )
 
     def test_process_name_keeps_a_kernel_thread_s_own_slash(self):
-        # A kernel thread's "comm" can itself contain a "/" (e.g. numbered instances
-        # of one worker pool), which is not a filesystem path: running it through
-        # basename() would both mangle it and silently merge unrelated threads that
-        # happen to share a trailing number ("migration/0" and "ksoftirqd/0" would
-        # otherwise both become the process name "0").
+        # A comm is not a path. basename() would merge both into "0".
         data = stacktrace_data(
             [stacktrace(16, 16, [0x10]), stacktrace(18, 18, [0x10])],
             processes={16: "migration/0", 18: "ksoftirqd/0"},
@@ -1079,53 +1084,31 @@ class SubcommandsTest(SysprofTestCase):
         counts = [int(line.rsplit(" ", 1)[1]) for line in lines]
 
         self.assertEqual(len(lines), 720)
-        # Every one of the capture's 1026 SAMPLE frames is accounted for exactly once.
+        # One count per SAMPLE frame.
         self.assertEqual(sum(counts), 1026)
-        # Folded output is sorted, like stackcollapse-perf.pl's own.
         self.assertEqual(stacks, sorted(stacks))
-        # The capture bundles its own record-time symbolization (see
-        # webkitsysprof.parser's "__symbols__.gz" handling), so real, demangled
-        # WebCore/WebKit function names come back without any local binary at all.
+        # From the bundled symbols, with no local binary.
         self.assertIn("WebCore::TextureMapperLayer::paint", stdout)
         self.assertIn("In File /usr/lib/libWPEWebKit-2.0.so.1.10.0", stdout)
-        # And the capture's bundled /proc/kallsyms.gz (see parser_unittest.py's
-        # kallsyms tests) resolves kernel-context frames, e.g. an ioctl() into DRM,
-        # to real kernel function names too.
+        # From the bundled kallsyms.
         self.assertIn("drm_ioctl", stdout)
-        # Matching Sysprof itself exactly (verified against sysprof-cat and
-        # test-symbolize built from the actual sysprof sources): this capture's own
-        # ld-linux-aarch64.so.1 mapping overlaps its neighboring [vdso] mapping, so
-        # Sysprof's own address-layout dedup drops it, and every address only it
-        # covered resolves to nothing and is dropped rather than shown as a bare
-        # address; a raw hex address would mean that dedup was not applied.
+        # Verified against sysprof-cat. The ld-linux map overlaps [vdso] and is
+        # dropped by the address-layout dedup.
         self.assertNotIn("ld-linux", stdout)
         self.assertNotIn(";0x", stdout)
-        # A kernel thread's own "comm" keeps its "/" (this capture's kworker
-        # threads would otherwise collide on their trailing number, or lose their
-        # "kworker/" prefix entirely).
         self.assertIn("kworker/1:2-events", stdout)
-        # A traceable whose only content is a single context-switch marker (no real
-        # frame at all) reads as "Unwindable", matching sysprof-cat's own totals
-        # for this capture exactly (WPENetworkProce 79, WPEWebProcess 89,
-        # wpe-bare-app 69).
+        # Matches sysprof-cat's totals.
         self.assertIn("WPENetworkProce;Unwindable 79", stdout)
         self.assertIn("WPEWebProcess;Unwindable 89", stdout)
         self.assertIn("wpe-bare-app;Unwindable 69", stdout)
-        # Consecutive raw addresses landing in the same bundled range collapse to
-        # one frame instead of repeating it. (Two adjacent frames can still show
-        # the same *text*, e.g. WebCore::GraphicsLayerCoordinated::
-        # ~GraphicsLayerCoordinated() appears twice in a row further down this same
-        # capture — verified against sysprof-cat as two genuinely different C1/C2
-        # destructor symbols that merely demangle identically, so collapsing must
-        # compare resolved identity, not display text; see the dedicated
-        # do-not-collapse-same-name test above.)
+        # Repeated addresses in one symbol collapse. Adjacent equal text can still
+        # occur, e.g. the C1 and C2 ~GraphicsLayerCoordinated() destructors.
         self.assertNotIn(
             "WebCore::GraphicsLayerCoordinated::updateBackingStoresIfNeededv;"
             "WebCore::GraphicsLayerCoordinated::updateBackingStoresIfNeededv",
             stdout,
         )
-        # A bundled symbol's "nick" (which library it belongs to) is kept alongside
-        # its name rather than dropped.
+        # A bundled symbol's nick.
         self.assertIn("(GLib)", stdout)
 
     def test_dump_collapsed_stacktraces_json_through_the_command_line(self):
@@ -1144,8 +1127,7 @@ class SubcommandsTest(SysprofTestCase):
             main(["dump", "--counters", "--collapsed-stacktraces", SAMPLE_CAPTURE_FILE])
 
     def test_a_window_without_refreshes_keeps_the_capture_interval(self):
-        # The link stops before the window begins. Its interval is a property of the
-        # display, so the cycles of the window are still measured in it.
+        # The display link stops before the window, but its interval still applies.
         marks = [
             mark("DisplayLinkUpdate", i * 16, i * 16, "WebKit (UI)", pid=1)
             for i in range(30)
@@ -1163,9 +1145,12 @@ class SubcommandsTest(SysprofTestCase):
         report = analyze._prepare_report(window, untrimmed)
 
         self.assertEqual(report["rendering"]["vblanks"], 0)
-        self.assertEqual(report["frame_cycle"]["capture_vblank_interval"], approx(16.0))
+        self.assertEqual(report["rendering"]["reference_interval"], approx(16.0))
         self.assertEqual(
-            report["frame_cycle"]["vblank_intervals_per_cycle"], approx(20 / 16)
+            report["rendering_updates"]["per_process"]["2"][
+                "refresh_intervals_statistics"
+            ]["median"],
+            approx(5 / 16),
         )
 
     def test_analyze_with_custom_timespan(self):
