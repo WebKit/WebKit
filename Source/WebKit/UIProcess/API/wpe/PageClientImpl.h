@@ -127,6 +127,7 @@ private:
     void doneWithTouchEvent(const WebTouchEvent&, bool) override;
 #endif
     void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
+    void doneWithWheelEvent(const NativeWebWheelEvent&, bool) override;
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
 #if ENABLE(CONTEXT_MENUS)
