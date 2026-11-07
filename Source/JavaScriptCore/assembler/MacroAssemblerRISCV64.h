@@ -506,48 +506,41 @@ public:
         m_assembler.mulInsn(dest, lhs, rhs);
     }
 
+    // The bitfield helpers take a field width, like the arm64 originals, and expand to a shift plus a mask of
+    // (1 << width) - 1 built from this port's own primitives.
     void extractUnsignedBitfield32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
-        m_assembler.srliInsn(dest, src, std::clamp<int32_t>(lsb.m_value, 0, 31));
-        if (!Imm::isValid<Imm::IType>(width.m_value)) {
-            auto temp = temps<Data>();
-            loadImmediate(width, temp.data());
-            m_assembler.andInsn(dest, dest, temp.data());
-        } else
-            m_assembler.andiInsn(dest, dest, Imm::I(width.m_value));
+        urshift32(src, lsb, dest);
+        if (width.m_value < 32)
+            and32(TrustedImm32((1u << width.m_value) - 1), dest);
     }
 
     void extractUnsignedBitfield64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
-        m_assembler.srliInsn(dest, src, std::clamp<int32_t>(lsb.m_value, 0, 63));
-        if (!Imm::isValid<Imm::IType>(width.m_value)) {
-            auto temp = temps<Data>();
-            loadImmediate(width, temp.data());
-            m_assembler.andInsn(dest, dest, temp.data());
-        } else
-            m_assembler.andiInsn(dest, dest, Imm::I(width.m_value));
+        urshift64(src, lsb, dest);
+        if (width.m_value < 64)
+            and64(TrustedImm64((1ull << width.m_value) - 1), dest);
     }
 
     void insertUnsignedBitfieldInZero32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
-        if (!Imm::isValid<Imm::IType>(width.m_value)) {
-            auto temp = temps<Data>();
-            loadImmediate(width, temp.data());
-            m_assembler.andInsn(dest, src, temp.data());
+        if (width.m_value < 32) {
+            and32(TrustedImm32((1u << width.m_value) - 1), src, dest);
+            lshift32(lsb, dest);
         } else
-            m_assembler.andiInsn(dest, src, Imm::I(width.m_value));
-        m_assembler.slliInsn(dest, dest, std::clamp<int32_t>(lsb.m_value, 0, 63));
+            lshift32(src, lsb, dest);
     }
 
     void insertUnsignedBitfieldInZero64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
-        if (!Imm::isValid<Imm::IType>(width.m_value)) {
-            auto temp = temps<Data>();
-            loadImmediate(width, temp.data());
-            m_assembler.andInsn(dest, src, temp.data());
+        if (width.m_value == 32) {
+            zeroExtend32ToWord(src, dest);
+            lshift64(lsb, dest);
+        } else if (width.m_value < 64) {
+            and64(TrustedImm64((1ull << width.m_value) - 1), src, dest);
+            lshift64(lsb, dest);
         } else
-            m_assembler.andiInsn(dest, src, Imm::I(width.m_value));
-        m_assembler.slliInsn(dest, dest, std::clamp<int32_t>(lsb.m_value, 0, 63));
+            lshift64(src, lsb, dest);
     }
 
     void countLeadingZeros32(RegisterID src, RegisterID dest)
