@@ -142,6 +142,11 @@ void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const Ato
     else if (name == marginwidthAttr || name == marginheightAttr) {
         if (RefPtr contentDocument = this->contentDocument()) {
             if (RefPtr body = contentDocument->body()) {
+                // https://html.spec.whatwg.org/multipage/rendering.html#the-page
+                // The body's own leftmargin/topmargin take precedence over the frame's attribute.
+                auto& fallbackAttr = name == marginwidthAttr ? leftmarginAttr : topmarginAttr;
+                if (body->hasAttributeWithoutSynchronization(fallbackAttr))
+                    return;
                 if (newValue.isNull())
                     body->removeAttribute(name);
                 else
