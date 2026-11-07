@@ -39,10 +39,13 @@
 #include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSLazyEventListener);
 using namespace JSC;
 
 struct JSLazyEventListener::CreationArguments {

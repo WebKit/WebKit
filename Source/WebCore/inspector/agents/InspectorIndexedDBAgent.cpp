@@ -93,6 +93,7 @@ private:
 };
 
 class OpenDatabaseCallback final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OpenDatabaseCallback);
 public:
     NODELETE static Ref<OpenDatabaseCallback> create(ExecutableWithDatabase& executableWithDatabase)
     {
@@ -194,6 +195,7 @@ static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, cons
 }
 
 class DatabaseLoader final : public ExecutableWithDatabase {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DatabaseLoader);
 public:
     NODELETE static Ref<DatabaseLoader> create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDatabaseCallback>&& requestCallback)
     {
@@ -332,6 +334,7 @@ static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(JSON::Object& keyRange)
 }
 
 class OpenCursorCallback final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OpenCursorCallback);
 public:
     static Ref<OpenCursorCallback> create(InjectedScript injectedScript, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, int skipCount, unsigned pageSize)
     {
@@ -428,6 +431,7 @@ private:
 };
 
 class DataLoader final : public ExecutableWithDatabase {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DataLoader);
 public:
     static Ref<DataLoader> create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange>&& idbKeyRange, int skipCount, unsigned pageSize)
     {
@@ -647,6 +651,7 @@ void InspectorIndexedDBAgent::requestData(const String& securityOrigin, const St
 namespace {
 
 class ClearObjectStoreListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ClearObjectStoreListener);
     WTF_MAKE_NONCOPYABLE(ClearObjectStoreListener);
 public:
     static Ref<ClearObjectStoreListener> create(Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback> requestCallback)
@@ -678,6 +683,7 @@ private:
 };
 
 class ClearObjectStore final : public ExecutableWithDatabase {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ClearObjectStore);
 public:
     NODELETE static Ref<ClearObjectStore> create(ScriptExecutionContext* context, const String& objectStoreName, Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback>&& requestCallback)
     {

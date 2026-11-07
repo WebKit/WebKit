@@ -33,6 +33,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace JSC {
@@ -47,6 +48,7 @@ class Document;
 class JSDOMGlobalObject;
 
 class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedStyleSheetClient {
+    WTF_MAKE_TZONE_ALLOCATED(CachedModuleScriptLoader);
 public:
     NODELETE static Ref<CachedModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 

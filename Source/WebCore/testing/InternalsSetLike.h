@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -33,6 +34,7 @@ namespace WebCore {
 class DOMSetAdapter;
 
 class InternalsSetLike : public RefCounted<InternalsSetLike> {
+    WTF_MAKE_TZONE_ALLOCATED(InternalsSetLike);
 public:
     static Ref<InternalsSetLike> create() { return adoptRef(*new InternalsSetLike); }
 

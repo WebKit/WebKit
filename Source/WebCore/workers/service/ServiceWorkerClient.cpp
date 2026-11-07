@@ -36,8 +36,11 @@
 #include "ServiceWorkerThread.h"
 #include "ServiceWorkerWindowClient.h"
 #include "StructuredSerializeOptions.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerClient);
 
 Ref<ServiceWorkerClient> ServiceWorkerClient::create(ServiceWorkerGlobalScope& context, ServiceWorkerClientData&& data)
 {

@@ -29,6 +29,7 @@
 #include <libxml/parserInternals.h>
 #include <libxslt/documents.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -38,6 +39,7 @@ class DocumentFragment;
 class LocalFrame;
 
 class XSLTProcessor : public RefCounted<XSLTProcessor> {
+    WTF_MAKE_TZONE_ALLOCATED(XSLTProcessor);
 public:
     static Ref<XSLTProcessor> create() { return adoptRef(*new XSLTProcessor); }
     ~XSLTProcessor();

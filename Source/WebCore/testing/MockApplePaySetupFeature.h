@@ -28,10 +28,12 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePaySetupFeatureWebCore.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MockApplePaySetupFeature final : public ApplePaySetupFeature {
+    WTF_MAKE_TZONE_ALLOCATED(MockApplePaySetupFeature);
 public:
     NODELETE static Ref<MockApplePaySetupFeature> create(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
     

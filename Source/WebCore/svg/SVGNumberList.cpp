@@ -26,10 +26,13 @@
 #include "config.h"
 #include "SVGNumberList.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGNumberList);
 
 SVGNumberList::SVGNumberList() = default;
 

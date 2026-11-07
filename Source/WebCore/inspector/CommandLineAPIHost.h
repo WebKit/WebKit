@@ -55,6 +55,7 @@ class RTCLogsCallback;
 struct EventListenerInfo;
 
 class CommandLineAPIHost : public RefCounted<CommandLineAPIHost> {
+    WTF_MAKE_TZONE_ALLOCATED(CommandLineAPIHost);
 public:
     NODELETE static Ref<CommandLineAPIHost> create();
     ~CommandLineAPIHost() = default;

@@ -44,6 +44,7 @@
 namespace WebCore {
 
 class MockCDMFactory : public RefCounted<MockCDMFactory>, public CDMFactory {
+    WTF_MAKE_TZONE_ALLOCATED(MockCDMFactory);
 public:
     static Ref<MockCDMFactory> create() { return adoptRef(*new MockCDMFactory); }
     static void unregisterAllMockFactories();
@@ -151,6 +152,7 @@ private:
 };
 
 class MockCDMInstance : public CDMInstance, public CanMakeWeakPtr<MockCDMInstance> {
+    WTF_MAKE_TZONE_ALLOCATED(MockCDMInstance);
 public:
     NODELETE static Ref<MockCDMInstance> create(MockCDM&);
 
@@ -174,6 +176,7 @@ private:
 };
 
 class MockCDMInstanceSession : public CDMInstanceSession {
+    WTF_MAKE_TZONE_ALLOCATED(MockCDMInstanceSession);
 public:
     explicit MockCDMInstanceSession(WeakPtr<MockCDMInstance>&&);
 

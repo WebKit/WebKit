@@ -37,6 +37,7 @@
 #include <WebCore/StyleURL.h>
 #include <WebCore/TransformOperationData.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
@@ -87,6 +88,7 @@ protected:
 };
 
 class ReferencePathOperation final : public PathOperation {
+    WTF_MAKE_TZONE_ALLOCATED(ReferencePathOperation);
 public:
     static Ref<ReferencePathOperation> create(const Style::URL&, const AtomString& fragment, const RefPtr<SVGElement>);
     NODELETE WEBCORE_EXPORT static Ref<ReferencePathOperation> create(std::optional<Path>&&);
@@ -121,6 +123,7 @@ private:
 };
 
 class ShapePathOperation final : public PathOperation {
+    WTF_MAKE_TZONE_ALLOCATED(ShapePathOperation);
 public:
     WEBCORE_EXPORT static Ref<ShapePathOperation> create(Style::BasicShape, CSSBoxType = CSSBoxType::BoxMissing);
 
@@ -147,6 +150,7 @@ private:
 };
 
 class BoxPathOperation final : public PathOperation {
+    WTF_MAKE_TZONE_ALLOCATED(BoxPathOperation);
 public:
     NODELETE WEBCORE_EXPORT static Ref<BoxPathOperation> create(CSSBoxType);
 
@@ -174,6 +178,7 @@ private:
 };
 
 class RayPathOperation final : public PathOperation {
+    WTF_MAKE_TZONE_ALLOCATED(RayPathOperation);
 public:
     NODELETE WEBCORE_EXPORT static Ref<RayPathOperation> create(Style::RayFunction&&, CSSBoxType = CSSBoxType::BoxMissing);
     NODELETE WEBCORE_EXPORT static Ref<RayPathOperation> create(const Style::RayFunction&, CSSBoxType = CSSBoxType::BoxMissing);

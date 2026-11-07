@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HistoryItem);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HistoryItemClient);
 
 int64_t HistoryItem::generateSequenceNumber()

@@ -28,8 +28,11 @@
 
 #include "SVGElement.h"
 #include "SVGPropertyRegistry.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAnimatedPropertyBase);
 
 SVGAnimatedPropertyBase::SVGAnimatedPropertyBase(SVGElement* contextElement)
     : m_contextElement(contextElement)

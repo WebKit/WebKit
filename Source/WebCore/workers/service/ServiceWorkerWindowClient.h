@@ -27,6 +27,7 @@
 
 #include "ServiceWorkerClient.h"
 #include "VisibilityState.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class DeferredPromise;
 class ServiceWorkerGlobalScope;
 
 class ServiceWorkerWindowClient final : public ServiceWorkerClient {
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerWindowClient);
 public:
     static Ref<ServiceWorkerWindowClient> create(ServiceWorkerGlobalScope& context, ServiceWorkerClientData&& data)
     {

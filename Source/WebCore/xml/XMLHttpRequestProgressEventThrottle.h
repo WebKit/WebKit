@@ -29,6 +29,7 @@
 #include "EventLoop.h"
 #include "XMLHttpRequest.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -49,7 +50,7 @@ enum ProgressEventAction {
 // This implements the XHR2 progress event dispatching: "dispatch a progress event called progress
 // about every 50ms or for every byte received, whichever is least frequent".
 class XMLHttpRequestProgressEventThrottle {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XMLHttpRequestProgressEventThrottle);
+    WTF_MAKE_TZONE_ALLOCATED(XMLHttpRequestProgressEventThrottle);
 public:
     explicit XMLHttpRequestProgressEventThrottle(XMLHttpRequest&);
     virtual ~XMLHttpRequestProgressEventThrottle();

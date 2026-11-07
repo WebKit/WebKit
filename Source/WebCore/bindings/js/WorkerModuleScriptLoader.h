@@ -34,6 +34,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ class ModuleScriptLoaderClient;
 class WorkerScriptLoader;
 
 class WorkerModuleScriptLoader final : public ModuleScriptLoader, private WorkerScriptLoaderClient {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerModuleScriptLoader);
 public:
     NODELETE static Ref<WorkerModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 

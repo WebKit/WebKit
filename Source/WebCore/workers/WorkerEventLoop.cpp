@@ -30,8 +30,11 @@
 #include "Microtasks.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletThread.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerEventLoop);
 
 Ref<WorkerEventLoop> WorkerEventLoop::create(WorkerOrWorkletGlobalScope& context)
 {

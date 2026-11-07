@@ -47,6 +47,7 @@ class PendingCallbacks;
 class Text;
 
 class XMLParserContext : public RefCounted<XMLParserContext> {
+    WTF_MAKE_TZONE_ALLOCATED(XMLParserContext);
 public:
     static RefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void* userData, const UTF8CString& chunk);
     static Ref<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void* userData);

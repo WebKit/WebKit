@@ -26,8 +26,12 @@
 #include "config.h"
 #include "InlineDisplayContent.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 namespace InlineDisplay {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Content);
 
 void Content::clear()
 {

@@ -86,6 +86,12 @@ using JSON::ArrayOf;
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorStyle);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorStyleSheet);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorStyleSheetForInlineStyle);
+
 using namespace Inspector;
 
 enum class RuleFlatteningStrategy {

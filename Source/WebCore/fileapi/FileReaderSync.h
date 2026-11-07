@@ -32,6 +32,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -45,6 +46,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class FileReaderSync : public RefCounted<FileReaderSync> {
+    WTF_MAKE_TZONE_ALLOCATED(FileReaderSync);
 public:
     static Ref<FileReaderSync> create()
     {

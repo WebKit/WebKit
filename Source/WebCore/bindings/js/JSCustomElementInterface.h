@@ -36,6 +36,7 @@
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace JSC {
@@ -55,6 +56,7 @@ class JSDOMGlobalObject;
 enum class ParserConstructElementWithEmptyStack : bool { No, Yes };
 
 class JSCustomElementInterface : public RefCounted<JSCustomElementInterface>, public ActiveDOMCallback {
+    WTF_MAKE_TZONE_ALLOCATED(JSCustomElementInterface);
 public:
     static Ref<JSCustomElementInterface> create(const QualifiedName& name, JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {

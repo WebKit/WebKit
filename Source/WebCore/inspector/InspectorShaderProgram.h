@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakRef.h>
 
@@ -47,6 +48,7 @@ class WebGLProgram;
 #endif // ENABLE(WEBGL)
 
 class InspectorShaderProgram final : public RefCounted<InspectorShaderProgram> {
+    WTF_MAKE_TZONE_ALLOCATED(InspectorShaderProgram);
 public:
 #if ENABLE(WEBGL)
     NODELETE static Ref<InspectorShaderProgram> create(WebGLProgram&, InspectorCanvas&);

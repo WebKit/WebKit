@@ -35,6 +35,7 @@
 #include <WebCore/JSDOMPromise.h>
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,6 +51,7 @@ enum class RejectAsHandled : bool { No, Yes };
 
 
 class DeferredPromise : public DOMGuarded<JSC::JSPromise> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeferredPromise, WEBCORE_EXPORT);
 public:
     enum class Mode {
         ClearPromiseOnResolve,

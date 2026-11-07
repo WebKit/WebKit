@@ -74,6 +74,7 @@ static const AtomString& indefiniteAtom()
 }
 
 class ConditionEventListener final : public EventListener {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ConditionEventListener);
 public:
     NODELETE static Ref<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
     {

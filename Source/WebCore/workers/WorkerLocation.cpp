@@ -28,10 +28,13 @@
 
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerLocation);
 
 String WorkerLocation::href() const
 {

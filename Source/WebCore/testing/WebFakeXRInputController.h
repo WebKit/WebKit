@@ -35,6 +35,7 @@
 #include "XRTargetRayMode.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(WEBXR_HANDS)
@@ -44,6 +45,7 @@
 namespace WebCore {
 
 class WebFakeXRInputController final : public RefCounted<WebFakeXRInputController> {
+    WTF_MAKE_TZONE_ALLOCATED(WebFakeXRInputController);
 public:
     static Ref<WebFakeXRInputController> create(PlatformXR::InputSourceHandle, const FakeXRInputSourceInit&);
 

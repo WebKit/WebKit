@@ -78,6 +78,7 @@ private:
 };
 
 class RasterLayoutShape final : public LayoutShape {
+    WTF_MAKE_TZONE_ALLOCATED(RasterLayoutShape);
     WTF_MAKE_NONCOPYABLE(RasterLayoutShape);
 public:
     RasterLayoutShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)

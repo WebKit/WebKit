@@ -45,8 +45,11 @@
 #include "ServiceWorkerRegistration.h"
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerInternals);
 
 ServiceWorkerInternals::ServiceWorkerInternals(ServiceWorkerGlobalScope& globalScope, ServiceWorkerIdentifier identifier)
     : m_identifier(identifier)

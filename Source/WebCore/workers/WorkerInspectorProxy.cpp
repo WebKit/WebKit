@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorProxy::PageChannel);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorProxy);
 
 using namespace Inspector;

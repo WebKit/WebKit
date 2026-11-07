@@ -27,8 +27,11 @@
 #include "HitTestingTransformState.h"
 
 #include "LayoutRect.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HitTestingTransformState);
 
 void HitTestingTransformState::translate(int x, int y)
 {

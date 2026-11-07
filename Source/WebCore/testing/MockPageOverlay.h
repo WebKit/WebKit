@@ -26,10 +26,12 @@
 #pragma once
 
 #include "PageOverlay.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MockPageOverlay : public RefCounted<MockPageOverlay> {
+    WTF_MAKE_TZONE_ALLOCATED(MockPageOverlay);
 public:
     NODELETE static Ref<MockPageOverlay> create(PageOverlay*);
 

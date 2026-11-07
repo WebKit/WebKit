@@ -25,6 +25,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 // This implements a counter tree that is used for finding parents in counters() lookup,
@@ -42,6 +43,7 @@ class RenderCounter;
 class RenderElement;
 
 class CounterNode : public RefCounted<CounterNode>, public CanMakeSingleThreadWeakPtr<CounterNode> {
+    WTF_MAKE_TZONE_ALLOCATED(CounterNode);
 public:
     enum class Type : uint8_t { Increment, Reset, Set };
 

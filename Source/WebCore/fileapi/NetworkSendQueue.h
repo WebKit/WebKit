@@ -30,6 +30,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/CString.h>
 
@@ -44,6 +45,7 @@ class BlobLoader;
 class FragmentedSharedBuffer;
 
 class WEBCORE_EXPORT NetworkSendQueue : public RefCounted<NetworkSendQueue>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NetworkSendQueue, WEBCORE_EXPORT);
 public:
     using WriteString = Function<void(const UTF8CString&)>;
     using WriteRawData = Function<void(std::span<const uint8_t>)>;

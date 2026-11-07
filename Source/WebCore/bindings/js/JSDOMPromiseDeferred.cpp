@@ -47,8 +47,11 @@
 #include <JavaScriptCore/Strong.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeferredPromise);
 using namespace JSC;
 
 RefPtr<DeferredPromise> DeferredPromise::create(JSDOMGlobalObject& globalObject, Mode mode)

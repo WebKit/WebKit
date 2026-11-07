@@ -29,10 +29,12 @@
 #include "ExceptionOr.h"
 #include "SVGLengthContext.h"
 #include "SVGValueProperty.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGLength : public SVGValueProperty<SVGLengthValue> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGLength);
     using Base = SVGValueProperty<SVGLengthValue>;
     using Base::Base;
     using Base::m_value;

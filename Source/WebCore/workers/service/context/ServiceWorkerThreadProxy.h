@@ -41,6 +41,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakRef.h>
 
@@ -57,7 +58,7 @@ struct ServiceWorkerContextData;
 enum class WorkerThreadMode : bool;
 
 class ServiceWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ServiceWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeThreadSafeCheckedPtr<ServiceWorkerThreadProxy> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ServiceWorkerThreadProxy);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ServiceWorkerThreadProxy, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerThreadProxy);
 public:
     template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)

@@ -30,6 +30,7 @@
 #include "ServiceWorkerClientData.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -45,6 +46,7 @@ struct StructuredSerializeOptions;
 template<typename> class ExceptionOr;
 
 class ServiceWorkerClient : public RefCounted<ServiceWorkerClient>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerClient);
 public:
     using Identifier = ScriptExecutionContextIdentifier;
 

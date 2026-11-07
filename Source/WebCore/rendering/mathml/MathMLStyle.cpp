@@ -38,8 +38,11 @@
 #include "RenderMathMLScripts.h"
 #include "RenderMathMLToken.h"
 #include "RenderMathMLUnderOver.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLStyle);
 
 using namespace MathMLNames;
 

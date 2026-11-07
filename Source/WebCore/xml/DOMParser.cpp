@@ -27,8 +27,11 @@
 #include "Settings.h"
 #include "TrustedType.h"
 #include "XMLDocument.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMParser);
 
 inline DOMParser::DOMParser(Document& contextDocument)
     : m_contextDocument(contextDocument)

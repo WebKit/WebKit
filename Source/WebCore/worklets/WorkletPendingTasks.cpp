@@ -28,8 +28,11 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "Worklet.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkletPendingTasks);
 
 Ref<WorkletPendingTasks> WorkletPendingTasks::create(Worklet& worklet, PendingTaskPromise&& promise, int counter)
 {

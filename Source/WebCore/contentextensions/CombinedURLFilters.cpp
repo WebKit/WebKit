@@ -31,6 +31,7 @@
 #include "HashableActionList.h"
 #include "Term.h"
 #include <wtf/DataLog.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,7 +46,8 @@ struct PrefixTreeEdge {
 typedef Vector<PrefixTreeEdge, 0, CrashOnOverflow, 1> PrefixTreeEdges;
 
 struct PrefixTreeVertex {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(PrefixTreeVertex);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(PrefixTreeVertex);
+public:
 
     PrefixTreeEdges edges;
 };

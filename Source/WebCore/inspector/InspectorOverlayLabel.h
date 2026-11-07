@@ -74,7 +74,7 @@ public:
     };
 
     struct Content {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Content);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Content);
 
         struct Decoration {
             enum class Type : uint8_t {

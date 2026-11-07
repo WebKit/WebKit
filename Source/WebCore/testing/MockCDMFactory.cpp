@@ -42,6 +42,12 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockCDMFactory);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockCDMInstance);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockCDMInstanceSession);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MockCDM);
 
 NODELETE static WeakHashSet<MockCDMFactory>& allMockFactories()

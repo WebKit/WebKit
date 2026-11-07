@@ -41,8 +41,11 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "WorkerScriptFetcher.h"
 #include "WorkerScriptLoader.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerModuleScriptLoader);
 
 Ref<WorkerModuleScriptLoader> WorkerModuleScriptLoader::create(ModuleScriptLoaderClient& client, DeferredPromise& promise, WorkerScriptFetcher& scriptFetcher, RefPtr<JSC::ScriptFetchParameters>&& parameters)
 {

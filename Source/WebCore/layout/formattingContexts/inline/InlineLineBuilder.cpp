@@ -41,13 +41,17 @@
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 namespace Layout {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LineBuilder);
+
 struct LineContent {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LineContent);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(LineContent);
+public:
 
     InlineItemRange range;
     size_t partialTrailingContentLength { 0 };
@@ -203,7 +207,8 @@ static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs
 }
 
 struct LineCandidate {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LineCandidate);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(LineCandidate);
+public:
 
     NODELETE void reset();
 

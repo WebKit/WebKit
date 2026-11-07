@@ -33,11 +33,14 @@
 #include "SVGParserUtilities.h"
 #include "SVGTransform.h"
 #include "SVGTransformListInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTransformList);
 
 SVGTransformList::SVGTransformList() = default;
 

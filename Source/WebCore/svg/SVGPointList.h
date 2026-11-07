@@ -27,10 +27,12 @@
 
 #include "SVGPoint.h"
 #include "SVGValuePropertyList.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGPointList final : public SVGValuePropertyList<SVGPoint> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGPointList);
     using Base = SVGValuePropertyList<SVGPoint>;
 
 public:
