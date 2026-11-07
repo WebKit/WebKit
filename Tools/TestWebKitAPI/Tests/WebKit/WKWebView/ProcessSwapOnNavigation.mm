@@ -59,11 +59,11 @@
 #import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <notify.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
+#import <wtf/MemoryPressureHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
@@ -9625,7 +9625,7 @@ TEST(ProcessSwap, MemoryPressureDuringProcessSwap)
     navigationDelegate->decidePolicyForNavigationAction = [](WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
         decisionHandler(WKNavigationActionPolicyAllow);
 
-        notify_post("org.WebKit.lowMemory");
+        MemoryPressureHandler::singleton().beginSimulatedMemoryPressure();
     };
 
     // The navigation may or may not finish depending on timing.
@@ -9636,6 +9636,8 @@ TEST(ProcessSwap, MemoryPressureDuringProcessSwap)
     auto before = MonotonicTime::now();
     while ((MonotonicTime::now() - before) < 1_s)
         TestWebKitAPI::Util::spinRunLoop(10);
+
+    MemoryPressureHandler::singleton().endSimulatedMemoryPressure();
 }
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
