@@ -33,11 +33,9 @@
 #include "config.h"
 #include "InspectorTimelineAgent.h"
 
-#include "Element.h"
 #include "Event.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCPUProfilerAgent.h"
-#include "InspectorDOMAgent.h"
 #include "InspectorMemoryAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSExecState.h"
@@ -346,23 +344,6 @@ void InspectorTimelineAgent::didPerformanceMark(const String& label, std::option
             return; // Stopwatch wasn't running at the time of timeInMonotonicTime.
     }
     appendRecord(TimelineRecordFactory::createTimeStampData(label), TimelineRecordType::TimeStamp, true, timestamp);
-}
-
-void InspectorTimelineAgent::didEnqueueFirstContentfulPaint()
-{
-    appendRecord(JSON::Object::create(), TimelineRecordType::FirstContentfulPaint, false);
-}
-
-void InspectorTimelineAgent::didEnqueueLargestContentfulPaint(Element* element, unsigned area)
-{
-    appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeIdForNode(element), area), TimelineRecordType::LargestContentfulPaint, false);
-}
-
-Inspector::Protocol::DOM::NodeId InspectorTimelineAgent::nodeIdForNode(Node* node)
-{
-    if (CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentDOMAgent())
-        return domAgent->pushNodeToFrontend(node);
-    return 0;
 }
 
 void InspectorTimelineAgent::startProgrammaticCapture()
