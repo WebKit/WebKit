@@ -444,6 +444,7 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
 bool ensureGStreamerInitializedNonWebProcess()
 {
     RELEASE_ASSERT(!isInWebProcess());
+    RELEASE_ASSERT(!isInNetworkProcess());
 
     static std::once_flag onceFlag;
     static bool isGStreamerInitialized;

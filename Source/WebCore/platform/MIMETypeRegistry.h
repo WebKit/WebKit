@@ -118,6 +118,9 @@ public:
     // isUnsupportedTextMIMEType() returns false.
     WEBCORE_EXPORT static bool canShowMIMEType(const String& mimeType);
 
+    // Like canShowMIMEType(), without isSupportedMediaMIMEType(), which asks the media engines.
+    WEBCORE_EXPORT static bool canShowNonMediaMIMEType(const String& mimeType);
+
     // Check to see if a MIME type is one where an XML document should be created
     // rather than an HTML document.
     WEBCORE_EXPORT static bool isXMLMIMEType(const String& mimeType);
