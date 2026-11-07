@@ -26,12 +26,14 @@
 #pragma once
 
 #include "ScriptElementCachedScriptFetcher.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScriptElement;
 
 class InlineClassicScript final : public ScriptElementCachedScriptFetcher {
+    WTF_MAKE_TZONE_ALLOCATED(InlineClassicScript);
 public:
     static Ref<InlineClassicScript> create(ScriptElement&);
 

@@ -27,12 +27,14 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SecurityOrigin;
 
 class SecurityOriginPolicy : public RefCounted<SecurityOriginPolicy> {
+    WTF_MAKE_TZONE_ALLOCATED(SecurityOriginPolicy);
 public:
     NODELETE static Ref<SecurityOriginPolicy> create(Ref<SecurityOrigin>&&);
     ~SecurityOriginPolicy();

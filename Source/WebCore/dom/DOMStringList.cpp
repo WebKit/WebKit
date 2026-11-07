@@ -27,8 +27,11 @@
 #include "DOMStringList.h"
 
 #include <ranges>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMStringList);
 
 String DOMStringList::item(unsigned index) const
 {

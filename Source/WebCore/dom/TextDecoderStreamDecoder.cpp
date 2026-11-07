@@ -26,8 +26,11 @@
 #include "TextDecoderStreamDecoder.h"
 
 #include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextDecoderStreamDecoder);
 
 ExceptionOr<Ref<TextDecoderStreamDecoder>> TextDecoderStreamDecoder::create(const String& label, bool fatal, bool ignoreBOM)
 {

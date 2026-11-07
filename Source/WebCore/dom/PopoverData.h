@@ -30,6 +30,7 @@
 #include "HTMLElement.h"
 #include "HTMLFormControlElement.h"
 #include "ToggleEventTask.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -89,6 +90,7 @@ public:
     };
 
     class PopoverCloseWatcherEventListener final : public EventListener {
+        WTF_MAKE_TZONE_ALLOCATED(PopoverCloseWatcherEventListener);
     public:
         static Ref<PopoverCloseWatcherEventListener> create(HTMLElement& popover)
         {

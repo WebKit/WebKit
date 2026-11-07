@@ -27,6 +27,7 @@
 #include "BufferSource.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace PAL {
 class TextCodec;
@@ -37,6 +38,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 class TextDecoder final : public RefCounted<TextDecoder> {
+    WTF_MAKE_TZONE_ALLOCATED(TextDecoder);
 public:
     ~TextDecoder();
 
