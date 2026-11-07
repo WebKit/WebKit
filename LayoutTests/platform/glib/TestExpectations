@@ -963,6 +963,12 @@ imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/column-grid-lan
 # Passing since 325530@main.
 imported/w3c/web-platform-tests/svg/struct/reftests/conditional-processing-never-rendered-resources.svg [ Pass ]
 
+# Passing since 325836@main.
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/shadow-dom-slotted-moveBefore.tentative.html [ Pass ]
+
+# Passing since 325849@main.
+imported/w3c/web-platform-tests/css/css-images/conic-gradient-calc-angle-percentage.html [ Pass ]
+
 imported/w3c/web-platform-tests/fs/ [ Pass ]
 storage/filesystemaccess/ [ Pass ]
 imported/w3c/web-platform-tests/storage/ [ Pass ]
@@ -2189,12 +2195,6 @@ http/tests/images/mp4-partial-load.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-deletion.any.html [ Pass Failure ]
-
-# Fails in Release but passes in Debug.
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.html [ Pass ]
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.serviceworker.html [ Pass ]
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.sharedworker.html [ Pass ]
-[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.worker.html [ Pass ]
 
 webkit.org/b/329575 storage/indexeddb/clear-data-with-stalled-abort-crash.html [ Skip ]
 webkit.org/b/329575 storage/indexeddb/close-database-with-stalled-abort-crash.html [ Skip ]
@@ -5309,6 +5309,9 @@ webkit.org/b/329971 http/wpt/service-workers/service-worker-fetch-task-cancel-on
 webkit.org/b/328193 fast/forms/select/base/select-translated-option-content-repaint.html [ ImageOnlyFailure Pass ]
 webkit.org/b/330316 media/media-source/media-source-loop-multiple-times.html [ Crash Pass ]
 webkit.org/b/330318 webaudio/audioworklet-stops-on-document-stop.html [ Failure Pass ]
+
+webkit.org/b/330502 [ Debug ] media/video-source-error.html [ Failure Pass ]
+webkit.org/b/330503 [ Debug ] http/tests/workers/service/indexeddb-file-posted-to-message-port-after-release.html [ Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 

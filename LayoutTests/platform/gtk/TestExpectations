@@ -1309,3 +1309,5 @@ webkit.org/b/329973 fullscreen/full-screen-enter-while-exiting-mid-completion-ha
 webkit.org/b/329973 [ Debug ] fullscreen/full-screen-enter-while-exiting-fully-mid-completion-handler.html [ Crash Pass ]
 webkit.org/b/330314 [ Debug ] imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-scroll-into-view.html [ ImageOnlyFailure Pass ]
 webkit.org/b/330317 webanimations/accelerated-backdrop-filter.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/330505 [ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.any.serviceworker.html [ Failure Pass ]
