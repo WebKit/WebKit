@@ -1,7 +1,7 @@
 if (WEBKIT_PLATFORM_MAC)
 
 # MiniBrowser is the primary dev-loop target -- simpler than the test harnesses.
-# Default ON is set via WEBKIT_OPTION_DEFAULT_PORT_VALUE in OptionsMac.cmake.
+# Default ON is set via WEBKIT_OPTION_DEFAULT_PORT_VALUE in OptionsCocoa.cmake.
 if (ENABLE_MINIBROWSER AND ENABLE_WEBKIT)
     add_subdirectory(MiniBrowser/mac)
 endif ()
@@ -48,6 +48,7 @@ endif ()
 
 endif ()
 
-if (WEBKIT_SDK_IS_MACCATALYST AND ENABLE_MINIBROWSER AND ENABLE_WEBKIT)
+# The iOS family includes Mac Catalyst.
+if (WEBKIT_SDK_IS_IOS_FAMILY AND ENABLE_MINIBROWSER AND ENABLE_WEBKIT)
     add_subdirectory(MobileMiniBrowser)
 endif ()

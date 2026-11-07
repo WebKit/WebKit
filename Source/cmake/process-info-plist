@@ -78,6 +78,10 @@ def main(argv):
         plist['MinimumOSVersion'] = args.deployment_target
     else:
         plist.setdefault('LSMinimumSystemVersion', args.deployment_target)
+    if args.device_family and args.platform == 'MacOSX':
+        # Xcode leaves the iOS-only keys out of a Mac Catalyst bundle.
+        plist.pop('LSRequiresIPhoneOS', None)
+        plist.pop('UIRequiredDeviceCapabilities', None)
 
     contents = plistlib.dumps(plist)
     try:

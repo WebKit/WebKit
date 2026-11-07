@@ -876,11 +876,12 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
             VERBATIM
             COMMENT "Code signing ${_target}")
         # A POST_BUILD command only re-runs when the target relinks, so make a
-        # change to the entitlements force a relink; otherwise editing the
-        # entitlements would leave the binary signed with the stale set.
-        if (_entitlements_path)
+        # change to any signing input, like the entitlements or the
+        # ${_target}_CODE_SIGN_INPUTS, force a relink; otherwise the binary
+        # would stay signed with the stale inputs.
+        if (_arg_DEPENDS)
             set_property(TARGET ${_target} APPEND PROPERTY
-                LINK_DEPENDS ${_entitlements_path})
+                LINK_DEPENDS ${_arg_DEPENDS})
         endif ()
         # Preserve a named ${_target}_CodeSign target so ordering edges elsewhere
         # (e.g. WebKit.framework signing after its XPC services) keep resolving.

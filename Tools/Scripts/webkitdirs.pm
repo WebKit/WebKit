@@ -4273,8 +4273,12 @@ sub runSafari
 
 sub runMiniBrowser
 {
-    if (isAppleMacWebKit() || isMacCatalystWebKit()) {
+    if (isAppleMacWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
+    }
+    # Only the CMake build makes MobileMiniBrowser for Mac Catalyst.
+    if (isMacCatalystWebKit() && isCMakeBuild()) {
+        return runMacWebKitApp(File::Spec->catfile(productDir(), "MobileMiniBrowser.app", "Contents", "MacOS", "MobileMiniBrowser"));
     }
     if (canRunWebKitAppInSimulator()) {
         return runIOSWebKitApp(mobileMiniBrowserBundle());
@@ -4284,8 +4288,11 @@ sub runMiniBrowser
 
 sub debugMiniBrowser
 {
-    if (isAppleMacWebKit() || isMacCatalystWebKit()) {
+    if (isAppleMacWebKit()) {
         execMacWebKitAppForDebugging(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
+    }
+    if (isMacCatalystWebKit() && isCMakeBuild()) {
+        execMacWebKitAppForDebugging(File::Spec->catfile(productDir(), "MobileMiniBrowser.app", "Contents", "MacOS", "MobileMiniBrowser"));
     }
 
     return 1;

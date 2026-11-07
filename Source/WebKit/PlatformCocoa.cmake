@@ -1905,6 +1905,11 @@ function(WEBKIT_EMBED_EXTENSION _host_target _ext_name _host_bundle_id)
     add_custom_command(TARGET ${_host_target} POST_BUILD
         COMMAND codesign --force --sign -
             "$<TARGET_FILE_DIR:${_host_target}>/Extensions/${_ext_name}.appex")
+
+    # The host embeds the extension in POST_BUILD, before signing, so a change
+    # to the extension has to re-sign the host. Call this before the host's
+    # WEBKIT_EXECUTABLE.
+    set(${_host_target}_CODE_SIGN_INPUTS ${${_host_target}_CODE_SIGN_INPUTS} $<TARGET_FILE:${_ext_name}> PARENT_SCOPE)
 endfunction()
 
 function(WEBKIT_DEFINE_IOS_RESOURCES)

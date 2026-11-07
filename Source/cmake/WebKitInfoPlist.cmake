@@ -8,8 +8,9 @@
 # )
 #
 # ${VAR} and @VAR@ references are substituted from the calling scope, as
-# configure_file() does. Then it adds common platform keys set by
-# WebKitXcodeSDK.
+# configure_file() does, and so are $(VAR) references, as Xcode spells them.
+# Then it adds common platform keys set by WebKitXcodeSDK, and for Mac Catalyst
+# leaves out the iOS-only keys, as Xcode does.
 #
 # <output> is only rewritten when its contents change, so reconfiguring doesn't
 # relink or re-sign the bundle it belongs to.
@@ -26,6 +27,7 @@ function(WEBKIT_PROCESS_INFO_PLIST _input _output)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${_input} ${_script})
 
     file(READ ${_input} _contents)
+    string(REGEX REPLACE "\\$\\(([A-Za-z_]+)\\)" "\${\\1}" _contents "${_contents}")
     string(CONFIGURE "${_contents}" _contents)
     get_filename_component(_name ${_output} NAME)
     string(MD5 _hash ${_output})
