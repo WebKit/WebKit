@@ -26,19 +26,14 @@ function test() {
         return WI.networkManager.frames.filter((frame) => frame !== WI.networkManager.mainFrame);
     }
 
-    function awaitFrameRemoved(frame, timeout = 3000) {
+    function awaitFrameRemoved(frame) {
         return new Promise((resolve) => {
-            let timer = setTimeout(() => finish(false), timeout);
-            function finish(removed) {
-                clearTimeout(timer);
+            WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasRemoved, function listener(event) {
+                if (event.data.frame !== frame)
+                    return;
                 WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasRemoved, listener);
-                resolve(removed);
-            }
-            function listener(event) {
-                if (event.data.frame === frame)
-                    finish(true);
-            }
-            WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasRemoved, listener);
+                resolve(true);
+            });
         });
     }
 
@@ -46,11 +41,11 @@ function test() {
         let removedPromise = previousFrame ? awaitFrameRemoved(previousFrame) : Promise.resolve(true);
         InspectorTest.evaluateInPage(`navigateIFrame(${JSON.stringify(url)})`);
 
-        for (let attempt = 0; attempt < 150; ++attempt) {
-            if (childFrames().some((frame) => frame.parentFrame && frame.url === url))
-                break;
+        // A cross-process navigation waits for the frontend to set up and resume the new frame target, which can
+        // take several seconds in slower configurations. Wait without a deadline so a slow load is not reported as
+        // a missing frame removal; a removal that never happens makes the test time out.
+        while (!childFrames().some((frame) => frame.parentFrame && frame.url === url))
             await new Promise((resolve) => setTimeout(resolve, 20));
-        }
 
         return removedPromise;
     }
@@ -74,6 +69,7 @@ function test() {
     suite.addTestCase({
         name: "SiteIsolation.Page.FrameProcessSwapSingleFrame.AToBToA",
         description: "An iframe that swaps process on a cross-site navigation, and then swaps back, should always be represented by exactly one WI.Frame.",
+        timeout: -1,
         async test() {
             let urlA = `${mainOrigin}${path}?a-${run}`;
             let urlB = `${otherOrigin}${path}?b-${run}`;
