@@ -24,7 +24,9 @@
  */
 
 // The rendering mode of the testing functions of the 2D canvas contexts.
-enum RenderingMode {
+[
+    ExportMacro=WEBCORE_EXPORT
+] enum RenderingMode {
     "Unaccelerated",
     "Accelerated",
 };

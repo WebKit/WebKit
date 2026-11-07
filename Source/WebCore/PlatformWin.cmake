@@ -153,6 +153,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 list(APPEND WebCore_LIBRARIES
     crypt32
     iphlpapi
+    ole32
     usp10
     ws2_32
 )
