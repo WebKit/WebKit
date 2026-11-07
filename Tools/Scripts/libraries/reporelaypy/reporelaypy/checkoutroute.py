@@ -153,7 +153,8 @@ class Redirector(object):
 
 
 class CheckoutRoute(AuthedBlueprint):
-    VALID_REF_RE = re.compile(r'^[a-zA-Z0-9\/\.\@-]+$')
+    # No component of a ref may start with '-', otherwise git will parse that component as an option
+    VALID_REF_RE = re.compile(r'^(?![\/\@]*-)(?!.*[\/\@]-)[a-zA-Z0-9\/\.\@-]+$')
 
     @classmethod
     def find_newer(cls, a, b):

@@ -231,6 +231,34 @@ class CheckoutRouteUnittest(testing.PathTestCase):
             ))
 
     @mock_app
+    def test_json_option_ref(self, app=None, client=None):
+        with OutputCapture(), mocks.local.Git(self.path) as repo, patch('webkitscmpy.local.Git.find') as find:
+            app.register_blueprint(CheckoutRoute(
+                Checkout(path=self.path, url=repo.remote, sentinal=False),
+                redirectors=[Redirector('https://trac.webkit.org')],
+            ))
+
+            for ref in ('4@--graph', '4@-z', '--graph', 'origin/--graph', '4@main/--all'):
+                response = client.get('{}/json'.format(ref))
+                self.assertEqual(response.status_code, 404, ref)
+            find.assert_not_called()
+
+    @mock_app
+    def test_redirect_option_ref(self, app=None, client=None):
+        with OutputCapture(), mocks.local.Git(self.path) as repo, patch('webkitscmpy.local.Git.find', side_effect=ValueError) as find:
+            app.register_blueprint(CheckoutRoute(
+                Checkout(path=self.path, url=repo.remote, sentinal=False),
+                redirectors=[Redirector('https://github.com/WebKit/WebKit')],
+            ))
+
+            for path in ('4@-z', '4@--/github', 'compare/2@--graph...4@main', 'compare/2@main...4@--source'):
+                response = client.get(path)
+                self.assertEqual(response.status_code, 302, path)
+                self.assertNotIn('/commit/', response.headers.get('location'))
+                self.assertNotIn('/compare/', response.headers.get('location'))
+            self.assertEqual([call.args for call in find.call_args_list], [('4@main',), ('2@main',)])
+
+    @mock_app
     def test_redirect(self, app=None, client=None):
         with OutputCapture(), mocks.local.Git(self.path) as repo:
             app.register_blueprint(CheckoutRoute(
