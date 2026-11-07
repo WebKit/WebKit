@@ -174,6 +174,7 @@ private:
     LayoutSize borderBoxOffsetInRoot(const ContainingBlockState&);
     void addFloats(PlacedFloats::List&&, const ContainingBlockState&);
     void addInlineContentFloats(const PlacedFloats::List&);
+    PlacedFloats floatsAtHypotheticalPosition() const;
 
     const RenderBlockFlow& root() const { return m_root; }
     LayoutIntegration::BlockIntegrationUtils& integrationUtils() const { return m_integrationUtils; }

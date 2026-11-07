@@ -643,8 +643,7 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
 }
 
 // What a float before a box in the block formatting context makes it need.
-// FIXME: Block containers with an inline direction of their own, and out-of-flow boxes between block-level boxes that would be inline-level,
-// whose static position is where a line box beside the floats would start (RenderBlockFlow::staticInlinePositionForOriginalDisplayInline).
+// FIXME: Block containers with an inline direction of their own.
 static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree, bool hasFloatsWithShape)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
@@ -653,8 +652,13 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
     CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*box->parent());
     auto isInInlineContent = box->parent()->isInlineBox() || (parentBlockContainer && parentBlockContainer->childrenInline());
     if (box->isOutOfFlowPositioned()) {
-        if (!isInInlineContent && box->style().originalDisplay().isInlineType())
-            return BlockAvoidanceReason::ContentHasFloat;
+        // FIXME: One that would be inline-level inside a box with clear, which may still go below the floats after the static position is taken.
+        if (!isInInlineContent && box->style().originalDisplay().isInlineType()) {
+            for (CheckedPtr<const RenderElement> ancestor = box->parent(); ancestor && ancestor != &rootContainer; ancestor = ancestor->parent()) {
+                if (ancestor->style().clear() != Clear::None)
+                    return BlockAvoidanceReason::ContentHasFloat;
+            }
+        }
         return { };
     }
     // FIXME: clear on a block-level box in inline content, which the inline formatting context places, in quirks mode, where a quirk container
