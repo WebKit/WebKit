@@ -888,3 +888,9 @@
         (deny (with telemetry-backtrace) asr-parser-enter)
         (allow (with telemetry-backtrace) asr-parser-enter
            (asr-parser-name "com.apple.imageio.png"))))
+
+#if HAVE(SECURITY_OVERRIDES)
+(with-filter (require-not (state-flag "BlockSecurityOverrides"))
+    (allow mach-lookup
+        (global-name "com.apple.securityoverrides")))
+#endif

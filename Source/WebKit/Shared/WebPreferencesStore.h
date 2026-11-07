@@ -65,15 +65,19 @@ struct WebPreferencesStore {
 
     void logNonDefaultValues() const;
 
+    void setOverriddenValues(ValueMap&&);
+    const ValueMap& overriddenValues() const LIFETIME_BOUND { return m_overriddenValues; }
+
     // For WebKitTestRunner usage.
     static void overrideBoolValueForKey(const String& key, bool value);
     static void removeTestRunnerOverrides();
 
     ValueMap m_values { };
     ValueMap m_overriddenDefaults { };
+    ValueMap m_overriddenValues { };
 
-    WebPreferencesStore isolatedCopy() const & { return { crossThreadCopy(m_values), crossThreadCopy(m_overriddenDefaults) }; }
-    WebPreferencesStore isolatedCopy() && { return { crossThreadCopy(WTF::move(m_values)), crossThreadCopy(WTF::move(m_overriddenDefaults)) }; }
+    WebPreferencesStore isolatedCopy() const & { return { crossThreadCopy(m_values), crossThreadCopy(m_overriddenDefaults), crossThreadCopy(m_overriddenValues) }; }
+    WebPreferencesStore isolatedCopy() && { return { crossThreadCopy(WTF::move(m_values)), crossThreadCopy(WTF::move(m_overriddenDefaults)), crossThreadCopy(WTF::move(m_overriddenValues)) }; }
 
     static ValueMap& defaults();
 };
