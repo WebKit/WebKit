@@ -1,0 +1,5 @@
+
+PASS Fetch cross-origin no-cors request does not include Available-Dictionary header
+PASS Fetch same-origin no-cors request includes Available-Dictionary header
+PASS Opaque responses resulting from cross-origin redirects in no-cors mode do not register dictionary
+
