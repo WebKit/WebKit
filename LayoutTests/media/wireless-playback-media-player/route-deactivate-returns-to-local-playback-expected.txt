@@ -1,0 +1,17 @@
+
+Test that deactivating the active MediaDeviceRoute returns the video element to local playback instead of failing with an error.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route.playbackRate = 1)
+RUN(route.timeRange = { start: 0, duration: 60 })
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(playing)
+EXPECTED (video.webkitCurrentPlaybackTargetIsWireless == 'true') OK
+RUN(internals.mockMediaDeviceRouteController.deactivateRoute(route))
+EVENT(canplaythrough)
+EXPECTED (video.error == 'null') OK
+EXPECTED (video.webkitCurrentPlaybackTargetIsWireless == 'false') OK
+END OF TEST
+

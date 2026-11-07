@@ -218,7 +218,12 @@ void MediaPlayerPrivateWirelessPlayback::setShouldPlayToPlaybackTarget(bool shou
 
     if (!isCurrentPlaybackTargetWireless()) {
         notifyRateAndPlaybackStateChanged();
-        setNetworkState(MediaPlayer::NetworkState::FormatError);
+        if (m_readyState < MediaPlayer::ReadyState::HaveMetadata) {
+            setNetworkState(MediaPlayer::NetworkState::FormatError);
+            return;
+        }
+        if (RefPtr player = m_player)
+            player->currentPlaybackTargetIsWirelessChanged(false);
         return;
     }
 
