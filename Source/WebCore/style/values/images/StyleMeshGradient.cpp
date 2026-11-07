@@ -35,6 +35,32 @@
 namespace WebCore {
 namespace Style {
 
+static RectEdges<FloatPoint> completeControlPoints(std::span<const FloatPoint> controlPoints, FloatPoint meshPoint)
+{
+    // "Control points are defined in the standard "top, right, bottom, left" order
+    //  (similar to properties like 'margin'). If omitted, a control point takes its
+    //  value from the specified point on the opposite side, rotated 180 degrees around
+    //  the mesh point. (The second point, if omitted, takes its value from the first,
+    //  rotated 90 degrees.)"
+    // https://github.com/w3c/csswg-drafts/pull/14655
+
+    auto rotated90Degrees = [&](FloatPoint controlPoint) {
+        auto offset = controlPoint - meshPoint;
+        return meshPoint + FloatSize { -offset.height(), offset.width() };
+    };
+
+    auto rotated180Degrees = [&](FloatPoint controlPoint) {
+        return meshPoint + (meshPoint - controlPoint);
+    };
+
+    auto top = controlPoints[0];
+    auto right = controlPoints.size() > 1 ? controlPoints[1] : rotated90Degrees(top);
+    auto bottom = controlPoints.size() > 2 ? controlPoints[2] : rotated180Degrees(top);
+    auto left = controlPoints.size() > 3 ? controlPoints[3] : rotated180Degrees(right);
+
+    return { top, right, bottom, left };
+}
+
 Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient& gradient, FloatSize size, const ComputedStyle& style)
 {
     auto zoom = style.usedZoomForLength();
@@ -48,20 +74,24 @@ Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient& gradie
     unsigned rows = gradient.rows.size();
     unsigned columns = gradient.rows[0].size();
 
+    auto defaultPosition = [&](unsigned row, unsigned column) {
+        return FloatPoint { size.width() * column / (columns - 1), size.height() * row / (rows - 1) };
+    };
+
     // 1. Resolve the position and color of each point.
     Vector<WebCore::MeshGradient::Point> points;
     for (unsigned row = 0; row < rows; ++row) {
         for (unsigned column = 0; column < columns; ++column) {
             auto& point = gradient.rows[row][column];
 
-            auto position = FloatPoint { size.width() * column / (columns - 1), size.height() * row / (rows - 1) };
+            auto position = defaultPosition(row, column);
             if (point.location) {
                 position = WTF::switchOn(*point.location,
                     [&](const MeshGradientAbsolutePosition& absolutePosition) {
                         return evaluate<FloatPoint>(absolutePosition.position, size, zoom);
                     },
                     [&](const MeshGradientRelativePosition& relativePosition) {
-                        return evaluate<FloatPoint>(relativePosition.offset, size, zoom);
+                        return position + evaluate<FloatPoint>(relativePosition.offset, size, zoom);
                     }
                 );
             }
@@ -74,7 +104,7 @@ Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient& gradie
         }
     }
 
-    auto resolveControlPoints = [&](const MeshGradientPoint& point, const WebCore::MeshGradient::Point& platformPoint) -> std::optional<RectEdges<FloatPoint>> {
+    auto resolveControlPoints = [&](const MeshGradientPoint& point, FloatPoint position, FloatPoint relativeTo) -> std::optional<RectEdges<FloatPoint>> {
         if (!point.location)
             return std::nullopt;
 
@@ -82,19 +112,21 @@ Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient& gradie
             [&](const MeshGradientAbsolutePosition& absolutePosition) -> std::optional<RectEdges<FloatPoint>> {
                 if (!absolutePosition.controlPoints)
                     return std::nullopt;
-                return RectEdges<FloatPoint>::map(*absolutePosition.controlPoints, [&](auto& controlPoint) {
+                auto controlPoints = WTF::map<4>(*absolutePosition.controlPoints, [&](auto& controlPoint) {
                     return evaluate<FloatPoint>(controlPoint, size, zoom);
                 });
+                return completeControlPoints(controlPoints.span(), position);
             },
             [&](const MeshGradientRelativePosition& relativePosition) -> std::optional<RectEdges<FloatPoint>> {
                 if (!relativePosition.controlPoints)
                     return std::nullopt;
-                return RectEdges<FloatPoint>::map(*relativePosition.controlPoints, [&](auto& controlPoint) {
+                auto controlPoints = WTF::map<4>(*relativePosition.controlPoints, [&](auto& controlPoint) {
                     auto offset = evaluate<FloatPoint>(controlPoint.offset, size, zoom);
                     if (controlPoint.anchor)
                         return offset;
-                    return platformPoint.position + offset;
+                    return relativeTo + offset;
                 });
+                return completeControlPoints(controlPoints.span(), position);
             }
         );
     };
@@ -102,12 +134,12 @@ Ref<WebCore::MeshGradient> createPlatformMeshGradient(const MeshGradient& gradie
     // 2. Resolve the control points, which need the positions of the points. Without control points, each side is a straight
     // line, with its control point a third of the way to the neighboring point. The sides on the edge of the mesh have no
     // neighbor, and use the point's own position.
-    // FIXME: The explainer does not define the control points of a point that gives none.
+    // FIXME: The draft does not define the control points of a point that gives none.
     for (unsigned row = 0; row < rows; ++row) {
         for (unsigned column = 0; column < columns; ++column) {
             auto& platformPoint = points[row * columns + column];
 
-            if (auto controlPoints = resolveControlPoints(gradient.rows[row][column], platformPoint)) {
+            if (auto controlPoints = resolveControlPoints(gradient.rows[row][column], platformPoint.position, defaultPosition(row, column))) {
                 platformPoint.controlPoints = WTF::move(*controlPoints);
                 continue;
             }

@@ -984,7 +984,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeConicGradient(CSSParser
 }
 
 // MARK: <mesh-gradient()>
-// https://github.com/w3c/csswg-drafts/blob/main/css-images-5/explainers/2d-gradients.md#mesh-gradient
+// https://github.com/w3c/csswg-drafts/pull/14655
 
 static std::optional<CSS::MeshGradientRelativeControlPoint> consumeMeshGradientRelativeControlPoint(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -1018,18 +1018,15 @@ template<typename ControlPoints> static std::optional<ControlPoints> consumeMesh
     if (!consumeIdent<CSSValueID::With>(range))
         return ControlPoints { };
 
-    using Edges = typename ControlPoints::value_type;
-
-    std::array<std::optional<typename Edges::value_type>, 4> controlPoints;
-    size_t count = 0;
+    typename ControlPoints::value_type::Container controlPoints;
     do {
         auto controlPoint = consumeControlPoint(range);
         if (!controlPoint)
             return { };
-        controlPoints[count++] = WTF::move(*controlPoint);
-    } while (count < controlPoints.size() && consumeSlashIncludingWhitespace(range));
+        controlPoints.append(WTF::move(*controlPoint));
+    } while (controlPoints.size() < 4 && consumeSlashIncludingWhitespace(range));
 
-    return ControlPoints { completeQuadFromArray<Edges>(WTF::move(controlPoints)) };
+    return ControlPoints { WTF::move(controlPoints) };
 }
 
 static std::optional<CSS::MeshGradientPoint> consumeMeshGradientPoint(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -1083,11 +1080,11 @@ static std::optional<CSS::MeshGradientPoint> consumeMeshGradientPoint(CSSParserT
 static RefPtr<CSSValue> consumeMeshGradient(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // mesh-gradient( [ <color-interpolation-method> || <color> ]?,
-    //                <mesh-point># [ ';' <mesh-point># ]*
+    //                <mesh-point>#{2,} [ ';' <mesh-point>#{2,} ]+
     //              )
     // <mesh-point> = <color> [ <mesh-absolute-position> | <mesh-relative-position> ]?
     // <mesh-absolute-position> = <position> [ with <position> [ / <position> ]{0,3} ]?
-    // <mesh-relative-position> = by <coordinate-pair> [ with <mesh-relative-control-point> [ / <mesh-relative-control-points> ]{0,3} ]?
+    // <mesh-relative-position> = by <coordinate-pair> [ with <mesh-relative-control-point> [ / <mesh-relative-control-point> ]{0,3} ]?
     // <mesh-relative-control-point> = <coordinate-pair> [from origin]?
 
     if (!state.context.cssMeshGradientsEnabled)
@@ -1143,8 +1140,7 @@ static RefPtr<CSSValue> consumeMeshGradient(CSSParserTokenRange& range, CSS::Pro
             return nullptr;
     }
 
-    // FIXME: The explainer doesn't say what grids are valid. For now, require a minimum of 2x2 and that
-    // each row has the same number of points.
+    // A mesh needs at least two rows and two columns, and rows of equal length.
     if (rows.size() < 2 || rows[0].size() < 2)
         return nullptr;
     for (auto& meshRow : rows) {
