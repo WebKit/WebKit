@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <math id="math">
+        <a id="math-link" href="https://www.webkit.org/">
+          <mi>x</mi>
+        </a>
+        <a id="link-click" onclick="void(0);">
+          <mi>x</mi>
+        </a>
+      </math>
+    </div>
+    <p id="description"></p>
+    <pre id="tree"></pre>
+    <div id="console"></div>
+    <script>
+      description(
+        "Verifies that MathML <a> elements expose the Link role, URL, and are not pruned from the tree."
+      );
+
+      if (window.accessibilityController) {
+        debug("\nAccessibility Tree:");
+        dumpAccessibilityTree(
+          accessibilityController.accessibleElementById("math"),
+          null,
+          0,
+          false,
+          false,
+          true
+        );
+        document.getElementById("content").style.visibility = "hidden";
+      }
+    </script>
+  </body>
+</html>

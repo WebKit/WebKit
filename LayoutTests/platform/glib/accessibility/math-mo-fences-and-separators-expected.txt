@@ -8,7 +8,7 @@ AXRole: AXMath
     AXRole: AXStatic AXValue: *
     AXRole: AXStatic AXValue: *
     AXRole: AXStatic AXValue: *
-    AXRole: AXGroup
+    AXRole: AXSection
         AXRole: AXStatic AXValue: (
         AXRole: AXStatic AXValue: x
         AXRole: AXStatic AXValue: ,

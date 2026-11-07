@@ -51,6 +51,7 @@ private:
     void addChildren() final;
     String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
     String stringValue() const final;
+    URL url() const final;
     bool isIgnoredElementWithinMathTree() const final;
 
     bool isMathElement() const final { return true; }
@@ -59,6 +60,7 @@ private:
     bool isMathFenced() const final;
     bool isMathSubscriptSuperscript() const final;
     bool isMathRow() const final;
+    bool isMathEmpty() const;
     bool isMathUnderOver() const final;
     bool isMathRoot() const final;
     bool isMathSquareRoot() const final;

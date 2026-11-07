@@ -1,0 +1,16 @@
+Verifies accessibility roles for MathML semantics, annotation, and annotation-xml elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXMath
+    AXRole: AXSection
+        AXRole: AXStatic AXValue: 𝑥
+        AXRole: AXSection
+            AXRole: AXStatic AXValue: 𝑦
+
+Accessibility Tree:
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
