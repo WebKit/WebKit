@@ -292,6 +292,23 @@ const documentation = {
                 [`Returns a list of tests associated with a specific suite. This list is useful for mapping a partial string to a test name.`],
             ),
             documentEndpoint(
+                '/api/&ltsuite&gt/sub-suites',
+                ['GET'],
+                [],
+                [
+                    `Returns a tree of the ${localLink(['Query Parameters', 'Sub-suite'], 'sub-suites')} which runs of a specific suite uploaded results for, kept as long as those results are and sorted by name. The only sub-suite of a parent holding no test of its own is marked as holding the same tests as its parent:`,
+                    codeBlock('{\n' +
+                    '    "suite": "layout-tests",\n' +
+                    '    "sub_suites": [\n' +
+                    '        {"name": "fast", "children": [{"name": "fast/forms"}, {"name": "fast/mediasession", "children": [{"name": "fast/mediasession/metadata", "same_tests_as_parent": true}]}]},\n' +
+                    '        {"name": "plugins"}\n' +
+                    '    ],\n' +
+                    '    "has_runs": <true if the suite has uploaded since sub-suites were recorded>,\n' +
+                    '    "max_selected": <number of sub-suites a page shows at once>\n' +
+                    '}'),
+                ],
+            ),
+            documentEndpoint(
                 '/results-ews/tests',
                 ['GET'],
                 ['Limit'],
@@ -326,7 +343,7 @@ const documentation = {
             documentEndpoint(
                 '/api/results/&ltsuite&gt',
                 ['GET'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Sub-suite', 'Time', 'Ref', 'UUID'],
                 [
                     `Endpoint which returns results for a specific test run. On this endpoint, results are aggregated results in a dictionary formated like this:`,
                     codeBlock('{\n' +
@@ -368,6 +385,7 @@ const documentation = {
                     '    }\n' +
                     ']'),
                     `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}' and &ltrun-a1&gt, &ltrun-a2&gt, &ltrun-b1&gt and &ltrun-b2&gt are all the afformentioned aggregated result dictionaries.`,
+                    `When a query names a ${localLink(['Query Parameters', 'Sub-suite'], 'sub-suite')}, the stats of each run count only its tests.`,
                 ],
             ),
             documentEndpoint(
@@ -449,7 +467,7 @@ const documentation = {
             documentEndpoint(
                 '/api/failures/&ltsuite&gt',
                 ['GET'],
-                ['Aggregation', 'Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
+                ['Aggregation', 'Branch', 'Configuration', 'Limit', 'Repository', 'Sub-suite', 'Time', 'Ref', 'UUID'],
                 [
                     `Returns a list of tests which failed during test runs matching the specified criteria. When collapsed, these results will be a sorted list looking like this:`,
                     codeBlock('[\n' +
@@ -482,6 +500,7 @@ const documentation = {
                     '    }\n' +
                     ']'),
                     `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                    `When a query names a ${localLink(['Query Parameters', 'Sub-suite'], 'sub-suite')}, only its tests are listed.`,
                 ],
             ),
         ],'CI Links': [
@@ -609,6 +628,10 @@ const documentation = {
         'Repository': [
             `The 'repository_id' query arguement allows a request to be limited to a specific repository. By default, endpoints which support the repository_id query argument will search all repositories if no repository_id is provided. A request which only searches for commits in the WebKit repository would have a query argument like this:`,
             codeBlock('repository_id=webkit'),
+        ],
+        'Sub-suite': [
+            `The 'sub_suite' query argument limits a request to the tests in one part of a suite. For layout-tests and javascriptcore-tests, a test's sub-suites are its directories. For api-tests, a test's sub-suites are its name up to each '.' and '/', and up to the ':' after its binary. Other suites have none. A request for the results of one group of API tests would have a query argument like this:`,
+            codeBlock('sub_suite=TestWebKitAPI.TextExtractionTests'),
         ],
         'Suite': [
             `In most cases, the suite is defined by the path of an endpoint, not the parameters. In some cases, however, suite is defined by the parameters. In these cases, the query parameters will look like this:`,

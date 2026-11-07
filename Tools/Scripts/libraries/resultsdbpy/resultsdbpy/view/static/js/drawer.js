@@ -22,7 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import {DOM, REF} from '/library/js/Ref.js';
-import {queryToParams, paramsToQuery, QueryModifier, escapeHTML} from '/assets/js/common.js';
+import {queryToParams, paramsToQuery, QueryModifier, escapeEndpoint, escapeHTML} from '/assets/js/common.js';
 import {CommitBank} from '/assets/js/commit.js';
 import {Configuration} from '/assets/js/configuration.js'
 
@@ -285,6 +285,431 @@ function BranchSelector(callback) {
         </div>`;
 }
 
+const SUB_SUITE_RELOAD_DELAY = 400;
+const SUB_SUITE_FILTER_ROW_LIMIT = 200;
+const SUB_SUITE_ROW_SIZE = '13px';
+const SUB_SUITE_ROW_STYLE = 'margin: 0; padding-top: 2px; padding-bottom: 2px; padding-right: calc(var(--smallSize) * 2 + 8px)';
+const SUB_SUITE_INDENT = 12;
+const SUB_SUITE_LIST_HEIGHT = '300px';
+const SUB_SUITE_BOX_INSET = '5px';
+const SUB_SUITE_NOTE_STYLE = 'flex: none; margin-left: 0.5em; font-style: italic';
+const SUB_SUITE_LINE = 'linear-gradient(var(--greyDarker), var(--greyDarker))';
+
+function subSuitesInAddress(suites) {
+    const picked = new Map();
+    new QueryModifier('sub_suite').current().forEach(value => {
+        const suite = suites.filter(name => value.startsWith(`${name}/`) && value.length > name.length + 1).reduce((longest, name) => (longest && longest.length >= name.length ? longest : name), null);
+        if (!suite)
+            return;
+        const folders = picked.get(suite) || [];
+        const folder = value.slice(suite.length + 1);
+        if (!folders.includes(folder))
+            folders.push(folder);
+        picked.set(suite, folders);
+    });
+    return picked;
+}
+
+function SubSuiteSelector(suites, callback) {
+    const modifier = new QueryModifier('sub_suite');
+    const picked = subSuitesInAddress(suites);
+    const sections = suites.map(suite => ({
+        suite,
+        list: null,
+        nodes: new Map(),
+        topLevel: [],
+        openGroups: new Set(),
+        found: new Set(),
+        foundAndAbove: new Set(),
+        openWhileFiltering: new Set(),
+        isExpanded: picked.has(suite),
+        isExpandedWhileFiltering: true,
+        message: '',
+    }));
+    let isExpanded = picked.size > 0;
+    let filterText = '';
+    let refused = null;
+    let sectionsElement = null;
+    let renderedSections = [];
+    let filterInput = null;
+    let clearButton = null;
+    let reloadTimer = null;
+
+    const selectedIn = section => subSuitesInAddress(suites).get(section.suite) || [];
+    const valueFor = (section, name) => `${section.suite}/${name}`;
+    const ancestorsOf = (section, name) => {
+        const ancestors = [];
+        for (let node = section.nodes.get(name); node && node.parent; node = section.nodes.get(node.parent))
+            ancestors.push(node.parent);
+        return ancestors;
+    };
+    const isOpen = (section, name) => (filterText ? section.openWhileFiltering : section.openGroups).has(name);
+    const isSectionOpen = section => (filterText ? section.isExpandedWhileFiltering : section.isExpanded);
+    const isCounted = (section, name, on) => on.includes(name) || ancestorsOf(section, name).some(ancestor => on.includes(ancestor));
+    const separate = (section, values) => values.filter(value => !ancestorsOf(section, value).some(ancestor => values.includes(ancestor)));
+    const topmostWithSameTests = (section, name) => {
+        let topmost = name;
+        while (section.nodes.has(topmost) && section.nodes.get(topmost).sameTestsAsParent)
+            topmost = section.nodes.get(topmost).parent;
+        return topmost;
+    };
+    const isSectionOn = (section, on) => {
+        if (!filterText)
+            return !on.length;
+        return section.found.size > 0 && [...section.found].every(name => isCounted(section, name, on));
+    };
+    const loaded = () => sections.filter(section => section.list && !section.list.error);
+    const maxSelected = () => Math.min(...loaded().map(section => section.list.max_selected));
+    const countOnPage = (changed, after) => sections.reduce((count, section) => count + separate(section, section === changed ? after : selectedIn(section)).length, 0);
+    const isShown = section => {
+        if (filterText)
+            return section.found.size > 0;
+        return section.topLevel.length > 0 || selectedIn(section).length > 0;
+    };
+    const clearMessages = () => {
+        sections.forEach(section => {
+            section.message = '';
+        });
+        refused = null;
+    };
+    const reloadSoon = () => {
+        clearTimeout(reloadTimer);
+        reloadTimer = setTimeout(callback, SUB_SUITE_RELOAD_DELAY);
+    };
+    const notesMarkup = notes => notes.length ? `<span class="text tiny" style="${SUB_SUITE_NOTE_STYLE}">(${notes.join(', ')})</span>` : '';
+
+    const rowFor = (section, name, depth, on) => {
+        const node = section.nodes.get(name);
+        const hasChildren = Boolean(node && node.children.length);
+        const isCovered = ancestorsOf(section, name).some(ancestor => on.includes(ancestor));
+        const notes = [];
+        if (!node)
+            notes.push('not in the list');
+        const onUnder = hasChildren && !isOpen(section, name) ? on.filter(value => ancestorsOf(section, value).includes(name)).length : 0;
+        if (onUnder)
+            notes.push(`${onUnder} on`);
+        if (refused && refused.section === section && refused.name === name)
+            notes.push(`at most ${maxSelected()} on the page`);
+        const lines = Array.from({length: depth}, (_, level) => `${SUB_SUITE_LINE} no-repeat calc(${level * SUB_SUITE_INDENT}px + 0.5em - 0.5px) 0 / 1px 100%`);
+
+        return `<div class="input" data-sub-suite="${escapeHTML(name)}" title="${escapeHTML([name, ...notes].join(' · '))}" style="${SUB_SUITE_ROW_STYLE}; padding-left: ${depth * SUB_SUITE_INDENT}px${lines.length ? `; background: ${lines.join(', ')}` : ''}">
+                <a class="link-button"${hasChildren ? ' data-expand' : ''} style="flex: none; width: 1em; text-align: center${hasChildren ? '' : '; visibility: hidden'}">${isOpen(section, name) ? '-' : '+'}</a>
+                <label style="display: flex; align-items: baseline; min-width: 0; margin-left: 4px; white-space: nowrap"><span style="overflow: hidden; text-overflow: ellipsis">${escapeHTML(node ? node.label : name)}</span>${notesMarkup(notes)}</label>
+                <label class="switch"${isCovered ? ' style="opacity: 0.5"' : ''}>
+                    <input type="checkbox"${on.includes(name) || isCovered ? ' checked' : ''}${isCovered ? ' disabled' : ''}>
+                    <span class="slider"></span>
+                </label>
+            </div>`;
+    };
+    const treeRows = (section, names, depth, on) => names.map(name => {
+        const row = rowFor(section, name, depth, on);
+        return section.openGroups.has(name) ? row + treeRows(section, section.nodes.get(name).children, depth + 1, on) : row;
+    }).join('');
+    const filteredRows = (section, on) => {
+        const rows = [];
+        let rowCount = 0;
+        const visit = (names, depth, isUnderFound) => names.forEach(name => {
+            if (!isUnderFound && !section.foundAndAbove.has(name))
+                return;
+            if (++rowCount <= SUB_SUITE_FILTER_ROW_LIMIT)
+                rows.push(rowFor(section, name, depth, on));
+            if (section.openWhileFiltering.has(name))
+                visit(section.nodes.get(name).children, depth + 1, isUnderFound || section.found.has(name));
+        });
+        visit(section.topLevel, 0, false);
+        const notShown = rowCount - rows.length;
+        return rows.join('') + (notShown > 0 ? `<div class="text tiny">${notShown.toLocaleString()} more: type more</div>` : '');
+    };
+    const rowsMarkup = section => {
+        const on = selectedIn(section);
+        const notListed = on.filter(name => !section.nodes.has(name)).map(name => rowFor(section, name, 0, on)).join('');
+        if (!section.topLevel.length)
+            return `${notListed}<div class="text tiny">${section.list.has_runs ? 'This suite has no sub-suites' : 'No sub-suites yet: they show as runs upload.'}</div>`;
+        if (!isSectionOpen(section))
+            return notListed;
+        return notListed + (filterText ? filteredRows(section, on) : treeRows(section, section.topLevel, 0, on));
+    };
+    const elementsOf = section => {
+        const element = sectionsElement ? sectionsElement.querySelector(`[data-section="${sections.indexOf(section)}"]`) : null;
+        if (!element)
+            return null;
+        return {
+            expander: element.querySelector('[data-section-expand]'),
+            label: element.querySelector('[data-section-label]'),
+            toggle: element.querySelector('[data-section-switch]'),
+            box: element.querySelector('[data-box]'),
+        };
+    };
+    const renderRows = section => {
+        const elements = elementsOf(section);
+        if (!elements)
+            return;
+        const on = selectedIn(section);
+        if (elements.box) {
+            const markup = rowsMarkup(section);
+            elements.box.innerHTML = markup;
+            elements.box.style.display = markup ? '' : 'none';
+        }
+        if (elements.expander)
+            elements.expander.textContent = isSectionOpen(section) ? '-' : '+';
+        if (elements.toggle)
+            elements.toggle.checked = isSectionOn(section, on);
+        if (elements.label) {
+            const notes = section.message ? [section.message] : [];
+            const onUnder = isSectionOpen(section) ? 0 : on.filter(value => section.nodes.has(value)).length;
+            if (onUnder)
+                notes.push(`${onUnder} on`);
+            elements.label.innerHTML = `<span style="overflow: hidden; text-overflow: ellipsis">${escapeHTML(section.suite)}</span>${notesMarkup(notes)}`;
+        }
+    };
+    const scrollToFirstOn = section => {
+        const elements = elementsOf(section);
+        const firstOn = elements && elements.box ? elements.box.querySelector('[data-sub-suite] input:checked:not(:disabled)') : null;
+        if (firstOn)
+            elements.box.scrollTop = firstOn.closest('[data-sub-suite]').offsetTop - elements.box.clientHeight / 3;
+    };
+    const sectionMarkup = section => `<div data-section="${sections.indexOf(section)}">
+            <div class="input" style="${SUB_SUITE_ROW_STYLE}; padding-left: ${SUB_SUITE_BOX_INSET}">
+                <a class="link-button" data-section-expand style="flex: none; width: 1em; text-align: center${section.topLevel.length ? '' : '; visibility: hidden'}">${isSectionOpen(section) ? '-' : '+'}</a>
+                <label data-section-label style="display: flex; align-items: baseline; min-width: 0; margin-left: 4px; white-space: nowrap"></label>
+                <label class="switch">
+                    <input type="checkbox" data-section-switch>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div data-box style="position: relative; max-height: ${SUB_SUITE_LIST_HEIGHT}; overflow-y: auto; overscroll-behavior: contain; padding: 2px 4px; border: 1px solid var(--borderColorInlineElement); border-radius: 4px"></div>
+        </div>`;
+    const messagesMarkup = () => {
+        const messages = sections.filter(section => section.list && section.list.error).map(section => `The sub-suites of ${escapeHTML(section.suite)} didn't load`);
+        if (sections.some(section => !section.list))
+            return `${messages.map(message => `<div class="text tiny">${message}</div>`).join('')}<div class="loader"><div class="spinner"></div></div>`;
+        if (filterText && !sections.some(isShown))
+            messages.push('No sub-suite matches');
+        else if (!sections.some(isShown) && loaded().length)
+            messages.push(loaded().every(section => section.list.has_runs) ? `${suites.length === 1 ? 'This suite has' : 'These suites have'} no sub-suites` : 'No sub-suites yet: they show as runs upload.');
+        return messages.map(message => `<div class="text tiny">${message}</div>`).join('');
+    };
+    const renderSections = () => {
+        if (!sectionsElement)
+            return;
+        renderedSections = loaded().filter(isShown);
+        sectionsElement.innerHTML = renderedSections.map(sectionMarkup).join('') + messagesMarkup();
+        renderedSections.forEach(renderRows);
+    };
+    const update = () => {
+        const shown = loaded().filter(isShown);
+        if (shown.length === renderedSections.length && shown.every((section, index) => section === renderedSections[index]))
+            shown.forEach(renderRows);
+        else
+            renderSections();
+    };
+
+    const find = section => {
+        const lowered = filterText.toLowerCase();
+        section.isExpandedWhileFiltering = true;
+        section.found.clear();
+        section.foundAndAbove.clear();
+        section.openWhileFiltering.clear();
+        section.nodes.forEach((node, name) => {
+            if (!lowered || !name.toLowerCase().includes(lowered) || (node.parent && node.parent.toLowerCase().includes(lowered)))
+                return;
+            section.found.add(name);
+            section.foundAndAbove.add(name);
+            ancestorsOf(section, name).forEach(ancestor => {
+                section.foundAndAbove.add(ancestor);
+                section.openWhileFiltering.add(ancestor);
+            });
+        });
+    };
+    const setFilter = text => {
+        if (text === filterText)
+            return;
+        filterText = text;
+        clearMessages();
+        sections.forEach(find);
+        renderSections();
+    };
+    const turnOn = (section, name) => {
+        const turningOn = topmostWithSameTests(section, name);
+        const turningOff = selectedIn(section).filter(value => ancestorsOf(section, value).includes(turningOn));
+        if (countOnPage(section, [...selectedIn(section).filter(value => !turningOff.includes(value)), turningOn]) > maxSelected()) {
+            refused = {section, name};
+            return false;
+        }
+        turningOff.forEach(value => modifier.remove(valueFor(section, value)));
+        modifier.append(valueFor(section, turningOn));
+        return true;
+    };
+    const turnOnFound = section => {
+        const on = selectedIn(section);
+        const turningOn = [...new Set([...section.found].filter(name => !isCounted(section, name, on)).map(name => topmostWithSameTests(section, name)))];
+        const turningOff = on.filter(value => turningOn.some(name => ancestorsOf(section, value).includes(name)));
+        const after = [...on.filter(value => !turningOff.includes(value)), ...turningOn];
+        if (countOnPage(section, after) > maxSelected()) {
+            section.message = `${section.found.size.toLocaleString()} found, at most ${maxSelected()} on the page`;
+            return;
+        }
+        turningOff.forEach(value => modifier.remove(valueFor(section, value)));
+        turningOn.forEach(name => modifier.append(valueFor(section, name)));
+    };
+    const turnOffFound = section => {
+        const turnedOnForFound = new Set([...section.found].map(name => topmostWithSameTests(section, name)));
+        selectedIn(section).filter(value => section.found.has(value) || turnedOnForFound.has(value)).forEach(value => modifier.remove(valueFor(section, value)));
+    };
+
+    const bodyRef = REF.createRef({
+        onElementMount: () => render(),
+    });
+    const render = () => {
+        const element = bodyRef.element;
+        if (!element)
+            return;
+        sectionsElement = null;
+        filterInput = null;
+        clearButton = null;
+        if (!isExpanded) {
+            DOM.inject(element, '');
+            return;
+        }
+
+        const hasFolders = loaded().some(section => section.topLevel.length);
+        const filterRef = REF.createRef({
+            onElementMount: (input) => {
+                filterInput = input;
+                input.value = filterText;
+                input.oninput = () => {
+                    if (clearButton)
+                        clearButton.style.display = input.value ? '' : 'none';
+                    setFilter(input.value.trim());
+                };
+            },
+        });
+        const clearRef = REF.createRef({
+            onElementMount: (button) => {
+                clearButton = button;
+                button.onclick = () => {
+                    if (!filterInput)
+                        return;
+                    filterInput.value = '';
+                    button.style.display = 'none';
+                    setFilter('');
+                    filterInput.focus();
+                };
+            },
+        });
+        const sectionsRef = REF.createRef({
+            onElementMount: (container) => {
+                sectionsElement = container;
+                container.onchange = (event) => {
+                    const sectionElement = event.target.closest('[data-section]');
+                    if (!sectionElement || event.target.type !== 'checkbox')
+                        return;
+                    const section = sections[sectionElement.dataset.section];
+                    const before = selectedIn(section);
+                    clearMessages();
+                    const row = event.target.closest('[data-sub-suite]');
+                    if (row) {
+                        if (!event.target.checked)
+                            modifier.remove(valueFor(section, row.dataset.subSuite));
+                        else if (!turnOn(section, row.dataset.subSuite))
+                            event.target.checked = false;
+                    } else if (!filterText) {
+                        if (event.target.checked)
+                            before.forEach(value => modifier.remove(valueFor(section, value)));
+                    } else if (event.target.checked)
+                        turnOnFound(section);
+                    else
+                        turnOffFound(section);
+                    update();
+                    if (JSON.stringify(selectedIn(section)) !== JSON.stringify(before))
+                        reloadSoon();
+                };
+                container.onclick = (event) => {
+                    const sectionElement = event.target.closest('[data-section]');
+                    if (!sectionElement)
+                        return;
+                    const section = sections[sectionElement.dataset.section];
+                    if (event.target.closest('[data-section-expand]')) {
+                        if (filterText)
+                            section.isExpandedWhileFiltering = !section.isExpandedWhileFiltering;
+                        else
+                            section.isExpanded = !section.isExpanded;
+                        renderRows(section);
+                        if (isSectionOpen(section))
+                            scrollToFirstOn(section);
+                        return;
+                    }
+                    const expander = event.target.closest('[data-expand]');
+                    const row = expander ? expander.closest('[data-sub-suite]') : null;
+                    if (!row)
+                        return;
+                    const name = row.dataset.subSuite;
+                    const open = filterText ? section.openWhileFiltering : section.openGroups;
+                    if (open.has(name))
+                        open.delete(name);
+                    else
+                        open.add(name);
+                    renderRows(section);
+                };
+                renderSections();
+                sections.forEach(scrollToFirstOn);
+            },
+        });
+
+        DOM.inject(element, `${hasFolders ? `<div class="input">
+                    <input type="text" ref="${filterRef}" autocomplete="off" autocapitalize="none" required style="padding-right: calc(var(--formLabelPadding) + 1em)"/>
+                    <label>Filter sub-suites</label>
+                    <a class="link-button" ref="${clearRef}" title="Clear the filter" aria-label="Clear the filter" style="position: absolute; right: var(--formLabelPadding)${filterText ? '' : '; display: none'}">X</a>
+                </div>` : ''}
+            <div style="--smallSize: ${SUB_SUITE_ROW_SIZE}">
+                <div ref="${sectionsRef}"></div>
+            </div>`);
+    };
+
+    const expander = REF.createRef({
+        onElementMount: (element) => {
+            element.onclick = () => {
+                isExpanded = !isExpanded;
+                element.innerHTML = isExpanded ? '-' : '+';
+                render();
+                if (!isExpanded)
+                    setFilter('');
+            };
+        },
+    });
+
+    sections.forEach(section => {
+        fetch(`api/${escapeEndpoint(section.suite)}/sub-suites`).then(response => response.json()).then(json => {
+            if (!Array.isArray(json.sub_suites))
+                throw new Error(json.description);
+            const addNodes = (children, parent) => children.map(child => {
+                section.nodes.set(child.name, {
+                    label: parent ? child.name.slice(parent.length + 1) : child.name,
+                    sameTestsAsParent: Boolean(child.same_tests_as_parent),
+                    parent,
+                    children: addNodes(child.children || [], child.name),
+                });
+                return child.name;
+            });
+            section.topLevel = addNodes(json.sub_suites, null);
+            section.list = json;
+            selectedIn(section).forEach(name => ancestorsOf(section, name).forEach(ancestor => section.openGroups.add(ancestor)));
+            find(section);
+            render();
+        }).catch(error => {
+            section.list = {error: true};
+            render();
+            console.error(error);
+        });
+    });
+
+    return `<div style="font-size: var(--smallSize);">
+            <a class="link-button text medium" ref="${expander}">${isExpanded ? '-' : '+'}</a>
+            Sub-suite <br>
+            <div ref="${bodyRef}"></div>
+        </div>`;
+}
+
 function LimitSlider(callback, max = 50000, defaultValue = 5000) {
     const limitModifier = new QueryModifier('limit');
     const startingValue = limitModifier.current().length ? limitModifier.current()[limitModifier.current().length -1]:defaultValue;
@@ -516,4 +941,4 @@ function CommitRepresentation(callback) {
         </div>`;
 }
 
-export {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar};
+export {Drawer, BranchSelector, SubSuiteSelector, subSuitesInAddress, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar};

@@ -31,6 +31,7 @@ from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ConfigurationContext
 from resultsdbpy.model.upload_context import UploadContext
 from resultsdbpy.model.suite_context import SuiteContext
+from resultsdbpy.model.sub_suite_context import SubSuiteContext
 from resultsdbpy.model.test_context import TestContext
 from resultsdbpy.model.failure_context import FailureContext
 from resultsdbpy.model.ews_context import EWSContext
@@ -46,7 +47,7 @@ class Model(object):
         key = columns.Text(partition_key=True, required=True)
         value = columns.Text(required=True)
 
-    def __init__(self, redis, cassandra, repositories=[], default_ttl_seconds=TTL_YEAR * 5, archive_ttl_seconds=TTL_WEEK * 8, async_processing=False, s3_credentials=None):
+    def __init__(self, redis, cassandra, repositories=[], default_ttl_seconds=TTL_YEAR * 5, archive_ttl_seconds=TTL_WEEK * 8, async_processing=False, s3_credentials=None, sub_suite_ttl_seconds=TTL_YEAR):
         if default_ttl_seconds is not None and default_ttl_seconds < 4 * self.TTL_WEEK:
             raise ValueError('TTL must be at least 4 weeks')
         if archive_ttl_seconds is not None and archive_ttl_seconds < 2 * self.TTL_WEEK:
@@ -77,6 +78,11 @@ class Model(object):
             commit_context=self.commit_context,
             ttl_seconds=self.default_ttl_seconds,
         )
+        self.sub_suite_context = SubSuiteContext(
+            configuration_context=self.configuration_context,
+            commit_context=self.commit_context,
+            ttl_seconds=min(self.default_ttl_seconds or sub_suite_ttl_seconds, sub_suite_ttl_seconds),
+        )
         self.test_context = TestContext(
             configuration_context=self.configuration_context,
             commit_context=self.commit_context,
@@ -93,7 +99,7 @@ class Model(object):
             ttl_seconds=self.default_ttl_seconds,
         )
 
-        for context in [self.ci_context, self.failure_context, self.suite_context, self.test_context, self.commit_context]:
+        for context in [self.ci_context, self.failure_context, self.suite_context, self.sub_suite_context, self.test_context, self.commit_context]:
             self.upload_context.register_upload_callback(context.name, context.register)
 
         self.archive_context = ArchiveContext(

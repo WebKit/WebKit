@@ -121,6 +121,7 @@ class MockModelFactory(object):
             ],
             default_ttl_seconds=ttl_seconds,
             archive_ttl_seconds=ttl_seconds,
+            sub_suite_ttl_seconds=ttl_seconds,
             async_processing=async_processing,
         )
         with cls.safari() as safari, cls.webkit() as webkit:

@@ -28,6 +28,7 @@ from cassandra.cqlengine import columns
 from datetime import datetime
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
+from resultsdbpy.model.sub_suite_context import SubSuiteContext
 from resultsdbpy.model.upload_context import UploadCallbackContext
 from resultsdbpy.model.test_context import Expectations
 from webkitscmpy import Commit
@@ -148,7 +149,7 @@ class FailureContext(UploadCallbackContext):
             self, all_table, unexpected_table, configurations, suite, recent=True,
             branch=None, begin=None, end=None,
             begin_query_time=None, end_query_time=None,
-            unexpected=True, collapsed=True, limit=DEFAULT_LIMIT,
+            unexpected=True, collapsed=True, limit=DEFAULT_LIMIT, sub_suite=None,
     ):
         table = unexpected_table if unexpected else all_table
         if not isinstance(suite, str):
@@ -160,6 +161,15 @@ class FailureContext(UploadCallbackContext):
             elif time:
                 return datetime.utcfromtimestamp(int(time))
             return None
+
+        def unpack_for_sub_suite(row):
+            unpacked = row.unpack()
+            if not sub_suite:
+                return unpacked
+            return {
+                test: state for test, state in unpacked.items()
+                if test in ['uuid', 'start_time'] or sub_suite in SubSuiteContext.sub_suites_for(suite, test)
+            }
 
         with self:
             has_test_runs = False
@@ -180,7 +190,7 @@ class FailureContext(UploadCallbackContext):
                     if collapsed:
                         for value in values:
                             has_test_runs = True
-                            for test in value.unpack():
+                            for test in unpack_for_sub_suite(value):
                                 if test not in ['uuid', 'start_time']:
                                     result.add(test)
                     else:
@@ -189,7 +199,7 @@ class FailureContext(UploadCallbackContext):
                             has_test_runs = True
 
                             # uuid and start_time are not in the unpacked values
-                            unpacked = value.unpack()
+                            unpacked = unpack_for_sub_suite(value)
                             if len(unpacked) > 2:
                                 runs.append(unpacked)
                         if runs:

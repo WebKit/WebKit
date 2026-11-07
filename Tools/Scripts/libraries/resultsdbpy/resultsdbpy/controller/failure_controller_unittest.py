@@ -26,6 +26,7 @@ from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 from resultsdbpy.controller.api_routes import APIRoutes
 from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
+from resultsdbpy.model import sub_suite_context_unittest
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
@@ -36,7 +37,7 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
     KEYSPACE = 'failure_controller_test_keyspace'
 
     @classmethod
-    def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
+    def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext, api_test_results=None):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
@@ -57,6 +58,9 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
                 },
             ))
             MockModelFactory.process_results(model)
+            if api_test_results:
+                MockModelFactory.add_mock_results(model, suite='api-tests', test_results=api_test_results)
+                MockModelFactory.process_results(model, suite='api-tests')
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -116,3 +120,35 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
             error='Not Found',
             description='No test runs found with the specified criteria',
         ))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(api_test_results=sub_suite_context_unittest.SubSuiteContextTest.api_test_results())
+    def test_failures_by_sub_suite_collapsed(self, client, **kwargs):
+        response = client.get(self.URL + '/api/failures/api-tests?platform=ios&style=Debug&unexpected=False&sub_suite=TestWebKitAPI')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), ['TestWebKitAPI.DownloadProgress.CancelDownloadWhenProgressIsCanceled', 'TestWebKitAPI.TextExtractionTests/invalidURLsAreSkipped()'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(api_test_results=sub_suite_context_unittest.SubSuiteContextTest.api_test_results())
+    def test_failures_by_sub_suite(self, client, **kwargs):
+        response = client.get(self.URL + '/api/failures/api-tests?platform=mac&style=Debug&unexpected=False&collapsed=False&sub_suite=TestWebKitAPI.TextExtractionTests')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 2)
+        self.assertEqual(len(response.json()[0]['results']), 5)
+        self.assertEqual(sorted(response.json()[0]['results'][0]), ['TestWebKitAPI.TextExtractionTests/invalidURLsAreSkipped()', 'start_time', 'uuid'])
+        self.assertEqual(response.json()[0]['results'][0]['TestWebKitAPI.TextExtractionTests/invalidURLsAreSkipped()'], 'FAIL')
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_failures_by_one_sub_suite_at_a_time(self, client, **kwargs):
+        response = client.get(f'{self.URL}/api/failures/layout-tests?platform=mac&sub_suite=fast&sub_suite=http')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['description'], 'One sub-suite at a time')
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver(api_test_results=sub_suite_context_unittest.SubSuiteContextTest.api_test_results())
+    def test_no_failures_by_sub_suite(self, client, **kwargs):
+        for sub_suite in ['TestWebKitAPI.HSTS', 'TestWebKitAPI.Text']:
+            response = client.get(self.URL + f'/api/failures/api-tests?platform=mac&style=Debug&unexpected=False&collapsed=False&sub_suite={sub_suite}')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json(), [])
