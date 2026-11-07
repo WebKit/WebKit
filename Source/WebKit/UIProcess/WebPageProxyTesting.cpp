@@ -278,6 +278,10 @@ void WebPageProxyTesting::resetStateBetweenTests()
     if (auto* mainFrame = page->mainFrame())
         mainFrame->disownOpener();
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    page->setMockVideoPresentationModeEnabled(false);
+#endif
+
     page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPageTesting::ResetStateBetweenTests(), pageID);
     });

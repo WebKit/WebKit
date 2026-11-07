@@ -548,6 +548,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
     setContentSizeCategory(parameters.contentSizeCategory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+    m_supportsPictureInPicture = parameters.supportsPictureInPicture;
     setSupportsPictureInPicture(parameters.supportsPictureInPicture);
 #endif
 #endif
