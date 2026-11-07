@@ -145,7 +145,7 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
         return;
 
     if (auto renderedRegion = interactionRegionForRenderedRegion(renderer, layerBounds, clipOffset, transform)) {
-        auto& [interactionRegion, shapeIsInset, hasNoVisualBorders] = *renderedRegion;
+        auto& [interactionRegion, shapeIsInset, hasNoVisualBorders, guardsCompositedContent] = *renderedRegion;
         auto rectForTracking = enclosingIntRect(interactionRegion.rectInLayerCoordinates);
 
         if (interactionRegion.type == InteractionRegion::Type::Occlusion) {
@@ -158,6 +158,9 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
         }
 
         if (interactionRegion.type == InteractionRegion::Type::Guard) {
+            if (guardsCompositedContent)
+                m_guardContainersWithCompositedContent.add(interactionRegion.nodeIdentifier);
+
             auto result = m_guardRects.add(rectForTracking, Inflated::No);
             if (!result.isNewEntry)
                 return;
@@ -307,6 +310,10 @@ void EventRegionContext::resolveGuardContainers(float minimumCornerRadius)
 
         if (m_consolidatedElements.contains(region.nodeIdentifier))
             return true;
+
+        // The guarded child's region is in its own composited layer, which this context can't see.
+        if (m_guardContainersWithCompositedContent.contains(region.nodeIdentifier))
+            return false;
 
         auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
         auto result = m_interactionRectsAndContentHints.add(rectForTracking, region.contentHint);

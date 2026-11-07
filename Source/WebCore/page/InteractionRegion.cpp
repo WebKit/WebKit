@@ -62,6 +62,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
 #include "RenderImageResource.h"
 #include "RenderLayer.h"
@@ -167,6 +168,26 @@ NODELETE static bool hasInteractiveCursorType(Element& element)
         || cursorType == CursorType::Pointer
         || cursorType == CursorType::Text
         || cursorType == CursorType::VerticalText;
+}
+
+static Ref<Element> interactiveElementForRegion(Element& element)
+{
+    bool isLabelable = [&] {
+        RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
+        return htmlElement && htmlElement->isLabelable();
+    }();
+    for (RefPtr<ContainerNode> node = &element; node; node = node->parentInComposedTree()) {
+        RefPtr ancestor = dynamicDowncast<Element>(node);
+        if (!ancestor)
+            continue;
+        bool matchedButton = is<HTMLButtonElement>(*ancestor);
+        RefPtr label = dynamicDowncast<HTMLLabelElement>(*ancestor);
+        bool matchedLabel = label && (isLabelable || hasInteractiveCursorType(*label) || label->control());
+        bool matchedLink = ancestor->isLink();
+        if (matchedButton || matchedLabel || matchedLink)
+            return ancestor.releaseNonNull();
+    }
+    return element;
 }
 
 NODELETE static bool shouldAllowElement(const Element& element)
@@ -330,32 +351,6 @@ static bool styleIsChallengingToHighlight(const Style::ComputedStyle& style)
     return colorIsChallengingToHighlight(colorResolver.colorResolvingCurrentColor(*color));
 }
 
-static bool isGuardContainer(const Element& element)
-{
-    bool isButton = is<HTMLButtonElement>(element);
-    bool isLink = element.isLink();
-    if (!isButton && !isLink)
-        return false;
-
-    if (!element.firstElementChild()
-        || element.firstElementChild() != element.lastElementChild())
-        return false;
-
-    if (!element.renderer())
-        return false;
-
-    CheckedRef renderer = *element.renderer();
-    CheckedRef style = renderer->style();
-    if (hasTransparentContainerStyle(style))
-        return true;
-
-    if (!hasTransparentBoxDecorations(style) || style->border().hasBorderRadius())
-        return false;
-
-    CheckedPtr childRenderer = element.firstElementChild()->renderer();
-    return childRenderer && !hasTransparentBoxDecorations(protect(childRenderer->style()));
-}
-
 static bool fillsContainer(const RenderBox& box, const RenderBox& container)
 {
     return box.container() == &container && box.borderBoxRectInContainer() == container.borderBoxRect();
@@ -395,6 +390,66 @@ static CheckedPtr<const RenderBox> backgroundPaintedBySibling(const RenderElemen
     }
 
     return nullptr;
+}
+
+static bool guardedChildHasRegionInOwnLayer(const Element& container, Element& child, float maximumInteractionArea)
+{
+    CheckedPtr box = dynamicDowncast<RenderBox>(child.renderer());
+    CheckedPtr layer = box ? box->layer() : nullptr;
+    if (!layer || !layer->isComposited() || layer->backing()->paintsIntoCompositedAncestor())
+        return false;
+
+    // The child's own box must add a region. It doesn't if it's an <svg>, an iframe or a plugin, or if it can't be hit.
+    if (box->isRenderOrLegacyRenderSVGRoot() || box->isRenderWidget() || !box->visibleToHitTesting())
+        return false;
+
+    // The region must belong to the container instead of the child itself.
+    if (interactiveElementForRegion(child).ptr() != &container)
+        return false;
+
+    FloatSize size = box->borderBoxSize();
+    return !size.isEmpty() && size.area() <= maximumInteractionArea;
+}
+
+enum class GuardContainerStatus : uint8_t {
+    No,
+    Yes,
+    YesWithCompositedContent,
+};
+
+struct GuardContainer {
+    GuardContainerStatus status { GuardContainerStatus::No };
+    // Set, with the status No, when a sibling paints the container's background, which then shapes the region.
+    CheckedPtr<const RenderBox> siblingBackground { };
+};
+
+static GuardContainer guardContainerStatus(const Element& element, const RenderElement& renderer, float maximumInteractionArea)
+{
+    if (!is<HTMLButtonElement>(element) && !element.isLink())
+        return { };
+
+    RefPtr child = element.firstElementChild();
+    if (!child || child != element.lastElementChild())
+        return { };
+
+    CheckedRef style = renderer.style();
+    if (!hasTransparentContainerStyle(style)) {
+        if (!hasTransparentBoxDecorations(style) || style->border().hasBorderRadius())
+            return { };
+
+        CheckedPtr childRenderer = child->renderer();
+        if (!childRenderer || hasTransparentBoxDecorations(protect(childRenderer->style())))
+            return { };
+    }
+
+    // A guard container lets its child shape the region, unless a sibling already paints its background.
+    if (CheckedPtr siblingBackground = backgroundPaintedBySibling(renderer, maximumInteractionArea))
+        return { GuardContainerStatus::No, WTF::move(siblingBackground) };
+
+    if (guardedChildHasRegionInOwnLayer(element, *child, maximumInteractionArea))
+        return { GuardContainerStatus::YesWithCompositedContent };
+
+    return { GuardContainerStatus::Yes };
 }
 
 static FloatSize boundingSize(const RenderObject& renderer, const std::optional<AffineTransform>& transform)
@@ -538,23 +593,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
     if (!matchedElement)
         return std::nullopt;
 
-    bool isLabelable = [&] {
-        RefPtr htmlElement = dynamicDowncast<HTMLElement>(matchedElement);
-        return htmlElement && htmlElement->isLabelable();
-    }();
-    for (RefPtr<ContainerNode> node = matchedElement; node; node = node->parentInComposedTree()) {
-        RefPtr element = dynamicDowncast<Element>(node);
-        if (!element)
-            continue;
-        bool matchedButton = is<HTMLButtonElement>(*element);
-        RefPtr label = dynamicDowncast<HTMLLabelElement>(*element);
-        bool matchedLabel = label && (isLabelable || hasInteractiveCursorType(*label) || label->control());
-        bool matchedLink = element->isLink();
-        if (matchedButton || matchedLabel || matchedLink) {
-            matchedElement = element;
-            break;
-        }
-    }
+    matchedElement = interactiveElementForRegion(*matchedElement);
 
     if (!shouldAllowElement(*matchedElement))
         return std::nullopt;
@@ -657,19 +696,18 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
         }
     }
 
-    bool matchedElementIsGuardContainer = isGuardContainer(*matchedElement);
-
-    // A guard container lets its child shape the region, unless a sibling already paints its background.
-    CheckedPtr siblingBackground = matchedElementIsGuardContainer ? backgroundPaintedBySibling(renderer.get(), maximumInteractionArea) : nullptr;
-    if (siblingBackground)
-        matchedElementIsGuardContainer = false;
+    auto guardContainer = guardContainerStatus(*matchedElement, renderer.get(), maximumInteractionArea);
+    bool matchedElementIsGuardContainer = guardContainer.status != GuardContainerStatus::No;
 
     if (isOriginalMatch && matchedElementIsGuardContainer) {
-        return RenderedInteractionRegion { {
-            InteractionRegion::Type::Guard,
-            nodeIdentifier,
-            bounds
-        } };
+        return RenderedInteractionRegion {
+            .region = {
+                InteractionRegion::Type::Guard,
+                nodeIdentifier,
+                bounds
+            },
+            .guardsCompositedContent = guardContainer.status == GuardContainerStatus::YesWithCompositedContent
+        };
     }
 
     // The parent will get its own InteractionRegion.
@@ -694,7 +732,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
     std::optional<Path> clipPath;
     bool shapeIsInset = false;
 
-    CheckedPtr<const RenderBox> backgroundBox = isOriginalMatch ? siblingBackground.get() : nullptr;
+    CheckedPtr<const RenderBox> backgroundBox = isOriginalMatch ? guardContainer.siblingBackground.get() : nullptr;
     CheckedRef style = styleRenderer->style();
     CheckedPtr<const RenderBox> regionRendererBox;
 
