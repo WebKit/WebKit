@@ -38,6 +38,8 @@ static bool webViewWasDeallocated = false;
 static bool didFinishLoad = false;
 static bool didCallShowCandidates = false;
 static bool candidatesWereRequested = false;
+static BOOL candidateListWasHidden = NO;
+static BOOL candidateListWasShown = NO;
 
 @interface DoNotLeakWebView : WebView
 @end
@@ -87,7 +89,20 @@ static bool candidatesWereRequested = false;
 
 namespace TestWebKitAPI {
 
-TEST(CandidateTests, DISABLED_DoNotLeakViewThatLoadsEditableArea)
+class CandidateTests : public testing::Test {
+public:
+    void SetUp() override
+    {
+        webViewWasDeallocated = false;
+        didFinishLoad = false;
+        didCallShowCandidates = false;
+        candidatesWereRequested = false;
+        candidateListWasHidden = NO;
+        candidateListWasShown = NO;
+    }
+};
+
+TEST_F(CandidateTests, DISABLED_DoNotLeakViewThatLoadsEditableArea)
 {
     RetainPtr webView = adoptNS([[DoNotLeakWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     RetainPtr delegate = adoptNS([[DoNotLeakFrameLoadDelegate alloc] init]);
@@ -103,7 +118,7 @@ TEST(CandidateTests, DISABLED_DoNotLeakViewThatLoadsEditableArea)
     EXPECT_TRUE(webViewWasDeallocated);
 }
 
-TEST(CandidateTests, DISABLED_RequestCandidatesForTextInput)
+TEST_F(CandidateTests, DISABLED_RequestCandidatesForTextInput)
 {
     RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView forceRequestCandidatesForTesting];
@@ -124,7 +139,7 @@ TEST(CandidateTests, DISABLED_RequestCandidatesForTextInput)
     EXPECT_TRUE(candidatesWereRequested);
 }
 
-TEST(CandidateTests, DoNotRequestCandidatesForPasswordInput)
+TEST_F(CandidateTests, DoNotRequestCandidatesForPasswordInput)
 {
     RetainPtr webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView forceRequestCandidatesForTesting];
@@ -145,8 +160,6 @@ TEST(CandidateTests, DoNotRequestCandidatesForPasswordInput)
     EXPECT_FALSE(candidatesWereRequested);
 }
 
-static BOOL candidateListWasHidden = NO;
-static BOOL candidateListWasShown = NO;
 static void updateCandidateListWithVisibility(id, SEL, BOOL visible)
 {
     if (visible)
@@ -155,7 +168,7 @@ static void updateCandidateListWithVisibility(id, SEL, BOOL visible)
         candidateListWasHidden = YES;
 }
 
-TEST(CandidateTests, DoNotHideCandidatesDuringTextReplacement)
+TEST_F(CandidateTests, DoNotHideCandidatesDuringTextReplacement)
 {
     InstanceMethodSwizzler visibilityUpdateSwizzler { NSCandidateListTouchBarItem.class, @selector(updateWithInsertionPointVisibility:), reinterpret_cast<IMP>(updateCandidateListWithVisibility) };
 
