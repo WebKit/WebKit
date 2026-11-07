@@ -450,34 +450,38 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Ideally this would be done during configure or generation, but CMake doesn't
     # produce compile_commands.json until generation has ended. Having a build
     # target that processes it is the next best thing we can do.
-    if (CMAKE_EXPORT_COMPILE_COMMANDS AND ENABLE_UNIFIED_BUILDS)
-        # compile_commands.json
-        add_custom_command(
-            OUTPUT  ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
-            DEPENDS ${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands
-                    ${CMAKE_BINARY_DIR}/compile_commands.json
-            COMMAND ${Python_EXECUTABLE}
-                    ${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands
-                    ${CMAKE_BINARY_DIR}/compile_commands.json
-                    ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
-                    ${CMAKE_SOURCE_DIR}
-                    ${CMAKE_BINARY_DIR}
-            VERBATIM
-        )
+    if (CMAKE_EXPORT_COMPILE_COMMANDS)
+        if (ENABLE_UNIFIED_BUILDS)
+            # compile_commands.json
+            add_custom_command(
+                OUTPUT  ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+                DEPENDS ${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands
+                        ${CMAKE_BINARY_DIR}/compile_commands.json
+                COMMAND ${Python_EXECUTABLE}
+                        ${CMAKE_SOURCE_DIR}/Tools/Scripts/rewrite-compile-commands
+                        ${CMAKE_BINARY_DIR}/compile_commands.json
+                        ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+                        ${CMAKE_SOURCE_DIR}
+                        ${CMAKE_BINARY_DIR}
+                VERBATIM
+            )
+        else ()
+            # Create a simple symlink in DeveloperTools/compile_commands.json so that
+            # it can be relied upon regardless of unified or non-unified builds.
+            set(COMPILE_COMMANDS_PATH "../compile_commands.json")
+            cmake_path(NATIVE_PATH COMPILE_COMMANDS_PATH COMPILE_COMMANDS_PATH)
+            add_custom_command(
+                OUTPUT  ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+                DEPENDS ${CMAKE_BINARY_DIR}/compile_commands.json
+                COMMAND ${CMAKE_COMMAND} -E create_symlink
+                        ${COMPILE_COMMANDS_PATH}
+                        ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
+                VERBATIM
+            )
+        endif ()
         add_custom_target(RewriteCompileCommands
             ALL
             DEPENDS ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
-        )
-    elseif (CMAKE_EXPORT_COMPILE_COMMANDS)
-        # Create a simple symlink in DeveloperTools/compile_commands.json so that
-        # it can be relied upon regardless of unified or non-unified builds.
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/DeveloperTools)
-        set(COMPILE_COMMANDS_PATH "../compile_commands.json")
-        cmake_path(NATIVE_PATH COMPILE_COMMANDS_PATH COMPILE_COMMANDS_PATH)
-        file(CREATE_LINK
-            ${COMPILE_COMMANDS_PATH}
-            ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
-            SYMBOLIC
         )
     endif ()
 
