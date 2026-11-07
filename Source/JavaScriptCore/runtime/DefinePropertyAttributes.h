@@ -28,6 +28,10 @@
 #include <optional>
 #include <wtf/TriState.h>
 
+#ifdef False
+#undef False
+#endif
+
 namespace JSC {
 
 class DefinePropertyAttributes {
