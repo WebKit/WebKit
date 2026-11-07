@@ -593,8 +593,9 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 // (BlockFormattingContext::placeBesideFloats).
 // FIXME: One in inline content, which the inline formatting context places, beside floats with a shape, which it avoids by their margin box,
 // in quirks mode, where a quirk container keeps the margins at its block-start side apart, and with margin-trim, which discard margins that
-// clearance separates, an orthogonal one, a fieldset or a box with a block step, whose margins collapse once laid out, negative or percentage
-// inline margins, justify-self, the -webkit- values of text-align, an inline size its own formatting context decides from the space beside
+// clearance separates, an orthogonal one, a fieldset or a box with a block step, whose margins collapse once laid out, negative inline
+// margins, which a float does not take (RenderBox::shrinkLogicalWidthToAvoidFloats), and calc() ones, which may be negative, justify-self,
+// the -webkit- values of text-align, an inline size its own formatting context decides from the space beside
 // the floats (RenderBox::shrinkToAvoidFloats with containingBlockAvailableLineWidth): of a box that fits its content, a sizing keyword, a
 // preferred aspect ratio or MathML, and of a table with a min or max inline size, which applies to the space, a form control the block
 // formatting context lays out as a block container, like a checkbox with display: block, and one inside a box with clear, which may still go
@@ -612,7 +613,7 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
     CheckedRef containingBlockStyle = box.containingBlock()->style();
     auto containingBlockWritingMode = containingBlockStyle->writingMode();
     auto isSupportedInlineMargin = [](auto& margin) {
-        return margin.isAuto() || (margin.tryFixed() && !margin.isKnownNegative());
+        return margin.isAuto() || ((margin.isFixed() || margin.isPercentage()) && !margin.isKnownNegative());
     };
     if (!isSupportedInlineMargin(style->marginStart(containingBlockWritingMode)) || !isSupportedInlineMargin(style->marginEnd(containingBlockWritingMode)))
         return BlockAvoidanceReason::ContentHasFloat;
