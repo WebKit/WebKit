@@ -466,9 +466,12 @@ TEST(SafeBrowsing, WKWebViewGoBack)
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple3")]];
     while (![webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
+    TestWebKitAPI::Util::run(&navigationFinished);
+
+    navigationFinished = false;
     [webView goBack];
     TestWebKitAPI::Util::run(&navigationFinished);
-    EXPECT_TRUE([[webView URL] isEqual:resourceURL(@"simple2")]);
+    EXPECT_WK_STREQ([[webView URL] absoluteString], [resourceURL(@"simple2") absoluteString]);
 }
 
 TEST(SafeBrowsing, WKWebViewGoBackIFrame)

@@ -1263,8 +1263,6 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 {
     THROW_IF_SUSPENDED;
     [self _didAccessBackForwardList];
-    if (self._safeBrowsingWarning)
-        return [self reload];
     return wrapper(_page->goBack()).autorelease();
 }
 
