@@ -90,6 +90,10 @@ private:
     bool isPanorama() const;
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    std::optional<float> focalLengthIn35mm() const final;
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     bool isSpatial() const;
     std::optional<unsigned> spatialEyeFrameIndex(const CFStringRef) const;

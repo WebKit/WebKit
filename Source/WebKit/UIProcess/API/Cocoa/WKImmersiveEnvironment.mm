@@ -36,6 +36,10 @@
     RetainPtr<WKFrameInfo> _sourceFrame;
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     RetainPtr<UIView> _environmentView;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    RetainPtr<CGImageRef> _image;
+    RetainPtr<NSNumber> _focalLengthIn35mm;
+#endif
     uint64_t _contextID;
     pid_t _processIdentifier;
 #endif
@@ -55,8 +59,27 @@
     return self;
 }
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+- (instancetype)_initWithImage:(CGImageRef)image focalLengthIn35mm:(NSNumber *)focalLengthIn35mm frameInfo:(WKFrameInfo *)frameInfo
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _sourceFrame = frameInfo;
+    _image = image;
+    _focalLengthIn35mm = focalLengthIn35mm;
+
+    return self;
+}
+
+#endif
+
 - (UIView *)_environmentView
 {
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    if (_image && !_environmentView)
+        _environmentView = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
+#endif
     if (!_environmentView) {
         RetainPtr environmentView = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
         RetainPtr remoteModelView = adoptNS([[_UIRemoteView alloc] initWithFrame:CGRectZero pid:_processIdentifier contextID:_contextID]);
@@ -70,6 +93,26 @@
     return _environmentView.get();
 }
 
+#endif
+
+#if PLATFORM(VISION)
+- (CGImageRef)_immersiveImage
+{
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) && ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    return _image.get();
+#else
+    return nil;
+#endif
+}
+
+- (NSNumber *)_immersiveFocalLengthIn35mm
+{
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) && ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    return _focalLengthIn35mm.get();
+#else
+    return nil;
+#endif
+}
 #endif
 
 - (WKFrameInfo *)sourceFrame

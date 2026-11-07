@@ -838,6 +838,28 @@ bool ImageDecoderCG::isPanorama() const
 }
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+std::optional<float> ImageDecoderCG::focalLengthIn35mm() const
+{
+    RetainPtr properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), primaryFrameIndex(), imageSourceOptions().get()));
+    if (!properties)
+        return std::nullopt;
+
+    RetainPtr exif = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(properties.get(), kCGImagePropertyExifDictionary));
+    if (!exif)
+        return std::nullopt;
+
+    RetainPtr focalLength = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(exif.get(), kCGImagePropertyExifFocalLenIn35mmFilm));
+    if (!focalLength)
+        return std::nullopt;
+
+    float value = 0;
+    if (!CFNumberGetValue(focalLength.get(), kCFNumberFloatType, &value) || !std::isfinite(value) || value <= 0)
+        return std::nullopt;
+    return value;
+}
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
 bool ImageDecoderCG::isSpatial() const
 {

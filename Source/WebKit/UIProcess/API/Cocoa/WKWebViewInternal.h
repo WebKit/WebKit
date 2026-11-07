@@ -623,6 +623,10 @@ struct LiveResizeSnapshotState {
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 - (void)_allowImmersiveElement:(WKFrameInfo *)frameInfo completion:(CompletionHandler<void(bool)>&&)completion;
 - (void)_presentImmersiveElement:(const WebCore::LayerHostingContextIdentifier)contextID frameInfo:(WKFrameInfo *)frameInfo completion:(CompletionHandler<void(bool)>&&)completion;
+- (void)_presentImmersiveEnvironment:(WKImmersiveEnvironment *)environment completion:(CompletionHandler<void(bool)>&&)completion;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+- (void)_presentImmersiveImageElement:(CGImageRef)image focalLengthIn35mm:(NSNumber *)focalLengthIn35mm frameInfo:(WKFrameInfo *)frameInfo completion:(CompletionHandler<void(bool)>&&)completion;
+#endif
 - (void)_dismissImmersiveElement:(CompletionHandler<void()>&&)completion;
 #endif
 

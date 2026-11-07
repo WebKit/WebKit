@@ -9095,10 +9095,31 @@ void WebPage::allowImmersiveElement(CompletionHandler<void(bool)>&& completion)
     sendWithAsyncReply(Messages::WebPageProxy::AllowImmersiveElement(), WTF::move(completion));
 }
 
-void WebPage::presentImmersiveElement(const LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion)
+void WebPage::presentImmersiveModelElement(const LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion)
 {
-    sendWithAsyncReply(Messages::WebPageProxy::PresentImmersiveElement(contextID), WTF::move(completion));
+    sendWithAsyncReply(Messages::WebPageProxy::PresentImmersiveModelElement(contextID), WTF::move(completion));
 }
+
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+void WebPage::presentImmersiveImageElement(HTMLImageElement& element, CompletionHandler<void(bool)>&& completion)
+{
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    if (!renderImage)
+        return completion(false);
+
+    RefPtr bitmap = renderImage->createShareableBitmapForFullScreen();
+    if (!bitmap)
+        return completion(false);
+
+    auto imageHandle = bitmap->createReadOnlyHandle();
+    if (!imageHandle)
+        return completion(false);
+
+    RefPtr cachedImage = element.cachedImage();
+    RefPtr image = cachedImage ? cachedImage->image() : nullptr;
+    sendWithAsyncReply(Messages::WebPageProxy::PresentImmersiveImageElement(WTF::move(*imageHandle), image ? image->focalLengthIn35mm() : std::nullopt), WTF::move(completion));
+}
+#endif
 
 void WebPage::dismissImmersiveElement(CompletionHandler<void()>&& completion)
 {

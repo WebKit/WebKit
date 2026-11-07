@@ -110,8 +110,10 @@
 #include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLModelElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/HTMLPlugInElement.h>
@@ -1907,12 +1909,23 @@ void WebChromeClient::allowImmersiveElement(CompletionHandler<void(bool)>&& comp
         completion(false);
 }
 
-void WebChromeClient::presentImmersiveElement(const LayerHostingContextIdentifier contextID, CompletionHandler<void(bool)>&& completion) const
+void WebChromeClient::presentImmersiveElement(ImmersiveElement& element, CompletionHandler<void(bool)>&& completion) const
 {
-    if (RefPtr page = m_page.get())
-        page->presentImmersiveElement(contextID, WTF::move(completion));
-    else
-        completion(false);
+    RefPtr page = m_page;
+    if (!page)
+        return completion(false);
+
+    Ref htmlElement = element.asHTMLElement();
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(htmlElement))
+        return page->presentImmersiveImageElement(*image, WTF::move(completion));
+#endif
+
+    RefPtr model = dynamicDowncast<HTMLModelElement>(htmlElement);
+    auto contextID = model ? model->immersiveContextID() : std::nullopt;
+    if (!contextID)
+        return completion(false);
+    page->presentImmersiveModelElement(*contextID, WTF::move(completion));
 }
 
 void WebChromeClient::dismissImmersiveElement(CompletionHandler<void()>&& completion) const

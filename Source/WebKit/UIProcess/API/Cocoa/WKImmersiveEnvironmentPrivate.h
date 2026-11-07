@@ -33,6 +33,9 @@
 
 @property (nonatomic, readonly) UIView *_environmentView;
 
+@property (nonatomic, readonly) CGImageRef _immersiveImage;
+@property (nonatomic, readonly) NSNumber *_immersiveFocalLengthIn35mm;
+
 @end
 
 #endif

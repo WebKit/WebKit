@@ -82,7 +82,10 @@ public:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&&) const final;
-    void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&&) const final;
+    void presentImmersiveModelElement(const WebCore::LayerHostingContextIdentifier, Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&&) const final;
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void presentImmersiveImageElement(WebCore::ShareableBitmapHandle&&, std::optional<float>, Ref<API::FrameInfo>&&, CompletionHandler<void(bool)>&&) const final;
+#endif
     void dismissImmersiveElement(CompletionHandler<void()>&&) const final;
 #endif
 

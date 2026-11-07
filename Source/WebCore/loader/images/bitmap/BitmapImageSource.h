@@ -183,6 +183,10 @@ private:
     bool isPanorama() const final { return m_descriptor.isPanorama(); }
 #endif
 
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    std::optional<float> focalLengthIn35mm() const final { return m_descriptor.focalLengthIn35mm(); }
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     bool isSpatial() const final { return m_descriptor.isSpatial(); }
     std::optional<unsigned> spatialLeftEyeFrameIndex() const final;

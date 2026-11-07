@@ -2049,13 +2049,6 @@ void HTMLModelElement::prepareImmersivePresentation(CompletionHandler<void(Excep
     });
 }
 
-void HTMLModelElement::presentImmersivePresentation(ChromeClient& client, CompletionHandler<void(bool)>&& completion)
-{
-    if (!m_immersiveContextID)
-        return completion(false);
-    client.presentImmersiveElement(*m_immersiveContextID, WTF::move(completion));
-}
-
 void HTMLModelElement::exitImmersivePresentation(CompletionHandler<void()>&& completion)
 {
     m_immersiveContextID = std::nullopt;

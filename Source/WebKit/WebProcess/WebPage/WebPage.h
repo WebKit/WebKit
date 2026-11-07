@@ -1871,7 +1871,10 @@ public:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&);
-    void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, CompletionHandler<void(bool)>&&);
+    void presentImmersiveModelElement(const WebCore::LayerHostingContextIdentifier, CompletionHandler<void(bool)>&&);
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void presentImmersiveImageElement(WebCore::HTMLImageElement&, CompletionHandler<void(bool)>&&);
+#endif
     void dismissImmersiveElement(CompletionHandler<void()>&&);
     void exitImmersive(CompletionHandler<void()>&&);
     bool allowsImmersiveEnvironments() const;

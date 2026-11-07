@@ -3507,7 +3507,11 @@ private:
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&);
-    void presentImmersiveElement(const WebCore::LayerHostingContextIdentifier, CompletionHandler<void(bool)>&&);
+    void prepareImmersiveFrameIfAllowed(CompletionHandler<void(RefPtr<API::FrameInfo>&&)>&&);
+    void presentImmersiveModelElement(const WebCore::LayerHostingContextIdentifier, CompletionHandler<void(bool)>&&);
+#if ENABLE(IMAGE_ELEMENT_IMMERSIVE)
+    void presentImmersiveImageElement(IPC::Connection&, WebCore::ShareableBitmapHandle&&, std::optional<float>, CompletionHandler<void(bool)>&&);
+#endif
     void dismissImmersiveElement(CompletionHandler<void()>&&);
 #endif
 
@@ -4631,6 +4635,7 @@ private:
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     bool m_immersive { false };
     RefPtr<API::FrameInfo> m_allowedImmersiveElementFrameInfo;
+    RefPtr<API::FrameInfo> m_presentedImmersiveElementFrameInfo;
 #endif
 
 #if HAVE(AUDIT_TOKEN)

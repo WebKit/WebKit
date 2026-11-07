@@ -374,7 +374,7 @@ void DocumentImmersive::presentImmersiveElement(Ref<ImmersiveElement>&& element,
     m_immersiveElement = element.get();
     updateElementIsImmersive(element.ptr(), true);
 
-    element->presentImmersivePresentation(protectedPage->chrome().client(), [weakElement = WeakPtr { element }, weakOldElement = WeakPtr { oldElement }, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool success) mutable {
+    protectedPage->chrome().client().presentImmersiveElement(element.get(), [weakElement = WeakPtr { element }, weakOldElement = WeakPtr { oldElement }, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool success) mutable {
         RefPtr protectedThis = weakThis;
         RefPtr protectedElement = weakElement.get();
 
