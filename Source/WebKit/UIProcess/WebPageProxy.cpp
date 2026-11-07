@@ -10290,6 +10290,8 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame()) {
         m_shouldListenToVoiceActivity = false;
         m_mutedCaptureKindsDesiredByWebApp = { };
+        m_isPromptingForDisplayCapture = false;
+        m_hasGrantedDisplayCapture = false;
     }
 #endif
 
@@ -13843,6 +13845,9 @@ void WebPageProxy::stopMediaCapture(MediaProducerMediaCaptureKind kind, Completi
     if (RefPtr manager = m_userMediaPermissionRequestManager)
         manager->resetAccess();
 
+    if (kind == MediaProducerMediaCaptureKind::Display || kind == MediaProducerMediaCaptureKind::EveryKind)
+        m_hasGrantedDisplayCapture = false;
+
     auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.sendWithAsyncReply(Messages::WebPage::StopMediaCapture(kind), [aggregator] { }, pageID);
@@ -16109,6 +16114,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         userMediaPermissionRequestManager->disconnectFromPage();
     m_shouldListenToVoiceActivity = false;
     m_mutedCaptureKindsDesiredByWebApp = { };
+    m_isPromptingForDisplayCapture = false;
+    m_hasGrantedDisplayCapture = false;
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -17115,6 +17122,8 @@ void WebPageProxy::willStartCapture(UserMediaPermissionRequestProxy& request, Co
         [[fallthrough]];
     case WebCore::MediaStreamRequest::Type::DisplayMedia:
         m_mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Display);
+        m_isPromptingForDisplayCapture = false;
+        m_hasGrantedDisplayCapture = true;
         break;
     }
 
@@ -18839,6 +18848,10 @@ void WebPageProxy::setIsPromptingForGetDisplayMedia(WebCore::MediaProducerMediaS
     if (isPrompting)
         internals().mainFrameMediaState.add(state & WebCore::MediaProducer::IsPromptingForDisplayCaptureMask);
 
+#if ENABLE(MEDIA_STREAM)
+    m_isPromptingForDisplayCapture = isPrompting;
+#endif
+
     updatePlayingMediaDidChange(isPrompting ? CanDelayNotification::No : CanDelayNotification::Yes);
 }
 
@@ -18960,7 +18973,6 @@ void WebPageProxy::updatePlayingMediaDidChange(CanDelayNotification canDelayNoti
         updateReportedMediaCaptureState();
 
         RefPtr userMediaPermissionRequestManager = m_userMediaPermissionRequestManager;
-        ASSERT(userMediaPermissionRequestManager);
         if (userMediaPermissionRequestManager)
             userMediaPermissionRequestManager->captureStateChanged(oldMediaCaptureState, newMediaCaptureState);
 

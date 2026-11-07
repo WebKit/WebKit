@@ -3897,6 +3897,7 @@ private:
     void deactivateDisplayCaptureCapability(MediaCapability&);
     bool shouldActivateDisplayCaptureCapability() const;
     bool shouldDeactivateDisplayCaptureCapability() const;
+    bool hasDisplayCaptureAuthorization() const;
 #endif
 
     // These are intentionally private
@@ -4226,6 +4227,8 @@ private:
     MediaPermissionPromptHandlerForTesting m_mediaPermissionPromptHandlerForTesting;
     bool m_mediaPermissionPromptRunsPreviewForTesting { false };
 #endif
+    bool m_isPromptingForDisplayCapture { false };
+    bool m_hasGrantedDisplayCapture { false };
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
