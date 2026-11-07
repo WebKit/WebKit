@@ -210,16 +210,20 @@ XYZA<float, WhitePoint::D50> ColorConversion<XYZA<float, WhitePoint::D50>, Lab<f
 {
     auto [lightness, a, b, alpha] = color.resolved();
 
-    float f1 = (lightness + 16.0f) / 116.0f;
-    float f0 = f1 + (a / 500.0f);
-    float f2 = f1 - (b / 200.0f);
+    float lightness116 = lightness / 116.0f;
+    float a500 = a / 500.0f;
+    float b200 = b / 200.0f;
 
-    auto computeXAndZ = [](float t) {
+    float f1 = lightness116 + (16.0f / 116.0f);
+    float f0 = f1 + a500;
+    float f2 = f1 - b200;
+
+    auto computeXAndZ = [](float t, float linear) {
         float tCubed = t * t * t;
         if (tCubed > LABe)
             return tCubed;
 
-        return (116.0f * t - 16.0f) / LABk;
+        return linear * (116.0f / LABk);
     };
 
     auto computeY = [](float t) {
@@ -231,9 +235,9 @@ XYZA<float, WhitePoint::D50> ColorConversion<XYZA<float, WhitePoint::D50>, Lab<f
         return t / LABk;
     };
 
-    float x = D50WhitePoint[0] * computeXAndZ(f0);
+    float x = D50WhitePoint[0] * computeXAndZ(f0, lightness116 + a500);
     float y = D50WhitePoint[1] * computeY(lightness);
-    float z = D50WhitePoint[2] * computeXAndZ(f2);
+    float z = D50WhitePoint[2] * computeXAndZ(f2, lightness116 - b200);
 
     return { x, y, z, alpha };
 }
