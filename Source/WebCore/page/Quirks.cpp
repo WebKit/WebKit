@@ -103,6 +103,7 @@
 #include <JavaScriptCore/StackVisitor.h>
 #include <array>
 #include <ranges>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -123,10 +124,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
 
-static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
+static QuirksData resolveSiteSpecificQuirks(const QuirkTable& table, const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
 {
     QuirksData quirksData;
-    for (auto& quirk : quirkTable().quirks) {
+    for (auto& quirk : table.quirks) {
         if (quirk.appliesTo(topContext, documentContext, documentIsTopDocument))
             quirk.apply(quirksData);
     }
@@ -135,13 +136,13 @@ static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, c
 
 QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument documentIsTopDocument)
 {
-    return resolveSiteSpecificQuirks(URLMatchContext { topURL }, URLMatchContext { documentURL }, documentIsTopDocument);
+    return resolveSiteSpecificQuirks(quirkTable(), URLMatchContext { topURL }, URLMatchContext { documentURL }, documentIsTopDocument);
 }
 
 QuirksData resolveTopURLQuirks(const URL& url)
 {
     URLMatchContext context { url };
-    return resolveSiteSpecificQuirks(context, context, IsTopDocument::Yes);
+    return resolveSiteSpecificQuirks(quirkTable(), context, context, IsTopDocument::Yes);
 }
 
 NODELETE static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
@@ -1402,6 +1403,18 @@ void Quirks::determineRelevantQuirks()
     m_quirksData = { };
     m_probedQuirks = { };
 
+    m_quirksData.applyDisabledBehaviors(m_overrides.disabledBehaviors);
+    auto applyEditsAndOverlay = makeScopeExit([&] {
+        m_quirksData.applyEdits(m_overrides);
+        if (!m_overrides.overlay)
+            return;
+        auto quirksURL = topDocumentURL();
+        if (quirksURL.isEmpty())
+            return;
+        Ref document = *protect(m_document);
+        m_quirksData.merge(resolveSiteSpecificQuirks(m_overrides.overlay->table(), URLMatchContext { quirksURL }, URLMatchContext { documentURL() }, document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No));
+    });
+
 #if PLATFORM(IOS_FAMILY)
     static const bool shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && WTF::IOSApplication::isUNIQLOApp();
     static const bool needsResettingTransitionCancelsRunningTransitionQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && WTF::IOSApplication::isDOFUSTouch();
@@ -1442,6 +1455,16 @@ void Quirks::determineRelevantQuirks()
     if (PAL::currentUserInterfaceIdiomIsSmallScreen())
         m_quirksData.setEnabled(QuirkBehaviorID::ShouldDisableElementFullscreenQuirk, document->safeAreaInsetOptIn() == Document::SafeAreaInsetOptIn::NotOptedIn);
 #endif
+}
+
+void Quirks::setOverrides(QuirkOverrides&& overrides)
+{
+    if (m_overrides == overrides)
+        return;
+
+    m_overrides = WTF::move(overrides);
+    determineRelevantQuirks();
+    protect(m_document)->scheduleFullStyleRebuild();
 }
 
 void Quirks::urlsDidChange()

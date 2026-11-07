@@ -26,13 +26,17 @@
 #pragma once
 
 #include <WebCore/QuirkMatchPattern.h>
-#include <WebCore/Quirks.h>
-#include <WebCore/QuirksData.h>
+#include <WebCore/QuirkBehaviors.h>
 #include <optional>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class QuirksData;
+
+WEBCORE_EXPORT std::optional<QuirkBehaviorID> quirkBehaviorIDFromName(StringView);
 
 struct Quirk {
     Vector<QuirkMatchPattern> matches;
@@ -53,6 +57,21 @@ struct Quirk {
 // The contents of QuirkTable.json, parsed at runtime; what quirkTable() and setQuirkTable() hold.
 struct QuirkTable {
     Vector<Quirk> quirks;
+};
+
+class QuirkOverlay : public RefCounted<QuirkOverlay> {
+public:
+    static Ref<QuirkOverlay> create(QuirkTable&& table) { return adoptRef(*new QuirkOverlay(WTF::move(table))); }
+
+    const QuirkTable& table() const LIFETIME_BOUND { return m_table; }
+
+private:
+    explicit QuirkOverlay(QuirkTable&& table)
+        : m_table(WTF::move(table))
+    {
+    }
+
+    QuirkTable m_table;
 };
 
 enum class QuirkTableParseErrorKind : uint8_t {
