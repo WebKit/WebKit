@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+select {
+    background-color: white;
+    line-height: 100px;
+}
+</style>
+</head>
+<body>
+<div id="container">
+<select id="single"><option>one</option></select>
+<select id="multiple" multiple><option>one</option></select>
+</div>
+<script>
+description("A select with author styles ignores line-height, with or without the multiple attribute, as both are dropdown boxes on iOS.");
+
+shouldBeEqualToString("getComputedStyle(single).lineHeight", "normal");
+shouldBeEqualToString("getComputedStyle(multiple).lineHeight", "normal");
+shouldBe("getComputedStyle(multiple).paddingInlineStart", "getComputedStyle(single).paddingInlineStart");
+
+container.remove();
+</script>
+</body>
+</html>
