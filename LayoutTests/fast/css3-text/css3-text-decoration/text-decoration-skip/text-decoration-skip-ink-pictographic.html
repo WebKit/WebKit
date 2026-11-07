@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+This test makes sure that underlines drawn across pictographic characters (e.g. symbols and emoji) do not skip over them as though they were low-hanging descenders. See webkit.org/b/322735.
+<div style="text-decoration: underline; font-size: 48px;">text &#x263B; text &#x1F600; text</div>
+</body>
+</html>
