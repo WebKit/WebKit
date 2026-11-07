@@ -187,13 +187,13 @@
         {
             "name": "handleUserPrompt",
             "description": "Allows closing an open prompt.",
-            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-create",
-            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/create",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-handleUserPrompt",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/handle_user_prompt",
             "async": true,
             "parameters": [
-                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context in which to handle a user prompt.  It is an error to pass a non-top level traversable." },
-                { "name": "accept", "type": "boolean", "optional": true },
-                { "name": "userText", "type": "string", "optional": true }
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context in which to handle a user prompt. A child context handles the prompt of its top-level traversable." },
+                { "name": "accept", "type": "boolean", "optional": true, "description": "Whether to accept the prompt. Defaults to true." },
+                { "name": "userText", "type": "string", "optional": true, "description": "Text to enter into a prompt dialog before accepting it. Ignored for other dialog types." }
             ]
         },
         {
