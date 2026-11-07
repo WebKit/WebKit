@@ -826,33 +826,6 @@ void BBQJIT::emitZeroExtendAddressOperand(bool is64Bit, Value operand)
 
 // Tables
 
-[[nodiscard]] PartialResult BBQJIT::addTableSet(unsigned tableIndex, Value index, Value value)
-{
-    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    ASSERT(index.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());
-
-    emitZeroExtendAddressOperand(m_info.table(tableIndex).addressType().is64Bit(), index);
-
-    Vector<Value, 8> arguments = {
-        instanceValue(),
-        Value::fromI32(tableIndex),
-        index,
-        value
-    };
-
-    Value shouldThrow = topValue(TypeKind::I32);
-    emitCCall(&operationSetWasmTableElement, arguments, shouldThrow);
-    Location shouldThrowLocation = loadIfNecessary(shouldThrow);
-
-    LOG_INSTRUCTION("TableSet", tableIndex, index, value);
-
-    recordJumpToThrowException(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
-
-    consume(shouldThrow);
-
-    return { };
-}
-
 [[nodiscard]] PartialResult BBQJIT::addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length)
 {
     ASSERT(dstOffset.type() == m_info.table(tableIndex).addressType().asWasmTypeKind());

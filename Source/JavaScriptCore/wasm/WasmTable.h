@@ -63,6 +63,7 @@ public:
     uint32_t length() const { return m_length; }
 
     static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
+    static constexpr ptrdiff_t offsetOfOwner() { return OBJECT_OFFSETOF(Table, m_owner); }
 
     NODELETE static uint32_t allocatedLength(uint32_t length);
 
