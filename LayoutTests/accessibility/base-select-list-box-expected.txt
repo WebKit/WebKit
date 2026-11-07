@@ -11,7 +11,7 @@ PASS: axCherry.parentElement().isEqual(axSelect) === true
 
 size=1
 PASS: accessibilityController.accessibleElementById('select').role.toLowerCase().includes('popup') === true
-PASS: findBaseSelectMenu(axSelect) != null === true
+PASS: findBaseSelectMenu(axSelect) === null
 PASS: axSelect.isExpanded === true
 PASS: findBaseSelectMenu(axSelect) != null === true
 PASS: axSelect.isExpanded === false

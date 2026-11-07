@@ -47,7 +47,8 @@ if (window.accessibilityController) {
         document.getElementById("select").size = 1;
         output += await expectAsync("accessibilityController.accessibleElementById('select').role.toLowerCase().includes('popup')", "true");
         window.axSelect = accessibilityController.accessibleElementById("select");
-        output += await expectAsync("findBaseSelectMenu(axSelect) != null", "true");
+        // Like the menu of a native pop-up button, the picker is only exposed while it's open.
+        output += await expectAsync("findBaseSelectMenu(axSelect)", "null");
         axSelect.press();
         output += await expectAsync("axSelect.isExpanded", "true");
         output += expect("findBaseSelectMenu(axSelect) != null", "true");

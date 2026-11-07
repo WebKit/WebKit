@@ -208,6 +208,66 @@ NODELETE static bool nodeAndRendererAreValid(Node* node)
     return node ? nodeRendererIsValid(*node) : false;
 }
 
+static bool isClosedBaseSelectPicker(SelectPopoverElement& picker)
+{
+    RefPtr select = picker.selectElement();
+    return select && select->usesBaseAppearancePicker() && !picker.isPopoverShowing();
+}
+
+// Rules out most nodes without walking their ancestors. A picker is in the user agent shadow tree of its select, and
+// IsInSelectOrDataListSubtree doesn't cross shadow boundaries, so also check shadow hosts, like the select itself.
+static bool mightBeInSelectPicker(Node& node)
+{
+    RefPtr<Element> element = dynamicDowncast<Element>(node);
+    if (!element)
+        element = node.parentElement();
+    if (!element) {
+        if (RefPtr shadowRoot = node.containingShadowRoot())
+            element = shadowRoot->host();
+    }
+    while (element) {
+        if (element->isInSelectOrDataListSubtree())
+            return true;
+        RefPtr shadowRoot = element->containingShadowRoot();
+        element = shadowRoot ? shadowRoot->host() : nullptr;
+    }
+    return false;
+}
+
+// Like the menu of a native pop-up button, the picker of a base-appearance select, and everything in it, only has
+// accessibility objects while it's open. Otherwise, an assistive technology could be left on a hidden option once
+// the picker closes. VoiceOver, for instance, doesn't move when focus moves to an ancestor of an object that's still valid.
+static bool isInClosedBaseSelectPicker(Node& node)
+{
+    if (!mightBeInSelectPicker(node))
+        return false;
+
+    for (RefPtr<Node> ancestor = &node; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+        if (RefPtr picker = dynamicDowncast<SelectPopoverElement>(*ancestor))
+            return isClosedBaseSelectPicker(*picker);
+        // Content of a select that isn't in its picker, like its button.
+        if (is<HTMLSelectElement>(*ancestor))
+            return false;
+    }
+    return false;
+}
+
+static bool isInClosedBaseSelectPicker(RenderObject& renderer)
+{
+    // Anonymous renderers take the node of their nearest ancestor that has one.
+    CheckedPtr<RenderObject> rendererWithNode = &renderer;
+    while (rendererWithNode && !rendererWithNode->node())
+        rendererWithNode = rendererWithNode->parent();
+    if (!rendererWithNode || !mightBeInSelectPicker(*protect(rendererWithNode->node())))
+        return false;
+
+    for (CheckedPtr<RenderObject> current = &renderer; current; current = current->parent()) {
+        if (RefPtr picker = dynamicDowncast<SelectPopoverElement>(current->node()))
+            return isClosedBaseSelectPicker(*picker);
+    }
+    return false;
+}
+
 AccessibilityReplacedText::AccessibilityReplacedText(const VisibleSelection& selection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
@@ -1253,6 +1313,9 @@ AccessibilityObject* AXObjectCache::getOrCreateSlow(Node& node, IsPartOfRelation
     if (!composedParent)
         return nullptr;
 
+    if (isInClosedBaseSelectPicker(node))
+        return nullptr;
+
     Ref protectedNode { node };
 
     RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(node);
@@ -1331,6 +1394,10 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
 
     // Don't create an object for this renderer if it's being destroyed.
     if (renderer.beingDestroyed())
+        return nullptr;
+
+    // The renderers of a closed picker remain until the next style update.
+    if (isInClosedBaseSelectPicker(renderer))
         return nullptr;
 
     // We should never create objects that have dirty layout. Doing so can cause
@@ -1928,8 +1995,15 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
     // The select popover is only exposed as a base appearance picker, which depends on the box type.
     if (RefPtr select = dynamicDowncast<HTMLSelectElement>(object.node())) {
         if (RefPtr popover = select->pickerPopoverElement()) {
-            if (RefPtr axPopover = get(*popover))
-                axPopover->recomputeIsIgnored();
+            if (RefPtr axPopover = get(*popover)) {
+                // A box type change can make a closed popover the picker, which only has objects while it's open.
+                // Its object can only exist from before that change, so this doesn't walk the picker each time
+                // the children of a select with a closed picker change.
+                if (isClosedBaseSelectPicker(*popover))
+                    removeSelectPickerObjects(*popover);
+                else
+                    axPopover->recomputeIsIgnored();
+            }
         }
     }
 
@@ -2913,6 +2987,11 @@ void AXObjectCache::onInertOrVisibilityChange(RenderElement& renderer)
 
 void AXObjectCache::onPopoverToggle(const HTMLElement& popover)
 {
+    if (RefPtr picker = dynamicDowncast<SelectPopoverElement>(const_cast<HTMLElement&>(popover))) {
+        handleSelectPickerToggle(*picker);
+        return;
+    }
+
     RefPtr axPopover = get(const_cast<HTMLElement*>(&popover));
     if (!axPopover)
         return;
@@ -3065,6 +3144,38 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 #else
     UNUSED_PARAM(scrollbar);
 #endif
+}
+
+void AXObjectCache::removeSelectPickerObjects(SelectPopoverElement& picker)
+{
+    // Once the picker is closed, isInClosedBaseSelectPicker() keeps these objects from being created again.
+    Vector<Ref<Node>> nodesToRemove;
+    for (Ref node : composedTreeDescendants</* InlineContextCapacity */ 0>(picker)) {
+        if (get(node.get()))
+            nodesToRemove.append(WTF::move(node));
+    }
+    for (Ref node : nodesToRemove)
+        remove(node.get());
+    remove(picker);
+}
+
+void AXObjectCache::handleSelectPickerToggle(SelectPopoverElement& picker)
+{
+    if (!picker.isPopoverShowing())
+        removeSelectPickerObjects(picker);
+
+    RefPtr select = picker.selectElement();
+    RefPtr axSelect = get(select.get());
+    if (!axSelect)
+        return;
+
+    // The picker's object is created, or was removed, as a child of the select's.
+    childrenChanged(axSelect.get());
+
+    // Posting notifications requires the select's updated children, so defer this to a time we know it's safe.
+    m_deferredToggledSelectPickers.append(axSelect.releaseNonNull());
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::onSelectedOptionChanged(Element& element)
@@ -6645,6 +6756,10 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         handleDeferredPopoverToggle(toggledPopover);
     m_deferredToggledPopovers.clear();
 
+    for (auto& axSelect : m_deferredToggledSelectPickers)
+        handleDeferredSelectPickerToggle(axSelect);
+    m_deferredToggledSelectPickers.clear();
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (m_deferredRegenerateIsolatedTree) {
         if (auto tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
@@ -6692,34 +6807,35 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 #endif
 }
 
+void AXObjectCache::handleDeferredSelectPickerToggle(AccessibilityObject& axSelect)
+{
+    RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(axSelect.element());
+    if (!selectElement)
+        return;
+
+    // Post ExpandedChanged on the select itself, since the picker is opened programmatically
+    // (not via popovertarget/commandfor), so its controllers() would be empty.
+    RefPtr document = this->document();
+    postNotification(&axSelect, document, AXNotification::ExpandedChanged);
+
+    RefPtr picker = selectElement->pickerPopoverElement();
+    if (!picker || !picker->isPopoverShowing())
+        return;
+
+    RefPtr option = selectElement->selectedOption();
+    if (option && (selectElement->focused() || option->focused())) {
+        // This notification isn't strictly necessary, as when handling press() via the
+        // accessibility API, the DOM will naturally move focus to the selected option.
+        // However, in practice, I've found a notification here to make VoiceOver's focus
+        // movement significantly more snappy and consistent.
+        if (RefPtr axOption = getOrCreate(*option))
+            postNotification(axOption.get(), document, AXNotification::FocusedUIElementChanged);
+    }
+}
+
 void AXObjectCache::handleDeferredPopoverToggle(AccessibilityObject& axPopover)
 {
     RefPtr document = this->document();
-    if (RefPtr popoverElement = dynamicDowncast<SelectPopoverElement>(axPopover.element())) {
-        // When a base-appearance select's popover toggles, post ExpandedChanged on the
-        // select element itself, since the popover is opened programmatically (not
-        // via popovertarget/commandfor) so controllers() would be empty.
-        if (RefPtr selectElement = popoverElement->selectElement()) {
-            if (RefPtr axSelect = get(selectElement.get()))
-                postNotification(axSelect.get(), document, AXNotification::ExpandedChanged);
-
-            bool isOpening = popoverElement->isPopoverShowing();
-            if (isOpening) {
-                RefPtr option = selectElement->selectedOption();
-                if (option && (selectElement->focused() || option->focused())) {
-                    // This notification isn't strictly necessary, as when handling press() via the
-                    // accessibility API, the DOM will naturally move focus to the selected option.
-                    // However, in practice, I've found a notification here to make VoiceOver's focus
-                    // movement significantly more snappy and consistent.
-                    if (RefPtr axOption = getOrCreate(*option))
-                        postNotification(axOption.get(), document, AXNotification::FocusedUIElementChanged);
-                }
-            }
-        }
-
-        return;
-    }
-
     // There may be multiple elements with popovertarget or commandfor attributes that point at this popover.
     for (const auto& invoker : axPopover.controllers())
         postNotification(&downcast<AccessibilityObject>(invoker.get()), document, AXNotification::ExpandedChanged);
