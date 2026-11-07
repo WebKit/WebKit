@@ -73,6 +73,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SerializedImageBuffer);
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
+// A side longer than a GPU texture can be only tiles or falls back to an unaccelerated
+// buffer, and no destination shows that many pixels of one. A long, thin strip, such as a
+// generated image tiled along a very wide box, stays under the area limit without this.
+static const float MaxClampedDimension = 16384;
+
 RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat pixelFormat, GraphicsClient* graphicsClient)
 {
     RefPtr<ImageBuffer> imageBuffer;
@@ -143,7 +148,8 @@ bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
     if (size.isEmpty())
         return false;
 
-    return floorf(size.height()) * floorf(size.width()) > MaxClampedArea;
+    return floorf(size.height()) * floorf(size.width()) > MaxClampedArea
+        || floorf(std::max(size.width(), size.height())) > MaxClampedDimension;
 }
 
 RefPtr<ImageBuffer> SerializedImageBuffer::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> buffer, GraphicsClient* graphicsClient)
@@ -210,8 +216,10 @@ bool ImageBuffer::sizeNeedsClamping(const FloatSize& size, FloatSize& scale)
     if (!sizeNeedsClamping(scaledSize))
         return false;
 
-    // The area of scaled size is bigger than the upper limit, adjust the scale to fit.
-    scale.scale(sqrtf(MaxClampedArea / (scaledSize.width() * scaledSize.height())));
+    // The scaled size's area or longest side is over its limit: scale uniformly to fit both.
+    float areaScale = sqrtf(MaxClampedArea / (scaledSize.width() * scaledSize.height()));
+    float dimensionScale = MaxClampedDimension / std::max(scaledSize.width(), scaledSize.height());
+    scale.scale(std::min({ areaScale, dimensionScale, 1.f }));
     ASSERT(!sizeNeedsClamping(size, scale));
     return true;
 }
