@@ -1052,6 +1052,15 @@ bool MediaElementSession::isPlayingToWirelessPlaybackTarget() const
 
 void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (shouldPlay && playbackTargetType() == MediaPlaybackTargetType::WirelessPlayback) {
+        if (RefPtr element = m_element; element && element->isWirelessPlaybackTargetDisabled()) {
+            INFO_LOG(LOGIDENTIFIER, "not playing to target because wireless playback is disabled");
+            shouldPlay = false;
+        }
+    }
+#endif
+
     INFO_LOG(LOGIDENTIFIER, shouldPlay);
     m_shouldPlayToPlaybackTarget = shouldPlay;
     updateClientDataBuffering();

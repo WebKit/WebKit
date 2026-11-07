@@ -1,0 +1,12 @@
+Test that a muted, looping video that starts playing while a MediaDeviceRoute is active is not played on the route, while a video with audio that starts playing afterward is.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EVENT(canplaythrough)
+RUN(flourish.play())
+EVENT(playing)
+EVENT(canplaythrough)
+RUN(main.play())
+EXPECTED (routeReceivedFlourishURL == 'false') OK
+EXPECTED (flourish.webkitCurrentPlaybackTargetIsWireless == 'false') OK
+END OF TEST
+

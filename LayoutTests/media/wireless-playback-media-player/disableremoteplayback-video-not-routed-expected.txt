@@ -1,0 +1,13 @@
+Test that a video with the disableRemotePlayback attribute that starts playing while a MediaDeviceRoute is active is not played on the route, while a video without it that starts playing afterward is.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(optedOut.disableRemotePlayback = true)
+EVENT(canplaythrough)
+RUN(optedOut.play())
+EVENT(playing)
+EVENT(canplaythrough)
+RUN(main.play())
+EXPECTED (routeReceivedOptedOutURL == 'false') OK
+EXPECTED (optedOut.webkitCurrentPlaybackTargetIsWireless == 'false') OK
+END OF TEST
+

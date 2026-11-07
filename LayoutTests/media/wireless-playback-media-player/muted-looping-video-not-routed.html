@@ -1,0 +1,62 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var flourish;
+            var main;
+            var routeReceivedFlourishURL = false;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                const mainURLPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        if (url.includes('/content/counting.'))
+                            routeReceivedFlourishURL = true;
+                        else if (url.includes('/content/test.'))
+                            resolve();
+                    });
+                });
+
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                flourish = document.createElement('video');
+                flourish.muted = true;
+                flourish.loop = true;
+                flourish.playsInline = true;
+                flourish.src = findMediaFile('video', '../content/counting');
+                document.body.appendChild(flourish);
+
+                await waitFor(flourish, 'canplaythrough');
+
+                run(`flourish.play()`);
+                await waitFor(flourish, 'playing');
+
+                main = document.createElement('video');
+                main.playsInline = true;
+                main.src = findMediaFile('video', '../content/test');
+                document.body.appendChild(main);
+
+                await waitFor(main, 'canplaythrough');
+
+                run(`main.play()`);
+                await mainURLPromise;
+
+                testExpected('routeReceivedFlourishURL', false);
+                testExpected('flourish.webkitCurrentPlaybackTargetIsWireless', false);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <p>Test that a muted, looping video that starts playing while a MediaDeviceRoute is active is not played on the route,
+        while a video with audio that starts playing afterward is.</p>
+    </body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remote playback routing</title>
+<style>
+    body { font: 14px -apple-system, sans-serif; margin: 12px; }
+    .videos { display: flex; flex-wrap: wrap; gap: 12px; }
+    .player { flex: 1 1 300px; border: 1px solid #ccc; padding: 8px; }
+    video { width: 100%; background: black; }
+    table { border-collapse: collapse; margin-top: 6px; }
+    td { padding: 2px 8px 2px 0; }
+    td.value { font-family: ui-monospace, monospace; }
+    .wireless { color: white; background: #c00; padding: 0 4px; }
+    button, select { font-size: 14px; margin: 4px 4px 4px 0; }
+    #log { font-family: ui-monospace, monospace; font-size: 12px; white-space: pre-wrap; border: 1px solid #ccc; padding: 6px; max-height: 300px; overflow-y: auto; }
+    ol { padding-left: 20px; }
+</style>
+</head>
+<body>
+<h3>Remote playback routing</h3>
+
+<div>
+    <label>First video:
+        <select id="scenario">
+            <option value="muted-loop">Muted, looping, no controls (flourish)</option>
+            <option value="disableremoteplayback">Unmuted, disableRemotePlayback</option>
+            <option value="x-webkit-airplay-deny">Unmuted, x-webkit-airplay="deny"</option>
+            <option value="x-webkit-wirelessvideoplaybackdisabled">Unmuted, x-webkit-wirelessvideoplaybackdisabled</option>
+            <option value="none">Unmuted, no opt-out</option>
+        </select>
+    </label>
+    <button id="setup">Set up</button>
+</div>
+<div>
+    <button id="playFirst" disabled>Play first video</button>
+    <button id="playMain" disabled>Play main video</button>
+    <button id="addOptOut" disabled>Add opt-out to first video</button>
+    <button id="removeOptOut" disabled>Remove opt-out from first video</button>
+    <button id="pauseAll" disabled>Pause both</button>
+</div>
+
+<div class="videos">
+    <div class="player">
+        <b>First video</b>
+        <div id="firstContainer"></div>
+        <table id="firstStatus"></table>
+    </div>
+    <div class="player">
+        <b>Main video</b> (controls, audio)
+        <div id="mainContainer"></div>
+        <table id="mainStatus"></table>
+    </div>
+</div>
+
+<h4>Log</h4>
+<button id="clearLog">Clear log</button>
+<div id="log"></div>
+
+<h4>Cases</h4>
+<p>Serve this page over HTTP, for example from the OpenSource checkout:
+<code>python3 -m http.server 8000 --bind 0.0.0.0</code>, then open
+<code>http://&lt;host&gt;:8000/ManualTests/media/remote-playback-routing.html</code>.
+By default both videos are Apple's public HLS sample streams, which the receiver loads directly.
+Use <code>?first=&lt;url&gt;&amp;main=&lt;url&gt;</code> to try other media; the receiver must be able to load them.
+<code>?scenario=muted-loop&amp;autoplay</code> sets up on load and autoplays the first video without a user gesture, as on apple.com;
+the other scenario values are <code>disableremoteplayback</code>, <code>x-webkit-airplay-deny</code>,
+<code>x-webkit-wirelessvideoplaybackdisabled</code> and <code>none</code>.</p>
+<p>A video is on the route when its <span class="wireless">isWireless</span> marker is shown, and the receiver shows that video.</p>
+<ol>
+    <li><b>Route active before the first video plays.</b> Connect the route (iOS: AirPlay from Control Center, or the casting app for a MediaDeviceRoute; macOS: AirPlay from Control Center or the menu bar). Pick a first-video option, Set up, Play first video, then Play main video. Note which video goes to the receiver, and when. Repeat with <code>?scenario=muted-loop&amp;autoplay</code>, loading the page after the route is connected, so the first video starts without a tap.</li>
+    <li><b>Route connected during playback.</b> Set up, Play first video, Play main video, then connect the route.</li>
+    <li><b>Opt-out added while on the route.</b> Choose "Unmuted, no opt-out", Set up, connect the route, Play first video and wait for it to reach the receiver. Then Add opt-out to first video. Note whether it comes back to local playback, pauses, or errors.</li>
+    <li><b>Opt-out removed.</b> After case 3, Remove opt-out from first video. Note whether it goes back to the receiver.</li>
+    <li><b>macOS picker.</b> With nothing connected, Set up, Play first video, then pick a device from the AirPlay button in the main video's controls. Note which video goes to the receiver.</li>
+</ol>
+
+<script>
+const params = new URLSearchParams(location.search);
+const firstURL = params.get('first') ?? 'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8';
+const mainURL = params.get('main') ?? 'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8';
+
+const optOuts = {
+    'disableremoteplayback': { add: v => v.disableRemotePlayback = true, remove: v => v.disableRemotePlayback = false },
+    'x-webkit-airplay-deny': { add: v => v.setAttribute('x-webkit-airplay', 'deny'), remove: v => v.removeAttribute('x-webkit-airplay') },
+    'x-webkit-wirelessvideoplaybackdisabled': { add: v => v.setAttribute('x-webkit-wirelessvideoplaybackdisabled', ''), remove: v => v.removeAttribute('x-webkit-wirelessvideoplaybackdisabled') },
+};
+
+const events = ['loadstart', 'emptied', 'loadedmetadata', 'canplaythrough', 'play', 'playing', 'pause', 'ended', 'error', 'volumechange',
+    'webkitcurrentplaybacktargetiswirelesschanged', 'webkitplaybacktargetavailabilitychanged'];
+
+let first;
+let main;
+let scenario;
+const startTime = performance.now();
+
+function log(text)
+{
+    const logElement = document.getElementById('log');
+    logElement.textContent += `${((performance.now() - startTime) / 1000).toFixed(2)}s ${text}\n`;
+    logElement.scrollTop = logElement.scrollHeight;
+}
+
+function optOutState(video)
+{
+    const states = [];
+    if (video.disableRemotePlayback)
+        states.push('disableRemotePlayback');
+    if (video.hasAttribute('x-webkit-airplay'))
+        states.push(`x-webkit-airplay="${video.getAttribute('x-webkit-airplay')}"`);
+    if (video.hasAttribute('x-webkit-wirelessvideoplaybackdisabled'))
+        states.push('x-webkit-wirelessvideoplaybackdisabled');
+    return states.join(', ') || 'none';
+}
+
+function updateStatus(video, tableID)
+{
+    const rows = [
+        ['isWireless', video.webkitCurrentPlaybackTargetIsWireless ? '<span class="wireless">isWireless</span>' : 'false'],
+        ['paused', video.paused],
+        ['muted', video.muted],
+        ['currentTime', video.currentTime.toFixed(2)],
+        ['readyState', video.readyState],
+        ['networkState', video.networkState],
+        ['error', video.error ? `${video.error.code} ${video.error.message}` : 'none'],
+        ['opt-out', optOutState(video)],
+        ['webkitWirelessVideoPlaybackDisabled', video.webkitWirelessVideoPlaybackDisabled],
+        ['currentSrc', video.currentSrc.split('/').pop()],
+    ];
+    document.getElementById(tableID).innerHTML = rows.map(([name, value]) => `<tr><td>${name}</td><td class="value">${value}</td></tr>`).join('');
+}
+
+function updateAllStatus()
+{
+    if (first)
+        updateStatus(first, 'firstStatus');
+    if (main)
+        updateStatus(main, 'mainStatus');
+}
+
+function observe(video, name)
+{
+    for (const type of events) {
+        video.addEventListener(type, event => {
+            let detail = '';
+            if (type === 'webkitcurrentplaybacktargetiswirelesschanged')
+                detail = ` isWireless=${video.webkitCurrentPlaybackTargetIsWireless}`;
+            else if (type === 'webkitplaybacktargetavailabilitychanged')
+                detail = ` availability=${event.availability}`;
+            else if (type === 'error')
+                detail = ` code=${video.error?.code} ${video.error?.message ?? ''}`;
+            log(`${name}: ${type}${detail}`);
+            updateAllStatus();
+        });
+    }
+    video.addEventListener('timeupdate', updateAllStatus);
+}
+
+function setUp(autoplayFirst = false)
+{
+    scenario = document.getElementById('scenario').value;
+    document.getElementById('firstContainer').replaceChildren();
+    document.getElementById('mainContainer').replaceChildren();
+
+    first = document.createElement('video');
+    first.playsInline = true;
+    first.loop = true;
+    if (scenario === 'muted-loop') {
+        first.muted = true;
+        first.setAttribute('aria-hidden', 'true');
+        first.src = firstURL;
+    } else {
+        first.controls = true;
+        optOuts[scenario]?.add(first);
+        first.src = firstURL;
+    }
+    first.autoplay = autoplayFirst;
+    observe(first, 'first');
+    document.getElementById('firstContainer').append(first);
+
+    main = document.createElement('video');
+    main.playsInline = true;
+    main.loop = true;
+    main.controls = true;
+    main.src = mainURL;
+    observe(main, 'main');
+    document.getElementById('mainContainer').append(main);
+
+    const canToggleOptOut = scenario !== 'muted-loop';
+    document.getElementById('playFirst').disabled = false;
+    document.getElementById('playMain').disabled = false;
+    document.getElementById('pauseAll').disabled = false;
+    document.getElementById('addOptOut').disabled = !canToggleOptOut;
+    document.getElementById('removeOptOut').disabled = !canToggleOptOut;
+
+    log(`set up: scenario=${scenario}, first opt-out=${optOutState(first)}`);
+    updateAllStatus();
+}
+
+function selectedOptOut()
+{
+    return optOuts[scenario] ?? optOuts['disableremoteplayback'];
+}
+
+document.getElementById('setup').onclick = () => setUp();
+if (params.has('scenario')) {
+    document.getElementById('scenario').value = params.get('scenario');
+    setUp(params.has('autoplay'));
+}
+document.getElementById('playFirst').onclick = () => {
+    log('first: play()');
+    first.play().catch(error => log(`first: play() rejected: ${error}`));
+};
+document.getElementById('playMain').onclick = () => {
+    log('main: play()');
+    main.play().catch(error => log(`main: play() rejected: ${error}`));
+};
+document.getElementById('addOptOut').onclick = () => {
+    selectedOptOut().add(first);
+    log(`first: opt-out added, now ${optOutState(first)}`);
+    updateAllStatus();
+};
+document.getElementById('removeOptOut').onclick = () => {
+    selectedOptOut().remove(first);
+    log(`first: opt-out removed, now ${optOutState(first)}`);
+    updateAllStatus();
+};
+document.getElementById('pauseAll').onclick = () => {
+    first.pause();
+    main.pause();
+};
+document.getElementById('clearLog').onclick = () => document.getElementById('log').textContent = '';
+</script>
+</body>
+</html>

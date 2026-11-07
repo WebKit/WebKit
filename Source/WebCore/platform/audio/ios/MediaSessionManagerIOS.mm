@@ -146,7 +146,8 @@ void MediaSessionManageriOS::sessionDidCompleteAdmission(PlatformMediaSessionInt
 {
     MediaSessionManagerCocoa::sessionDidCompleteAdmission(session);
 
-    applyActiveVideoRouteToSession(session);
+    if (&session == nowPlayingEligibleSession().get())
+        applyActiveVideoRouteToSession(session);
 }
 
 void MediaSessionManageriOS::activeNowPlayingSessionChanged(PlatformMediaSessionInterface* session)
