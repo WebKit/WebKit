@@ -9055,6 +9055,156 @@ All tests successfully passed!
         return self.run_step()
 
 
+class TestFindChangedAPITests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, stdout, exit_code=0):
+        self.setup_step(FindChangedAPITests())
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['python3', 'Tools/Scripts/run-gtk-tests', '--release', '--changed-since', 'remotes/origin/main', '-l'],
+                        timeout=5 * 60,
+                        )
+            .log('stdio', stdout=stdout)
+            .exit(exit_code),
+        )
+
+    def test_changed_tests(self):
+        self.configureStep('''Tests changed since remotes/origin/main:
+    TestLoaderClient (Tools/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestLoaderClient.cpp)
+    TestWTF:WTF_Vector.Basic (Tools/TestWebKitAPI/glib/TestExpectations.json)
+''')
+        self.expect_outcome(result=SUCCESS, state_string='Found 2 changed API test(s)')
+        self.expect_property('changed_api_tests', {
+            'TestLoaderClient': 'Tools/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestLoaderClient.cpp',
+            'TestWTF:WTF_Vector.Basic': 'Tools/TestWebKitAPI/glib/TestExpectations.json',
+        })
+        return self.run_step()
+
+    def test_no_changed_tests(self):
+        self.configureStep('No tests changed since remotes/origin/main.\n')
+        self.expect_outcome(result=SKIPPED, state_string='No API tests changed')
+        self.expect_property('changed_api_tests', {})
+        return self.run_step()
+
+    def test_failure_does_not_select_tests(self):
+        self.configureStep('Traceback (most recent call last):\n', exit_code=1)
+        self.expect_outcome(result=WARNINGS, state_string='Unable to find changed API tests')
+        self.expect_property('changed_api_tests', {})
+        return self.run_step()
+
+
+class TestRunAPITestsInStressMode(BuildStepMixinAdditions, unittest.TestCase):
+    EXPECTATIONS = 'Tools/TestWebKitAPI/glib/TestExpectations.json'
+    SOURCE = 'Tools/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestLoaderClient.cpp'
+
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'api_test_results.json'
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, changed_tests, failures=None, pre_existing=(), flaky=(), flaky_verdict=FlakyVerdict(flaky_type='DirtyTree', build_urls={'https://ews-build.webkit.org/#/builders/21/builds/1'}), queried=None):
+        self.setup_step(RunAPITestsInStressMode())
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('changed_api_tests', changed_tests)
+
+        def fake_is_pre_existing(cls, test, **kwargs):
+            if queried is not None:
+                queried.append(test)
+            return defer.succeed({'is_existing_failure': test in pre_existing, 'pass_rate': 0 if test in pre_existing else 100, 'raw_data': {}, 'logs': '', 'request_failed': False})
+
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {test: flaky_verdict for test in flaky}, queried))
+
+        tests = ' '.join(sorted(changed_tests))
+        json_output = json.dumps({'Failed': [{'name': failure, 'output': None} for failure in failures or []], 'Crashed': [], 'Timedout': []}) if failures is not None else ''
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-gtk-tests --release --json-output={self.jsonFileName} --repeat-each 20 {tests} 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=20 * 60,
+                        )
+            .log('json', stdout=json_output)
+            .exit(1 if failures or failures is None else 0),
+        )
+
+    def test_skipped_without_changed_tests(self):
+        self.setup_step(RunAPITestsInStressMode())
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expect_outcome(result=SKIPPED)
+        return self.run_step()
+
+    def test_passing_changed_tests(self):
+        self.configureStep({'TestLoaderClient': self.SOURCE, 'TestWTF:WTF_Vector.Basic': self.EXPECTATIONS}, failures=[])
+        self.expect_outcome(result=SUCCESS, state_string='Passed 2 changed API test(s) 20 times')
+        return self.run_step()
+
+    def test_a_new_failure_fails_the_build(self):
+        self.configureStep({'TestLoaderClient': self.SOURCE}, failures=['TestLoaderClient:/webkit/WebKitWebView/title'])
+        self.expect_outcome(result=FAILURE, state_string='Found test failures in stress mode: TestLoaderClient:/webkit/WebKitWebView/title')
+        self.expect_property('build_summary', 'Found test failures in stress mode: TestLoaderClient:/webkit/WebKitWebView/title')
+        return self.run_step()
+
+    def test_a_known_flake_in_a_changed_test_program_is_excused(self):
+        self.configureStep({'TestLoaderClient': self.SOURCE}, failures=['TestLoaderClient:/webkit/WebKitWebView/title'], flaky=['TestLoaderClient:/webkit/WebKitWebView/title'])
+        self.expect_outcome(result=SUCCESS, state_string='Ignored pre-existing flakes: TestLoaderClient:/webkit/WebKitWebView/title')
+        d = self.run_step()
+        d.addCallback(lambda _: self.assertIsNone(self.getProperty('build_summary')))
+        return d
+
+    def test_a_flake_without_within_build_evidence_is_not_excused(self):
+        test = 'TestLoaderClient:/webkit/WebKitWebView/title'
+        self.configureStep({'TestLoaderClient': self.SOURCE}, failures=[test], flaky=[test], flaky_verdict=FlakyVerdict(flaky_type='BetweenBuilds', build_urls={'https://ews-build.webkit.org/#/builders/21/builds/1'}))
+        self.expect_outcome(result=FAILURE, state_string=f'Found test failures in stress mode: {test}')
+        return self.run_step()
+
+    def test_a_pre_existing_failure_in_a_changed_test_program_is_excused(self):
+        self.configureStep({'TestLoaderClient': self.SOURCE}, failures=['TestLoaderClient:/webkit/WebKitWebView/title'], pre_existing=['TestLoaderClient:/webkit/WebKitWebView/title'])
+        self.expect_outcome(result=SUCCESS, state_string='Ignored pre-existing failures: TestLoaderClient:/webkit/WebKitWebView/title')
+        return self.run_step()
+
+    def test_a_test_with_a_changed_expectation_is_never_excused(self):
+        queried = []
+        test = 'TestLoaderClient:/webkit/WebKitWebView/title'
+        self.configureStep({test: self.EXPECTATIONS}, failures=[test], pre_existing=[test], flaky=[test], queried=queried)
+        self.expect_outcome(result=FAILURE, state_string=f'Found test failures in stress mode: {test}')
+        d = self.run_step()
+        d.addCallback(lambda _: self.assertEqual(queried, []))
+        return d
+
+    def test_a_google_test_with_a_changed_expectation_is_never_excused(self):
+        self.configureStep({'TestWTF:WTF_Vector.Basic': self.EXPECTATIONS}, failures=['TestWTF.WTF_Vector.Basic'], flaky=['TestWTF.WTF_Vector.Basic'])
+        self.expect_outcome(result=FAILURE, state_string='Found test failures in stress mode: TestWTF.WTF_Vector.Basic')
+        return self.run_step()
+
+    def test_a_changed_test_program_expectation_covers_its_test_cases(self):
+        self.configureStep({'TestLoaderClient': self.EXPECTATIONS}, failures=['TestLoaderClient:/webkit/WebKitWebView/title'], flaky=['TestLoaderClient:/webkit/WebKitWebView/title'])
+        self.expect_outcome(result=FAILURE, state_string='Found test failures in stress mode: TestLoaderClient:/webkit/WebKitWebView/title')
+        return self.run_step()
+
+    def test_a_run_without_results_fails_the_build(self):
+        self.configureStep({'TestLoaderClient': self.SOURCE}, failures=None)
+        self.expect_outcome(result=FAILURE, state_string='Found test failures in stress mode, but its results could not be parsed')
+        self.expect_property('build_summary', 'Found test failures in stress mode, but its results could not be parsed')
+        return self.run_step()
+
+
 class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
