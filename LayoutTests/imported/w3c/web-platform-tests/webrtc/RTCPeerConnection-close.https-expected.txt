@@ -1,0 +1,4 @@
+
+PASS close() sets the state of the ICE and DTLS transports to closed
+PASS close() sets the state of the SCTP transport and its underlying transports to closed
+
