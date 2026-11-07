@@ -1,0 +1,4 @@
+
+
+PASS Test event dispatches and attribute changes for seek to middle.
+
