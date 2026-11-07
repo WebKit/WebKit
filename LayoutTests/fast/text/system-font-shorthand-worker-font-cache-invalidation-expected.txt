@@ -1,0 +1,10 @@
+Worker threads invalidating their font caches must not corrupt the system font shorthand cache used by the main thread.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
