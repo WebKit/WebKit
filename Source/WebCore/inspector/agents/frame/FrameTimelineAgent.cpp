@@ -26,7 +26,22 @@
 #include "config.h"
 #include "FrameTimelineAgent.h"
 
+#include "Document.h"
+#include "Element.h"
+#include "FloatQuad.h"
+#include "FrameDOMAgent.h"
+#include "FrameDebuggerAgent.h"
 #include "InspectorWebAgentBase.h"
+#include "InstrumentingAgents.h"
+#include "LayoutRect.h"
+#include "LocalFrameView.h"
+#include "Node.h"
+#include "NodeDocument.h"
+#include "RenderElementInlines.h"
+#include "RenderObjectInlines.h"
+#include "RenderView.h"
+#include "TimelineRecordFactory.h"
+#include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -46,19 +61,212 @@ Inspector::Protocol::ErrorStringOr<void> FrameTimelineAgent::setAutoCaptureEnabl
     return makeUnexpected("Not supported"_s);
 }
 
+bool FrameTimelineAgent::tracking() const
+{
+    return protect(m_instrumentingAgents)->trackingFrameTimelineAgent() == this && InspectorTimelineAgent::tracking();
+}
+
+void FrameTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
+{
+    // Set before the base Timeline slot and cleared after it, so InspectorInstrumentation never finds the base slot
+    // set without this one, which would send this frame's records to the page's agent.
+    protect(m_instrumentingAgents)->setTrackingFrameTimelineAgent(this);
+
+    InspectorTimelineAgent::internalStart(WTF::move(maxCallStackDepth));
+}
+
+void FrameTimelineAgent::internalStop()
+{
+    InspectorTimelineAgent::internalStop();
+
+    protect(m_instrumentingAgents)->setTrackingFrameTimelineAgent(nullptr);
+}
+
 bool FrameTimelineAgent::shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument instrument) const
 {
     // The other instruments belong to domains that frame targets do not have yet, so their getters would reach
     // the page's agents.
-    // FIXME: <https://webkit.org/b/329360> Also toggle ScriptProfiler once frame targets have that domain.
-    return instrument == Inspector::Protocol::Timeline::Instrument::Timeline;
+    return instrument == Inspector::Protocol::Timeline::Instrument::Timeline
+        || instrument == Inspector::Protocol::Timeline::Instrument::ScriptProfiler;
 }
 
-Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForNode(Node*)
+void FrameTimelineAgent::willInvalidateLayout(const RenderObject& renderer)
 {
-    // FIXME: <https://webkit.org/b/329361> Push the node through FrameDOMAgent once the frontend resolves
-    // node IDs in Timeline records through the record's target.
-    return 0;
+    if (renderer.needsLayout())
+        return;
+
+    if (!is<RenderElement>(renderer))
+        return;
+
+    auto data = JSON::Object::create();
+
+    if (auto nodeId = nodeIdForRenderer(renderer))
+        TimelineRecordFactory::appendNodeId(data.get(), nodeId);
+
+    appendRecord(WTF::move(data), TimelineRecordType::InvalidateLayout, true);
+}
+
+void FrameTimelineAgent::didScheduleLayout(const RenderElement& layoutRoot)
+{
+    auto data = JSON::Object::create();
+
+    if (auto nodeId = nodeIdForRenderer(layoutRoot))
+        TimelineRecordFactory::appendNodeId(data.get(), nodeId);
+
+    appendRecord(WTF::move(data), TimelineRecordType::ScheduleLayout, true);
+}
+
+void FrameTimelineAgent::willLayout()
+{
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Layout, true);
+}
+
+void FrameTimelineAgent::didLayout(const RenderElement& layoutRoot, const Vector<FloatQuad>& layoutAreas)
+{
+    if (!lastRecordEntry())
+        return;
+
+    // Get the node ID first: it calls into the DOM agent, and a record pushed meanwhile would invalidate a
+    // pointer into the record stack.
+    auto nodeId = nodeIdForRenderer(layoutRoot);
+
+    auto* entry = lastRecordEntry();
+    ASSERT(entry->type == TimelineRecordType::Layout);
+
+    if (!layoutAreas.isEmpty())
+        TimelineRecordFactory::appendLayoutRoot(entry->data.get(), layoutAreas[0]);
+
+    if (nodeId)
+        TimelineRecordFactory::appendNodeId(entry->data.get(), nodeId);
+
+    didCompleteCurrentRecord(TimelineRecordType::Layout);
+}
+
+void FrameTimelineAgent::didScheduleStyleRecalculation(Document& document)
+{
+    auto data = JSON::Object::create();
+
+    if (auto nodeId = nodeIdForDocument(document))
+        TimelineRecordFactory::appendNodeId(data.get(), nodeId);
+
+    appendRecord(WTF::move(data), TimelineRecordType::ScheduleStyleRecalculation, true);
+}
+
+void FrameTimelineAgent::willRecalculateStyle()
+{
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::RecalculateStyles, true);
+}
+
+void FrameTimelineAgent::didRecalculateStyle(Document& document)
+{
+    if (!lastRecordEntry())
+        return;
+
+    // Get the node ID before taking a pointer into the record stack (see didLayout).
+    auto nodeId = nodeIdForDocument(document);
+
+    auto* entry = lastRecordEntry();
+    ASSERT(entry->type == TimelineRecordType::RecalculateStyles);
+
+    if (nodeId)
+        TimelineRecordFactory::appendNodeId(entry->data.get(), nodeId);
+
+    didCompleteCurrentRecord(TimelineRecordType::RecalculateStyles);
+}
+
+void FrameTimelineAgent::willPaint()
+{
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Paint, true);
+}
+
+void FrameTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipRect)
+{
+    if (!lastRecordEntry())
+        return;
+
+    // Get the node ID before taking a pointer into the record stack (see didLayout).
+    auto nodeId = nodeIdForRenderer(renderer);
+
+    auto* entry = lastRecordEntry();
+    ASSERT(entry->type == TimelineRecordType::Paint);
+
+    auto clipQuadInMainFrameView = protect(renderer.view().frameView())->contentsToMainFrameView(renderer.localToAbsoluteQuad({ clipRect }));
+    entry->data = TimelineRecordFactory::createPaintData(clipQuadInMainFrameView);
+
+    if (nodeId)
+        TimelineRecordFactory::appendNodeId(entry->data.get(), nodeId);
+
+    didCompleteCurrentRecord(TimelineRecordType::Paint);
+}
+
+void FrameTimelineAgent::didEnqueueFirstContentfulPaint()
+{
+    appendRecord(JSON::Object::create(), TimelineRecordType::FirstContentfulPaint, false);
+}
+
+void FrameTimelineAgent::didEnqueueLargestContentfulPaint(Element* element, unsigned area)
+{
+    appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeIdForNode(element), area), TimelineRecordType::LargestContentfulPaint, false);
+}
+
+WebDebuggerAgent* FrameTimelineAgent::debuggerAgentForProgrammaticCapture() const
+{
+    // Only this frame's own debugger agent, so that a frame's capture never turns off the page target's breakpoints.
+    // The page never fills this slot, so the fallback to the page's agents finds nothing.
+    return protect(m_instrumentingAgents)->enabledFrameDebuggerAgent();
+}
+
+Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForNode(Node* node) const
+{
+    if (!node)
+        return 0;
+
+    CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent();
+    if (!domAgent)
+        return 0;
+
+    // Like the page's DOM agent, push a node only once the frontend has requested its document.
+    if (!domAgent->boundNodeId(protect(node->document()).ptr()))
+        return 0;
+
+    return domAgent->pushNodePathToFrontend(node);
+}
+
+Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForDocument(Document& document) const
+{
+    CheckedPtr domAgent = protect(m_instrumentingAgents)->persistentFrameDOMAgent();
+    if (!domAgent)
+        return 0;
+
+    return domAgent->boundNodeId(&document);
+}
+
+Inspector::Protocol::DOM::NodeId FrameTimelineAgent::nodeIdForRenderer(const RenderObject& renderer) const
+{
+    if (renderer.isRenderView())
+        return nodeIdForDocument(protect(renderer.document()).get());
+
+    if (renderer.isAnonymous()) {
+        for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+            if (RefPtr element = ancestor->element())
+                return nodeIdForNode(element.get());
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer)) {
+        if (renderElement->isPseudoElement()) {
+            RefPtr generatingElement = renderElement->generatingElement();
+            return nodeIdForNode(generatingElement.get());
+        }
+
+        RefPtr element = renderElement->element();
+        return nodeIdForNode(element.get());
+    }
+
+    RefPtr node = renderer.node();
+    return nodeIdForNode(node.get());
 }
 
 } // namespace WebCore

@@ -67,6 +67,7 @@ class FrameDOMDebuggerAgent;
 class FrameDOMStorageAgent;
 class FrameDebuggerAgent;
 class FrameRuntimeAgent;
+class FrameTimelineAgent;
 class PageCanvasAgent;
 class PageDOMDebuggerAgent;
 class PageDebuggerAgent;
@@ -107,6 +108,7 @@ class WebHeapAgent;
 #define DEFINE_INSPECTOR_AGENT_Runtime_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageRuntimeAgent, PageRuntimeAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_ScriptProfiler(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, Inspector::InspectorScriptProfilerAgent, ScriptProfilerAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Timeline(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorTimelineAgent, TimelineAgent, Getter, Setter)
+#define DEFINE_INSPECTOR_AGENT_Timeline_Frame(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, FrameTimelineAgent, FrameTimelineAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Timeline_Page(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, PageTimelineAgent, PageTimelineAgent, Getter, Setter)
 #define DEFINE_INSPECTOR_AGENT_Worker(macro, Getter, Setter) DEFINE_INSPECTOR_AGENT(macro, InspectorWorkerAgent, WorkerAgent, Getter, Setter)
 
@@ -138,7 +140,6 @@ class WebHeapAgent;
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Heap_Web) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Inspector) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Memory) \
-    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, ScriptProfiler) \
     DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, Worker) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Animation) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Canvas) \
@@ -170,8 +171,10 @@ class WebHeapAgent;
 // Under Site Isolation, a frame reports these only through its own frame target, so a frame's slots for them
 // never fall back to its page's agents, even while empty.
 #define FOR_EACH_INSPECTOR_AGENT_WITHOUT_FALLBACK_UNDER_SITE_ISOLATION(macro) \
+    DEFINE_PERSISTENT_INSPECTOR_AGENT(macro, ScriptProfiler) \
     DEFINE_ENABLED_INSPECTOR_AGENT(macro, Timeline) \
     DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline) \
+    DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline_Frame) \
 
 #define FOR_EACH_INSPECTOR_AGENT(macro) \
     FOR_EACH_INSPECTOR_AGENT_WITH_FALLBACK(macro) \

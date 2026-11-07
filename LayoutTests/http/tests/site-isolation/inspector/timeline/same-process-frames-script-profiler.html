@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/frame-script-profiler-test-utilities.js"></script>
+<script src="resources/script-profiler-work.js"></script>
+<script>
+function addIFrame()
+{
+    let iframe = document.createElement("iframe");
+    iframe.src = "resources/script-profiler-frame.html";
+    document.body.appendChild(iframe);
+}
+
+function removeIFrame()
+{
+    document.querySelector("iframe").remove();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Timeline.SameProcessFramesScriptProfiler");
+
+    let mainFrameTarget;
+    let iframeTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.SameProcessFramesScriptProfiler.Samples",
+        description: "Two frames in one process share a sampling profiler, but each frame target should get only the samples of its own frame.",
+        async test() {
+            mainFrameTarget = InspectorTest.mainFrameTarget;
+            iframeTarget = await waitForFrameTargetForURLContaining("script-profiler-frame.html");
+            InspectorTest.expectNotNull(iframeTarget, "Should find the same-origin iframe target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof runInTimer === 'function'");
+            InspectorTest.expectEqual(FrameScriptProfilerTest.processIdentifier(iframeTarget), FrameScriptProfilerTest.processIdentifier(mainFrameTarget), "The same-origin iframe should be in the main frame's process.");
+
+            let {recording} = await FrameScriptProfilerTest.repeatWhileUnsampled(async () => {
+                await FrameScriptProfilerTest.startCapturing([mainFrameTarget, iframeTarget]);
+
+                let recording = WI.timelineManager.activeRecording;
+                await FrameScriptProfilerTest.runInTimer(mainFrameTarget, "mainFrameWork");
+                await FrameScriptProfilerTest.runInTimer(iframeTarget, "iframeWork");
+
+                await FrameTimelineTest.stopCapturing();
+                return {
+                    recording,
+                    functionNamesByTarget: FrameScriptProfilerTest.sampledFunctionNamesByTarget(recording),
+                    expectedFunctionNames: ["mainFrameWork", "iframeWork"],
+                    targetForFunctionName: new Map([["mainFrameWork", mainFrameTarget], ["iframeWork", iframeTarget]]),
+                };
+            });
+            InspectorTest.pass("Both frame targets started tracking.");
+            InspectorTest.pass("Capturing stopped.");
+
+            let mainFrameFunctionNames = FrameScriptProfilerTest.sampledFunctionNames(recording, mainFrameTarget);
+            InspectorTest.expectThat(mainFrameFunctionNames.has("mainFrameWork"), "Samples from the main frame target should include mainFrameWork.");
+            InspectorTest.expectFalse(mainFrameFunctionNames.has("iframeWork"), "Samples from the main frame target should not include iframeWork.");
+
+            let iframeFunctionNames = FrameScriptProfilerTest.sampledFunctionNames(recording, iframeTarget);
+            InspectorTest.expectThat(iframeFunctionNames.has("iframeWork"), "Samples from the iframe target should include iframeWork.");
+            InspectorTest.expectFalse(iframeFunctionNames.has("mainFrameWork"), "Samples from the iframe target should not include mainFrameWork.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.SameProcessFramesScriptProfiler.OneFrameSampling",
+        description: "When only one of two frames in one process is sampling, it should get only the samples of its own frame.",
+        async test() {
+            let {iframeFunctionNames} = await FrameScriptProfilerTest.repeatWhileUnsampled(async () => {
+                let samples = await FrameScriptProfilerTest.trackSamplesOutsideRecording(iframeTarget, async () => {
+                    await FrameScriptProfilerTest.runInTimer(mainFrameTarget, "mainFrameWork");
+                    await FrameScriptProfilerTest.runInTimer(iframeTarget, "iframeWork");
+                });
+
+                let iframeFunctionNames = FrameScriptProfilerTest.functionNamesInSamples(samples);
+                return {
+                    iframeFunctionNames,
+                    functionNamesByTarget: new Map([[iframeTarget, iframeFunctionNames]]),
+                    expectedFunctionNames: ["iframeWork"],
+                    targetForFunctionName: new Map([["mainFrameWork", mainFrameTarget], ["iframeWork", iframeTarget]]),
+                };
+            });
+
+            InspectorTest.expectThat(iframeFunctionNames.has("iframeWork"), "Samples from the iframe target should include iframeWork.");
+            InspectorTest.expectFalse(iframeFunctionNames.has("mainFrameWork"), "Samples from the iframe target should not include mainFrameWork.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.SameProcessFramesScriptProfiler.FrameRemoved",
+        description: "Removing one of two frames in one process during a recording should not take away the samples of the other frame.",
+        async test() {
+            let isFirstAttempt = true;
+            let {recording, removedTarget, removableIFrameTarget} = await FrameScriptProfilerTest.repeatWhileUnsampled(async () => {
+                // Each attempt removes the iframe, so later attempts add a new one.
+                let removableIFrameTarget = iframeTarget;
+                if (!isFirstAttempt) {
+                    await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "addIFrame()");
+                    removableIFrameTarget = await waitForFrameTargetForURLContaining("script-profiler-frame.html");
+                    await waitForExpressionInTarget(removableIFrameTarget, "typeof runInTimer === 'function'");
+                }
+                isFirstAttempt = false;
+
+                await FrameScriptProfilerTest.startCapturing([mainFrameTarget, removableIFrameTarget]);
+
+                let recording = WI.timelineManager.activeRecording;
+                await FrameScriptProfilerTest.runInTimer(mainFrameTarget, "mainFrameWork");
+                await FrameScriptProfilerTest.runInTimer(removableIFrameTarget, "iframeWork");
+
+                let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+                await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "removeIFrame()");
+                let removedTarget = (await targetRemovedPromise).data.target;
+
+                await FrameScriptProfilerTest.runInTimer(mainFrameTarget, "mainFrameWorkAfterRemoval");
+
+                await FrameTimelineTest.stopCapturing();
+                return {
+                    recording,
+                    removedTarget,
+                    removableIFrameTarget,
+                    functionNamesByTarget: FrameScriptProfilerTest.sampledFunctionNamesByTarget(recording),
+                    expectedFunctionNames: ["mainFrameWork", "mainFrameWorkAfterRemoval"],
+                    targetForFunctionName: new Map([["mainFrameWork", mainFrameTarget], ["mainFrameWorkAfterRemoval", mainFrameTarget], ["iframeWork", removableIFrameTarget]]),
+                };
+            });
+            InspectorTest.pass("Both frame targets started tracking.");
+            InspectorTest.expectEqual(removedTarget, removableIFrameTarget, "The iframe target should be removed.");
+            InspectorTest.pass("Capturing stopped.");
+
+            let mainFrameFunctionNames = FrameScriptProfilerTest.sampledFunctionNames(recording, mainFrameTarget);
+            InspectorTest.expectThat(mainFrameFunctionNames.has("mainFrameWork"), "Samples from the main frame target should include mainFrameWork, which ran before the iframe was removed.");
+            InspectorTest.expectThat(mainFrameFunctionNames.has("mainFrameWorkAfterRemoval"), "Samples from the main frame target should include mainFrameWorkAfterRemoval, which ran after the iframe was removed.");
+            InspectorTest.expectFalse(mainFrameFunctionNames.has("iframeWork"), "Samples from the main frame target should not include iframeWork.");
+            InspectorTest.expectEqual(FrameScriptProfilerTest.sampleCount(recording, WI.mainTarget), 0, "The page target should report no samples, including the samples left by the removed iframe.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that under Site Isolation, two frames in one process each get their own JavaScript samples, also when one of them is removed during the recording.</p>
+<iframe src="resources/script-profiler-frame.html"></iframe>
+</body>

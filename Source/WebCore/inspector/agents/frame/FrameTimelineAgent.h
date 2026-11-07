@@ -26,12 +26,21 @@
 #pragma once
 
 #include "InspectorTimelineAgent.h"
+#include <optional>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class Document;
+class Element;
+class FloatQuad;
+class LayoutRect;
 class Node;
+class RenderElement;
+class RenderObject;
+class WebDebuggerAgent;
 struct FrameAgentContext;
 
 class FrameTimelineAgent final : public InspectorTimelineAgent, public CanMakeCheckedPtr<FrameTimelineAgent> {
@@ -47,9 +56,31 @@ public:
     // TimelineBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> setAutoCaptureEnabled(bool) override;
 
+    // InspectorInstrumentation
+    // Copies of PageTimelineAgent's, as is nodeIdForRenderer; keep both in sync until the page target is removed.
+    void willInvalidateLayout(const RenderObject&);
+    void didScheduleLayout(const RenderElement&);
+    void willLayout();
+    void didLayout(const RenderElement&, const Vector<FloatQuad>&);
+    void willPaint();
+    void didPaint(RenderObject&, const LayoutRect&);
+    void willRecalculateStyle();
+    void didRecalculateStyle(Document&);
+    void didScheduleStyleRecalculation(Document&);
+    void didEnqueueFirstContentfulPaint();
+    void didEnqueueLargestContentfulPaint(Element*, unsigned area);
+
 private:
+    bool tracking() const override;
+    void internalStart(std::optional<int>&& maxCallStackDepth) override;
+    void internalStop() override;
+
     bool shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument) const override;
-    Inspector::Protocol::DOM::NodeId nodeIdForNode(Node*) override;
+    WebDebuggerAgent* debuggerAgentForProgrammaticCapture() const override;
+
+    Inspector::Protocol::DOM::NodeId nodeIdForNode(Node*) const;
+    Inspector::Protocol::DOM::NodeId nodeIdForDocument(Document&) const;
+    Inspector::Protocol::DOM::NodeId nodeIdForRenderer(const RenderObject&) const;
 };
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 #include "FrameInspectorController.h"
 
 #include "CommonVM.h"
+#include "DOMWindow.h"
 #include "DocumentPage.h"
 #include "FrameCSSAgent.h"
 #include "FrameCanvasAgent.h"
@@ -51,7 +52,9 @@
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowBase.h"
 #include "JSExecState.h"
+#include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "Node.h"
 #include "NodeDocument.h"
@@ -195,9 +198,6 @@ void FrameInspectorController::createLazyAgents()
     // Create debugger before agents that depend on it.
     lazyInitialize(m_debugger, makeUnique<FrameDebugger>(frame.get()));
 
-    if (CheckedPtr scriptProfilerAgent = m_instrumentingAgents->persistentScriptProfilerAgent())
-        scriptProfilerAgent->installProfilingClientIfTracking(*m_debugger);
-
     auto context = frameAgentContext();
     auto debuggerAgent = makeUniqueRef<FrameDebuggerAgent>(context);
     CheckedPtr debuggerAgentPtr = debuggerAgent.ptr();
@@ -213,6 +213,11 @@ void FrameInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<FrameRuntimeAgent>(context));
     m_agents.append(makeUniqueRef<FrameCSSAgent>(context));
     m_agents.append(makeUniqueRef<FrameCanvasAgent>(context));
+
+    auto scriptProfilerAgent = makeUniqueRef<InspectorScriptProfilerAgent>(context);
+    m_instrumentingAgents->setPersistentScriptProfilerAgent(protect(scriptProfilerAgent).ptr());
+    m_agents.append(WTF::move(scriptProfilerAgent));
+
     m_agents.append(makeUniqueRef<FrameTimelineAgent>(context));
     m_agents.append(makeUniqueRef<FrameWorkerAgent>(context));
 }
@@ -334,6 +339,15 @@ Stopwatch& FrameInspectorController::executionStopwatch() const
 JSC::Debugger* FrameInspectorController::debugger()
 {
     return m_debugger.get();
+}
+
+bool FrameInspectorController::coversGlobalObjectForSampling(JSC::JSGlobalObject& globalObject) const
+{
+    // Each world has its own global object for the same DOMWindow, and a DOMWindow whose document has left the frame
+    // has no frame, so this covers every world of the frame's current document. It is based on ownership rather than
+    // on the frame's debugger, which is detached while nothing observes it.
+    auto* window = dynamicDowncast<JSDOMWindowBase>(globalObject);
+    return window && protect(window->wrapped())->frame() == m_frame.ptr();
 }
 
 JSC::Debugger* FrameInspectorController::attachedDebugger() const

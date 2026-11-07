@@ -32,13 +32,14 @@ WI.CPUInstrument = class CPUInstrument extends WI.Instrument
         return WI.TimelineRecord.Type.CPU;
     }
 
-    startInstrumentation(initiatedByBackend)
+    startInstrumentation(initiatingTarget)
     {
-        if (!initiatedByBackend) {
-            let target = WI.assumingMainTarget();
-            WI.timelineManager.willStartTrackingForTarget(target, "CPUProfiler");
-            target.CPUProfilerAgent.startTracking();
-        }
+        let target = WI.assumingMainTarget();
+        if (target === initiatingTarget)
+            return;
+
+        WI.timelineManager.willStartTrackingForTarget(target, "CPUProfiler");
+        target.CPUProfilerAgent.startTracking();
     }
 
     startInstrumentationForTarget(target)

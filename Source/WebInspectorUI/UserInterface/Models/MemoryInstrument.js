@@ -32,13 +32,14 @@ WI.MemoryInstrument = class MemoryInstrument extends WI.Instrument
         return WI.TimelineRecord.Type.Memory;
     }
 
-    startInstrumentation(initiatedByBackend)
+    startInstrumentation(initiatingTarget)
     {
-        if (!initiatedByBackend) {
-            let target = WI.assumingMainTarget();
-            WI.timelineManager.willStartTrackingForTarget(target, "Memory");
-            target.MemoryAgent.startTracking();
-        }
+        let target = WI.assumingMainTarget();
+        if (target === initiatingTarget)
+            return;
+
+        WI.timelineManager.willStartTrackingForTarget(target, "Memory");
+        target.MemoryAgent.startTracking();
     }
 
     startInstrumentationForTarget(target)

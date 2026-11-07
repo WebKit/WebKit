@@ -27,6 +27,20 @@ function test() {
         InspectorTest.expectThat(startTime <= record.startTime && record.endTime <= endTime, `Record from the ${description} should be within the recording.`);
     }
 
+    function expectNoLayoutStyleOrPaintRecordsFromPageTarget() {
+        // Composite records always come from the page target.
+        const layoutStyleAndPaintTypes = [
+            InspectorBackend.Enum.Timeline.EventType.ScheduleStyleRecalculation,
+            InspectorBackend.Enum.Timeline.EventType.RecalculateStyles,
+            InspectorBackend.Enum.Timeline.EventType.InvalidateLayout,
+            InspectorBackend.Enum.Timeline.EventType.ScheduleLayout,
+            InspectorBackend.Enum.Timeline.EventType.Layout,
+            InspectorBackend.Enum.Timeline.EventType.Paint,
+        ];
+        let types = FrameTimelineTest.recordPayloadTypes(WI.mainTarget).filter((type) => layoutStyleAndPaintTypes.includes(type));
+        InspectorTest.expectEqual(types.length, 0, "No layout, style or paint records should come from the page target.");
+    }
+
     function expectNoScriptRecordsFromPageTarget(recording) {
         let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
         // Garbage collections are reported by the page target's Heap domain.
@@ -106,29 +120,90 @@ function test() {
     });
 
     suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetRecords.LayoutAndPaint",
+        description: "A layout and a paint in the cross-origin iframe should be recorded by its frame target, not by the page target.",
+        async test() {
+            await FrameTimelineTest.startCapturing([WI.mainTarget, iframeTarget]);
+
+            let layoutPromise = FrameTimelineTest.awaitRecordPayload(iframeTarget, InspectorBackend.Enum.Timeline.EventType.Layout);
+            let paintPromise = FrameTimelineTest.awaitRecordPayload(iframeTarget, InspectorBackend.Enum.Timeline.EventType.Paint);
+            await FrameTimelineTest.evaluateInTarget(iframeTarget, "forceLayoutAndRepaint()");
+            await layoutPromise;
+            InspectorTest.pass("Recorded a layout from the cross-origin iframe target.");
+            await paintPromise;
+            InspectorTest.pass("Recorded a paint from the cross-origin iframe target.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            expectNoLayoutStyleOrPaintRecordsFromPageTarget();
+        }
+    });
+
+    suite.addTestCase({
         name: "SiteIsolation.Timeline.FrameTargetRecords.NoFallbackToPageTarget",
         description: "While a frame target's Timeline domain is enabled but not tracking, its records should not go to the page target, even when the page target is tracking.",
         async test() {
+            // Keep the page target's events away from TimelineManager, which would otherwise start the main frame
+            // target too when the page target starts.
+            let pageTargetRecordPayloads = [];
+            let originalFunctions = new Map;
+            for (let functionName of ["capturingStarted", "capturingStopped", "eventRecorded"]) {
+                let originalFunction = WI.timelineManager[functionName];
+                originalFunctions.set(functionName, originalFunction);
+                WI.timelineManager[functionName] = function(target, ...rest) {
+                    if (target !== WI.mainTarget)
+                        return originalFunction.call(this, target, ...rest);
+                    if (functionName === "eventRecorded")
+                        pageTargetRecordPayloads.push(rest[0]);
+                };
+            }
+
             FrameTimelineTest.clearTrackingEvents();
+
+            await WI.mainTarget.TimelineAgent.start();
+
+            await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "new Promise((resolve) => setTimeout(() => { timerFired(); resolve(); }))", objectGroup: "test", awaitPromise: true});
+            InspectorTest.pass("A timer fired in the main frame.");
+            InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStarted", mainFrameTarget), "The main frame target should not be tracking.");
+
+            // The page target sends any record before it replies to the stop command, so the check below sees them all.
+            await WI.mainTarget.TimelineAgent.stop();
+            InspectorTest.pass("The page target stopped.");
+
+            for (let [functionName, originalFunction] of originalFunctions)
+                WI.timelineManager[functionName] = originalFunction;
+
+            function containsTimerFire(recordPayload) {
+                return recordPayload.type === InspectorBackend.Enum.Timeline.EventType.TimerFire || (recordPayload.children || []).some(containsTimerFire);
+            }
+            InspectorTest.expectFalse(pageTargetRecordPayloads.some(containsTimerFire), "The page target should not record the main frame's timer.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Timeline.FrameTargetRecords.LayoutAndPaintNoFallbackToPageTarget",
+        description: "While a frame target's Timeline domain is enabled but not tracking, its layout and paint records should not go to the page target, even when the page target is tracking.",
+        async test() {
+            FrameTimelineTest.clearTrackingEvents();
+            FrameTimelineTest.clearRecordPayloads();
 
             let activePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Active);
             await WI.mainTarget.TimelineAgent.start();
             await activePromise;
             InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStarted", mainFrameTarget), "The main frame target should not be tracking.");
 
-            let recording = WI.timelineManager.activeRecording;
-            await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "new Promise((resolve) => setTimeout(() => { timerFired(); resolve(); }))", objectGroup: "test", awaitPromise: true});
-            InspectorTest.pass("A timer fired in the main frame.");
+            await FrameTimelineTest.evaluateInTarget(mainFrameTarget, "forceLayoutAndRepaint()");
+            // Wait for the rendering update that paints the change.
+            await mainFrameTarget.RuntimeAgent.evaluate.invoke({expression: "new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))", objectGroup: "test", awaitPromise: true});
+            InspectorTest.pass("Forced a layout and a repaint in the main frame.");
 
-            // The page target sends any record before it reports that it stopped, so the check below sees them all.
             let inactivePromise = FrameTimelineTest.awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
             await WI.mainTarget.TimelineAgent.stop();
             await inactivePromise;
             InspectorTest.pass("Capturing stopped.");
 
-            let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
-            let timerRecords = scriptTimeline.records.filter((record) => record.eventType === WI.ScriptTimelineRecord.EventType.TimerFired);
-            InspectorTest.expectFalse(timerRecords.some((record) => record.target === WI.mainTarget), "The page target should not record the main frame's timer.");
+            expectNoLayoutStyleOrPaintRecordsFromPageTarget();
         }
     });
 
