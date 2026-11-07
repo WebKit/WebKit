@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Shaping across inline boxes should not leak graphics context state when the shaped range is visually interrupted by LTR content</title>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Gulf-regular.ttf") format("truetype");
+}
+.container {
+    position: relative;
+    width: 400px;
+}
+.shaped {
+    font: 32px WebFont;
+    height: 60px;
+    text-align: right;
+}
+.embed {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+.cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 60px;
+    background-color: white;
+    z-index: 1;
+}
+.after {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+</head>
+<body>
+<p>This test passes if there is a green square below.</p>
+<div class="container">
+<!-- The shaping range is [سلام, سلام] in logical order, but the LTR embedding puts "XYZ" visually between them. -->
+<div class="shaped" dir="rtl" lang="ar">سلام<span class="embed">سلام XYZ</span></div>
+<div class="cover"></div>
+<div><div class="after"></div></div>
+</div>
+</body>
+</html>
