@@ -608,8 +608,19 @@ void RenderBlock::addOverflowFromOutOfFlowBoxes()
 
     for (auto& outOfFlowBox : *outOfFlowDescendants) {
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
-        if (outOfFlowBox.isAbsolutelyPositioned())
+        if (!outOfFlowBox.isAbsolutelyPositioned())
+            continue;
+        CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(outOfFlowBox.container());
+        if (!inlineBox || !inlineBox->isInlineBox()) {
             addOverflowFromContainedBox(outOfFlowBox);
+            continue;
+        }
+        // An out-of-flow box in an inline box is positioned relative to the inline box, which is in the coordinate space of its own containing block.
+        auto offsetFromThis = outOfFlowBox.locationOffset() + toLayoutSize(inlineBox->firstFragmentBorderBoxRectFromBlockStart().location());
+        // FIXME: Remove this walk once inline boxes own their out-of-flow boxes and the block that establishes their inline formatting context adds them.
+        for (CheckedPtr block = inlineBox->containingBlock(); block && block != this; block = block->containingBlock())
+            offsetFromThis += block->locationOffset();
+        addOverflowWithRendererOffset(outOfFlowBox, offsetFromThis);
     }
 }
 
@@ -2120,14 +2131,6 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
     offset = flipForWritingMode(offset);
     offset += toLayoutSize(scrollPosition());
     offset = flipForWritingMode(offset);
-}
-
-bool RenderBlock::willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode mode) const
-{
-    UNUSED_PARAM(item);
-    UNUSED_PARAM(containingAxis);
-    UNUSED_PARAM(mode);
-    return false;
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeIntrinsicLogicalWidths() const

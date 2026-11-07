@@ -403,7 +403,7 @@ void LargestContentfulPaintData::didPaintText(const RenderBlockFlow& formattingC
 
     auto& renderBlockFlow = const_cast<RenderBlockFlow&>(formattingContextRoot);
     // https://w3c.github.io/paint-timing/#sec-modifications-dom says to get the containing block.
-    CheckedPtr<RenderBlock> containingBlock = &renderBlockFlow;
+    CheckedPtr<RenderBoxModelObject> containingBlock = &renderBlockFlow;
     if (containingBlock->isAnonymous()) {
         CheckedPtr ancestor = containingBlock->firstNonAnonymousAncestor();
         if (CheckedPtr ancestorBlock = dynamicDowncast<RenderBlock>(ancestor.get()))

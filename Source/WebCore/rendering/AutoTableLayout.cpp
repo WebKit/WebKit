@@ -224,7 +224,7 @@ void AutoTableLayout::fullRecalc()
 
 static bool shouldScaleColumnsForParent(const RenderTable& table)
 {
-    RenderBlock* containingBlock = table.containingBlock();
+    RenderBoxModelObject* containingBlock = table.containingBlock();
     while (containingBlock && !is<RenderView>(containingBlock)) {
         // It doesn't matter if our table is auto or fixed: auto means we don't
         // scale. Fixed doesn't care if we do or not because it doesn't depend

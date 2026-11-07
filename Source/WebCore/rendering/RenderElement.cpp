@@ -2898,7 +2898,7 @@ void RenderElement::establishesTopLayerDidChange()
         protect(renderer->layer())->establishesTopLayerDidChange();
 }
 
-void RenderElement::markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution)
+void RenderElement::markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBoxModelObject* containingBlockBeforeStyleResolution)
 {
     auto* renderBox = dynamicDowncast<RenderBox>(renderer);
     if (!renderBox || !renderBox->parent() || !containingBlockBeforeStyleResolution)
