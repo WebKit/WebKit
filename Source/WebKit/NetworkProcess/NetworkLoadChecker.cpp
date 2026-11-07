@@ -172,6 +172,9 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     if (m_options.mode == FetchOptions::Mode::Navigate)
         appendToNavigationTimingAllowValuesList(redirectResponse);
 
+    if (!isSameOrigin(m_url, protect(m_origin)) && !SecurityOrigin::create(m_url)->isSameOriginAs(SecurityOrigin::create(redirectRequest.url())))
+        m_hasCrossOriginRedirectTaint = true;
+
     m_previousURL = WTF::move(m_url);
     m_url = redirectRequest.url();
 
@@ -285,7 +288,7 @@ bool NetworkLoadChecker::checkTAO(const ResourceResponse& response)
         const auto& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
         for (auto originWithSpace : StringView(timingAllowOriginString).split(',')) {
             auto origin = originWithSpace.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-            if (origin == "*"_s || origin == protect(m_origin)->toString())
+            if (origin == "*"_s || (!m_hasCrossOriginRedirectTaint && origin == protect(m_origin)->toString()))
                 return true;
         }
     }
