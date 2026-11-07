@@ -148,7 +148,7 @@ void IdleCallbackController::invokeIdleCallbackTimeout(unsigned identifier)
         return request.identifier == identifier;
     });
 
-    if (it == m_idleRequestCallbacks.end())
+    if (it == m_idleRequestCallbacks.end() || !it->callback)
         return;
 
     auto idleDeadline = IdleDeadline::create(IdleDeadline::DidTimeout::Yes);

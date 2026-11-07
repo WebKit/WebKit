@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that cancelling an idle callback that has a timeout does not run it, nor crash, when the timeout fires while the cancelled request is still queued.');
+
+jsTestIsAsync = true;
+
+const rounds = 10;
+let round = 0;
+let cancelledCallbackRan = false;
+
+function busyWait(ms) {
+    const end = performance.now() + ms;
+    while (performance.now() < end) { }
+}
+
+function runRound() {
+    if (round == rounds) {
+        shouldBeFalse('cancelledCallbackRan');
+        finishJSTest();
+        return;
+    }
+    ++round;
+
+    // Runs first in the next idle period and outlasts its 50ms deadline, so the
+    // idle period ends before it can drop the cancelled request queued below.
+    requestIdleCallback(() => busyWait(60));
+
+    const handle = requestIdleCallback(() => {
+        cancelledCallbackRan = true;
+    }, { timeout: 1 });
+    cancelIdleCallback(handle);
+
+    setTimeout(runRound, 100);
+}
+
+runRound();
+
+</script>
+</body>
+</html>
