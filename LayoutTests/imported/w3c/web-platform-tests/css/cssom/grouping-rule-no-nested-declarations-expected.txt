@@ -1,0 +1,7 @@
+
+PASS Bare declaration inside top-level @media produces no child rules
+PASS Multiple bare declarations inside top-level @media produce no child rules
+PASS Bare declaration inside top-level @supports produces no child rules
+PASS Declaration after style rule inside top-level @media is dropped, not wrapped
+PASS Declaration inside @media in nesting context is correctly wrapped as CSSNestedDeclarations
+

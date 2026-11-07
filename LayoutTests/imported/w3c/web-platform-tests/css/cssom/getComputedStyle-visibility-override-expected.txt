@@ -1,0 +1,5 @@
+Hello, Dave!
+
+PASS Sanity check: Parent is actually visibly hidden
+PASS computed visibility can be visible even if the parent is not
+

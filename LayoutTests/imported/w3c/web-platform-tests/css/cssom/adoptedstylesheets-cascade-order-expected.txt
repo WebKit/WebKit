@@ -1,0 +1,15 @@
+
+PASS Reordering document.adoptedStyleSheets updates cascade order
+PASS Reordering a document.adoptedStyleSheets suffix after a replacement updates cascade order
+PASS Rotating document.adoptedStyleSheets updates cascade order
+PASS Reordering after an unchanged leading adopted stylesheet updates cascade order
+PASS Reordering around a mutated adopted stylesheet updates cascade order
+PASS Reordering adopted stylesheets while removing one updates cascade order
+PASS Reordering adopted stylesheets while inserting one updates cascade order
+PASS Reordering adopted stylesheets with media queries updates cascade order
+PASS Reordering duplicated adopted stylesheets updates cascade order
+PASS Mutating a duplicated adopted stylesheet while inserting a leading sheet updates cascade order
+PASS Reordering shadowRoot.adoptedStyleSheets updates cascade order
+PASS Reordering a shadowRoot.adoptedStyleSheets suffix after a replacement updates cascade order
+PASS Rotating shadowRoot.adoptedStyleSheets updates cascade order
+

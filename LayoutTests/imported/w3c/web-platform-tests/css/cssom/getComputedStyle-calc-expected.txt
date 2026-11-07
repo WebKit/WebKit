@@ -1,0 +1,7 @@
+
+PASS getComputedStyle() returns computed value for calc(100% - 40px)
+PASS getComputedStyle() returns computed value for calc(var(--gap) - 4px)
+PASS getComputedStyle() returns computed value for calc(608px - env(safe-area-inset-top))
+PASS getComputedStyle() returns computed value for calc(-1 * 8px)
+PASS getComputedStyle() returns computed value for calc(8px * 2)
+
