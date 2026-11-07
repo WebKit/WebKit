@@ -385,11 +385,25 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
         }
     };
 
+    auto updateChildFrameOwnerZoom = [&](const auto& oldMap, const auto& newMap) {
+        for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+            RefPtr localChild = dynamicDowncast<LocalFrame>(child);
+            if (!localChild)
+                continue;
+
+            RefPtr oldFrameInfo = oldMap.get(child->frameID());
+            RefPtr newFrameInfo = newMap.get(child->frameID());
+            if (newFrameInfo && (!oldFrameInfo || oldFrameInfo->frameOwnerZoomFactor() != newFrameInfo->frameOwnerZoomFactor()))
+                localChild->frameOwnerZoomDidChange();
+        }
+    };
+
     auto oldChildrenFrameLayoutMap = m_frameTreeSyncData->frameGeometry.childrenFrameLayoutInfo;
 
     protect(frameTreeSyncData())->update(data);
 
     invalidateChildFrameForDarkAppearanceChange(oldChildrenFrameLayoutMap, m_frameTreeSyncData->frameGeometry.childrenFrameLayoutInfo);
+    updateChildFrameOwnerZoom(oldChildrenFrameLayoutMap, m_frameTreeSyncData->frameGeometry.childrenFrameLayoutInfo);
 }
 
 bool Frame::frameCanCreatePaymentSession() const
@@ -423,17 +437,8 @@ float Frame::frameScaleFactor() const
 {
     RefPtr page = this->page();
 
-    if (!page)
+    if (!page || !isMainFrame())
         return 1.0;
-
-    // https://github.com/w3c/csswg-drafts/issues/9644
-    // Check if this frame's owner element (iframe) has CSS zoom applied.
-    if (!isMainFrame()) {
-        if (RefPtr parentFrame = tree().parent())
-            return parentFrame->frameScaleFactorForChild(*this);
-
-        return 1.0;
-    }
 
     if (page->delegatesScaling())
         return 1;

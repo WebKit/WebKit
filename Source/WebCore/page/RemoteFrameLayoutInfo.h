@@ -61,7 +61,7 @@ public:
     bool ownerIsFullyClipped() const { return m_ownerIsFullyClipped; }
     const TransformationMatrix& childFrameOwnerToRootContentTransform() const { return m_childFrameOwnerToRootContentTransform; }
     const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const { return m_absoluteToChildFrameOwnerLocalTransform; }
-    float frameScaleFactor() const { return m_frameScaleFactor; }
+    float frameOwnerZoomFactor() const { return m_frameOwnerZoomFactor; }
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
 
@@ -78,7 +78,7 @@ private:
         bool ownerIsFullyClipped,
         TransformationMatrix childFrameOwnerToRootContentTransform,
         TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
-        float frameScaleFactor,
+        float frameOwnerZoomFactor,
         LayoutPoint contentBoxLocation,
         OptionSet<FrameOwnerElementAppearance>
     );
@@ -115,10 +115,8 @@ private:
     // absolute coordinate to the child frame owner's local coordinate.
     TransformationMatrix m_absoluteToChildFrameOwnerLocalTransform;
 
-    // Scale factor of the frame with respect to its parent frame. Per
-    // Frame::frameScaleFactor, this is the accumulated CSS zoom applied
-    // to the frame element.
-    float m_frameScaleFactor;
+    // The accumulated CSS zoom applied to the frame element, without page zoom.
+    float m_frameOwnerZoomFactor;
 
     // The offset of the content box of the frame's owner element
     // from its border box.

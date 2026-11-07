@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!doctype html>
+<style>
+  body { margin: 0; }
+  iframe { display: block; width: 128px; height: 64px; zoom: 2; border: 0; }
+</style>
+<body>
+<pre id="layers"></pre>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+const iframe = document.createElement("iframe");
+iframe.src = "http://localhost:8000/site-isolation/compositing/iframes/resources/iframe-css-zoom-child.html";
+iframe.onload = async () => {
+  await nextFrame();
+  document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+  testRunner.notifyDone();
+};
+document.body.prepend(iframe);
+</script>

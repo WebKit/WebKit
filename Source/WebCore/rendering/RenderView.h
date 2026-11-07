@@ -72,7 +72,6 @@ public:
     LayoutUnit clientLogicalWidthForFixedPosition() const;
     LayoutUnit clientLogicalHeightForFixedPosition() const;
 
-    NODELETE float pageZoomFactor() const;
 
     NODELETE inline LocalFrameView& frameView() const LIFETIME_BOUND; // Defined in LocalFrameViewInlines.h.
 

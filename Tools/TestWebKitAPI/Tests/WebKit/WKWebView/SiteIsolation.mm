@@ -5117,7 +5117,7 @@ static void runConvertRectToMainFrameCoordinatesInNestedZoomedIframeTest(bool cr
     CGRect rect;
     EXPECT_TRUE(Util::waitFor([&] {
         rect = convertRectToMainFrameCoordinatesInFrame(webView.get(), innerFrameInfo.get(), CGRectMake(5, 7, 10, 15));
-        return rect.origin.x > 100;
+        return rect.origin.x == 130 && rect.origin.y == 174;
     }));
     [webView waitForNextPresentationUpdate];
 

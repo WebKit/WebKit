@@ -750,7 +750,7 @@ ExceptionOr<Ref<DOMRect>> LocalDOMWindow::convertRectToMainFrameCoordinates(cons
     // and it is CSS pixels that have not had zoom taken into account.
     FloatRect contentsRect(rect.x, rect.y, rect.width, rect.height);
     Ref frame = view->frame();
-    contentsRect.scale(frame->pageZoomFactor() * frame->frameScaleFactor());
+    contentsRect.scale(frame->effectiveZoomFactor() * frame->frameScaleFactor());
     return DOMRect::create(view->contentsToMainFrameView(enclosingIntRect(contentsRect)));
 }
 
@@ -1883,9 +1883,8 @@ double LocalDOMWindow::devicePixelRatio() const
         return 0.0;
 
     // Page zoom applies to all frames synchronously, so include it in devicePixelRatio
-    // for both main frame and iframes. frameScaleFactor() doesn't include page zoom
-    // since page zoom is applied globally for rendering.
-    auto frameScaleRatio = frame->frameScaleFactor() * frame->pageZoomFactor();
+    // for both main frame and iframes, along with the owner's CSS zoom for an iframe.
+    auto frameScaleRatio = frame->frameScaleFactor() * frame->effectiveZoomFactor();
     return page->deviceScaleFactor() * frameScaleRatio;
 }
 
