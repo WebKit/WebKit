@@ -171,10 +171,13 @@ class ExecutiveTest(unittest.TestCase):
         self.assertIn(encoded_tor, output)
 
     def serial_test_kill_process(self):
+        from webkitcorepy import OutputCapture
+
         executive = Executive()
         with executive.popen(never_ending_command(), stdout=subprocess.PIPE) as process:
             self.assertEqual(process.poll(), None)  # Process is running
-            executive.kill_process(process.pid)
+            with OutputCapture() as captured:
+                executive.kill_process(process.pid)
             # Note: Can't use a ternary since signal.SIGKILL is undefined for sys.platform == "win32"
             if sys.platform.startswith('win'):
                 # FIXME: https://bugs.webkit.org/show_bug.cgi?id=54790
@@ -188,6 +191,8 @@ class ExecutiveTest(unittest.TestCase):
             else:
                 expected_exit_code = -signal.SIGTERM
                 self.assertEqual(process.wait(), expected_exit_code)
+                # The process exited on SIGTERM; it just hadn't been reaped yet.
+                self.assertNotIn("Couldn't quit", captured.root.log.getvalue())
 
             # Killing again should fail silently.
             executive.kill_process(process.pid)

@@ -216,6 +216,7 @@ class Driver(object):
         start_time = time.time()
         self.start(driver_input.should_run_pixel_test, driver_input.args)
         test_begin_time = time.time()
+        test_begin_monotonic_time = time.monotonic()
         self._driver_timed_out = False
         self._crash_report_from_driver = None
         self.error_from_test = ''
@@ -242,6 +243,9 @@ class Driver(object):
         timed_out = self._server_process.timed_out
         driver_timed_out = self._driver_timed_out
         pid = self._server_process.pid()
+
+        if timed_out:
+            self._warn_if_system_slept(driver_input.test_name, test_begin_time, test_begin_monotonic_time)
 
         if stop_when_done or crashed or timed_out:
             if stop_when_done and not (crashed or timed_out):
@@ -280,6 +284,12 @@ class Driver(object):
             timeout=timed_out or driver_timed_out, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
+
+    def _warn_if_system_slept(self, test_name, begin_time, begin_monotonic_time):
+        # The deadline is wall-clock time, which keeps running while the system sleeps; the monotonic clock doesn't.
+        slept_seconds = (time.time() - begin_time) - (time.monotonic() - begin_monotonic_time)
+        if slept_seconds > 30:
+            _log.warning('%s: the system was asleep for about %d seconds during this test; the timeout may be caused by the sleep.' % (test_name, slept_seconds))
 
     def do_post_tests_work(self):
         if not self._server_process:
