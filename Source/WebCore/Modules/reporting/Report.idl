@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,15 +22,81 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-// https://w3c.github.io/reporting/#reportingobserver
+
+// https://w3c.github.io/reporting/#dom-report
+// The specification types body as ReportBody, which has no members. As a union of the dictionaries
+// that inherit from ReportBody, each body converts with its own dictionary instead.
+// The Report class holds reports and nests the body dictionaries below, hence ImplementedAs.
 [
-    Exposed=(Window,Worker)
-] interface Report {
-   [Default] object toJSON();
-   readonly attribute [AtomString] DOMString type;
-   readonly attribute DOMString url;
-   readonly attribute ReportBody? body;
+    JSGenerateToJSObject,
+    ImplementedAs=ReportDictionary
+] dictionary Report {
+    [ImplementationRequired] DOMString type;
+    [ImplementationRequired] DOMString url;
+    [ImplementationRequired] (COEPInheritenceViolationReportBody or CORPViolationReportBody or CSPViolationReportBody or DeprecationReportBody or IntegrityViolationReportBody or TestReportBody)? body;
 };
 
-typedef sequence<Report> ReportList;
+// https://html.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-inheritance-violation
+[
+    JSGenerateToJSObject
+] dictionary COEPInheritenceViolationReportBody {
+    [ImplementationRequired] DOMString type;
+    [ImplementationRequired] USVString blockedURL;
+    [ImplementationRequired] DOMString disposition;
+};
+
+// https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
+[
+    JSGenerateToJSObject
+] dictionary CORPViolationReportBody {
+    [ImplementationRequired] DOMString type;
+    [ImplementationRequired] USVString blockedURL;
+    [ImplementationRequired] FetchRequestDestination destination;
+    [ImplementationRequired] DOMString disposition;
+};
+
+// https://w3c.github.io/webappsec-csp/#dictdef-cspviolationreportbody
+[
+    JSGenerateToJSObject
+] dictionary CSPViolationReportBody {
+    [ImplementationRequired] USVString documentURL;
+    [ImplementationRequired] USVString? referrer;
+    [ImplementationRequired] USVString? blockedURL;
+    [ImplementationRequired] DOMString effectiveDirective;
+    [ImplementationRequired] DOMString originalPolicy;
+    [ImplementationRequired] USVString? sourceFile;
+    [ImplementationRequired] DOMString? sample;
+    [ImplementationRequired] SecurityPolicyViolationEventDisposition disposition;
+    [ImplementationRequired] unsigned short statusCode;
+    [ImplementationRequired] unsigned long? lineNumber;
+    [ImplementationRequired] unsigned long? columnNumber;
+};
+
+// https://wicg.github.io/deprecation-reporting/#dictdef-deprecationreportbody
+[
+    JSGenerateToJSObject
+] dictionary DeprecationReportBody {
+    [ImplementationRequired] DOMString id;
+    [ImplementationRequired] Date? anticipatedRemoval;
+    [ImplementationRequired] DOMString message;
+    [ImplementationRequired] DOMString? sourceFile;
+    [ImplementationRequired] unsigned long? lineNumber;
+    [ImplementationRequired] unsigned long? columnNumber;
+};
+
+// https://w3c.github.io/webappsec-subresource-integrity/#dictdef-integrityviolationreportbody
+[
+    JSGenerateToJSObject
+] dictionary IntegrityViolationReportBody {
+    [ImplementationRequired] USVString documentURL;
+    [ImplementationRequired] USVString blockedURL;
+    [ImplementationRequired] USVString destination;
+    [ImplementationRequired] boolean reportOnly;
+};
+
+// https://w3c.github.io/reporting/#generate-test-report-command
+[
+    JSGenerateToJSObject
+] dictionary TestReportBody {
+    [ImplementationRequired] DOMString message;
+};

@@ -38,9 +38,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/generateTestReport.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/reporting/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/reporting/nestedReport.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/order.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/report-dictionary.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/reporting-api-honors-limits.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/reporting-api-honors-limits.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/reporting-isolated-across-navigations.https.sub.html

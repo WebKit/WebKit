@@ -397,12 +397,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSByteLengthQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSByteLengthQueuingStrategy.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCDATASection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCDATASection.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCOEPInheritenceViolationReportBody.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCOEPInheritenceViolationReportBody.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCORPViolationReportBody.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCORPViolationReportBody.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSPViolationReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSAnimationEvent.cpp
@@ -926,8 +920,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMValue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMValue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMValueList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMValueList.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecationReportBody.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecationReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedBarcode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedBarcode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedFace.cpp
@@ -1854,8 +1846,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorFrontendHost.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInspectorFrontendHost.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInstallEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInstallEvent.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntegrityPolicyViolationReportBody.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntegrityPolicyViolationReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalSettings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalSettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInternalSettingsGenerated.cpp
@@ -2708,8 +2698,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRenderingMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRenderingMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReport.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportBody.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserverCallback.cpp
@@ -3138,8 +3126,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserverCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubscriptionObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTestReportBody.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTestReportBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSText.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSText.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoder.cpp

@@ -828,7 +828,6 @@ bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSPromiseRejectionEventCustom.cpp
 bindings/js/JSRangeCustom.cpp
 bindings/js/JSReadableStreamSourceCustom.cpp
-bindings/js/JSReportBodyCustom.cpp
 bindings/js/JSReportingObserverCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp @cost:3
 bindings/js/JSResizeObserverEntryCustom.cpp
@@ -4019,9 +4018,6 @@ JSBufferedChangeEvent.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCallToActionLabel.cpp
-JSCOEPInheritenceViolationReportBody.cpp
-JSCORPViolationReportBody.cpp
-JSCSPViolationReportBody.cpp
 JSCSSAnimation.cpp
 JSCSSAnimationEvent.cpp
 JSCSSConditionRule.cpp
@@ -4265,7 +4261,6 @@ JSDeprecatedCSSOMRGBColor.cpp
 JSDeprecatedCSSOMRect.cpp
 JSDeprecatedCSSOMValue.cpp
 JSDeprecatedCSSOMValueList.cpp
-JSDeprecationReportBody.cpp
 JSDetectedBarcode.cpp
 JSDetectedFace.cpp
 JSDetectedText.cpp
@@ -4669,7 +4664,6 @@ JSInspectorAuditDOMObject.cpp
 JSInspectorAuditResourcesObject.cpp
 JSInspectorFrontendHost.cpp
 JSInstallEvent.cpp
-JSIntegrityPolicyViolationReportBody.cpp
 JSIntersectionObserver.cpp
 JSIntersectionObserverCallback.cpp
 JSIntersectionObserverEntry.cpp
@@ -5022,7 +5016,6 @@ JSRemotePlayback.cpp
 JSRemotePlaybackAvailabilityCallback.cpp
 JSRenderingMode.cpp
 JSReport.cpp
-JSReportBody.cpp
 JSReportingObserver.cpp
 JSReportingObserverCallback.cpp
 JSRequestAnimationFrameCallback.cpp
@@ -5227,7 +5220,6 @@ JSSubscriberCallback.cpp
 JSSubscriptionObserver.cpp
 JSSubscriptionObserverCallback.cpp
 JSSubtleCrypto.cpp
-JSTestReportBody.cpp
 JSText.cpp
 JSTextDecoder.cpp
 JSTextDecoderStream.cpp

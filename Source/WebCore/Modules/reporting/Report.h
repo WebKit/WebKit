@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,12 @@
 
 #pragma once
 
+#include <WebCore/FetchRequestDestination.h>
 #include <WebCore/ReportBody.h>
+#include <WebCore/SecurityPolicyViolationEventDisposition.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,6 +40,54 @@ class FormData;
 class Report : public RefCounted<Report> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Report, WEBCORE_EXPORT);
 public:
+    // The body dictionaries of Report.idl.
+    struct COEPInheritenceViolationReportBody {
+        String type;
+        String blockedURL;
+        String disposition;
+    };
+
+    struct CORPViolationReportBody {
+        String type;
+        String blockedURL;
+        FetchRequestDestination destination;
+        String disposition;
+    };
+
+    struct CSPViolationReportBody {
+        String documentURL;
+        String referrer;
+        String blockedURL;
+        String effectiveDirective;
+        String originalPolicy;
+        String sourceFile;
+        String sample;
+        SecurityPolicyViolationEventDisposition disposition;
+        unsigned short statusCode;
+        std::optional<uint64_t> lineNumber;
+        std::optional<uint64_t> columnNumber;
+    };
+
+    struct DeprecationReportBody {
+        String id;
+        WallTime anticipatedRemoval;
+        String message;
+        String sourceFile;
+        std::optional<unsigned> lineNumber;
+        std::optional<unsigned> columnNumber;
+    };
+
+    struct IntegrityViolationReportBody {
+        String documentURL;
+        String blockedURL;
+        String destination;
+        bool reportOnly;
+    };
+
+    struct TestReportBody {
+        String message;
+    };
+
     NODELETE WEBCORE_EXPORT static Ref<Report> create(const String& type, const String& url, RefPtr<ReportBody>&&);
 
     WEBCORE_EXPORT ~Report();

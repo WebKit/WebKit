@@ -13,6 +13,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/dedicated-worker-correct-url-in-report.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-body-dictionary.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-doesnt-send-reports-without-violation.https.sub.html

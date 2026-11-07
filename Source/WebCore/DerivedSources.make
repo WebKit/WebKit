@@ -621,13 +621,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
-    $(WebCore)/Modules/reporting/DeprecationReportBody.idl \
-    $(WebCore)/Modules/reporting/IntegrityPolicyViolationReportBody.idl \
     $(WebCore)/Modules/reporting/Report.idl \
-    $(WebCore)/Modules/reporting/ReportBody.idl \
     $(WebCore)/Modules/reporting/ReportingObserver.idl \
     $(WebCore)/Modules/reporting/ReportingObserverCallback.idl \
-    $(WebCore)/Modules/reporting/TestReportBody.idl \
     $(WebCore)/Modules/screen-wake-lock/Navigator+ScreenWakeLock.idl \
     $(WebCore)/Modules/screen-wake-lock/WakeLock.idl \
     $(WebCore)/Modules/screen-wake-lock/WakeLockSentinel.idl \
@@ -1591,8 +1587,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/inspector/InspectorAuditResourcesObject.idl \
     $(WebCore)/inspector/InspectorFrontendHost.idl \
     $(WebCore)/inspector/RTCLogsCallback.idl \
-    $(WebCore)/loader/COEPInheritenceViolationReportBody.idl \
-    $(WebCore)/loader/CORPViolationReportBody.idl \
     $(WebCore)/page/BarProp.idl \
     $(WebCore)/page/Crypto.idl \
     $(WebCore)/page/DOMSelection.idl \
@@ -1707,7 +1701,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/WebKitBuffer.idl \
     $(WebCore)/page/WebKitBufferNamespace.idl \
     $(WebCore)/page/WorkerNavigator.idl \
-    $(WebCore)/page/csp/CSPViolationReportBody.idl \
     $(WebCore)/plugins/DOMMimeType.idl \
     $(WebCore)/plugins/DOMMimeTypeArray.idl \
     $(WebCore)/plugins/DOMPlugin.idl \

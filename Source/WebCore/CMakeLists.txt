@@ -686,13 +686,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/remoteplayback/RemotePlayback.idl
     Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
 
-    Modules/reporting/DeprecationReportBody.idl
-    Modules/reporting/IntegrityPolicyViolationReportBody.idl
     Modules/reporting/Report.idl
-    Modules/reporting/ReportBody.idl
     Modules/reporting/ReportingObserver.idl
     Modules/reporting/ReportingObserverCallback.idl
-    Modules/reporting/TestReportBody.idl
 
     Modules/screen-wake-lock/WakeLock.idl
     Modules/screen-wake-lock/WakeLockSentinel.idl
@@ -1436,8 +1432,6 @@ set(WebCore_NON_SVG_IDL_FILES
     inspector/InspectorFrontendHost.idl
     inspector/RTCLogsCallback.idl
 
-    loader/COEPInheritenceViolationReportBody.idl
-    loader/CORPViolationReportBody.idl
 
     mathml/MathMLAnchorElement.idl
     mathml/MathMLElement.idl
@@ -1522,7 +1516,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/WindowPostMessageOptions.idl
     page/WorkerNavigator.idl
 
-    page/csp/CSPViolationReportBody.idl
 
     plugins/DOMMimeType.idl
     plugins/DOMMimeTypeArray.idl

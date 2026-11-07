@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-class Report;
 class ReportingObserver;
+struct ReportDictionary;
 
 class ReportingObserverCallback : public RefCounted<ReportingObserverCallback>, public ActiveDOMCallback {
     WTF_MAKE_TZONE_ALLOCATED(ReportingObserverCallback);
@@ -43,8 +43,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    virtual CallbackResult<void> invoke(const Vector<Ref<Report>>&, ReportingObserver&) = 0;
-    virtual CallbackResult<void> invokeRethrowingException(const Vector<Ref<Report>>&, ReportingObserver&) = 0;
+    virtual CallbackResult<void> invoke(const Vector<ReportDictionary>&, ReportingObserver&) = 0;
+    virtual CallbackResult<void> invokeRethrowingException(const Vector<ReportDictionary>&, ReportingObserver&) = 0;
 
     virtual bool hasCallback() const = 0;
     virtual bool isJSReportingObserverCallback() const { return false; }
