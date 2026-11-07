@@ -65,6 +65,7 @@ void Symbol::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
+    Locker locker { vm.symbolImplToSymbolMapLock };
     vm.symbolImplToSymbolMap.set(&m_privateName.uid(), this);
 }
 
@@ -165,12 +166,18 @@ Symbol* Symbol::createWithDescription(VM& vm, const String& description, JSStrin
 
 Symbol* Symbol::create(VM& vm, SymbolImpl& uid)
 {
-    if (Symbol* symbol = vm.symbolImplToSymbolMap.get(&uid))
+    if (Symbol* symbol = existingSymbolConcurrently(vm, uid))
         return symbol;
 
     Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm)) Symbol(vm, uid);
     symbol->finishCreation(vm);
     return symbol;
+}
+
+Symbol* Symbol::existingSymbolConcurrently(VM& vm, SymbolImpl& uid)
+{
+    Locker locker { vm.symbolImplToSymbolMapLock };
+    return vm.symbolImplToSymbolMap.get(&uid);
 }
 
 } // namespace JSC

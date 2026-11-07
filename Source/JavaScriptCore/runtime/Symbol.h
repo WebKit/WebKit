@@ -55,6 +55,8 @@ public:
     static Symbol* createWithDescription(VM&, const String&);
     static Symbol* createWithDescription(VM&, const String&, JSString*);
     JS_EXPORT_PRIVATE static Symbol* create(VM&, SymbolImpl& uid);
+    // The Symbol cell for uid if one exists. Safe to call from GC marking threads.
+    static Symbol* existingSymbolConcurrently(VM&, SymbolImpl& uid);
 
     SymbolImpl& uid() const { return m_privateName.uid(); }
     GCOwnedDataScope<const PrivateName&> privateName() const { return { this, m_privateName }; }
