@@ -45,13 +45,12 @@ String CSSRegisteredCounterStyle::counterForSystemCyclic(int value) const
     auto amountOfSymbols = symbols().size();
     ASSERT(amountOfSymbols > 0);
 
-    // For avoiding subtracting -1 from INT_MAX we will sum-up amountOfSymbols in case the value is not positive.
-    // This works because x % y = (x + y) % y
-    unsigned symbolIndex = static_cast<unsigned>(value > 0 ? value : value + amountOfSymbols);
-    symbolIndex = (symbolIndex - 1) % amountOfSymbols;
-    ASSERT(static_cast<unsigned>(symbolIndex) < amountOfSymbols);
+    // Signed modulo in 64 bits: value - 1 can't overflow, and negative values wrap to the right symbol for any amountOfSymbols.
+    int64_t symbolCount = amountOfSymbols;
+    size_t symbolIndex = static_cast<size_t>(((static_cast<int64_t>(value) - 1) % symbolCount + symbolCount) % symbolCount);
+    ASSERT(symbolIndex < amountOfSymbols);
 
-    return symbols().at(static_cast<unsigned>(symbolIndex)).text;
+    return symbols().at(symbolIndex).text;
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#fixed-system
