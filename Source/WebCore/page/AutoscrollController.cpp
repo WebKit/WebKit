@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AutoscrollController.h"
 
+#include "DocumentView.h"
 #include "EventHandler.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
