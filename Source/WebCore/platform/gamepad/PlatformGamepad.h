@@ -27,12 +27,13 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <WebCore/GamepadButtonType.h>
 #include <WebCore/GamepadHapticEffectType.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class SharedGamepadValue;
 struct GamepadEffectParameters;
 
 class PlatformGamepad : public CanMakeWeakPtr<PlatformGamepad>, public CanMakeCheckedPtr<PlatformGamepad> {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformGamepad);
+    WTF_MAKE_TZONE_ALLOCATED(PlatformGamepad);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlatformGamepad);
 public:
     virtual ~PlatformGamepad() = default;
@@ -52,9 +53,10 @@ public:
     virtual MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
     MonotonicTime connectTime() const { return m_connectTime; }
     const GamepadHapticEffectTypeSet& supportedEffectTypes() const LIFETIME_BOUND { return m_supportedEffectTypes; }
-    
+
     virtual const Vector<SharedGamepadValue>& axisValues() const = 0;
     virtual const Vector<SharedGamepadValue>& buttonValues() const = 0;
+    virtual const Vector<GamepadButtonType>& buttonTypes() const LIFETIME_BOUND { return m_buttonTypes; }
     virtual void playEffect(GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void stopEffects(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
@@ -66,12 +68,16 @@ protected:
     {
     }
 
+    void setNonStandardButtonTypes(size_t);
+    void setButtonTypesForStandardMapping(size_t);
+
     String m_id;
     String m_mapping;
     unsigned m_index;
     MonotonicTime m_lastUpdateTime;
     MonotonicTime m_connectTime;
     GamepadHapticEffectTypeSet m_supportedEffectTypes;
+    Vector<GamepadButtonType> m_buttonTypes;
 };
 
 } // namespace WebCore

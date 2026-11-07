@@ -28,6 +28,7 @@ class WebKit::GamepadData {
     String mapping();
     Vector<double> axisValues();
     Vector<double> buttonValues();
+    Vector<WebCore::GamepadButtonType> buttonTypes();
     MonotonicTime lastUpdateTime();
     HashSet<WebCore::GamepadHapticEffectType, IntHash<WebCore::GamepadHapticEffectType>, WTF::StrongEnumHashTraits<WebCore::GamepadHapticEffectType>> supportedEffectTypes();
 };
