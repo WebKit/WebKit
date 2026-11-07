@@ -51,6 +51,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
@@ -115,8 +116,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderImage);
 // of the start and end, we need to know the whole Position.
 void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometries, unsigned, unsigned)
 {
-    RenderBlock* containingBlock = this->containingBlock();
-
     IntRect imageRect;
     // FIXME: It doesn't make sense to package line bounds into SelectionGeometry. We should find
     // the right and left extent of the selection once for the entire selected Range, perhaps
@@ -124,31 +123,38 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
     IntRect lineExtentRect;
     bool isFirstOnLine = false;
     bool isLastOnLine = false;
+    auto containerWritingMode = WritingMode { };
 
     auto run = InlineIterator::boxFor(*this);
     if (!run) {
         // This is a block image.
+        CheckedPtr containingBlock = this->containingBlock();
+        containerWritingMode = containingBlock->writingMode();
         imageRect = IntRect(0, 0, borderBoxWidth(), borderBoxHeight());
         isFirstOnLine = true;
         isLastOnLine = true;
         lineExtentRect = imageRect;
+        auto containingBlockRect = containingBlock->borderBoxRectInContainer();
         if (containingBlock->isHorizontalWritingMode()) {
-            lineExtentRect.setX(containingBlock->x());
-            lineExtentRect.setWidth(containingBlock->borderBoxWidth());
+            lineExtentRect.setX(containingBlockRect.x());
+            lineExtentRect.setWidth(containingBlockRect.width());
         } else {
-            lineExtentRect.setY(containingBlock->y());
-            lineExtentRect.setHeight(containingBlock->borderBoxHeight());
+            lineExtentRect.setY(containingBlockRect.y());
+            lineExtentRect.setHeight(containingBlockRect.height());
         }
     } else {
+        // An image on a line is laid out by the block that establishes its inline formatting context.
+        CheckedRef formattingContextRoot = LayoutIntegration::LineLayout::containing(*this)->flow();
+        containerWritingMode = formattingContextRoot->writingMode();
         auto lineRect = run->lineBox().contentLogicalRectAdjustedForAdjacentLineBoxes();
-        int selectionTop = !containingBlock->writingMode().isBlockFlipped() ? lineRect.y() - logicalTop() : logicalBottom() - lineRect.maxY();
+        int selectionTop = !containerWritingMode.isBlockFlipped() ? lineRect.y() - logicalTop() : logicalBottom() - lineRect.maxY();
         int selectionHeight = lineRect.height();
         imageRect = IntRect { 0,  selectionTop, logicalWidth(), selectionHeight };
         isFirstOnLine = !run->nextLineLeftwardOnLine();
         isLastOnLine = !run->nextLineRightwardOnLine();
-        LogicalSelectionOffsetCaches cache(*containingBlock);
-        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
-        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
+        LogicalSelectionOffsetCaches cache(formattingContextRoot);
+        LayoutUnit leftOffset = formattingContextRoot->logicalLeftSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
+        LayoutUnit rightOffset = formattingContextRoot->logicalRightSelectionOffset(formattingContextRoot, LayoutUnit(run->logicalTop()), cache);
         lineExtentRect = IntRect(leftOffset - logicalLeft(), imageRect.y(), rightOffset - leftOffset, imageRect.height());
         if (!run->isHorizontal()) {
             imageRect = imageRect.transposedRect();
@@ -159,12 +165,12 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
     bool isFixed = false;
     auto absoluteQuad = localToAbsoluteQuad(FloatRect(imageRect), MapCoordinatesMode::UseTransforms, &isFixed);
     auto lineExtentBounds = localToAbsoluteQuad(FloatRect(lineExtentRect)).enclosingBoundingBox();
-    if (!containingBlock->isHorizontalWritingMode())
+    if (!containerWritingMode.isHorizontal())
         lineExtentBounds = lineExtentBounds.transposedRect();
 
     // FIXME: We should consider either making SelectionGeometry a struct or better organize its optional fields into
     // an auxiliary struct to simplify its initialization.
-    geometries.append(SelectionGeometry(absoluteQuad, SelectionRenderingBehavior::CoalesceBoundingRects, containingBlock->writingMode().bidiDirection(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->writingMode().isHorizontal(), isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+    geometries.append(SelectionGeometry(absoluteQuad, SelectionRenderingBehavior::CoalesceBoundingRects, containerWritingMode.bidiDirection(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containerWritingMode.isHorizontal(), isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
 }
 
 using namespace HTMLNames;

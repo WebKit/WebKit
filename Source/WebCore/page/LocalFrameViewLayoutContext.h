@@ -175,8 +175,8 @@ public:
 
     UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction() LIFETIME_BOUND;
     NODELETE UpdateScrollInfoAfterLayoutTransaction* updateScrollInfoAfterLayoutTransactionIfExists() LIFETIME_BOUND { return m_updateScrollInfoAfterLayoutTransaction.get(); }
-    void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBlock& container);
-    Vector<SingleThreadWeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
+    void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBoxModelObject& container);
+    Vector<SingleThreadWeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBoxModelObject&);
 
     void startTrackingLayoutUpdates() { m_layoutUpdateCount = 0; }
     unsigned layoutUpdateCount() const { return m_layoutUpdateCount; }
@@ -298,7 +298,7 @@ private:
     unsigned m_renderLayerPositionUpdateCount { 0 };
     LayoutStateStack m_layoutStateStack;
     const std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
-    SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
+    SingleThreadWeakHashMap<RenderBoxModelObject, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
     SingleThreadWeakHashSet<RenderBox> m_boxesInOrthogonalIntrinsicContributionLayout;
     SingleThreadWeakHashSet<RenderBox> m_intrinsicLogicalWidthComputationList;

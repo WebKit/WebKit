@@ -3165,9 +3165,9 @@ static RenderElement* rootForSkippedLayout(RenderElement& rootCandidate)
     auto skippedSubtreeRoot = [&] (auto& skippedRootOrSkippedContent) -> RenderElement* {
         if (auto* renderBox = dynamicDowncast<RenderBox>(skippedRootOrSkippedContent); renderBox && isSkippedContentRoot(*renderBox))
             return renderBox;
-        for (auto* ancestor = skippedRootOrSkippedContent.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-            if (isSkippedContentRoot(*ancestor))
-                return ancestor;
+        for (RenderBoxModelObject* ancestor = skippedRootOrSkippedContent.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            if (auto* renderBox = dynamicDowncast<RenderBox>(*ancestor); renderBox && isSkippedContentRoot(*renderBox))
+                return renderBox;
         }
         return &skippedRootOrSkippedContent.view();
     };

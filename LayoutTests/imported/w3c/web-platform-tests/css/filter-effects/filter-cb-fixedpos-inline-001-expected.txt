@@ -1,0 +1,8 @@
+XX XXXX
+XX XXXX
+
+PASS filter: geometry of the fixed positioned box
+PASS filter: hit testing the fixed positioned box
+PASS backdrop-filter: geometry of the fixed positioned box
+PASS backdrop-filter: hit testing the fixed positioned box
+

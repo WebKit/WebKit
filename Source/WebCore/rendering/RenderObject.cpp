@@ -641,7 +641,7 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
     return { };
 }
 
-void RenderObject::invalidateContentLogicalWidths(MarkingBehavior markParents, const RenderBlock* ancestorUpdateBoundary)
+void RenderObject::invalidateContentLogicalWidths(MarkingBehavior markParents, const RenderBoxModelObject* ancestorUpdateBoundary)
 {
     ASSERT_IMPLIES(ancestorUpdateBoundary, markParents == MarkingBehavior::ContainingBlockChain);
 
@@ -666,7 +666,7 @@ void RenderObject::invalidateContentLogicalWidths(MarkingBehavior markParents, c
         ensureRareData().contentLogicalWidthsInvalidationIsMarkOnlyThis = false;
 }
 
-void RenderObject::invalidateContainerContentLogicalWidths(const RenderBlock* ancestorUpdateBoundary)
+void RenderObject::invalidateContainerContentLogicalWidths(const RenderBoxModelObject* ancestorUpdateBoundary)
 {
     // In order to avoid pathological behavior when inlines are deeply nested, we do include them
     // in the chain that we mark dirty (even though they're kind of irrelevant).
