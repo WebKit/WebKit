@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>CSS Position Test: absolutely positioned box in an inline box that preceding content makes wrap differently</title>
+<link rel="help" href="https://drafts.csswg.org/css-position-3/#def-cb">
+<link rel="match" href="position-absolute-in-inline-dynamic-003-ref.html">
+<meta name="assert" content="An absolutely positioned box whose containing block is an inline box is laid out again when content before the inline box changes how the inline box breaks into lines.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+  .container { font: 20px/60px Ahem; width: 120px; height: 120px; }
+  .inline { position: relative; background-color: red; color: transparent; }
+  .absolute { position: absolute; inset: 0; background-color: green; }
+</style>
+<p>Test passes if there is no red.</p>
+<div class="container"><span id="before">ABCD</span> <span class="inline">6 7<span class="absolute"></span></span></div>
+<script src="/common/rendering-utils.js"></script>
+<script src="/common/reftest-wait.js"></script>
+<script>
+  window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    await waitForAtLeastOneFrame();
+    document.getElementById("before").textContent = "A";
+    await waitForAtLeastOneFrame();
+    takeScreenshot();
+  });
+</script>
+</html>
