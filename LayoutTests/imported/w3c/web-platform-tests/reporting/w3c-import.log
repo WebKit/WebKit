@@ -48,3 +48,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/reporting/same-origin-report-credentials.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/reporting/same-origin-report-credentials.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/reporting/same-origin-same-site-credentials.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/takeRecords-before-callback.window.js

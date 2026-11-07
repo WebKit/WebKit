@@ -148,6 +148,8 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
 
         // Step 4.4: Invoke reporting observers with notify list with a copy of global’s registered reporting observer list.
         auto reports = observer.takeRecords();
+        if (reports.isEmpty())
+            return;
 
         InspectorInstrumentation::willFireObserverCallback(*context, "ReportingObserver"_s);
 
