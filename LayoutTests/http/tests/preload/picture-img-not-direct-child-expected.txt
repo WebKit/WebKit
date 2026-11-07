@@ -1,0 +1,28 @@
+The speculative preload scanner must only treat an <img> that is a direct child of a <picture> as that <picture>'s image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isPreloaded('/resources/square20.jpg?case1-source'); is true
+PASS internals.isPreloaded('/resources/square20.jpg?case1-img'); is false
+PASS internals.isPreloaded('/resources/square20.jpg?case2-source'); is false
+PASS internals.isPreloaded('/resources/square20.jpg?case2-img'); is true
+PASS internals.isPreloaded('/resources/square20.jpg?case3-source'); is true
+PASS internals.isPreloaded('/resources/square20.jpg?case3-img'); is false
+PASS internals.isPreloaded('/resources/square20.jpg?case4-source'); is true
+PASS internals.isPreloaded('/resources/square20.jpg?case4-img'); is false
+PASS internals.isPreloaded('/resources/square20.jpg?case5-source'); is true
+PASS internals.isPreloaded('/resources/square20.jpg?case5-img'); is false
+PASS internals.isPreloaded('/resources/square20.jpg?case6-source'); is true
+PASS internals.isPreloaded('/resources/square20.jpg?case6-nested'); is true
+PASS internals.isPreloaded('/resources/square20.jpg?case6-img'); is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+
+
