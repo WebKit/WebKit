@@ -1,0 +1,33 @@
+This tests that a list item's marker text is only included with the text adjacent to the marker, not with every text object on the marker's line.
+
+#unordered has 3 static text children.
+#unordered text 0: "• Hello "
+PASS: markerCount(string) === 1
+PASS: markerCount(attributedString) === 1
+#unordered text 1: "World"
+PASS: markerCount(string) === 0
+PASS: markerCount(attributedString) === 0
+#unordered text 2: "!"
+PASS: markerCount(string) === 0
+PASS: markerCount(attributedString) === 0
+#unordered full text: "• Hello World!"
+PASS: markerCount(string) === 1
+
+#ordered has 3 static text children.
+#ordered text 0: "2. Hello "
+PASS: markerCount(string) === 1
+PASS: markerCount(attributedString) === 1
+#ordered text 1: "World"
+PASS: markerCount(string) === 0
+PASS: markerCount(attributedString) === 0
+#ordered text 2: "!"
+PASS: markerCount(string) === 0
+PASS: markerCount(attributedString) === 0
+#ordered full text: "2. Hello World!"
+PASS: markerCount(string) === 1
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
