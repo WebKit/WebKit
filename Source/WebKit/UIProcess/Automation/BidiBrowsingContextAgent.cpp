@@ -184,8 +184,8 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
     auto [pageHandle, frameHandle] = handles.value();
 
-    // FIXME: implement the `document` origin; captures are always relative to the viewport. <https://webkit.org/b/323419>
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalOrigin.isNull() && optionalOrigin != "viewport"_s && optionalOrigin != "document"_s, InvalidParameter);
+    bool documentOrigin = optionalOrigin == "document"_s;
 
     if (optionalFormat) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformat
@@ -202,23 +202,25 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
         // FIXME: honor the requested image format and quality; captures are always encoded as PNG. <https://webkit.org/b/323422>
     }
 
+    std::optional<double> maxWidth;
+    std::optional<double> maxHeight;
     if (optionalImageSize) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimagesize
-        for (auto key : { "maxWidth"_s, "maxHeight"_s }) {
+        for (auto [key, maxDimension] : { std::pair { "maxWidth"_s, &maxWidth }, std::pair { "maxHeight"_s, &maxHeight } }) {
             if (RefPtr value = optionalImageSize->getValue(key)) {
-                // maxWidth and maxHeight are js-uint (0..2^53-1) constrained to be greater than 1.
+                // maxWidth and maxHeight are js-uint (0..2^53-1) constrained to be at least 1.
                 // asInteger() truncates a JSON double, so validate integrality and both bounds
                 // against the raw double, matching the js-uint handling in getTree above.
                 auto doubleValue = value->asDouble();
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!doubleValue, InvalidParameter);
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::floor(*doubleValue) != *doubleValue, InvalidParameter);
-                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*doubleValue <= 1 || *doubleValue > JSC::maxSafeInteger(), InvalidParameter);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*doubleValue < 1 || *doubleValue > JSC::maxSafeInteger(), InvalidParameter);
+                *maxDimension = *doubleValue;
             }
         }
-
-        // FIXME: honor the requested image size; the captured image is never downscaled. <https://webkit.org/b/323419>
     }
 
+    std::optional<WebCore::FloatRect> clip;
     if (optionalClip) {
         // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextcliprectangle
         RefPtr clipTypeValue = optionalClip->getValue("type"_s);
@@ -260,15 +262,14 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
             auto height = *optionalClip->getDouble("height"_s);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!width || !height, ScreenshotError);
 
-            // FIXME: apply the clip rectangle to the captured image. <https://webkit.org/b/323419>
+            // Clamp rather than convert, so a huge double cannot become an infinite float whose
+            // sum with an opposite infinity is NaN when the clip is intersected.
+            clip = WebCore::FloatRect(clampTo<float>(*optionalClip->getDouble("x"_s)), clampTo<float>(*optionalClip->getDouble("y"_s)), clampTo<float>(width), clampTo<float>(height));
         } else
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
     }
 
-    // FIXME: this always captures the full page viewport: the empty node handle, and the
-    // absent scrollIntoViewIfNeeded and clipToViewport arguments, are placeholders until the
-    // origin, clip, and image-size options above are applied. <https://webkit.org/b/323419>
-    session->takeScreenshot(pageHandle, frameHandle, emptyString(), std::nullopt, std::nullopt, WTF::move(callback));
+    session->captureBidiScreenshot(pageHandle, frameHandle, documentOrigin, WTF::move(clip), WTF::move(maxWidth), WTF::move(maxHeight), WTF::move(callback));
 }
 
 void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std::optional<bool>&& optionalPromptUnload, CommandCallback<void>&& callback)
