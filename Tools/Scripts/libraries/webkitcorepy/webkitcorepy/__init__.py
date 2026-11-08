@@ -25,6 +25,9 @@ import sys
 if sys.version_info < (3, 9):  # noqa: UP036
     raise ImportError("webkitcorepy requires Python 3.9 or above")
 
+import warnings
+warnings.filterwarnings('ignore', message='urllib3 v2 only supports OpenSSL')
+
 import logging
 import platform
 
