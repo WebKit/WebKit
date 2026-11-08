@@ -31,6 +31,7 @@
 
 from collections import OrderedDict
 from io import StringIO
+import json
 import sys
 import time
 import unittest
@@ -202,3 +203,54 @@ passes/text.html                       ['PASS']
 
         self.assertEqual(collect_tests('DumpRenderTree'), ([other_test], {print_reftest}))
         self.assertEqual(collect_tests('WebKitTestRunner'), ([print_reftest, other_test], set()))
+
+    def expectations_as_json(self, device_type_list, tests_to_run_by_device, tests_to_skip):
+        host = MockHost()
+        port = host.port_factory.get('test-win-xp', None)
+        port.supported_device_types = lambda: device_type_list
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = ('Bug(test) failures/expected/text.html [ Failure ]\n'
+                                             'Bug(test) failures/expected/crash.html [ WontFix ]\n')
+        port.expectations_dict = lambda **kwargs: expectations_dict
+        manager = Manager(port, options=MockOptions(test_list=None, http=True, verbose=False, driver_names=['driver-a', 'driver-b']), printer=Mock())
+        manager._create_port_for_driver = Mock(return_value=port)
+
+        def collect_tests(paths, device_type_list, driver_name):
+            for device_type in device_type_list:
+                manager._expectations[(driver_name, device_type)] = test_expectations.TestExpectations(
+                    port, ['failures/expected/text.html', 'failures/expected/crash.html', 'passes/text.html'], device_type=device_type)
+                manager._expectations[(driver_name, device_type)].parse_all_expectations()
+            return tests_to_run_by_device, tests_to_skip
+
+        manager._collect_tests = collect_tests
+
+        initial_stdout = sys.stdout
+        stringIO = StringIO()
+        sys.stdout = stringIO
+        try:
+            exit_code = manager.print_expectations_json([])
+        finally:
+            sys.stdout = initial_stdout
+        self.assertEqual(exit_code, 0)
+        return json.loads(stringIO.getvalue())
+
+    def test_print_expectations_json(self):
+        device_type_a = DeviceType.from_string('iPhone 12')
+        device_type_b = DeviceType.from_string('iPad (9th generation)')
+        output = self.expectations_as_json([device_type_a, device_type_b],
+                                              {device_type_a: [Test('failures/expected/text.html')], device_type_b: [Test('passes/text.html')]},
+                                              {Test('failures/expected/crash.html')})
+        self.assertEqual(sorted(output), ['driver-a', 'driver-b'])
+        for driver_name in ['driver-a', 'driver-b']:
+            # A skipped test is only listed under "skip", with the expectations of the first device type.
+            self.assertEqual(sorted(output[driver_name]['skip']), ['failures/expected/crash.html'])
+            self.assertEqual(output[driver_name]['skip']['failures/expected/crash.html']['expected'], ['SKIP'])
+            self.assertEqual(sorted(output[driver_name]['run']), sorted([str(device_type_a), str(device_type_b)]))
+            run_a = output[driver_name]['run'][str(device_type_a)]
+            self.assertEqual(sorted(run_a), ['failures/expected/text.html'])
+            self.assertEqual(run_a['failures/expected/text.html']['expected'], ['FAIL'])
+            self.assertEqual(output[driver_name]['run'][str(device_type_b)], {'passes/text.html': {'expected': ['PASS'], 'lines': []}})
+
+    def test_print_expectations_json_default_device_type(self):
+        output = self.expectations_as_json([None], {None: [Test('passes/text.html')]}, set())
+        self.assertEqual(sorted(output['driver-a']['run']), ['default'])

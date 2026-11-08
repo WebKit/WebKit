@@ -970,16 +970,16 @@ class Manager(object):
         for test in sorted(tests_to_run):
             self._print_expectation_line_for_test(format_string, test, device_type=device_type)
 
-    def print_expectations(self, args):
-        if self._options.test_list:
-            for list_path in self._options.test_list:
-                if not self._port.host.filesystem.isfile(list_path):
-                    _log.critical('')
-                    _log.critical('--test-list file "{}" not found'.format(list_path))
-                    return -1
+    def _test_list_files_exist(self):
+        # type: () -> bool
+        for list_path in self._options.test_list or []:
+            if not self._port.host.filesystem.isfile(list_path):
+                _log.critical('')
+                _log.critical('--test-list file "{}" not found'.format(list_path))
+                return False
+        return True
 
-        worst_exit_code = 0
-
+    def _for_each_driver(self, args):
         # Loop over all drivers (like Manager.run() does)
         for driver_name in self._driver_names:
             self._current_driver_name = driver_name
@@ -989,7 +989,15 @@ class Manager(object):
 
             device_type_list = self._port.supported_device_types()
             tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list, driver_name)
+            yield driver_name, device_type_list, tests_to_run_by_device, aggregate_tests_to_skip
 
+    def print_expectations(self, args):
+        if not self._test_list_files_exist():
+            return -1
+
+        worst_exit_code = 0
+
+        for _, device_type_list, tests_to_run_by_device, aggregate_tests_to_skip in self._for_each_driver(args):
             aggregate_tests_to_run = set()
             for v in tests_to_run_by_device.values():
                 aggregate_tests_to_run.update(v)
@@ -1007,27 +1015,50 @@ class Manager(object):
 
         return worst_exit_code
 
+    def print_expectations_json(self, args):
+        if not self._test_list_files_exist():
+            return -1
+
+        output = {}
+        for driver_name, device_type_list, tests_to_run_by_device, aggregate_tests_to_skip in self._for_each_driver(args):
+            first = self._expectations[(driver_name, device_type_list[0])]  # skipped tests use these, as in the text
+            output[driver_name] = {
+                'skip': {test.test_path: self._expectations_json(first, test.test_path) for test in sorted(aggregate_tests_to_skip)},
+                'run': {
+                    str(device_type) if device_type else 'default': {
+                        test.test_path: self._expectations_json(self._expectations[(driver_name, device_type)], test.test_path)
+                        for test in sorted(tests_to_run_by_device[device_type])}
+                    for device_type in device_type_list},
+            }
+        print(json.dumps(output))
+        return 0
+
+    def _expectations_json(self, expectations, test_path):
+        model = expectations.model()
+        lines = []
+        for status, line in model.get_classified_expectation_lines(test_path):
+            if line.filename is None:  # the synthetic PASS line
+                continue
+            filename = expectations.readable_filename(line)
+            lines.append({
+                'status': status.name.lower(),
+                'expected': line.expected_behavior,
+                'path': line.name,
+                'filename': filename,
+                'line_number': line.line_number if filename is not None else None,
+                'original_string': line.original_string,
+                'from_skipped_list': line.not_applicable_to_current_platform,
+            })
+        return {'expected': model.get_expectation_line(test_path).expected_behavior, 'lines': lines}
+
     def print_summary(self, args):
-        if self._options.test_list:
-            for list_path in self._options.test_list:
-                if not self._port.host.filesystem.isfile(list_path):
-                    _log.critical('')
-                    _log.critical('--test-list file "{}" not found'.format(list_path))
-                    return -1
+        if not self._test_list_files_exist():
+            return -1
 
         worst_exit_code = 0
 
-        # Loop over all drivers (like Manager.run() does)
-        for driver_name in self._driver_names:
-            self._current_driver_name = driver_name
-            self._port = self._create_port_for_driver(driver_name)
-            self._results_directory = self._port.results_directory()
-            self._finder = LayoutTestFinder(self._port, self._options)
-
-            device_type_list = self._port.supported_device_types()
+        for driver_name, device_type_list, _, _ in self._for_each_driver(args):
             test_stats = {}
-
-            self._collect_tests(args, device_type_list, driver_name)
 
             for (drv_name, device_type), expectations in self._expectations.items():
                 if drv_name != driver_name:

@@ -1099,15 +1099,27 @@ class TestExpectations(object):
         self._include_overrides = include_overrides
         self._expectations_to_lint = expectations_to_lint
 
+    def readable_filename(self, line):
+        # type: (TestExpectationLine) -> Optional[str]
+        if line.not_applicable_to_current_platform:
+            return None
+
+        if not line.filename:
+            return None
+
+        if line.filename.startswith(self._port.path_from_webkit_base()):
+            return self._port.host.filesystem.relpath(line.filename, self._port.path_from_webkit_base())
+        return line.filename
+
     def readable_filename_and_line_number(self, line):
         # type: (TestExpectationLine) -> str
         if line.not_applicable_to_current_platform:
             return "(skipped for this platform)"
-        if not line.filename:
+
+        filename = self.readable_filename(line)
+        if filename is None:
             return ''
-        if line.filename.startswith(self._port.path_from_webkit_base()):
-            return '{}:{}'.format(self._port.host.filesystem.relpath(line.filename, self._port.path_from_webkit_base()), line.line_number)
-        return '{}:{}'.format(line.filename, line.line_number)
+        return '{}:{}'.format(filename, line.line_number)
 
     def parse_generic_expectations(self):
         # type: () -> None
