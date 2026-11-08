@@ -42,6 +42,8 @@
  */
 
 struct _JSCExceptionPrivate {
+    // Never read: keeps the VM of jsException alive, since context is a weak pointer.
+    GRefPtr<JSCVirtualMachine> vm;
     GWeakPtr<JSCContext> context;
     JSC::Strong<JSC::JSObject> jsException;
     bool cached;
@@ -66,6 +68,7 @@ GRefPtr<JSCException> jscExceptionCreate(JSCContext* context, JSValueRef jsExcep
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
+    exception->priv->vm = jsc_context_get_virtual_machine(context);
     exception->priv->jsException.set(vm, toJS(JSValueToObject(jsContext, jsException, nullptr)));
     // The context has a strong reference to the exception, so we can't ref the context. We use a weak
     // pointer instead to invalidate the exception if the context is destroyed before.
