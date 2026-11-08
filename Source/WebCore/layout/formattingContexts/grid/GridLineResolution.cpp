@@ -80,10 +80,13 @@ UnplacedGridItem::AxisPosition resolveAxisPosition(const Style::GridPosition& st
     if (!explicitRange) {
         // An axis with no explicit line is auto-positioned; carry the span forward for the
         // placement algorithm to resolve.
+        // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
+        // "If the placement contains two spans, remove the one contributed by the end grid-placement property."
+        // "If the placement contains only a span for a named line, replace it with a span of 1."
         size_t span = 1;
-        if (start.isSpan())
+        if (start.isSpan() && start.namedGridLine().value.isEmpty())
             span = start.spanPosition();
-        else if (end.isSpan())
+        else if (!start.isSpan() && end.isSpan() && end.namedGridLine().value.isEmpty())
             span = end.spanPosition();
         return UnplacedGridItem::AutoPosition { span };
     }
@@ -102,7 +105,7 @@ UnplacedGridItem::AxisPosition resolveAxisPosition(const Style::GridPosition& st
 std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, const NamedLineResolver& namedLineResolver, size_t maxTracks)
 {
     // An axis is only definite when one of its edges is a line. Anything
-    // else (auto/auto, span/auto, auto/span) is auto-positioned and has no explicit line range.
+    // else (auto/auto, span/auto, auto/span, span/span) is auto-positioned and has no explicit line range.
     if (!isLine(start) && !isLine(end))
         return { };
 
