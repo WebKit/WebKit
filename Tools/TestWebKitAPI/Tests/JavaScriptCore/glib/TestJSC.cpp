@@ -3932,6 +3932,36 @@ static void testJSCExceptions()
         jsc_context_clear_exception(context.get());
         g_assert_null(jsc_context_get_exception(context.get()));
     }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "foo", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_undefined(result.get()));
+
+        GRefPtr<JSCException> exception = jsc_context_get_exception(context.get());
+        g_assert_true(JSC_IS_EXCEPTION(exception.get()));
+        checker.watch(exception.get());
+
+        // Release the context before properties are cached.
+        result = nullptr;
+        g_assert_cmpuint(G_OBJECT(context.get())->ref_count, ==, 1);
+        context = nullptr;
+
+        g_assert_null(jsc_exception_get_name(exception.get()));
+        g_assert_null(jsc_exception_get_message(exception.get()));
+        g_assert_cmpuint(jsc_exception_get_line_number(exception.get()), ==, 0);
+        g_assert_cmpuint(jsc_exception_get_column_number(exception.get()), ==, 0);
+        g_assert_null(jsc_exception_get_source_uri(exception.get()));
+        g_assert_null(jsc_exception_get_backtrace_string(exception.get()));
+        GUniquePtr<char> errorString(jsc_exception_to_string(exception.get()));
+        g_assert_cmpstr(errorString.get(), ==, "");
+        GUniquePtr<char> reportString(jsc_exception_report(exception.get()));
+        g_assert_cmpstr(reportString.get(), ==, "");
+    }
 }
 
 struct AsyncPromiseTestData {
