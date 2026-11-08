@@ -818,7 +818,10 @@ void MockRealtimeVideoSource::orientationChanged(IntDegrees orientation)
 
 void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 {
-    if (!mockCamera() || std::get<MockCameraProperties>(m_device.properties).facingMode == VideoFacingMode::Unknown)
+    if (mockCamera()) {
+        if (std::get<MockCameraProperties>(m_device.properties).facingMode == VideoFacingMode::Unknown)
+            return;
+    } else if (!mockDisplay())
         return;
 
     notifier.addObserver(*this);
