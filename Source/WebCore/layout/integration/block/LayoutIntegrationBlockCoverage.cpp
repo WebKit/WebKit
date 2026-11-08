@@ -597,9 +597,8 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 // margins, which a float does not take (RenderBox::shrinkLogicalWidthToAvoidFloats), and calc() ones, which may be negative, justify-self,
 // the -webkit- values of text-align, an inline size its own formatting context decides from the space beside
 // the floats (RenderBox::shrinkToAvoidFloats with containingBlockAvailableLineWidth): of a box that fits its content, a sizing keyword, a
-// preferred aspect ratio or MathML, and of a table with a min or max inline size, which applies to the space, a form control the block
-// formatting context lays out as a block container, like a checkbox with display: block, and one inside a box with clear, which may still go
-// below floats when the avoider is placed.
+// preferred aspect ratio or MathML, and of a table with a min or max inline size, which applies to the space, and a form control the block
+// formatting context lays out as a block container, like a checkbox with display: block.
 static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isInInlineContent, bool hasFloatsWithShape, bool isLaidOutThroughRenderTree)
 {
     if (isInInlineContent || hasFloatsWithShape || box.document().inQuirksMode() || box.isFieldset() || !box.style().blockStepSize().isNone())
@@ -636,8 +635,6 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
             return BlockAvoidanceReason::ContentHasFloat;
         if (ancestor == &rootContainer)
             break;
-        if (ancestor->style().clear() != Clear::None)
-            return BlockAvoidanceReason::ContentHasFloat;
     }
     return { };
 }
@@ -651,16 +648,8 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
         return { };
     CheckedPtr parentBlockContainer = dynamicDowncast<RenderBlockFlow>(*box->parent());
     auto isInInlineContent = box->parent()->isInlineBox() || (parentBlockContainer && parentBlockContainer->childrenInline());
-    if (box->isOutOfFlowPositioned()) {
-        // FIXME: One that would be inline-level inside a box with clear, which may still go below the floats after the static position is taken.
-        if (!isInInlineContent && box->style().originalDisplay().isInlineType()) {
-            for (CheckedPtr<const RenderElement> ancestor = box->parent(); ancestor && ancestor != &rootContainer; ancestor = ancestor->parent()) {
-                if (ancestor->style().clear() != Clear::None)
-                    return BlockAvoidanceReason::ContentHasFloat;
-            }
-        }
+    if (box->isOutOfFlowPositioned())
         return { };
-    }
     // FIXME: clear on a block-level box in inline content, which the inline formatting context places, in quirks mode, where a quirk container
     // keeps the margins at its block-start side apart, with margin-trim, which discards margins that clearance separates, and on a box inside
     // another one with clear.
