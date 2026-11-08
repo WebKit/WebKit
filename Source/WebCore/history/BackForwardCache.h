@@ -69,6 +69,7 @@ public:
     WEBCORE_EXPORT std::unique_ptr<CachedPage> take(BackForwardFrameItemIdentifier, Page*);
 
     WEBCORE_EXPORT void removeAllItemsForPage(Page&);
+    WEBCORE_EXPORT void removeAllItemsForMainFrame(LocalFrame&);
 
     WEBCORE_EXPORT void clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>>&);
 

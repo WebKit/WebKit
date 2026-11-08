@@ -631,6 +631,12 @@ std::unique_ptr<CachedPage> BackForwardCache::take(BackForwardFrameItemIdentifie
     return cachedPage.moveToUniquePtr();
 }
 
+static RefPtr<LocalFrame> cachedLocalMainFrame(const CachedPage& cachedPage)
+{
+    RefPtr view = cachedPage.cachedMainFrame() ? cachedPage.cachedMainFrame()->view() : nullptr;
+    return view ? dynamicDowncast<LocalFrame>(view->frame()) : nullptr;
+}
+
 void BackForwardCache::removeAllItemsForPage(Page& page)
 {
 #if ASSERT_ENABLED
@@ -647,6 +653,22 @@ void BackForwardCache::removeAllItemsForPage(Page& page)
             }
         }
         return false;
+    });
+}
+
+void BackForwardCache::removeAllItemsForMainFrame(LocalFrame& frame)
+{
+    if (!frame.cachedPageCount())
+        return;
+
+    m_cachedPageMap.removeIf([&](auto& pair) -> bool {
+        auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&pair.value);
+        if (!cachedPage || cachedLocalMainFrame(cachedPage->get()) != &frame)
+            return false;
+        RELEASE_LOG(BackForwardCache, "BackForwardCache::removeAllItemsForMainFrame removing item: %s, size: %u / %u", pair.key.toString().utf8(), pageCount() - 1, maxSize());
+        notifyClientOfEviction(protect(cachedPage->get()));
+        m_items.remove(pair.key);
+        return true;
     });
 }
 
@@ -667,6 +689,12 @@ CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
         if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByWebInspector())) {
             LOG(BackForwardCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().utf8());
             logBackForwardCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
+            remove(item);
+            return nullptr;
+        }
+        // FIXME: Make the cached main frame the page's main frame again to restore the page.
+        if (RefPtr localMainFrame = cachedLocalMainFrame(cachedPage.get()); localMainFrame && localMainFrame->existsOnlyForCachedPages()) {
+            RELEASE_LOG(BackForwardCache, "BackForwardCache::get evicting item %s whose main frame is no longer the page's main frame", item.frameItemID().toString().utf8());
             remove(item);
             return nullptr;
         }
@@ -695,7 +723,7 @@ static void notifyClientOfEviction(CachedPage& cachedPage)
     auto itemID = cachedPage.itemID();
     if (!itemID)
         return;
-    RefPtr localMainFrame = cachedPage.page().localMainFrame();
+    RefPtr localMainFrame = cachedLocalMainFrame(cachedPage);
     if (!localMainFrame)
         return;
     localMainFrame->loader().client().didEvictBackForwardItem(*itemID);

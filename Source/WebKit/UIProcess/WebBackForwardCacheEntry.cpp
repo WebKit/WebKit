@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebBackForwardCacheEntry.h"
 
+#include "FrameProcess.h"
 #include "Logging.h"
 #include "SuspendedPageProxy.h"
 #include "WebBackForwardCache.h"
@@ -121,6 +122,13 @@ HashSet<Ref<WebProcessProxy>> WebBackForwardCacheEntry::allProcesses() const
     if (RefPtr mainProcess = process())
         result.add(mainProcess.releaseNonNull());
     return result;
+}
+
+void WebBackForwardCacheEntry::setMainFrameProcess(FrameProcess& frameProcess)
+{
+    ASSERT(!m_suspendedPage);
+    ASSERT(frameProcess.process().coreProcessIdentifier() == m_processIdentifier);
+    m_mainFrameProcess = frameProcess;
 }
 
 void WebBackForwardCacheEntry::setCachedChildren(Vector<Ref<WebFrameProxy>>&& children)

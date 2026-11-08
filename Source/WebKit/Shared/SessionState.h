@@ -170,6 +170,13 @@ struct BackForwardListItemState {
 
 using VectorBackForwardListItemState = Vector<BackForwardListItemState>;
 
+struct BackForwardItemIdentifiers {
+    WebCore::BackForwardItemIdentifier itemID;
+    WebCore::BackForwardFrameItemIdentifier mainFrameItemID;
+};
+
+enum class DidCacheOutgoingDocument : bool { No, Yes };
+
 struct BackForwardListState {
     Vector<BackForwardListItemState> items;
     std::optional<uint32_t> currentIndex;

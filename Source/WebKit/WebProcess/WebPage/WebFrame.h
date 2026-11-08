@@ -113,6 +113,9 @@ class WebMouseEvent;
 class WebPage;
 class WebRemoteFrameClient;
 
+enum class DidCacheOutgoingDocument : bool;
+
+struct BackForwardItemIdentifiers;
 struct FrameInfoData;
 struct FrameTreeNodeData;
 struct JSHandleInfo;
@@ -148,7 +151,7 @@ public:
     void destroyProvisionalFrame();
     void stopLoadingDueToProcessSwap(WebCore::NavigationIdentifier);
     void updateSandboxFlags(WebCore::SandboxFlags);
-    void loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>);
+    DidCacheOutgoingDocument loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>, std::optional<BackForwardItemIdentifiers>&& cacheIdentifiers);
     WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
 
     Awaitable<std::optional<FrameInfoData>> getFrameInfo();

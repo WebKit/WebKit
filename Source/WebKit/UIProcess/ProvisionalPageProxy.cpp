@@ -538,18 +538,25 @@ void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, Fr
         if (frameProcessChanged)
             pageMainFrame->setProcess(protect(m_frameProcess));
 
-        // Record that this page needs a remote-page transition. The actual
+        // Record that this page may need a remote-page transition. The actual
         // IPC + transitionPageToRemotePage() call is deferred to
         // commitProvisionalPage() so it can be skipped when the previous
         // page is BFCache-suspended (a suspended page is frozen, not remote).
-        if (frameProcessChanged && pageMainFrameProcess->frameCount() && pageMainFrameProcess->browsingContextGroup() == m_browsingContextGroup.ptr())
+        if (frameProcessChanged && pageMainFrameProcess->browsingContextGroup() == m_browsingContextGroup.ptr()) {
+            m_previousMainFrameProcess = pageMainFrameProcess.copyRef();
             m_deferredRemoteTransitionSite = Site { pageMainFrame->url() };
+        }
     }
     m_provisionalLoadURL = { };
     m_messageReceiverRegistration.stopReceivingMessages();
 
     m_wasCommitted = true;
     page->commitProvisionalPage(connection, frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, hasCertificateInfo, usedLegacyTLS, privateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), WTF::move(cspOriginsThatUpgradeInsecureNavigations), userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState)); // Will delete |this|.
+}
+
+FrameProcess* ProvisionalPageProxy::previousMainFrameProcess() const
+{
+    return m_previousMainFrameProcess.get();
 }
 
 void ProvisionalPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, FrameIdentifier frameID)

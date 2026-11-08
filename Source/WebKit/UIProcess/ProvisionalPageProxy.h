@@ -123,6 +123,7 @@ public:
     bool isProcessSwappingOnNavigationResponse() const { return m_isProcessSwappingOnNavigationResponse; }
     bool didFailProvisionalLoad() const { return m_didFailProvisionalLoad; }
     const std::optional<WebCore::Site>& deferredRemoteTransitionSite() const { return m_deferredRemoteTransitionSite; }
+    FrameProcess* previousMainFrameProcess() const;
     bool hasActiveLoadForNavigation(const API::Navigation&) const;
 
     void setDeferredTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&&);
@@ -246,6 +247,7 @@ private:
     bool m_shouldClosePage { true };
     bool m_didFailProvisionalLoad { false };
     std::optional<WebCore::Site> m_deferredRemoteTransitionSite;
+    RefPtr<FrameProcess> m_previousMainFrameProcess;
     RefPtr<WebCore::DocumentSyncData> m_deferredTopDocumentSyncData;
     URL m_provisionalLoadURL;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;

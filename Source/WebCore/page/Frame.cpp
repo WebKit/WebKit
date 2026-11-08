@@ -85,8 +85,24 @@ public:
         }
     }
 
+    void frameExistsOnlyForCachedPages(LocalFrame& frame)
+    {
+        auto it = m_map.find(frame.frameID());
+        ASSERT(it != m_map.end());
+        ASSERT(it->value.first == &frame);
+        if (it->value.second)
+            it->value.first = nullptr;
+        else
+            m_map.remove(it);
+
+        m_framesExistingOnlyForCachedPages.add(frame);
+    }
+
     void frameDestroyed(Frame& frame)
     {
+        if (m_framesExistingOnlyForCachedPages.remove(frame))
+            return;
+
         auto it = m_map.find(frame.frameID());
         ASSERT(it != m_map.end());
         auto& pair = it->value;
@@ -116,6 +132,7 @@ public:
     }
 private:
     HashMap<FrameIdentifier, std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>>> m_map;
+    WeakHashSet<Frame> m_framesExistingOnlyForCachedPages;
 };
 #endif
 
@@ -169,7 +186,8 @@ void Frame::detachFromPage()
             // Page::rootFrames(), so there is no need to remove it again.
             if (page->rootFrames().contains(downcast<LocalFrame>(*this)))
                 page->removeRootFrame(downcast<LocalFrame>(*this));
-            if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
+            // Its FrameIdentifier belongs to the frame that replaced it.
+            if (RefPtr scrollingCoordinator = page->scrollingCoordinator(); scrollingCoordinator && !downcast<LocalFrame>(*this).existsOnlyForCachedPages())
                 scrollingCoordinator->rootFrameWasRemoved(frameID());
         }
     }
@@ -254,6 +272,11 @@ RenderWidget* Frame::ownerRenderer() const
 bool Frame::isRootFrameIdentifier(FrameIdentifier identifier)
 {
     return FrameLifetimeVerifier::singleton().isRootFrameIdentifier(identifier);
+}
+
+void Frame::frameExistsOnlyForCachedPages(LocalFrame& frame)
+{
+    FrameLifetimeVerifier::singleton().frameExistsOnlyForCachedPages(frame);
 }
 #endif
 

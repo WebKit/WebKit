@@ -41,6 +41,7 @@
 
 namespace WebKit {
 
+class FrameProcess;
 class SuspendedPageProxy;
 class WebBackForwardCache;
 class WebFrameProxy;
@@ -68,6 +69,9 @@ public:
     bool hasCachedChildren() const { return !m_cachedChildren.isEmpty(); }
     void setCachedChildren(Vector<Ref<WebFrameProxy>>&&);
 
+    bool isCachedInPlace() const { return !!m_mainFrameProcess; }
+    void setMainFrameProcess(FrameProcess&);
+
     std::pair<Vector<Ref<WebFrameProxy>>, Vector<Ref<WebProcessProxy>>> takeForRestoration();
 
     bool referencesIframeProcess(WebCore::ProcessIdentifier) const;
@@ -86,6 +90,7 @@ private:
     Markable<WebCore::BackForwardItemIdentifier> m_backForwardItemID;
     Markable<WebCore::BackForwardFrameItemIdentifier> m_backForwardFrameItemID;
     RefPtr<SuspendedPageProxy> m_suspendedPage;
+    RefPtr<FrameProcess> m_mainFrameProcess;
     Vector<Ref<WebFrameProxy>> m_cachedChildren;
     RunLoop::Timer m_expirationTimer;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebBackForwardCacheEntry, derefWebBackForwardCacheEntry);
