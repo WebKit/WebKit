@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <array>
+#include <expected>
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
@@ -41,16 +42,20 @@ enum class MouseEventInputSource : uint8_t { UserDriven, Automation };
 
 enum class MouseEventCanInitiateDrag : bool { No, Yes };
 
-// These button numbers match the ones used in the DOM API, 0 through 2, except for None and Other which aren't specified.
-// We reserve -2 for the former and -1 to represent pointer events that indicate that the pressed mouse button hasn't
-// changed since the last event, as specified in the DOM API for Pointer Events.
+// These button numbers match the ones used in the DOM API, 0 through 2, except for Other which isn't specified.
 // https://w3c.github.io/uievents/#dom-mouseevent-button
+enum class MouseButton : int8_t { Left, Middle, Right, Back, Forward, Other };
+
+// Where an event may not report a specific button, the button is a std::expected<MouseButton, MouseButtonState>.
+// None means that no button is pressed, for example a mouse move with no button down. PointerHasNotChanged
+// represents pointer events that indicate that the pressed mouse button hasn't changed since the last event,
+// which the DOM API for Pointer Events exposes as -1.
 // https://w3c.github.io/pointerevents/#the-button-property
-enum class MouseButton : int8_t { None = -2, PointerHasNotChanged, Left, Middle, Right, Back, Forward, Other };
+enum class MouseButtonState : int8_t { None = -2, PointerHasNotChanged = -1 };
 
 inline MouseButton buttonFromShort(int16_t buttonValue)
 {
-    static constexpr std::array knownMouseButtonCases { MouseButton::None, MouseButton::PointerHasNotChanged, MouseButton::Left, MouseButton::Middle, MouseButton::Right, MouseButton::Back, MouseButton::Forward };
+    static constexpr std::array knownMouseButtonCases { MouseButton::Left, MouseButton::Middle, MouseButton::Right, MouseButton::Back, MouseButton::Forward };
     bool isKnownButton = std::ranges::any_of(knownMouseButtonCases, [buttonValue](MouseButton button) {
         return buttonValue == std::to_underlying(button);
     });

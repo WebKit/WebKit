@@ -38,11 +38,11 @@
 
 namespace WebKit {
 
-WebCore::MouseButton platform(WebMouseEventButton button)
+std::expected<WebCore::MouseButton, WebCore::MouseButtonState> platform(WebMouseEventButton button)
 {
     switch (button) {
     case WebMouseEventButton::None:
-        return WebCore::MouseButton::None;
+        return std::unexpected { WebCore::MouseButtonState::None };
     case WebMouseEventButton::Left:
         return WebCore::MouseButton::Left;
     case WebMouseEventButton::Middle:
@@ -58,11 +58,14 @@ WebCore::MouseButton platform(WebMouseEventButton button)
     }
 }
 
-WebMouseEventButton kit(WebCore::MouseButton button)
+WebMouseEventButton kit(std::expected<WebCore::MouseButton, WebCore::MouseButtonState> button)
 {
-    switch (button) {
-    case WebCore::MouseButton::None:
+    if (!button) {
+        RELEASE_ASSERT(button.error() == WebCore::MouseButtonState::None);
         return WebMouseEventButton::None;
+    }
+
+    switch (*button) {
     case WebCore::MouseButton::Left:
         return WebMouseEventButton::Left;
     case WebCore::MouseButton::Middle:

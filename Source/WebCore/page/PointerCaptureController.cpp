@@ -418,7 +418,7 @@ bool PointerCaptureController::dispatchEventForTrackedPointer(Element& target, c
         if (previousTarget && (!previousTarget->isConnected() || !previousTarget->document().frame()))
             previousTarget = nullptr;
         dispatchBoundaryEvents(previousTarget.get(), &target, [&](const AtomString& eventType) {
-            return PointerEvent::create(eventType, MouseButton::PointerHasNotChanged, mouseEvent, pointerId, pointerType);
+            return PointerEvent::create(eventType, std::unexpected { MouseButtonState::PointerHasNotChanged }, mouseEvent, pointerId, pointerType);
         });
     }
 
@@ -544,13 +544,13 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
     RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
     bool pointerIsPressed = capturingData ? capturingData->pointerIsPressed : false;
 
-    MouseButton newButton = mouseEvent.button();
-    MouseButton previousMouseButton = capturingData ? capturingData->previousMouseButton : MouseButton::PointerHasNotChanged;
-    MouseButton button = [&] {
+    auto newButton = mouseEvent.button();
+    std::expected<MouseButton, MouseButtonState> previousMouseButton = capturingData ? capturingData->previousMouseButton : std::unexpected { MouseButtonState::PointerHasNotChanged };
+    auto button = [&] -> std::expected<MouseButton, MouseButtonState> {
         auto pointerEventType = PointerEvent::typeFromMouseEventType(type);
         if (!PointerEvent::typeRequiresResolvedButton(pointerEventType)) {
             if (newButton == previousMouseButton || !pointerIsPressed)
-                return MouseButton::PointerHasNotChanged;
+                return std::unexpected { MouseButtonState::PointerHasNotChanged };
         }
         return newButton;
     }();

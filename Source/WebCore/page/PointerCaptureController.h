@@ -126,7 +126,7 @@ private:
         bool isPrimary { false };
         bool preventsCompatibilityMouseEvents { false };
         bool pointerIsPressed { false };
-        MouseButton previousMouseButton { MouseButton::PointerHasNotChanged };
+        std::expected<MouseButton, MouseButtonState> previousMouseButton { std::unexpected { MouseButtonState::PointerHasNotChanged } };
 
     private:
         CapturingData(const String& pointerType)

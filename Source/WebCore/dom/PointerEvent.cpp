@@ -64,7 +64,7 @@ AtomString PointerEvent::typeFromMouseEventType(const AtomString& mouseEventType
     return nullAtom();
 }
 
-RefPtr<PointerEvent> PointerEvent::create(MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+RefPtr<PointerEvent> PointerEvent::create(std::expected<MouseButton, MouseButtonState> button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     auto type = typeFromMouseEventType(mouseEvent.type());
     if (type.isEmpty())
@@ -73,12 +73,12 @@ RefPtr<PointerEvent> PointerEvent::create(MouseButton button, const MouseEvent& 
     return create(type, button, mouseEvent, pointerId, pointerType);
 }
 
-Ref<PointerEvent> PointerEvent::create(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, std::expected<MouseButton, MouseButtonState> button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     return create(type, button, mouseEvent, pointerId, pointerType, typeCanBubble(type), typeIsCancelable(type));
 }
 
-Ref<PointerEvent> PointerEvent::create(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType, CanBubble canBubble, IsCancelable isCancelable)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, std::expected<MouseButton, MouseButtonState> button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType, CanBubble canBubble, IsCancelable isCancelable)
 {
     return adoptRef(*new PointerEvent(type, button, mouseEvent, pointerId, pointerType, canBubble, isCancelable, typeIsComposed(type)));
 }
@@ -165,7 +165,7 @@ PointerEvent::PointerEvent(const AtomString& type, Init&& initializer, IsTrusted
     m_tiltY = tiltComponentsComplete ? tilt.tiltY : m_tiltY;
 }
 
-static Vector<Ref<PointerEvent>> createCoalescedPointerEvents(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+static Vector<Ref<PointerEvent>> createCoalescedPointerEvents(const AtomString& type, std::expected<MouseButton, MouseButtonState> button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     if (type != eventNames().pointermoveEvent)
         return { };
@@ -181,7 +181,7 @@ static Vector<Ref<PointerEvent>> createCoalescedPointerEvents(const AtomString& 
     return result;
 }
 
-static Vector<Ref<PointerEvent>> createPredictedPointerEvents(const AtomString& type, MouseButton button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+static Vector<Ref<PointerEvent>> createPredictedPointerEvents(const AtomString& type, std::expected<MouseButton, MouseButtonState> button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     if (type != eventNames().pointermoveEvent)
         return { };
@@ -199,7 +199,7 @@ static Vector<Ref<PointerEvent>> createPredictedPointerEvents(const AtomString& 
 
 PointerEvent::PointerEvent(
     const AtomString& type,
-    MouseButton button,
+    std::expected<MouseButton, MouseButtonState> button,
     const MouseEvent& mouseEvent,
     PointerID pointerId,
     const String& pointerType,

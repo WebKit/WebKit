@@ -69,7 +69,7 @@ public:
         double movementX,
         double movementY,
         OptionSet<Modifier>,
-        MouseButton,
+        std::expected<MouseButton, MouseButtonState>,
         unsigned short buttons,
         RefPtr<EventTarget>&& relatedTarget,
         double force,
@@ -104,7 +104,7 @@ public:
         double clientX,
         double clientY,
         OptionSet<Modifier>,
-        MouseButton,
+        std::expected<MouseButton, MouseButtonState>,
         unsigned short buttons,
         SyntheticClickType,
         RefPtr<EventTarget>&& relatedTarget
@@ -141,7 +141,7 @@ public:
 
     const std::optional<MouseEventInputSource>& inputSource() const LIFETIME_BOUND { return m_inputSource; }
 
-    MouseButton button() const;
+    std::expected<MouseButton, MouseButtonState> button() const;
     int16_t buttonAsShort() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
     SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
@@ -176,7 +176,7 @@ protected:
         double movementX,
         double movementY,
         OptionSet<Modifier>,
-        MouseButton,
+        std::expected<MouseButton, MouseButtonState>,
         unsigned short buttons,
         RefPtr<EventTarget>&& relatedTarget,
         double force,
@@ -202,7 +202,7 @@ protected:
         double movementX,
         double movementY,
         OptionSet<Modifier>,
-        MouseButton,
+        std::expected<MouseButton, MouseButtonState>,
         unsigned short buttons,
         SyntheticClickType,
         RefPtr<EventTarget>&& relatedTarget

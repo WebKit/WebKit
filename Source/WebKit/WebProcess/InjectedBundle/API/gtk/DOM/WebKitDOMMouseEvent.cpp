@@ -402,7 +402,8 @@ gushort webkit_dom_mouse_event_get_button(WebKitDOMMouseEvent* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_MOUSE_EVENT(self), 0);
     WebCore::MouseEvent* item = WebKit::core(self);
-    gushort result = static_cast<gushort>(item->button());
+    auto button = item->button();
+    gushort result = static_cast<gushort>(button ? std::to_underlying(*button) : std::to_underlying(button.error()));
     return result;
 }
 

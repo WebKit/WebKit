@@ -43,6 +43,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <expected>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -55,6 +56,7 @@ class UIEventWithKeyState;
 
 enum class SyntheticClickType : uint8_t;
 enum class MouseButton : int8_t;
+enum class MouseButtonState : int8_t;
 enum class NavigationNavigationType : uint8_t;
 enum class PolicyAlreadyDecided : bool { No, Yes };
 
@@ -93,7 +95,7 @@ public:
 
         LayoutPoint absoluteLocation;
         FloatPoint locationInRootViewCoordinates;
-        MouseButton button;
+        std::expected<MouseButton, MouseButtonState> button;
         SyntheticClickType syntheticClickType;
         bool buttonDown;
     };

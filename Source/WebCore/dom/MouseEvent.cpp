@@ -42,6 +42,21 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MouseEvent);
 
+static bool hasNoButton(std::expected<MouseButton, MouseButtonState> button)
+{
+    return !button && button.error() == MouseButtonState::None;
+}
+
+static int16_t buttonValue(std::expected<MouseButton, MouseButtonState> button)
+{
+    if (button)
+        return std::to_underlying(*button);
+    // The DOM reports the main button when no button is pressed.
+    if (button.error() == MouseButtonState::None)
+        return std::to_underlying(MouseButton::Left);
+    return std::to_underlying(button.error());
+}
+
 bool isAnyClick(const AtomString& eventType)
 {
     return eventType == eventNames().clickEvent || eventType == eventNames().auxclickEvent;
@@ -110,7 +125,7 @@ Ref<MouseEvent> MouseEvent::create(
     double movementX,
     double movementY,
     OptionSet<Modifier> modifiers,
-    MouseButton button,
+    std::expected<MouseButton, MouseButtonState> button,
     unsigned short buttons,
     RefPtr<EventTarget>&& relatedTarget,
     double force,
@@ -164,7 +179,7 @@ Ref<MouseEvent> MouseEvent::create(
     double clientX,
     double clientY,
     OptionSet<Modifier> modifiers,
-    MouseButton button,
+    std::expected<MouseButton, MouseButtonState> button,
     unsigned short buttons,
     SyntheticClickType syntheticClickType,
     RefPtr<EventTarget>&& relatedTarget
@@ -226,7 +241,7 @@ MouseEvent::MouseEvent(
     double movementX,
     double movementY,
     OptionSet<Modifier> modifiers,
-    MouseButton button,
+    std::expected<MouseButton, MouseButtonState> button,
     unsigned short buttons,
     RefPtr<EventTarget>&& relatedTarget,
     double force,
@@ -254,10 +269,10 @@ MouseEvent::MouseEvent(
         isSimulated,
         isTrusted
     )
-    , m_button(std::to_underlying(button == MouseButton::None ? MouseButton::Left : button))
+    , m_button(buttonValue(button))
     , m_buttons(buttons)
-    , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
-    , m_buttonDown(button != MouseButton::None)
+    , m_syntheticClickType(hasNoButton(button) ? SyntheticClickType::NoTap : syntheticClickType)
+    , m_buttonDown(!hasNoButton(button))
     , m_relatedTarget(WTF::move(relatedTarget))
     , m_force(force)
     , m_coalescedEvents(coalescedEvents)
@@ -280,7 +295,7 @@ MouseEvent::MouseEvent(
     double movementX,
     double movementY,
     OptionSet<Modifier> modifiers,
-    MouseButton button,
+    std::expected<MouseButton, MouseButtonState> button,
     unsigned short buttons,
     SyntheticClickType syntheticClickType,
     RefPtr<EventTarget>&& relatedTarget
@@ -301,10 +316,10 @@ MouseEvent::MouseEvent(
         modifiers,
         IsSimulated::No
     )
-    , m_button(std::to_underlying(button == MouseButton::None ? MouseButton::Left : button))
+    , m_button(buttonValue(button))
     , m_buttons(buttons)
-    , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
-    , m_buttonDown(button != MouseButton::None)
+    , m_syntheticClickType(hasNoButton(button) ? SyntheticClickType::NoTap : syntheticClickType)
+    , m_buttonDown(!hasNoButton(button))
     , m_relatedTarget(WTF::move(relatedTarget))
 {
     initCoordinates(clientLocation);
@@ -322,7 +337,6 @@ MouseEvent::MouseEvent(
     , m_buttonDown(true)
     , m_relatedTarget(initializer.relatedTarget)
 {
-    ASSERT(isTrusted == IsTrusted::No || initializer.button != std::to_underlying(MouseButton::None));
     initCoordinates({ initializer.clientX, initializer.clientY });
 }
 
@@ -380,8 +394,10 @@ bool MouseEvent::canTriggerActivationBehavior(const Event& event)
     return !mouseEvent || mouseEvent->button() != MouseButton::Right;
 }
 
-MouseButton MouseEvent::button() const
+std::expected<MouseButton, MouseButtonState> MouseEvent::button() const
 {
+    if (m_button == std::to_underlying(MouseButtonState::PointerHasNotChanged))
+        return std::unexpected { MouseButtonState::PointerHasNotChanged };
     return buttonFromShort(m_button);
 }
 

@@ -112,7 +112,7 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
             else if (wParam & MK_RBUTTON)
                 m_button = MouseButton::Right;
             else
-                m_button = MouseButton::None;
+                m_button = std::unexpected { MouseButtonState::None };
             break;
         default:
             ASSERT_NOT_REACHED();
