@@ -1,0 +1,11 @@
+
+
+
+
+
+
+
+
+PASS Absolutely positioned image without insets in an inline box containing block after a column spanner
+PASS Absolutely positioned image with insets in an inline box containing block after a column spanner
+
