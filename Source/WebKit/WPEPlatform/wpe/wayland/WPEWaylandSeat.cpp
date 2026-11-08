@@ -123,13 +123,15 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
         wpe_view_event(view.get(), event.get());
     },
     // button
-    [](void* data, struct wl_pointer*, uint32_t /*serial*/, uint32_t time, uint32_t button, uint32_t state)
+    [](void* data, struct wl_pointer*, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
     {
         WTFEmitSignpost(wl_pointer, WaylandButtonEvent);
 
         auto& seat = *static_cast<WaylandSeat*>(data);
         if (!seat.m_pointer.toplevel)
             return;
+
+        seat.m_pointer.buttonSerial = state ? serial : 0;
 
         switch (button) {
         case BTN_LEFT:

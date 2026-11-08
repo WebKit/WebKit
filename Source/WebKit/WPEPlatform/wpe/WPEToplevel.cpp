@@ -603,6 +603,27 @@ gboolean wpe_toplevel_minimize(WPEToplevel* toplevel)
 }
 
 /**
+ * wpe_toplevel_begin_move:
+ * @toplevel: a #WPEToplevel
+ *
+ * Request that the @toplevel starts an interactive move, driven by the pointer
+ * button being pressed, as when dragging a title bar. Call it while the button
+ * is down, after its press: the move ends when the button is released. This is
+ * how an application that draws its own title bar lets the user move its window.
+ *
+ * Returns: %TRUE if the move started, otherwise %FALSE
+ *
+ * Since: 2.56
+ */
+gboolean wpe_toplevel_begin_move(WPEToplevel* toplevel)
+{
+    g_return_val_if_fail(WPE_IS_TOPLEVEL(toplevel), FALSE);
+
+    auto* toplevelClass = WPE_TOPLEVEL_GET_CLASS(toplevel);
+    return toplevelClass->begin_move ? toplevelClass->begin_move(toplevel) : FALSE;
+}
+
+/**
  * wpe_toplevel_get_preferred_buffer_formats:
  * @toplevel: a #WPEToplevel
  *

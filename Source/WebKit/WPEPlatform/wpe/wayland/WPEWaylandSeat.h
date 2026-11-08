@@ -49,6 +49,7 @@ public:
     uint32_t pointerModifiers() const { return m_pointer.modifiers; }
     std::pair<double, double> pointerCoords() const { return std::pair<double, double>(m_pointer.x, m_pointer.y); }
     uint32_t keyboardSerial() const { return m_keyboard.serial; }
+    uint32_t pointerButtonSerial() const { return m_pointer.buttonSerial; }
     WPEAvailableInputDevices availableInputDevices() const;
 
     void startListening();
@@ -83,6 +84,7 @@ private:
         uint32_t modifiers { 0 };
         uint32_t time { 0 };
         uint32_t enterSerial { 0 };
+        uint32_t buttonSerial { 0 };
 
         struct {
             WPEEvent* event { nullptr };
