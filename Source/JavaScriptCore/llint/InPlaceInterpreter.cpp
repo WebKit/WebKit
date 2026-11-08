@@ -75,7 +75,8 @@ do { \
     v(ipint_atomic_dispatch_base, ipint_memory_atomic_notify_atomic_validate) \
 
 
-void initialize()
+// FIXME: Remove once Clang fixes Thread Safety scaling (rdar://192171252).
+void initialize() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
 #if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || CPU(X86_64)))
 
