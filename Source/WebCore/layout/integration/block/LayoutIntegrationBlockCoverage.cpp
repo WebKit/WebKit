@@ -83,7 +83,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasNestedQuirkContainer,
     ContentHasAnchorPositioning,
     ContentHasOutOfFlowSelfAlignment,
-    ContentHasOutOfFlowScrollContainer,
     ContentHasLineClamp,
     ContentHasTextBoxTrim,
     ContentHasLineGrid,
@@ -105,7 +104,7 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     if (!rootContainer.createsNewFormattingContext())
         return BlockAvoidanceReason::NotABlockFormattingContextRoot;
     // Not RenderView, list items with a marker, table captions, multi-column flows or form controls, which lay out their content their
-    // own way, nor marquees, whose children fit their content (RenderBox::sizesLogicalWidthToFitContent).
+    // own way.
     if (rootContainer.isRenderView())
         return BlockAvoidanceReason::RootIsRenderView;
     if (hasListMarker(rootContainer))
@@ -167,8 +166,7 @@ static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockCo
     if (Layout::BlockFormattingUtils::isFormControlBlockContainer(blockContainer))
         return false;
     CheckedRef style = blockContainer.style();
-    // FIXME: Marquees, which scroll their content and size their children differently (RenderBox::sizesLogicalWidthToFitContent).
-    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? !blockContainer.isHTMLMarquee() : style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
+    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() || style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
     // FIXME: A root whose content content-visibility skips (RenderBlockFlow::layoutBlock leaves it as it is).
     // An out-of-flow box sizes itself in its own writing mode (OutOfFlowGeometry).
     auto isSupportedWritingMode = !blockContainer.isWritingModeRoot() || (blockContainer.isOutOfFlowPositioned() && !(blockContainer.writingMode().isHorizontal() && blockContainer.writingMode().isBlockFlipped()));
@@ -420,9 +418,6 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     // FIXME: A grid that aligns the static position of its out-of-flow child (PositionedLayoutConstraints::remainingSpaceForStaticAlignment).
     if (CheckedPtr grid = dynamicDowncast<RenderGrid>(outOfFlowBox.parent()); grid && !style->alignSelf().resolve(&grid->style()).isNormalStretchOrLegacy())
         return BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment;
-    // FIXME: Marquees, which scroll their content and size their children differently (RenderBox::sizesLogicalWidthToFitContent).
-    if (outOfFlowBox.isHTMLMarquee())
-        return BlockAvoidanceReason::ContentHasOutOfFlowScrollContainer;
     // Its own formatting context sizes a replaced element, from its natural size and aspect ratio.
     if (isReplaced)
         return { };
@@ -890,8 +885,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "anchor positioning"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowSelfAlignment:
         return "out-of-flow self alignment"_s;
-    case BlockAvoidanceReason::ContentHasOutOfFlowScrollContainer:
-        return "out-of-flow scroll container"_s;
     case BlockAvoidanceReason::ContentHasLineClamp:
         return "line-clamp"_s;
     case BlockAvoidanceReason::ContentHasTextBoxTrim:
