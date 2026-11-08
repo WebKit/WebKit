@@ -1416,8 +1416,14 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     geometry.setHorizontalMargin({ marginStart, marginEnd });
 }
 
-// Goes through the block items of the block container's content the way layout does, collecting the outer min-content and max-content
-// contributions of the boxes in it (§5.2).
+IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const
+{
+    auto sizes = computeContentIntrinsicInlineSizes(blockContainer);
+    if (BlockFormattingUtils::isScrollingHorizontalMarquee(blockContainer))
+        sizes.minimum = { };
+    return sizes;
+}
+
 // A box with inline size containment measures as if it had no content, by contain-intrinsic-inline-size (css-contain-2 §3.3,
 // RenderBlockFlow::computeIntrinsicLogicalWidths).
 static std::optional<IntrinsicWidthConstraints> containedIntrinsicInlineSizes(const RenderBox& box)
@@ -1428,7 +1434,9 @@ static std::optional<IntrinsicWidthConstraints> containedIntrinsicInlineSizes(co
     return IntrinsicWidthConstraints { inlineSize, inlineSize };
 }
 
-IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const
+// Goes through the block items of the block container's content the way layout does, collecting the outer min-content and max-content
+// contributions of the boxes in it (§5.2).
+IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const
 {
     if (auto sizes = containedIntrinsicInlineSizes(blockContainer))
         return *sizes;

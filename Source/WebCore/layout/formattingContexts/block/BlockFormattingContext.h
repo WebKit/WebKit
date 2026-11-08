@@ -127,13 +127,15 @@ public:
     // the block-level boxes before it. It and its content join the result. The floats the inline formatting context placed so far, in the
     // coordinates of the block container's border box, are the ones the box and the lines after it avoid.
     BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, size_t lineCountForLineClamp, PlacedFloats& inlineContentFloats, BlockLayoutResult&);
-    // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
+    // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1), but no min-content size for a
+    // marquee that scrolls its content horizontally (RenderBlockFlow::computeIntrinsicLogicalWidths).
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
     // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4), and against its default anchor
     // (css-anchor-position-1 §3). The box establishes an independent formatting context for its content.
     BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
 
 private:
+    IntrinsicWidthConstraints computeContentIntrinsicInlineSizes(const RenderBlockFlow&) const;
     void layoutBlockItems(const Vector<BlockItem>&, BlockLayoutResult&);
     bool isAfterClampPoint() const;
     TextBoxTrimState textBoxTrimStateFor(const RenderBlockFlow&, const TextBoxTrimState& ancestorState) const;
