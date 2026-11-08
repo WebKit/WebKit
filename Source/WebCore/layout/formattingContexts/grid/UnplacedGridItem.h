@@ -77,7 +77,7 @@ private:
         // resolve lines given with a name. The leading implicit track count then shifts negative
         // resolved lines forward so the range maps to non-negative matrix indices. See
         // UnplacedGridItem::resolveDefinitePosition().
-        NODELETE static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines&, size_t leadingImplicitTracksCount, size_t maxTracks);
+        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines&, size_t leadingImplicitTracksCount, size_t maxTracks);
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -109,12 +109,13 @@ public:
     WTF::Range<size_t> definiteNonAutoFlowRange() const;
 
     // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
-    // axis is auto-positioned. explicitTrackCount is used to resolve negative lines against the end
-    // of the explicit grid, and the NamedGridLines to resolve lines given with a name; the resolved
-    // lines may still be negative for negative line placements that count past the start edge, and
-    // the leading implicit track count is applied later in GridPosition::create(). maxTracks limits
-    // the resolved lines, see https://drafts.csswg.org/css-grid-1/#overlarge-grids.
-    NODELETE static std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines&, size_t maxTracks);
+    // axis is auto-positioned (neither edge is a line, which is an <integer> or a lone <custom-ident>).
+    // explicitTrackCount is used to resolve negative lines against the end of the explicit grid, and
+    // the NamedGridLines to resolve lines given with a name; the resolved lines may still be negative
+    // for negative line placements that count past the start edge, and the leading implicit track
+    // count is applied later in GridPosition::create(). maxTracks limits the resolved lines, see
+    // https://drafts.csswg.org/css-grid-1/#overlarge-grids.
+    static std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines&, size_t maxTracks);
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;

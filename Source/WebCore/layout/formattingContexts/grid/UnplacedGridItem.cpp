@@ -75,6 +75,37 @@ NODELETE static int explicitLineToIndex(const Style::GridPosition& position, siz
     return -static_cast<int>(count - linesWithName.size());
 }
 
+enum class GridEdge : bool { Start, End };
+
+// A grid-*-start or grid-*-end that is a line: an <integer> (and a name), or a lone <custom-ident>.
+static bool isLine(const Style::GridPosition& position)
+{
+    return position.isExplicit() || position.isNamedGridArea();
+}
+
+// The 0-based line a grid-*-start (edge is Start) or grid-*-end (edge is End) that is a line refers to.
+static int lineToIndex(const Style::GridPosition& position, GridEdge edge, size_t explicitTrackCount, const NamedGridLines& namedGridLines)
+{
+    if (position.isExplicit())
+        return explicitLineToIndex(position, explicitTrackCount, namedGridLines);
+
+    // https://drafts.csswg.org/css-grid-1/#grid-placement-slot
+    // "First attempt to match the grid area's edge to a named grid area: if there is a grid line whose line name is
+    // <custom-ident>-start (for grid-*-start) / <custom-ident>-end (for grid-*-end), contributes the first such line to the grid
+    // item's placement."
+    ASSERT(position.isNamedGridArea());
+    auto& name = position.namedGridLine();
+    auto linesWithEdgeName = namedGridLines.lines({ makeAtomString(name.value, edge == GridEdge::Start ? "-start"_s : "-end"_s) });
+    if (!linesWithEdgeName.empty())
+        return static_cast<int>(linesWithEdgeName.front());
+
+    // "Otherwise, treat this as if the integer 1 had been specified along with the <custom-ident>."
+    auto linesWithName = namedGridLines.lines(name);
+    if (!linesWithName.empty())
+        return static_cast<int>(linesWithName.front());
+    return static_cast<int>(explicitTrackCount + 1);
+}
+
 UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines& namedGridLines, size_t leadingImplicitTracksCount, size_t maxTracks)
 {
     auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount, namedGridLines, maxTracks);
@@ -103,16 +134,16 @@ UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Styl
 
 std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines& namedGridLines, size_t maxTracks)
 {
-    // An axis is only definite when one of its edges references an explicit line. Anything
+    // An axis is only definite when one of its edges is a line. Anything
     // else (auto/auto, span/auto, auto/span) is auto-positioned and has no explicit line range.
-    if (!start.isExplicit() && !end.isExplicit())
+    if (!isLine(start) && !isLine(end))
         return { };
 
     int startLine = 0;
     int endLine = 0;
-    if (start.isExplicit() && end.isExplicit()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount, namedGridLines);
-        endLine = explicitLineToIndex(end, explicitTrackCount, namedGridLines);
+    if (isLine(start) && isLine(end)) {
+        startLine = lineToIndex(start, GridEdge::Start, explicitTrackCount, namedGridLines);
+        endLine = lineToIndex(end, GridEdge::End, explicitTrackCount, namedGridLines);
 
         // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
         // "If the placement for a grid item contains two lines, and the start line is further
@@ -123,18 +154,18 @@ std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(con
         // start line occupies the one track after it.
         else if (startLine == endLine)
             endLine = startLine + 1;
-    } else if (start.isExplicit() && end.isSpan()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount, namedGridLines);
+    } else if (isLine(start) && end.isSpan()) {
+        startLine = lineToIndex(start, GridEdge::Start, explicitTrackCount, namedGridLines);
         endLine = startLine + end.spanPosition();
-    } else if (start.isSpan() && end.isExplicit()) {
-        endLine = explicitLineToIndex(end, explicitTrackCount, namedGridLines);
+    } else if (start.isSpan() && isLine(end)) {
+        endLine = lineToIndex(end, GridEdge::End, explicitTrackCount, namedGridLines);
         startLine = endLine - static_cast<int>(start.spanPosition());
-    } else if (start.isExplicit() && end.isAuto()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount, namedGridLines);
+    } else if (isLine(start) && end.isAuto()) {
+        startLine = lineToIndex(start, GridEdge::Start, explicitTrackCount, namedGridLines);
         endLine = startLine + 1;
     } else {
-        ASSERT(start.isAuto() && end.isExplicit());
-        endLine = explicitLineToIndex(end, explicitTrackCount, namedGridLines);
+        ASSERT(start.isAuto() && isLine(end));
+        endLine = lineToIndex(end, GridEdge::End, explicitTrackCount, namedGridLines);
         startLine = endLine - 1;
     }
 
