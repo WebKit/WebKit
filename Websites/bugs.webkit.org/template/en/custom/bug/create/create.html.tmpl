@@ -154,8 +154,11 @@ TUI_hide_default('attachment_text_field');
     </div>
     [% END %]
     
-    <p><em>Note: If you are reporting an intermittent issue that WebKit developers may not be able to easily reproduce, please also file a <a href="https://feedbackassistant.apple.com">Feedback Assistant</a> report to <a href="https://developer.apple.com/bug-reporting/profiles-and-logs/?name=sysdiagnose">include a sysdiagnose</a>.</em></p>
-
+    <ul>
+      <li>Please add testcases as an attachment or quote problematic code in the bug report even when providing a link for convenience to guarantee WebKit engineers can review buggy behavior, as linked pages can change or be unavailable later.</li>
+      <li>If you are reporting an intermittent issue that WebKit developers may not be able to easily reproduce, please also file a <a href="https://feedbackassistant.apple.com">Feedback Assistant</a> report to <a href="https://developer.apple.com/bug-reporting/profiles-and-logs/?name=sysdiagnose">include a sysdiagnose</a>.</li>
+    </ul>
+    
     <p><input type="submit" id="submitbug" value="Submit [% terms.Bug %]"></p>
 </section>
 
