@@ -31,6 +31,7 @@ for layout tests.
 """
 
 import bisect
+import enum
 import logging
 import re
 
@@ -582,6 +583,12 @@ class TestExpectationLine(object):
 
 
 # FIXME: Refactor API to be a proper CRUD.
+class TestExpectationLineStatus(enum.Enum):
+    EFFECTIVE = enum.auto()  # determines the test's expectations
+    SUPERSEDED = enum.auto()  # was effective, then replaced by a later line
+    SHADOWED = enum.auto()  # never took effect: a more specific line in the same file was already effective
+
+
 class TestExpectationsModel(object):
     """Represents relational store of all expectations and provides CRUD semantics to manage it."""
 
@@ -679,6 +686,23 @@ class TestExpectationsModel(object):
         # type: (str) -> Optional[List[TestExpectationLine]]
         return self._test_to_expectation_lines.get(test)
 
+    def get_classified_expectation_lines(self, test):
+        # type: (str) -> List[Tuple[TestExpectationLineStatus, TestExpectationLine]]
+        """Returns every line added for the test, with what happened to it, by replaying the rule in add_expectation_line."""
+        lines = self._test_to_expectation_lines.get(test, [])
+        statuses = []
+        effective = None  # index into lines
+        for index, line in enumerate(lines):
+            if effective is not None and not line.not_applicable_to_current_platform and self._shadows(lines[effective], line):
+                statuses.append(TestExpectationLineStatus.SHADOWED)
+                continue
+            if effective is not None:
+                statuses[effective] = TestExpectationLineStatus.SUPERSEDED
+            statuses.append(TestExpectationLineStatus.EFFECTIVE)
+            effective = index
+        assert effective is None or lines[effective] is self._test_to_expectation_line[test]  # the replay agrees with the model
+        return list(zip(statuses, lines))
+
     def get_expectations(self, test):
         # type: (str) -> Set[int]
         return self._test_to_expectations[test]
@@ -725,6 +749,8 @@ class TestExpectationsModel(object):
     def add_expectation_line(self, expectation_line, in_skipped=False):
         # type: (TestExpectationLine, bool) -> None
         """Returns a list of warnings encountered while matching modifiers."""
+        # get_classified_expectation_lines replays the rule below using not_applicable_to_current_platform for in_skipped.
+        assert in_skipped == expectation_line.not_applicable_to_current_platform
 
         if expectation_line.is_invalid():
             return
@@ -794,6 +820,24 @@ class TestExpectationsModel(object):
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
+    @staticmethod
+    def _shadows(prev_expectation_line, expectation_line):
+        # type: (TestExpectationLine, TestExpectationLine) -> bool
+        """Returns whether expectation_line, matching a test whose effective line is prev_expectation_line, leaves prev_expectation_line in effect."""
+        if prev_expectation_line.filename != expectation_line.filename:
+            # We've moved on to a new expectation file, which overrides older ones.
+            return False
+
+        if len(prev_expectation_line.path) != len(expectation_line.path):
+            # The longer path matches more of the test.
+            return len(prev_expectation_line.path) > len(expectation_line.path)
+
+        # Equal, nested or overlapping configurations keep the previous line in effect (only the warnings differ).
+        # Disjoint configurations let the new line win.
+        prev_configs = prev_expectation_line.matching_configurations
+        configs = expectation_line.matching_configurations
+        return prev_configs == configs or prev_configs >= configs or prev_configs <= configs or bool(prev_configs & configs)
+
     def _already_seen_better_match(self, test, expectation_line):
         # type: (str, TestExpectationLine) -> bool
         """Returns whether we've seen a better match already in the file.
@@ -808,20 +852,15 @@ class TestExpectationsModel(object):
 
         prev_expectation_line = self._test_to_expectation_line[test]
 
-        if prev_expectation_line.filename != expectation_line.filename:
-            # We've moved on to a new expectation file, which overrides older ones.
+        if not self._shadows(prev_expectation_line, expectation_line):
             return False
 
         assert prev_expectation_line.path is not None
         assert expectation_line.path is not None
 
-        if len(prev_expectation_line.path) > len(expectation_line.path):
-            # The previous path matched more of the test.
+        if len(prev_expectation_line.path) != len(expectation_line.path):
+            # The previous path matched more of the test, and it stays in effect.
             return True
-
-        if len(prev_expectation_line.path) < len(expectation_line.path):
-            # This path matches more of the test.
-            return False
 
         # At this point we know we have seen a previous exact match on this
         # base path, so we need to check the two sets of modifiers.
@@ -860,10 +899,6 @@ class TestExpectationsModel(object):
             expectation_line.warnings.append('Entries for %s on lines %s:%d and %s:%d match overlapping sets of configurations.' % (expectation_line.name,
                 shortened_previous_expectation_filename, prev_expectation_line.line_number,
                 shortened_expectation_filename, expectation_line.line_number))
-
-        else:
-            # Configuration sets are disjoint.
-            return False
 
         # Missing files will be 'None'. It should be impossible to have a missing file which also has a line associated with it.
         if shortened_previous_expectation_filename not in expectation_line.related_files:

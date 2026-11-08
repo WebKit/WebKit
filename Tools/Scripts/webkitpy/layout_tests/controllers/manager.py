@@ -949,21 +949,12 @@ class Manager(object):
                                        self._expectations[(self._current_driver_name, device_type)].readable_filename_and_line_number(main_line),
                                        main_line.original_string or ''))
         else:
-            lines = self._expectations[(self._current_driver_name, device_type)].model().get_expectation_lines(test_path)
-            before_main_line = True
-            decision = ""
-            for line in lines:
-                if line == main_line:
-                    decision = "-> "
-                    before_main_line = False
-                elif before_main_line:
-                    decision = "v  "
-                else:
-                    decision = "^  "
+            expectations = self._expectations[(self._current_driver_name, device_type)]
+            for status, line in expectations.model().get_classified_expectation_lines(test_path):
                 print(format_string.format(test_path,
-                                           decision,
+                                           '{:<10} '.format(status.name.lower()),
                                            line.expected_behavior,
-                                           self._expectations[(self._current_driver_name, device_type)].readable_filename_and_line_number(line),
+                                           expectations.readable_filename_and_line_number(line),
                                            line.original_string or ''))
 
     def _print_expectations_for_subset(self, device_type, test_col_width, tests_to_run, tests_to_skip=None):

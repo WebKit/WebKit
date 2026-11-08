@@ -142,6 +142,33 @@ passes/text.html                       ['PASS']
         # could lead to unwanted effects, like blocking builds for a long time.
         self.assertEqual(get_printed_expectations(), out)
 
+    def test_print_expectations_verbose_shows_status(self):
+        host = MockHost()
+        port = host.port_factory.get('test-win-xp', None)
+        manager = Manager(port, options=MockOptions(test_list=None, http=True, verbose=True, driver_names=list(port.DEFAULT_SUPPORTED_DRIVERS)), printer=Mock())
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = 'Bug(exp) failures/expected/text.html [ Failure ]\n'
+        expectations_dict['overrides'] = 'Bug(override) failures/expected/text.html [ ImageOnlyFailure ]\n'
+        port.expectations_dict = lambda **kwargs: expectations_dict
+        exp = test_expectations.TestExpectations(port, ['failures/expected/text.html'])
+        exp.parse_all_expectations()
+        driver_name = manager._driver_names[0]
+        manager._current_driver_name = driver_name
+        manager._expectations[(driver_name, 'DEVICE_TYPE')] = exp
+
+        initial_stdout = sys.stdout
+        stringIO = StringIO()
+        sys.stdout = stringIO
+        try:
+            manager._print_expectation_line_for_test('{:<40} {}{} {} {}', Test('failures/expected/text.html'), device_type='DEVICE_TYPE')
+        finally:
+            sys.stdout = initial_stdout
+
+        lines = stringIO.getvalue().splitlines()
+        self.assertEqual(len(lines), 2)
+        self.assertIn('superseded', lines[0])
+        self.assertIn('effective', lines[1])
+
     def test_print_expectations_no_tests_found(self):
         # Passing a non-existent path should not raise ValueError from max() on an
         # empty sequence; it should return 0 cleanly.
