@@ -21,9 +21,7 @@
           },
           () => {
               var damage = latestFrameDamage();
-              // We take a 1px margin into account as we cannot avoid it. It was added in:
-              // https://github.com/WebKit/WebKit/commit/0e8b2662b634fbd074709ee8ac30b3499c10e081
-              assertRectsEq(damage.rects, [[4, 4, 12, 12]]);
+              assertRectsEq(damage.rects, [[5, 5, 10, 10]]);
           },
       ], 0);
     </script>
