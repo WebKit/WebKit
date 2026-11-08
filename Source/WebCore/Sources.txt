@@ -2244,6 +2244,7 @@ loader/cache/TrustedFonts.cpp
 loader/icon/IconLoader.cpp
 loader/images/Image.cpp
 loader/images/ImageAdapter.cpp
+loader/images/ImageAnimationTimeline.cpp
 loader/images/ImageContentSettings.cpp
 loader/images/ImageDrawDescriptor.cpp
 loader/images/ImageRenditionOptions.cpp

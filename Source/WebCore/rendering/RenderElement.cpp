@@ -46,6 +46,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
+#include "ImageAnimationTimeline.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
@@ -1930,6 +1931,13 @@ bool RenderElement::allowsAnimation() const
     if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
         return imageElement->allowsAnimation();
     return page().imageAnimationEnabled();
+}
+
+Ref<ImageAnimationTimeline> RenderElement::imageAnimationTimeline() const
+{
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        return imageElement->imageAnimationTimeline();
+    return page().imageAnimationTimeline();
 }
 
 void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)

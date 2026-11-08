@@ -200,6 +200,8 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
         }
         m_imageComplete = true;
         oldImage->removeClient(*this);
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+            imageElement->clearImageAnimationTimeline();
     }
 
     if (CheckedPtr imageResource = renderImageResource())
@@ -382,6 +384,10 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, RefPtr
         }
 
         m_image = newImage;
+        if (newImage != oldImage) {
+            if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+                imageElement->clearImageAnimationTimeline();
+        }
         m_hasPendingBeforeLoadEvent = !document->isImageDocument() && newImage;
         m_hasPendingLoadEvent = newImage;
         m_imageComplete = !newImage;
