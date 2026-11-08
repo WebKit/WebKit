@@ -34,15 +34,15 @@ namespace Layout {
 // Convert a 1-indexed explicit CSS grid line into a 0-indexed grid line.
 // https://www.w3.org/TR/css-grid-1/#line-placement
 //
-// Positive lines count forward from the start of the explicit grid: grid-column-start: 1 maps to 0.
-// Negative lines count backward from the *end* of the explicit grid: grid-column-start: -1 maps to
+// Positive lines count forward from the start of the explicit grid: line 1 maps to 0.
+// Negative lines count backward from the *end* of the explicit grid: line -1 maps to
 // the last line (explicitTrackCount). The mapping is a single linear formula that stays correct as
 // a negative line counts past the start edge into the leading implicit grid, producing a negative
-// index. For example, with 3 explicit columns (lines 0..3):
+// index. For example, with 3 explicit tracks (lines 0..3):
 //     -1 -> 3 (last line), -4 -> 0 (first line), -5 -> -1, -6 -> -2 (two lines before the start).
 // A negative index is not a valid matrix position on its own; GridFormattingContext computes the
 // most-negative line across all items and shifts every line forward by that magnitude (the number
-// of leading implicit tracks) so, e.g., -2 above maps to matrix column 0. See GridPosition::create().
+// of leading implicit tracks) so, e.g., -2 above maps to matrix index 0. See GridPosition::create().
 NODELETE static int explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount)
 {
     ASSERT(position.isExplicit());
@@ -153,54 +153,44 @@ size_t UnplacedGridItem::GridPosition::span() const
     return std::get<AutoPosition>(m_position).span;
 }
 
-UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition columnStart, Style::GridPosition columnEnd,
-    Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount,
-    size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, size_t maxTracks)
+UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition nonAutoFlowStart, Style::GridPosition nonAutoFlowEnd,
+    Style::GridPosition autoFlowStart, Style::GridPosition autoFlowEnd, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount,
+    size_t leadingImplicitNonAutoFlowTracksCount, size_t leadingImplicitAutoFlowTracksCount, size_t maxTracks)
     : m_layoutBox(layoutBox)
-    , m_columnPosition(GridPosition::create(columnStart, columnEnd, explicitColumnCount, leadingImplicitColumnsCount, maxTracks))
-    , m_rowPosition(GridPosition::create(rowStart, rowEnd, explicitRowCount, leadingImplicitRowsCount, maxTracks))
+    , m_nonAutoFlowPosition(GridPosition::create(nonAutoFlowStart, nonAutoFlowEnd, explicitNonAutoFlowTracksCount, leadingImplicitNonAutoFlowTracksCount, maxTracks))
+    , m_autoFlowPosition(GridPosition::create(autoFlowStart, autoFlowEnd, explicitAutoFlowTracksCount, leadingImplicitAutoFlowTracksCount, maxTracks))
 {
 }
 
-bool UnplacedGridItem::hasDefiniteRowPosition() const
+bool UnplacedGridItem::hasDefiniteAutoFlowPosition() const
 {
-    return m_rowPosition.isDefinite();
+    return m_autoFlowPosition.isDefinite();
 }
 
-bool UnplacedGridItem::hasDefiniteColumnPosition() const
+bool UnplacedGridItem::hasDefiniteNonAutoFlowPosition() const
 {
-    return m_columnPosition.isDefinite();
+    return m_nonAutoFlowPosition.isDefinite();
 }
 
-bool UnplacedGridItem::hasAutoColumnPosition() const
+size_t UnplacedGridItem::nonAutoFlowSpanSize() const
 {
-    return m_columnPosition.isAuto();
+    return m_nonAutoFlowPosition.span();
 }
 
-bool UnplacedGridItem::hasAutoRowPosition() const
+size_t UnplacedGridItem::autoFlowSpanSize() const
 {
-    return m_rowPosition.isAuto();
+    return m_autoFlowPosition.span();
 }
 
-size_t UnplacedGridItem::columnSpanSize() const
+WTF::Range<size_t> UnplacedGridItem::definiteAutoFlowRange() const
 {
-    return m_columnPosition.span();
-}
-
-size_t UnplacedGridItem::rowSpanSize() const
-{
-    return m_rowPosition.span();
-}
-
-WTF::Range<size_t> UnplacedGridItem::definiteRowRange() const
-{
-    auto& definitePosition = m_rowPosition.definitePosition();
+    auto& definitePosition = m_autoFlowPosition.definitePosition();
     return { definitePosition.startLine, definitePosition.endLine };
 }
 
-WTF::Range<size_t> UnplacedGridItem::definiteColumnRange() const
+WTF::Range<size_t> UnplacedGridItem::definiteNonAutoFlowRange() const
 {
-    auto& definitePosition = m_columnPosition.definitePosition();
+    auto& definitePosition = m_nonAutoFlowPosition.definitePosition();
     return { definitePosition.startLine, definitePosition.endLine };
 }
 

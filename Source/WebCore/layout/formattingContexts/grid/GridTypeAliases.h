@@ -42,6 +42,7 @@ class ElementBox;
 class PlacedGridItem;
 class UnplacedGridItem;
 
+struct FlowRelativeAreaLines;
 struct ComputedSizes;
 struct FlexTrack;
 struct GridAreaLines;
@@ -56,9 +57,9 @@ using FlexTracks = Vector<FlexTrack>;
 using GridAreas = Vector<std::pair<UnplacedGridItem, GridAreaLines>>;
 using GridItemIndexes = Vector<size_t>;
 using GridItemRects = Vector<GridItemRect>;
-// One row of the implicit grid: the bit is set where a grid item covers the cell.
-using GridRow = BitVector;
-using GridMatrix = Vector<GridRow>;
+// One auto-flow track of the implicit grid: the bit is set where a grid item covers the cell.
+using AutoFlowTrack = BitVector;
+using GridMatrix = Vector<AutoFlowTrack>;
 using LogicalGridItems = Vector<WTF::CheckedRef<const ElementBox>>;
 using PlacedGridItems = Vector<PlacedGridItem>;
 using PlacedGridItemSpanList = Vector<WTF::Range<size_t>>;

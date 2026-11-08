@@ -34,6 +34,21 @@ namespace Layout {
 class ElementBox;
 class GridLayout;
 
+// Grid item placement is written in terms of grid-auto-flow instead of columns and rows. From
+// https://drafts.csswg.org/css-grid-1/#grid-auto-flow-property:
+// "row: The auto-placement algorithm places items by filling each row in turn, adding new rows as necessary."
+// The auto-flow tracks are the tracks that grid-auto-flow names (rows for row, columns for column): the implicit
+// grid grows by adding them. The non-auto-flow tracks are the others. GridItemPlacer is the only place that maps
+// between these and the columns and rows of the style and of GridAreaLines.
+//
+// A grid area in the flow-relative terms: the lines of the non-auto-flow tracks and of the auto-flow tracks it spans.
+struct FlowRelativeAreaLines {
+    size_t nonAutoFlowStartLine { 0 };
+    size_t nonAutoFlowEndLine { 0 };
+    size_t autoFlowStartLine { 0 };
+    size_t autoFlowEndLine { 0 };
+};
+
 class UnplacedGridItem {
 private:
     // https://drafts.csswg.org/css-grid-1/#placement
@@ -81,17 +96,15 @@ private:
     };
 
 public:
-    UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount, size_t maxTracks);
+    UnplacedGridItem(const ElementBox&, Style::GridPosition nonAutoFlowStart, Style::GridPosition nonAutoFlowEnd, Style::GridPosition autoFlowStart, Style::GridPosition autoFlowEnd, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount, size_t leadingImplicitNonAutoFlowTracksCount, size_t leadingImplicitAutoFlowTracksCount, size_t maxTracks);
 
-    NODELETE bool hasDefiniteRowPosition() const;
-    NODELETE bool hasDefiniteColumnPosition() const;
-    NODELETE bool hasAutoColumnPosition() const;
-    NODELETE bool hasAutoRowPosition() const;
-    size_t columnSpanSize() const;
-    size_t rowSpanSize() const;
+    NODELETE bool hasDefiniteAutoFlowPosition() const;
+    NODELETE bool hasDefiniteNonAutoFlowPosition() const;
+    size_t nonAutoFlowSpanSize() const;
+    size_t autoFlowSpanSize() const;
 
-    WTF::Range<size_t> definiteRowRange() const;
-    WTF::Range<size_t> definiteColumnRange() const;
+    WTF::Range<size_t> definiteAutoFlowRange() const;
+    WTF::Range<size_t> definiteNonAutoFlowRange() const;
 
     // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
     // axis is auto-positioned. explicitTrackCount is used to resolve negative lines against the end
@@ -105,8 +118,9 @@ private:
     CheckedRef<const ElementBox> m_layoutBox;
 
     // https://drafts.csswg.org/css-grid-1/#typedef-grid-row-start-grid-line
-    GridPosition m_columnPosition;
-    GridPosition m_rowPosition;
+    // The position in the non-auto-flow tracks and in the auto-flow tracks.
+    GridPosition m_nonAutoFlowPosition;
+    GridPosition m_autoFlowPosition;
 
     friend class GridLayoutContextBuilder;
 };
@@ -115,8 +129,8 @@ private:
 struct UnplacedGridItems {
     // 1. Position anything that’s not auto-positioned.
     Vector<UnplacedGridItem> nonAutoPositionedItems;
-    // 2. Process the items locked to a given row.
-    Vector<UnplacedGridItem> definiteRowPositionedItems;
+    // 2. Process the items locked to a given auto-flow track (a row for grid-auto-flow: row).
+    Vector<UnplacedGridItem> definiteAutoFlowPositionedItems;
     // 4. Position the remaining grid items.
     Vector<UnplacedGridItem> autoPositionedItems;
 };
