@@ -1396,6 +1396,8 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
         auto fitsContent = style->logicalWidth(writingMode).isAuto() && BlockFormattingUtils::autoInlineSizeFitsContent(box, containingBlockStyle);
         if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode) && !fitsContent && !BlockFormattingUtils::hasAspectRatioAutomaticMinimumInlineSize(box, aspectRatioBorderBoxInlineSize, writingMode))
             return { };
+        // The scrollbars that come or go in its content change these (RenderBlock::layout).
+        integrationUtils().trackScrollbarChangesForContentSizes();
         auto sizes = computeIntrinsicInlineSizes(*blockContainer);
         // With its scrollbars (RenderBlockFlow::computeIntrinsicLogicalWidths).
         auto scrollbarInlineSize = LayoutUnit { box.intrinsicScrollbarLogicalWidthIncludingGutter() };

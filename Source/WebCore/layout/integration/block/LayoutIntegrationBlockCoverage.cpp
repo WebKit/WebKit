@@ -340,24 +340,13 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
         // (BoxGeometryUpdater::updateLayoutBoxDimensions). A percentage block size, which an aspect ratio turns into an inline size, resolves
         // against the block size of the containing block from its style there too (RenderBox::computePercentageLogicalHeight).
         // FIXME: An orthogonal box, which the render tree lays out to measure it (RenderBox::computeIntrinsicLogicalHeight), and percentage
-        // padding, which resolves against its inline size, which the block formatting context writes once all of it is laid out. And scrollbars
-        // that come or go with the layout, which RenderBlock::scrollbarsChanged makes the containing blocks measure again.
+        // padding, which resolves against its inline size, which the block formatting context writes once all of it is laid out.
         if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant) || isBlockLevelFloat())) {
             CheckedRef leaf = downcast<RenderBox>(*descendant);
             CheckedRef style = leaf->style();
             auto writingMode = leaf->writingMode();
             if (writingMode.isOrthogonal(leaf->parent()->writingMode()) || style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
                 return false;
-            auto hasAutoScrollbars = [](const RenderBox& box) {
-                CheckedRef style = box.style();
-                return box.hasNonVisibleOverflow() && (style->overflowX() == Overflow::Auto || style->overflowY() == Overflow::Auto);
-            };
-            if (hasAutoScrollbars(leaf))
-                return false;
-            for (CheckedRef leafDescendant : descendantsOfType<RenderBox>(leaf.get())) {
-                if (hasAutoScrollbars(leafDescendant))
-                    return false;
-            }
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
         }
