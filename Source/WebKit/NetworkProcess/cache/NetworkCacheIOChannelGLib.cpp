@@ -98,7 +98,7 @@ void IOChannel::read(size_t offset, size_t size, Ref<WTF::WorkQueueBase>&& queue
                 gsize bytesRead;
                 if (g_input_stream_read_all(m_inputStream.get(), bufferData, bufferSize, &bytesRead, nullptr, nullptr)) {
                     GRefPtr<GBytes> bytes = bufferSize == bytesRead ? buffer : adoptGRef(g_bytes_new_from_bytes(buffer.get(), 0, bytesRead));
-                    queue->dispatch([protectedThis = WTF::move(protectedThis), bytes = WTF::move(bytes), completionHandler = WTF::move(completionHandler)]() mutable {
+                    queue->dispatch([protectedThis = Ref { *this }, bytes = WTF::move(bytes), completionHandler = WTF::move(completionHandler)] mutable {
                         Data data(WTF::move(bytes));
                         completionHandler(WTF::move(data), 0);
                     });
