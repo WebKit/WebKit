@@ -6305,7 +6305,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
     case ResolveURLs::YesExcludingURLsForPrivacy: {
         if (protect(document())->shouldMaskURLForBindings(completeURL))
             return maskedURLStringForBindings.get();
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
         return protect(document())->url().protocolIsFile() ? urlString : completeURL.string();
 #else
         return completeURL.string();
