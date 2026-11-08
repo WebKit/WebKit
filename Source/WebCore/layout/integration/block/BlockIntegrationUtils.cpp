@@ -42,6 +42,7 @@
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderObjectInlines.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
@@ -354,6 +355,27 @@ Layout::BoxGeometry BlockIntegrationUtils::rootGeometry(const RenderBlockFlow& r
     geometry.setHorizontalSpaceForScrollbar(spaceForScrollbar.width());
     geometry.setVerticalSpaceForScrollbar(spaceForScrollbar.height());
     return geometry;
+}
+
+// Like RenderBlock::layout for a box whose inline size comes from its content (sizesAffectedByScrollbarsForSubtreeRoot): the scroll containers
+// laid out after it hand their scrollbar changes to the root (RelayoutScopeForScrollbarChange), which lays its content out again with them.
+void BlockIntegrationUtils::trackScrollbarChangesForContentSizes()
+{
+    if (!m_rootForScrollbarChanges || m_scrollbarChangesForContentSizes)
+        return;
+    CheckedRef layoutContext = m_rootForScrollbarChanges->layoutContext();
+    if (layoutContext->subtreeScrollbarChangesState() || m_rootForScrollbarChanges->writingMode().computedTextDirection() == TextDirection::RTL)
+        return;
+    m_scrollbarChangesForContentSizes.emplace(layoutContext.get(), *m_rootForScrollbarChanges, EnumSet { LogicalBoxAxis::Inline });
+}
+
+Vector<RendererScrollbarChange> BlockIntegrationUtils::takeScrollbarChangesForContentSizes()
+{
+    if (!m_scrollbarChangesForContentSizes)
+        return { };
+    auto changes = WTF::move(m_rootForScrollbarChanges->layoutContext().subtreeScrollbarChangesState()->rendererScrollbarChanges);
+    m_scrollbarChangesForContentSizes.reset();
+    return changes;
 }
 
 bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, LayoutUnit contentBoxInlineSize)
