@@ -1616,6 +1616,8 @@ if (WebKit_USE_PLATFORM_SUBTARGET)
     WEBKIT_COMPUTE_SOURCES(WebKitPlatform)
 endif ()
 
+# NO_PCH_OBJECT_LANGUAGES is only for sub-targets whose PCH object would repeat a sibling's code exactly.
+# Remove it if linking reports missing inline functions.
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitUIProcess
     PREFIX WebKitUIProcessPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX
@@ -1627,11 +1629,13 @@ WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitWebProcess
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitGPUProcess
     PREFIX WebKitGPUProcessPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX
-    DIRS GPUProcess)
+    DIRS GPUProcess
+    NO_PCH_OBJECT_LANGUAGES CXX OBJCXX)
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitNetworkProcess
     PREFIX WebKitNetworkProcessPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX
-    DIRS NetworkProcess)
+    DIRS NetworkProcess
+    NO_PCH_OBJECT_LANGUAGES CXX OBJCXX)
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitShared
     PREFIX WebKitSharedPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX

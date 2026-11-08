@@ -3298,6 +3298,8 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Namespace.cpp)
 
 WEBKIT_COMPUTE_SOURCES(WebCore)
 
+# NO_PCH_OBJECT_LANGUAGES is only for sub-targets whose PCH object would repeat a sibling's code exactly.
+# Remove it if linking reports missing inline functions.
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreJSBindings
     PREFIX WebCoreJSBindingsPrefix.h
     PREFIX_LANGUAGES CXX
@@ -3309,17 +3311,20 @@ WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreStyle
     PREFIX WebCoreStylePrefix.h
     PREFIX_LANGUAGES CXX
     DIRS css cssjit layout rendering style
-    CHAIN_PARENT WebCoreDOMAndRendering)
+    CHAIN_PARENT WebCoreDOMAndRendering
+    NO_PCH_OBJECT_LANGUAGES CXX)
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreDOMAndRendering
     PREFIX WebCoreDOMAndRenderingPrefix.h
     PREFIX_LANGUAGES CXX OBJCXX
     DIRS accessibility animation css cssjit dom domjit editing history html
          layout loader page plugins rendering storage style svg workers
-         worklets xml)
+         worklets xml
+    NO_PCH_OBJECT_LANGUAGES CXX)
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreInspector
     PREFIX WebCoreInspectorPrefix.h
     PREFIX_LANGUAGES CXX
-    DIRS inspector)
+    DIRS inspector
+    NO_PCH_OBJECT_LANGUAGES CXX)
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebCore WebCoreAVFoundation
     PREFIX WebCoreAVFoundationPrefix.h
     PREFIX_LANGUAGES OBJCXX
