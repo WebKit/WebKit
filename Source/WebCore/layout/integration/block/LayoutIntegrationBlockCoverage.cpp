@@ -651,8 +651,7 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
     if (box->isOutOfFlowPositioned())
         return { };
     // FIXME: clear on a block-level box in inline content, which the inline formatting context places, in quirks mode, where a quirk container
-    // keeps the margins at its block-start side apart, with margin-trim, which discards margins that clearance separates, and on a box inside
-    // another one with clear.
+    // keeps the margins at its block-start side apart, and with margin-trim, which discards margins that clearance separates.
     if (box->style().clear() != Clear::None) {
         if (isInInlineContent || box->document().inQuirksMode())
             return BlockAvoidanceReason::ContentHasFloat;
@@ -662,8 +661,6 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
                 return BlockAvoidanceReason::ContentHasFloat;
             if (ancestor == &rootContainer)
                 break;
-            if (ancestor != box && ancestor->style().clear() != Clear::None)
-                return BlockAvoidanceReason::ContentHasFloat;
         }
     }
     // Form controls avoid floats too (RenderBox::avoidsFloats).
