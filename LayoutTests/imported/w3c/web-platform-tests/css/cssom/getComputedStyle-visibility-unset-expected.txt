@@ -1,0 +1,4 @@
+
+PASS Sanity check: Parent is actually visibly hidden
+PASS computed visibility gets unset and inherits from parent
+

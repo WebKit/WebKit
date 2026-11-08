@@ -1,0 +1,13 @@
+
+PASS @import with layer identifier inside supports declaration should not set layerName
+PASS @import with layer() inside supports() condition should not set layerName
+PASS @import with layer() inside media query should not set layerName
+PASS @import with nested layer() inside supports() function argument should not set layerName
+PASS @import with top-level layer() should still set layerName
+PASS @import with bare top-level layer should still set empty layerName
+PASS @import with invalid layer() followed by media query should preserve both as media
+PASS @import with invalid layer() followed by compound media query should preserve both as media
+PASS @import with invalid layer() followed by supports() and media query drops all modifiers
+PASS @import with invalid layer(name with space) followed by media query should preserve both as media
+PASS @import with invalid layer(name with space) followed by supports() and media query drops all modifiers
+

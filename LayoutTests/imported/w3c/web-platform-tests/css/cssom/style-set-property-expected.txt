@@ -1,0 +1,23 @@
+
+PASS initial value of cssRule.style
+PASS set new value for cssRule.style.setProperty
+PASS set empty string for cssRule.style.setProperty
+PASS set null for cssRule.style.setProperty
+PASS set undefined for cssRule.style.setProperty
+PASS initial value of div.style
+PASS set new value for div.style.setProperty
+PASS set empty string for div.style.setProperty
+PASS set null for div.style.setProperty
+PASS set undefined for div.style.setProperty
+PASS set new value for div.style[property]
+PASS set empty string for div.style[property]
+PASS set null for div.style[property]
+PASS set undefined for div.style[property]
+PASS set Symbol for div.style[property]
+PASS set Object.toString for div.style[property]
+PASS set BigInt for div.style[property]
+PASS set undefined for div.style.setProperty custom property
+PASS set true for div.style.setProperty custom property
+PASS set toString() returning null for div.style.setProperty custom property
+PASS set toString() returning whitespace for div.style.setProperty custom property
+

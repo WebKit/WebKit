@@ -1,0 +1,37 @@
+
+PASS StyleSheet and CSSStyleSheet properties
+PASS <style>: type is 'text/css'
+PASS <style>: ownerNode is the style element
+PASS <style>: href is null for inline sheets
+PASS <style>: title is null when the style element has no title attribute
+PASS <style>: title reflects the style element's title attribute
+PASS <style>: media is empty when the style element has no media attribute
+PASS <style>: media reflects the style element's media attribute
+PASS <style>: disabled is false initially
+PASS <style>: parentStyleSheet is null for top-level sheets
+PASS <style>: ownerRule is null for non-imported sheets
+PASS <style>: cssRules is a CSSRuleList with rules
+PASS <link>: type is 'text/css'
+PASS <link>: ownerNode is the link element
+PASS <link>: href is the resolved URL of the stylesheet
+PASS <link>: title is null when the link element has no title attribute
+PASS <link>: title reflects the link element's title attribute
+PASS <link>: media is empty when the link element has no media attribute
+PASS <link>: media reflects the link element's media attribute
+PASS <link>: disabled is false initially
+PASS <link>: parentStyleSheet is null for top-level sheets
+PASS <link>: ownerRule is null for non-imported sheets
+PASS <link>: cssRules is a CSSRuleList with rules
+PASS @import: imported sheet type is 'text/css'
+PASS @import: imported sheet ownerNode is null
+PASS @import: imported sheet href is the resolved URL
+PASS @import: imported sheet title is null
+PASS @import: imported sheet media is empty when @import has no media query
+PASS @import: imported sheet disabled is false initially
+PASS @import: imported sheet parentStyleSheet is the importing sheet
+PASS @import: imported sheet ownerRule is the CSSImportRule
+PASS @import: imported sheet cssRules is a CSSRuleList with rules
+PASS Removing a <style> element nulls ownerNode, parentStyleSheet, and ownerRule
+PASS Removing a <link> element nulls ownerNode, parentStyleSheet, and ownerRule
+PASS Programmatically setting title on a <style> element is reflected in sheet.title
+

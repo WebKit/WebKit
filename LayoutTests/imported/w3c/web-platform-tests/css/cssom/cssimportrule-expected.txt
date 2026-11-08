@@ -10,4 +10,5 @@ PASS CSSStyleDeclaration cssText attribute should be updated due to [PutForwards
 PASS StyleSheet : MediaList mediaText attribute should be updated due to [PutForwards]
 PASS Existence and writability of CSSImportRule supportsText attribute
 PASS Value of CSSImportRule supportsText attribute
+FAIL CSSImportRule.styleSheet is null for a false supports condition assert_equals: A false supports condition should not expose the imported stylesheet expected null but got object "[object CSSStyleSheet]"
 

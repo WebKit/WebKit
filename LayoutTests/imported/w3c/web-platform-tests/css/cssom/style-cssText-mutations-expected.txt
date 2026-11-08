@@ -1,0 +1,6 @@
+
+PASS inline cssText reflects property, priority, shorthand, and declaration replacements
+PASS rule cssText reflects property, priority, shorthand, and declaration replacements
+PASS cssText reflects style attribute replacement and removal
+PASS Reading cssText preserves style mutation records
+

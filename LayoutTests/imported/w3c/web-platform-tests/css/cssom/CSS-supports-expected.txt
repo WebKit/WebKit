@@ -1,0 +1,13 @@
+
+PASS CSS.supports(property, value) with valid inputs
+PASS CSS.supports(property, value) with invalid inputs
+PASS CSS.supports(property, value) edge cases
+PASS CSS.supports(conditionText) with parentheses
+PASS CSS.supports(conditionText) with logical operators
+PASS CSS.supports(conditionText) without parentheses
+PASS CSS.supports() requires at least one argument
+PASS CSS.supports and implementation: keyword
+PASS CSS.supports and implementation: min function
+PASS CSS.supports and shorthand / longhand
+PASS CSS.supports invalid value semi
+
