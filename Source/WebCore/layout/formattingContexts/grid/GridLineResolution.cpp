@@ -123,10 +123,18 @@ std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosi
             endLine = startLine + 1;
     } else if (isLine(start) && end.isSpan()) {
         startLine = lineToIndex(start, GridEdge::Start, namedLineResolver);
-        endLine = startLine + end.spanPosition();
+        // A span with a name counts only the lines with that name.
+        if (!end.namedGridLine().value.isEmpty())
+            endLine = namedLineResolver.namedSpanLine(end.namedGridLine(), end.spanPosition(), startLine, GridEdge::End);
+        else
+            endLine = startLine + end.spanPosition();
     } else if (start.isSpan() && isLine(end)) {
         endLine = lineToIndex(end, GridEdge::End, namedLineResolver);
-        startLine = endLine - static_cast<int>(start.spanPosition());
+        // Likewise, counting back from the end line.
+        if (!start.namedGridLine().value.isEmpty())
+            startLine = namedLineResolver.namedSpanLine(start.namedGridLine(), start.spanPosition(), endLine, GridEdge::Start);
+        else
+            startLine = endLine - static_cast<int>(start.spanPosition());
     } else if (isLine(start) && end.isAuto()) {
         startLine = lineToIndex(start, GridEdge::Start, namedLineResolver);
         endLine = startLine + 1;

@@ -55,6 +55,13 @@ public:
     // https://drafts.csswg.org/css-grid-1/#grid-placement-slot
     int namedAreaEdgeLine(const Style::CustomIdent&, GridEdge) const;
 
+    // The line of grid-*-start / grid-*-end given as "span <integer>? <custom-ident>", which is `span` lines away from the opposite
+    // edge, counting only the lines with the name. https://drafts.csswg.org/css-grid-1/#grid-placement-span-int
+    // The GridEdge is the edge being resolved, and `oppositeLine` is the line of the other edge: End searches endward from the start
+    // line, Start searches startward from the end line. `span` is always positive (it is the span integer, 1 by default), so the
+    // direction comes from the edge and not from a sign, unlike the N of nthNamedLine().
+    int namedSpanLine(const Style::CustomIdent&, unsigned span, int oppositeLine, GridEdge) const;
+
 private:
     const NamedGridLines& m_namedGridLines;
     const size_t m_explicitTrackCount;
