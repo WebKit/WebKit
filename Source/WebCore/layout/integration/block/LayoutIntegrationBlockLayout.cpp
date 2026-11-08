@@ -56,6 +56,7 @@
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "ScrollbarUpdateScope.h"
+#include "SubtreeScrollbarChangesState.h"
 #include "TextBoxTrimmer.h"
 #include <wtf/text/TextStream.h>
 
@@ -177,6 +178,7 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
     auto renderTreeTextBoxTrim = layoutContext->textBoxTrim();
     layoutContext->setTextBoxTrim({ });
 
+    auto hasAutoScrollbarChanges = false;
     auto layoutContent = [&](Layout::BlockLayoutState::LastFormattedLineRoots&& lastFormattedLineRoots) {
         auto blockLayoutState = Layout::BlockLayoutState { { } };
         if (renderTreeLineClamp) {
@@ -192,7 +194,7 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
         LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
         if (auto lineClamp = blockLayoutState.lineClamp())
             renderTreeLayoutState->setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, blockLayoutState.clampAfterBox(), lineClamp->isStableTextWrap, lineClamp->hasConstrainedTextWrapContent });
-        updateRenderers(result, paintInvalidation);
+        hasAutoScrollbarChanges |= updateRenderers(result, paintInvalidation);
         rootRenderer().m_floatingObjects = nullptr;
         if (blockLayoutState.placedFloats())
             layoutContext->addRootWithFloatsPlacedByBlockFormattingContext(rootRenderer());
@@ -202,6 +204,11 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
 
     auto lastFormattedLineRoots = lastFormattedLineRootsForTrimEnd(&rootRenderer(), result);
     if (!lastFormattedLineRoots.isEmpty())
+        result = layoutContent(Layout::BlockLayoutState::LastFormattedLineRoots { lastFormattedLineRoots });
+    // RenderBlock::layout lays a scroll container out again, once, when its auto scrollbars come or go (RelayoutScopeForScrollbarChange). The
+    // ones the block formatting context lays out take their new scrollbars when it lays out the content again, and the ones in it keep theirs
+    // then.
+    if (hasAutoScrollbarChanges)
         result = layoutContent(WTF::move(lastFormattedLineRoots));
     layoutContext->setTextBoxTrim(renderTreeTextBoxTrim);
 
@@ -515,14 +522,18 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
         auto layoutOutOfFlowBox = [&] {
             auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, boxStaticPosition, boxDefaultAnchor);
             LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
-            updateRenderers(result, paintInvalidation);
-            return result;
+            auto hasAutoScrollbarChanges = updateRenderers(result, paintInvalidation);
+            return std::pair { hasAutoScrollbarChanges, WTF::move(result) };
         };
         blockLayoutState.setLastFormattedLineRoots({ });
-        if (auto lastFormattedLineRoots = lastFormattedLineRootsForTrimEnd(nullptr, layoutOutOfFlowBox()); !lastFormattedLineRoots.isEmpty()) {
+        auto [hasAutoScrollbarChanges, result] = layoutOutOfFlowBox();
+        if (auto lastFormattedLineRoots = lastFormattedLineRootsForTrimEnd(nullptr, result); !lastFormattedLineRoots.isEmpty()) {
             blockLayoutState.setLastFormattedLineRoots(WTF::move(lastFormattedLineRoots));
-            layoutOutOfFlowBox();
+            hasAutoScrollbarChanges |= layoutOutOfFlowBox().first;
         }
+        // Once more when its auto scrollbars, or those of the scroll containers in it, come or go (RelayoutScopeForScrollbarChange).
+        if (hasAutoScrollbarChanges)
+            layoutOutOfFlowBox();
         if (capturesScrollSnapshots)
             Style::AnchorPositionEvaluator::captureScrollSnapshots(outOfFlowBox);
     }
@@ -534,8 +545,9 @@ void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, Paint
     downcast<RenderBlockFlow>(mutableContainingBlock).addOverflowFromOutOfFlowBoxes();
 }
 
-void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, PaintInvalidation& paintInvalidation)
+bool BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, PaintInvalidation& paintInvalidation)
 {
+    auto hasAutoScrollbarChanges = false;
     // This is the only place where the block formatting context's renderers are written, and the only place where its logical
     // coordinates (from the inline start of each containing block) are mapped to the render tree's.
     auto mutableRenderer = [](const CheckedRef<const RenderBox>& renderer) -> CheckedRef<RenderBox> {
@@ -720,9 +732,22 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
                 downcast<RenderBlockFlow>(renderer).repaintInlineContentAfterLayout(damagedInlineContent->logicalTop, damagedInlineContent->logicalBottom);
         });
         // What RenderBlock::layout and RenderBlock::recomputeLogicalWidth do once the box is laid out. The scroll size and position of a
-        // scroll container follow its new overflow; coverage keeps out the ones whose scrollbars would come or go with it.
+        // scroll container follow its new overflow, and so do its auto scrollbars, which lay it out again when they come or go, or the
+        // ancestor whose size they change (RelayoutScopeForScrollbarChange).
         if (blockFlow) {
-            blockFlow->updateScrollInfoAfterLayout();
+            if (auto scrollbarUpdate = blockFlow->updateScrollInfoAfterLayout(); scrollbarUpdate && !scrollbarUpdate->autoScrollbarChanges().isEmpty()) {
+                auto& autoScrollbarChanges = scrollbarUpdate->autoScrollbarChanges();
+                blockFlow->repaint();
+                CheckedRef style = blockFlow->style();
+                if (style->overflowX() == Overflow::Auto || style->overflowY() == Overflow::Auto) {
+                    auto& subtreeScrollbarChangesState = blockFlow->layoutContext().subtreeScrollbarChangesState();
+                    auto sizesAffected = subtreeScrollbarChangesState && subtreeScrollbarChangesState->isEligibleForScrollbarHandlingByAncestor(*blockFlow) ? subtreeScrollbarChangesState->sizesAffectedForSubtreeRootFromScrollbarChanges(*blockFlow, autoScrollbarChanges) : EnumSet<LogicalBoxAxis> { };
+                    if (!sizesAffected.isEmpty())
+                        subtreeScrollbarChangesState->addRendererWithScrollbarChange(*blockFlow, sizesAffected);
+                    else
+                        hasAutoScrollbarChanges = true;
+                }
+            }
             blockFlow->setShouldForceRelayoutChildren(false);
         }
         renderer->invalidateBackgroundObscurationStatus();
@@ -740,6 +765,7 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
                 renderer->repaintDuringLayoutIfMoved(previousState.borderBoxRect);
         });
     }
+    return hasAutoScrollbarChanges;
 }
 
 } // namespace LayoutIntegration

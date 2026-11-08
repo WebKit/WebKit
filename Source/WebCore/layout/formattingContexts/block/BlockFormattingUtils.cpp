@@ -169,13 +169,15 @@ LayoutUnit BlockFormattingUtils::availableBlockSize(const RenderBox& blockContai
     // An anonymous block box or one with an auto block size passes the percentages through, but not this.
     if (contentBoxBlockSize && !blockContainer.isAnonymous() && !style->logicalHeight(writingMode).isAuto())
         return *contentBoxBlockSize;
+    // Without the scrollbar in the block axis (RenderBox::availableLogicalHeightUsing).
+    auto scrollbarBlockSize = geometry.verticalSpaceForScrollbar();
     auto blockSize = containingBlockAvailableBlockSize;
     if (type == AvailableLogicalHeightType::ExcludeMarginBorderPadding)
-        blockSize -= geometry.marginBefore() + geometry.marginAfter() + borderAndPaddingBlockSize;
+        blockSize -= geometry.marginBefore() + geometry.marginAfter() + borderAndPaddingBlockSize + scrollbarBlockSize;
     if (auto maximumBlockSize = borderBoxBlockSizeFor(style->logicalMaxHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
-        blockSize = std::min(blockSize, *maximumBlockSize - borderAndPaddingBlockSize);
+        blockSize = std::min(blockSize, *maximumBlockSize - borderAndPaddingBlockSize - scrollbarBlockSize);
     if (auto minimumBlockSize = borderBoxBlockSizeFor(style->logicalMinHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize))
-        blockSize = std::max(blockSize, *minimumBlockSize - borderAndPaddingBlockSize);
+        blockSize = std::max(blockSize, *minimumBlockSize - borderAndPaddingBlockSize - scrollbarBlockSize);
     return blockSize;
 }
 
@@ -220,12 +222,14 @@ std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(cons
             return std::max(0_lu, blockSize - geometry.marginBefore() - geometry.marginAfter() - borderAndPaddingBlockSize);
         });
     }
-    // A preferred aspect ratio gives an auto block size from the definite inline size.
+    // A preferred aspect ratio gives an auto block size from the definite inline size. The scrollbar in the block axis is not part of it
+    // (RenderBox::computePercentageLogicalHeight).
+    auto scrollbarBlockSize = geometry.verticalSpaceForScrollbar();
     if (auto aspectRatioBlockSize = aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode))
-        return *aspectRatioBlockSize - borderAndPaddingBlockSize;
+        return std::max(0_lu, *aspectRatioBlockSize - borderAndPaddingBlockSize - scrollbarBlockSize);
     if (!borderBoxBlockSizeFor(style->logicalHeight(writingMode), style.get(), borderAndPaddingBlockSize, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, { }, containingBlockIsTableCell))
         return { };
-    return borderBoxBlockSize(box, borderAndPaddingBlockSize, { }, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode, containingBlockIsTableCell) - borderAndPaddingBlockSize;
+    return std::max(0_lu, borderBoxBlockSize(box, borderAndPaddingBlockSize, { }, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode, containingBlockIsTableCell) - borderAndPaddingBlockSize - scrollbarBlockSize);
 }
 
 bool BlockFormattingUtils::hasIntrinsicInlineSize(const RenderBox& box, WritingMode writingMode)

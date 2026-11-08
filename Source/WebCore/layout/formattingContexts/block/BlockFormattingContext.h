@@ -156,6 +156,7 @@ private:
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;
 
     BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
+    LayoutUnit scrollbarInlineStartSpace(const RenderBox&, const BoxGeometry&) const;
     void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&, std::optional<LayoutUnit> availableInlineSize = { }) const;
     void computeLogicalLeft(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
