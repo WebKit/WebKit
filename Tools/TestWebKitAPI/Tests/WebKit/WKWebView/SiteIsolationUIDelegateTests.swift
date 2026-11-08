@@ -37,7 +37,7 @@ import struct Swift.String
 // Its method is never called. A frame only dispatches beforeunload if its page can run a beforeunload panel, which
 // takes a UI delegate that implements this method, so having one is what makes the iframe's process dispatch it.
 @MainActor
-private final class BeforeUnloadDelegate: NSObject, @preconcurrency WKUIDelegatePrivate {
+private final class BeforeUnloadDelegate: NSObject, WKUIDelegatePrivate {
     // swift-format-ignore: NoLeadingUnderscores
     func _webView(
         _ webView: WKWebView,

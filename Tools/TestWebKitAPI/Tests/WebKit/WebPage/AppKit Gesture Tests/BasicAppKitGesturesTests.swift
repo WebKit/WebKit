@@ -637,7 +637,8 @@ extension AppKitGesturesTests.Basic {
     @Test
     func trackedPointerMovesReportThemselvesAsCoalescedEvents() async throws {
         // `getCoalescedEvents()` is only exposed in a secure context, which a page loaded from a string is not by default.
-        try await loadLongPressSurface(baseURL: try #require(URL(string: "https://example.com")))
+        let baseURL = try #require(URL(string: "https://example.com"))
+        try await loadLongPressSurface(baseURL: baseURL)
         try #require(try await page.callJavaScript(returning: Bool.self) { "return window.isSecureContext;" })
 
         try await page.callJavaScript {

@@ -701,8 +701,9 @@ struct TextExtractionTests {
         let debugText = try await webView.debugText()
 
         func clickDescription(_ locator: String, _ searchText: String) async throws -> String {
+            let nodeIdentifier = try #require(extractNodeIdentifier(debugText, locator))
             let interaction = _WKTextExtractionInteraction(action: .click)
-            interaction.nodeIdentifier = try #require(extractNodeIdentifier(debugText, locator))
+            interaction.nodeIdentifier = nodeIdentifier
             interaction.text = searchText
             return try await interaction.debugDescription(in: webView)
         }
@@ -730,8 +731,9 @@ struct TextExtractionTests {
         let debugText = try await webView.debugText()
 
         func clickDescription(_ className: String, _ searchText: String) async throws -> String {
+            let nodeIdentifier = try #require(extractNodeIdentifier(debugText, className))
             let interaction = _WKTextExtractionInteraction(action: .click)
-            interaction.nodeIdentifier = try #require(extractNodeIdentifier(debugText, className))
+            interaction.nodeIdentifier = nodeIdentifier
             interaction.text = searchText
             return try await interaction.debugDescription(in: webView)
         }
