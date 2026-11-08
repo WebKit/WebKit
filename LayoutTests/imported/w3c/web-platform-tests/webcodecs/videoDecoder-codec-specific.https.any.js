@@ -125,6 +125,21 @@ promise_test(async t => {
   const callbacks = {};
   const decoder = createVideoDecoder(t, callbacks);
   decoder.configure(CONFIG);
+
+  // Mark a keyframe chunk as a delta chunk to ensure any packet analysis
+  // doesn't override the user provided type.
+  let mismarked_chunk = new EncodedVideoChunk(
+      {type: 'delta', timestamp: 0, duration: 1, data: CHUNK_DATA[0]});
+
+  assert_throws_dom(
+      'DataError', () => decoder.decode(mismarked_chunk, 'decode'));
+}, 'Decode a key frame marked as delta fails');
+
+promise_test(async t => {
+  await checkImplements();
+  const callbacks = {};
+  const decoder = createVideoDecoder(t, callbacks);
+  decoder.configure(CONFIG);
   for (let i = 0; i < 16; i++) {
     decoder.decode(new EncodedVideoChunk(
         {type: 'key', timestamp: 0, data: CHUNK_DATA[0]}));
@@ -472,3 +487,46 @@ promise_test(async t => {
   decoder.reset();
   assert_equals(decoder.decodeQueueSize, 0);
 }, 'VideoDecoder decodeQueueSize test');
+
+promise_test(async t => {
+  await checkImplements();
+  const callbacks = {};
+  const decoder = createVideoDecoder(t, callbacks);
+  decoder.configure(CONFIG);
+  decoder.reset();
+  decoder.configure(CONFIG);
+  decoder.decode(CHUNKS[0]);
+
+  let outputs = 0;
+  callbacks.output = frame => {
+    outputs++;
+    assert_equals(frame.timestamp, CHUNKS[0].timestamp, 'timestamp');
+    assert_equals(frame.duration, CHUNKS[0].duration, 'duration');
+    frame.close();
+  };
+
+  await decoder.flush();
+  assert_equals(outputs, 1, 'outputs');
+}, 'Test configure, reset, configure does not stall');
+
+promise_test(async t => {
+  await checkImplements();
+  const callbacks = {};
+  const decoder = createVideoDecoder(t, callbacks);
+
+  decoder.configure(CONFIG);
+  decoder.decode(new EncodedVideoChunk(
+      {type: 'key', timestamp: 0, duration: 111, data: CHUNK_DATA[0]}));
+  decoder.decode(new EncodedVideoChunk(
+      {type: 'key', timestamp: 0, duration: 222, data: CHUNK_DATA[0]}));
+
+  const durations = [];
+  callbacks.output = frame => {
+    assert_equals(frame.timestamp, 0, 'timestamp');
+    durations.push(frame.duration);
+    frame.close();
+  };
+
+  await decoder.flush();
+  assert_array_equals(durations, [111, 222], 'durations');
+}, 'Test decoding chunks with duplicate timestamps preserves durations');

@@ -1,5 +1,6 @@
 
 PASS Verify AudioData constructors
+PASS AudioData close
 PASS Verify closing and cloning AudioData
 PASS Test we can construct AudioData with a negative timestamp.
 PASS Test input array is copied on construction

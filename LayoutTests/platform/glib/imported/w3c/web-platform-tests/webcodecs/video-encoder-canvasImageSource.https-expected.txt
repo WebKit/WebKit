@@ -1,0 +1,9 @@
+
+
+PASS Wait for onload event to get access to image data
+PASS Test encode ImageElement-constructed VideoFrame
+PASS Test encode SVGImageElement-constructed VideoFrame
+PASS Test encode canvas-element-constructed VideoFrame
+FAIL Test encode canvas-element-constructed VideoFrame with visibleRect assert_greater_than: Green channel at (120, 30) expected a number greater than 200 but got 0
+FAIL Test encode canvas-element-constructed VideoFrame with non-zero offset visibleRect assert_less_than: Red channel at (40, 30) expected a number less than 50 but got 250
+

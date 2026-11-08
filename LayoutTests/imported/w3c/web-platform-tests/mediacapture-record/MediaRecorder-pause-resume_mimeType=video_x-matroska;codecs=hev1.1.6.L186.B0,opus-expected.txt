@@ -1,0 +1,6 @@
+
+PASS MediaRecorder handles pause() and resume() state and events, mimeType "video/x-matroska;codecs=hev1.1.6.L186.B0,opus"
+PASS MediaRecorder handles stop() in paused state appropriately, mimeType "video/x-matroska;codecs=hev1.1.6.L186.B0,opus"
+PASS MediaRecorder constructor throws on no support 1st, video/x-matroska;codecs=hev1.1.6.L186.B0,opus
+PASS MediaRecorder constructor throws on no support 2nd, video/x-matroska;codecs=hev1.1.6.L186.B0,opus
+

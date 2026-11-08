@@ -1,0 +1,5 @@
+
+FAIL Encoding 16ch Opus produces a valid OpusHead decoderConfig description. assert_true: 16ch Opus encoding must be supported expected true got false
+FAIL Encoding then decoding 16ch Opus produces frames with 16 channels. assert_true: 16ch Opus encoding must be supported expected true got false
+FAIL Configuring AudioDecoder with 16ch Opus without description must fail. promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
+

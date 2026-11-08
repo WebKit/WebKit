@@ -1,13 +1,10 @@
 
-Harness Error (FAIL), message = Unhandled rejection: Config is not valid
-
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Missing codec
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Empty codec
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Missing sampleRate
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Missing numberOfChannels
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Zero sampleRate
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Zero channels
-PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Opus with >2 channels but no description
 PASS Test that AudioDecoder.isConfigSupported() rejects invalid config: Valid configuration except detached description
 PASS Test that AudioDecoder.configure() rejects invalid config: Missing codec
 PASS Test that AudioDecoder.configure() rejects invalid config: Empty codec
@@ -15,7 +12,6 @@ PASS Test that AudioDecoder.configure() rejects invalid config: Missing sampleRa
 PASS Test that AudioDecoder.configure() rejects invalid config: Missing numberOfChannels
 PASS Test that AudioDecoder.configure() rejects invalid config: Zero sampleRate
 PASS Test that AudioDecoder.configure() rejects invalid config: Zero channels
-PASS Test that AudioDecoder.configure() rejects invalid config: Opus with >2 channels but no description
 PASS Test that AudioDecoder.configure() rejects invalid config: Valid configuration except detached description
 PASS Test that AudioDecoder.isConfigSupported() doesn't support config: Unrecognized codec
 PASS Test that AudioDecoder.isConfigSupported() doesn't support config: Video codec
@@ -31,10 +27,10 @@ PASS Test that AudioDecoder.configure() doesn't support config: Codec with MIME 
 PASS Test that AudioDecoder.configure() doesn't support config: Possible future opus codec string
 PASS Test that AudioDecoder.configure() doesn't support config: Possible future aac codec string
 PASS Test that AudioDecoder.configure() doesn't support config: codec with spaces
-FAIL Test that AudioDecoder.configure() doesn't support config: Opus with more than two channels and without description Config is not valid
-FAIL Test that AudioDecoder.configure() doesn't support config: Opus with more than two channels and with a description that is too short Config is not valid
-PASS Test that AudioDecoder.configure() doesn't support config: vorbis requires a description
-PASS Test that AudioDecoder.configure() doesn't support config: flac requires a description
+FAIL Test that AudioDecoder.configure() doesn't support config: Opus with more than two channels and without description promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
+FAIL Test that AudioDecoder.configure() doesn't support config: Opus with more than two channels and with a description that is too short promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
+NOTRUN Test that AudioDecoder.configure() doesn't support config: vorbis requires a description vorbis unsupported
+NOTRUN Test that AudioDecoder.configure() doesn't support config: flac requires a description flac unsupported
 PASS Test AudioDecoder construction
 PASS Verify unconfigured AudioDecoder operations
 

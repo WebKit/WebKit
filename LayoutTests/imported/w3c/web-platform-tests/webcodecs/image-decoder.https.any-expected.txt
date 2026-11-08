@@ -2,14 +2,14 @@
 Harness Error (TIMEOUT), message = null
 
 FAIL Test JPEG image decoding. assert_array_approx_equals: top left corner is yellow property 2, expected 0 +/- 0, expected 0 but got 1
-PASS Test JPEG w/ EXIF orientation top-left.
-PASS Test JPEG w/ EXIF orientation top-right.
-PASS Test JPEG w/ EXIF orientation bottom-right.
-PASS Test JPEG w/ EXIF orientation bottom-left.
-PASS Test JPEG w/ EXIF orientation left-top.
-PASS Test JPEG w/ EXIF orientation right-top.
-PASS Test JPEG w/ EXIF orientation right-bottom.
-PASS Test JPEG w/ EXIF orientation left-bottom.
+FAIL Test JPEG w/ EXIF orientation top-left. assert_equals: top left corner expected "Yellow" but got "#ffff01ff"
+FAIL Test JPEG w/ EXIF orientation top-right. assert_equals: top left corner expected "Red" but got "#fe0000ff"
+FAIL Test JPEG w/ EXIF orientation bottom-right. assert_equals: top left corner expected "Green" but got "#ff01ff"
+FAIL Test JPEG w/ EXIF orientation bottom-left. assert_equals: top left corner expected "Blue" but got "#feff"
+FAIL Test JPEG w/ EXIF orientation left-top. assert_equals: top left corner expected "Yellow" but got "#ffff01ff"
+FAIL Test JPEG w/ EXIF orientation right-top. assert_equals: top left corner expected "Blue" but got "#feff"
+FAIL Test JPEG w/ EXIF orientation right-bottom. assert_equals: top left corner expected "Green" but got "#ff01ff"
+FAIL Test JPEG w/ EXIF orientation left-bottom. assert_equals: top left corner expected "Red" but got "#fe0000ff"
 PASS Test 4:2:0 JPEG w/ EXIF orientation top-left.
 PASS Test 4:2:0 JPEG w/ EXIF orientation top-right.
 PASS Test 4:2:0 JPEG w/ EXIF orientation bottom-right.
@@ -30,6 +30,12 @@ FAIL Test AVIF image YUV 4:2:0 decoding. assert_equals: expected "I420" but got 
 FAIL Test AVIF image YUV 4:2:2 decoding. assert_equals: expected "I422" but got "RGBA"
 FAIL Test AVIF image YUV 4:4:4 decoding. assert_equals: expected "I444" but got "RGBA"
 FAIL Test WEBP image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "RGBA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:0 decoding. assert_equals: expected "I420P10" but got "RGBA"
+FAIL Test AVIF image HDR YUV 10-bit 4:2:2 decoding. assert_equals: expected "I422P10" but got "RGBA"
+FAIL Test AVIF image HDR YUV 10-bit 4:4:4 decoding. assert_equals: expected "I444P10" but got "RGBA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:0 decoding. assert_equals: expected "I420P12" but got "RGBA"
+FAIL Test AVIF image HDR YUV 12-bit 4:2:2 decoding. assert_equals: expected "I422P12" but got "RGBA"
+FAIL Test AVIF image HDR YUV 12-bit 4:4:4 decoding. assert_equals: expected "I444P12" but got "RGBA"
 PASS Test invalid mime type rejects decode() requests
 PASS Test invalid mime type rejects decodeMetadata() requests
 FAIL Test out of range index returns RangeError promise_rejects_js: function "function() { throw e; }" threw object "DataError: Decoding error" ("DataError") expected instance of function "function RangeError() {

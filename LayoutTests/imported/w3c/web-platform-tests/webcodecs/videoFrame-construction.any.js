@@ -332,6 +332,61 @@ test(t => {
 }, 'Test visibleRect metadata override where source display size = 2 * visible size for both width and height');
 
 test(t => {
+  const hdAnamorphic = new VideoFrame(new Uint8Array(1.5 * 1440 * 1080), {
+    format: 'I420',
+    timestamp: 1234,
+    codedWidth: 1440,
+    codedHeight: 1080,
+    displayWidth: 1920,
+    displayHeight: 1080,
+  });
+  t.add_cleanup(() => hdAnamorphic.close());
+
+  const croppedHd = new VideoFrame(
+      hdAnamorphic, {visibleRect: {x: 0, y: 0, width: 720, height: 540}});
+  t.add_cleanup(() => croppedHd.close());
+  assert_equals(croppedHd.displayWidth, 960, 'croppedHd.displayWidth');
+  assert_equals(croppedHd.displayHeight, 540, 'croppedHd.displayHeight');
+
+  const narrowAnamorphic = new VideoFrame(new Uint8Array(1.5 * 640 * 480), {
+    format: 'I420',
+    timestamp: 1234,
+    codedWidth: 640,
+    codedHeight: 480,
+    displayWidth: 160,
+    displayHeight: 480,
+  });
+  t.add_cleanup(() => narrowAnamorphic.close());
+
+  const croppedNarrow = new VideoFrame(
+      narrowAnamorphic, {visibleRect: {x: 0, y: 0, width: 320, height: 240}});
+  t.add_cleanup(() => croppedNarrow.close());
+  assert_equals(croppedNarrow.displayWidth, 80, 'croppedNarrow.displayWidth');
+  assert_equals(croppedNarrow.displayHeight, 240,
+                'croppedNarrow.displayHeight');
+}, 'Test visibleRect metadata override with fractional display size scale');
+
+test(t => {
+  const init = {
+    format: 'I420',
+    timestamp: 1234,
+    codedWidth: 300,
+    codedHeight: 150,
+    displayWidth: 1280,
+    displayHeight: 1
+  };
+  const data = new Uint8Array(1.5 * init.codedWidth * init.codedHeight);
+  const tinyDisplayFrame = new VideoFrame(data, init);
+  t.add_cleanup(() => tinyDisplayFrame.close());
+
+  // heightScale = 1/150, so round(1/150 * 40) = round(0.267) = 0: TypeError
+  assert_throws_js(
+      TypeError,
+      () => new VideoFrame(tinyDisplayFrame, {visibleRect: {width: 187, height: 40}}),
+      'computed display height rounds to zero');
+}, 'Test that a visibleRect override throwing when computed display size rounds to zero');
+
+test(t => {
   let image = makeImageBitmap(32, 16);
 
   let scaledFrame = new VideoFrame(image, {
@@ -642,6 +697,14 @@ test(t => {
   assert_equals(frame_copy.timestamp, 1234);
   assert_equals(frame_copy.duration, 456);
   frame_copy.close();
+
+  let frame_override = new VideoFrame(frame, {timestamp: 1234});
+  assert_equals(frame_override.timestamp, 1234);
+
+  let frame_chain = new VideoFrame(frame_override);
+  assert_equals(frame_chain.timestamp, 1234);
+  frame_chain.close();
+  frame_override.close();
 
   frame.close();
 }, 'Test VideoFrame constructed VideoFrame');
@@ -1003,6 +1066,11 @@ function testAllYUVPixelFormats() {
   for (let yuv of YUVs) {
     test(t => {
       const frame = new VideoFrame(yuv.data, yuv.init);
+      assert_equals(frame.format, yuv.init.format);
+      assert_equals(frame.timestamp, yuv.init.timestamp);
+      // User Agent may choose more optimal coded size allocations.
+      assert_less_than_equal(yuv.init.codedWidth, frame.codedWidth);
+      assert_less_than_equal(yuv.init.codedHeight, frame.codedHeight);
       frame.close();
     }, `Test we can construct a ${yuv.init.format} VideoFrame`);
   }

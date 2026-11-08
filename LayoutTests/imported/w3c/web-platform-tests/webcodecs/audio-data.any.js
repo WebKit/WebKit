@@ -84,7 +84,28 @@ test(t => {
       TypeError, () => {let data = new AudioData(invalid_init)},
       'AudioData requires numberOfChannels > 0');
 
+  invalid_init = {...audio_data_init};
+  invalid_init.sampleRate = 0;
+
+  assert_throws_js(TypeError, () => {let data = new AudioData(invalid_init)},
+                   'AudioData requires sampleRate > 0');
+
+  invalid_init = {...audio_data_init};
+  invalid_init.sampleRate = -1;
+
+  assert_throws_js(TypeError, () => {let data = new AudioData(invalid_init)},
+                   'AudioData requires sampleRate > 0 (negative)');
+
 }, 'Verify AudioData constructors');
+
+test(t => {
+  let data = createDefaultAudioData();
+  data.close();
+  assert_equals(data.sampleRate, 0);
+  assert_equals(data.numberOfFrames, 0);
+  assert_equals(data.numberOfChannels, 0);
+  assert_equals(data.format, null);
+}, 'AudioData close');
 
 test(t => {
   let data = createDefaultAudioData();

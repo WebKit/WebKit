@@ -1,6 +1,8 @@
 
-PASS Encoding and decoding cycle
-PASS Encoding and decoding cycle with realtime latency mode
-PASS Encoding and decoding cycle w/ stripped color space
-PASS Encoding and decoding cycle w/ rate control
+Harness Error (FAIL), message = Error: assert_equals: decoded pixel format expected (string) "I420P10" but got (object) null
+
+FAIL Encoding and decoding cycle assert_equals: frames_decoded expected 16 but got 0
+FAIL Encoding and decoding cycle with realtime latency mode assert_equals: frames_decoded expected 16 but got 0
+FAIL Encoding and decoding cycle w/ stripped color space assert_equals: frames_decoded expected 16 but got 0
+FAIL Encoding and decoding cycle w/ rate control assert_equals: frames_decoded expected 16 but got 0
 

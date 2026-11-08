@@ -6,6 +6,7 @@ PASS Test invalid configs
 PASS Test configure()
 PASS Decode a key frame
 PASS Decode a non key frame first fails
+PASS Decode a key frame marked as delta fails
 PASS Verify reset() suppresses outputs
 PASS Test unconfigured VideoDecoder operations
 PASS Test closed VideoDecoder operations
@@ -19,4 +20,6 @@ PASS Test new flush after reset in a flush callback
 PASS Test decoding a corrupt frame after reset in a flush callback
 PASS Test low-latency decoding
 PASS VideoDecoder decodeQueueSize test
+PASS Test configure, reset, configure does not stall
+PASS Test decoding chunks with duplicate timestamps preserves durations
 

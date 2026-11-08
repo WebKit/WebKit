@@ -48,4 +48,6 @@ PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":480
 PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{"complexity":5,"signal":"music","application":"audio","frameDuration":20000,"packetlossperc":10,"useinbandfec":true}}
 PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{"format":"opus","signal":"voice","application":"lowdelay","complexity":10,"frameDuration":60000,"packetlossperc":20,"usedtx":true,"bogus":456}}
 PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{}}
+FAIL AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{"frameDuration":7500}} promise_test: Unhandled rejection with value: object "TypeError: Config is not valid"
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{"frameDuration":120000}}
 
