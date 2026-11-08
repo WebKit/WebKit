@@ -674,4 +674,18 @@ TEST(Color, PackedColorFromPremultiplied)
     EXPECT_EQ(PackedColor::ARGB { premultipliedFlooring(SRGBA<uint8_t> { 255, 128, 64, 128 }) }.value, 0x80804020u);
 }
 
+TEST(Color, TransferFunctionsKeepTheSignOfExtendedComponents)
+{
+    auto expectRoundTrip = [&]<typename ColorType>() {
+        using TransferFunction = typename ColorType::TransferFunction;
+        for (float component : { -0.01f, -0.09f, -0.5f, -1.5f, 0.5f, 1.5f })
+            EXPECT_NEAR(TransferFunction::toGammaEncoded(TransferFunction::toLinear(component)), component, 0.0001f);
+    };
+
+    expectRoundTrip.template operator()<ExtendedA98RGB<float>>();
+    expectRoundTrip.template operator()<ExtendedProPhotoRGB<float>>();
+    expectRoundTrip.template operator()<ExtendedRec2020<float>>();
+    expectRoundTrip.template operator()<ExtendedSRGBA<float>>();
+}
+
 } // namespace TestWebKitAPI

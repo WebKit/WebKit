@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,155 +37,91 @@ enum class TransferFunctionMode : uint8_t {
     Unclamped
 };
 
-template<typename T, TransferFunctionMode mode>
-struct A98RGBTransferFunction {
+// With `sign` as the sign of the component `c`, and `threshold` applying to the magnitude of `c`, a gamma encoded component goes to linear as:
+//
+//     c / slope                                        up to `threshold`
+//     sign * ((|c| + offset) / scale) ^ exponent       past it
+//
+// and a linear component goes to gamma encoded as:
+//
+//     c * slope                                        up to `linearThreshold`
+//     sign * (scale * |c| ^ (1 / exponent) - offset)   past it
+template<typename T>
+struct ParametricTransferFunction {
+    T threshold;
+    T linearThreshold;
+    T slope;
+    T scale;
+    T offset;
+    T exponent;
+};
+
+template<typename T, TransferFunctionMode mode, ParametricTransferFunction<T> parameters>
+struct PiecewiseTransferFunction {
+    static constexpr ParametricTransferFunction<T> parametric = parameters;
+
     static T toGammaEncoded(T);
     static T toLinear(T);
 };
 
 template<typename T, TransferFunctionMode mode>
-struct ProPhotoRGBTransferFunction {
-    static constexpr T gamma = 1.8;
-
-    static T toGammaEncoded(T);
-    static T toLinear(T);
-};
-
-template<typename T, TransferFunctionMode mode>
-struct Rec2020TransferFunction {
-    static constexpr T alpha = 1.09929682680944;
-    static constexpr T beta = 0.018053968510807;
-    static constexpr T gamma = 0.45;
-
-    static T toGammaEncoded(T);
-    static T toLinear(T);
-};
+struct A98RGBTransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
+    .threshold = 0,
+    .linearThreshold = 0,
+    .slope = 1,
+    .scale = 1,
+    .offset = 0,
+    .exponent = 563.0 / 256.0,
+}> { };
 
 template<typename T, TransferFunctionMode mode>
-struct SRGBTransferFunction {
-    static T toGammaEncoded(T);
-    static T toLinear(T);
-};
+struct ProPhotoRGBTransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
+    .threshold = 16.0 / 512.0,
+    .linearThreshold = 1.0 / 512.0,
+    .slope = 16,
+    .scale = 1,
+    .offset = 0,
+    .exponent = 1.8,
+}> { };
 
-// MARK: A98RGBTransferFunction.
+template<typename T, TransferFunctionMode mode>
+struct Rec2020TransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
+    .threshold = 0.018053968510807 * 4.5,
+    .linearThreshold = 0.018053968510807,
+    .slope = 4.5,
+    .scale = 1.09929682680944,
+    .offset = 0.09929682680944,
+    .exponent = 1.0 / 0.45,
+}> { };
 
-template<typename T, TransferFunctionMode mode> T A98RGBTransferFunction<T, mode>::toGammaEncoded(T c)
+template<typename T, TransferFunctionMode mode>
+struct SRGBTransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
+    .threshold = 0.04045,
+    .linearThreshold = 0.0031308,
+    .slope = 12.92,
+    .scale = 1.055,
+    .offset = 0.055,
+    .exponent = 2.4,
+}> { };
+
+template<typename T, TransferFunctionMode mode, ParametricTransferFunction<T> parameters>
+T PiecewiseTransferFunction<T, mode, parameters>::toGammaEncoded(T c)
 {
-    auto sign = std::signbit(c) ? -1.0f : 1.0f;
-    auto result = std::pow(std::abs(c), 256.0f / 563.0f) * sign;
+    auto magnitude = std::abs(c);
+    T result = magnitude <= parameters.linearThreshold ? c * parameters.slope : std::copysign(parameters.scale * std::pow(magnitude, 1 / parameters.exponent) - parameters.offset, c);
     if constexpr (mode == TransferFunctionMode::Clamped)
         return clampTo<T>(result, 0, 1);
     return result;
 }
 
-template<typename T, TransferFunctionMode mode> T A98RGBTransferFunction<T, mode>::toLinear(T c)
+template<typename T, TransferFunctionMode mode, ParametricTransferFunction<T> parameters>
+T PiecewiseTransferFunction<T, mode, parameters>::toLinear(T c)
 {
-    auto sign = std::signbit(c) ? -1.0f : 1.0f;
-    auto result = std::pow(std::abs(c), 563.0f / 256.0f) * sign;
+    auto magnitude = std::abs(c);
+    T result = magnitude <= parameters.threshold ? c / parameters.slope : std::copysign(std::pow((magnitude + parameters.offset) / parameters.scale, parameters.exponent), c);
     if constexpr (mode == TransferFunctionMode::Clamped)
         return clampTo<T>(result, 0, 1);
     return result;
 }
 
-// MARK: ProPhotoRGBTransferFunction.
-
-template<typename T, TransferFunctionMode mode> T ProPhotoRGBTransferFunction<T, mode>::toGammaEncoded(T c)
-{
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c < 1.0 / 512.0)
-            return 16.0 * c;
-
-        return clampTo<T>(std::pow(c, 1.0 / gamma), 0, 1);
-    } else {
-        if (std::abs(c) < 1.0 / 512.0)
-            return 16.0 * c;
-
-        float sign = std::signbit(c) ? -1.0 : 1.0;
-        return std::pow(c, 1.0 / gamma) * sign;
-    }
-}
-
-template<typename T, TransferFunctionMode mode> T ProPhotoRGBTransferFunction<T, mode>::toLinear(T c)
-{
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c <= 16.0 / 512.0)
-            return c / 16.0;
-
-        return clampTo<T>(std::pow(c, gamma), 0, 1);
-    } else {
-        if (std::abs(c) <= 16.0 / 512.0)
-            return c / 16.0;
-
-        float sign = std::signbit(c) ? -1.0 : 1.0;
-        return std::pow(c, gamma) * sign;
-    }
-}
-
-// MARK: Rec2020TransferFunction.
-
-template<typename T, TransferFunctionMode mode> T Rec2020TransferFunction<T, mode>::toGammaEncoded(T c)
-{
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c <= beta)
-            return 4.5f * c;
-
-        return clampTo<T>(alpha * std::pow(c, gamma) - (alpha - 1.0f), 0, 1);
-    } else {
-        if (std::abs(c) <= beta)
-            return 4.5f * c;
-
-        float sign = std::signbit(c) ? -1.0 : 1.0;
-        return (alpha * std::pow(c, gamma) - (alpha - 1.0)) * sign;
-    }
-}
-
-template<typename T, TransferFunctionMode mode> T Rec2020TransferFunction<T, mode>::toLinear(T c)
-{
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c < beta * 4.5f)
-            return c / 4.5f;
-        return clampTo<T>(std::pow((c + alpha - 1.0) / alpha, 1.0 / gamma), 0, 1);
-    } else {
-        if (std::abs(c) < beta * 4.5f)
-            return c / 4.5f;
-
-        float sign = std::signbit(c) ? -1.0 : 1.0;
-        return std::pow((c + alpha - 1.0) / alpha, 1.0 / gamma) * sign;
-    }
-}
-
-// MARK: SRGBTransferFunction.
-
-template<typename T, TransferFunctionMode mode> T SRGBTransferFunction<T, mode>::toGammaEncoded(T c)
-{
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c < 0.0031308f)
-            return std::max<T>(12.92f * c, 0);
-        return clampTo<T>(1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f, 0, 1);
-    } else {
-        auto sign = std::signbit(c) ? -1.0f : 1.0f;
-        c = std::abs(c);
-
-        if (c < 0.0031308f)
-            return 12.92f * c * sign;
-        return (1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f) * sign;
-    }
-}
-
-template<typename T, TransferFunctionMode mode> T SRGBTransferFunction<T, mode>::toLinear(T c)
-{
-    if constexpr (mode == TransferFunctionMode::Clamped) {
-        if (c <= 0.04045f)
-            return std::max<float>(c / 12.92f, 0);
-        return clampTo<float>(std::pow((c + 0.055f) / 1.055f, 2.4f), 0, 1);
-    } else {
-        auto sign = std::signbit(c) ? -1.0f : 1.0f;
-        c = std::abs(c);
-
-        if (c <= 0.04045f)
-            return c / 12.92f * sign;
-        return std::pow((c + 0.055f) / 1.055f, 2.4f) * sign;
-    }
-}
-
-}
+} // namespace WebCore
