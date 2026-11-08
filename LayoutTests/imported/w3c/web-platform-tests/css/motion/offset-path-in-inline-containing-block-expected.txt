@@ -1,0 +1,56 @@
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+XX XXXX
+XX WWXXXX
+XX XXXXYY
+
+PASS writing-mode: horizontal-tb; offset-path: ray(45deg closest-side); offset-distance: 50%
+PASS writing-mode: horizontal-tb; offset-path: ray(45deg closest-side); offset-distance: 50%; content inserted before the inline box
+PASS writing-mode: horizontal-tb; offset-path: ray(45deg closest-side); offset-distance: 50%; text appended to the inline box
+PASS writing-mode: horizontal-tb; offset-path: border-box; offset-distance: 30%
+PASS writing-mode: horizontal-tb; offset-path: border-box; offset-distance: 30%; content inserted before the inline box
+PASS writing-mode: horizontal-tb; offset-path: border-box; offset-distance: 30%; text appended to the inline box
+PASS writing-mode: horizontal-tb; offset-path: inset(2px round 4px); offset-distance: 60%
+PASS writing-mode: horizontal-tb; offset-path: inset(2px round 4px); offset-distance: 60%; content inserted before the inline box
+PASS writing-mode: horizontal-tb; offset-path: inset(2px round 4px); offset-distance: 60%; text appended to the inline box
+PASS writing-mode: vertical-rl; offset-path: ray(45deg closest-side); offset-distance: 50%
+PASS writing-mode: vertical-rl; offset-path: ray(45deg closest-side); offset-distance: 50%; content inserted before the inline box
+PASS writing-mode: vertical-rl; offset-path: ray(45deg closest-side); offset-distance: 50%; text appended to the inline box
+PASS writing-mode: vertical-rl; offset-path: border-box; offset-distance: 30%
+PASS writing-mode: vertical-rl; offset-path: border-box; offset-distance: 30%; content inserted before the inline box
+PASS writing-mode: vertical-rl; offset-path: border-box; offset-distance: 30%; text appended to the inline box
+PASS writing-mode: vertical-rl; offset-path: inset(2px round 4px); offset-distance: 60%
+PASS writing-mode: vertical-rl; offset-path: inset(2px round 4px); offset-distance: 60%; content inserted before the inline box
+PASS writing-mode: vertical-rl; offset-path: inset(2px round 4px); offset-distance: 60%; text appended to the inline box
+PASS writing-mode: vertical-lr; offset-path: ray(45deg closest-side); offset-distance: 50%
+PASS writing-mode: vertical-lr; offset-path: ray(45deg closest-side); offset-distance: 50%; content inserted before the inline box
+PASS writing-mode: vertical-lr; offset-path: ray(45deg closest-side); offset-distance: 50%; text appended to the inline box
+PASS writing-mode: vertical-lr; offset-path: border-box; offset-distance: 30%
+PASS writing-mode: vertical-lr; offset-path: border-box; offset-distance: 30%; content inserted before the inline box
+PASS writing-mode: vertical-lr; offset-path: border-box; offset-distance: 30%; text appended to the inline box
+PASS writing-mode: vertical-lr; offset-path: inset(2px round 4px); offset-distance: 60%
+PASS writing-mode: vertical-lr; offset-path: inset(2px round 4px); offset-distance: 60%; content inserted before the inline box
+PASS writing-mode: vertical-lr; offset-path: inset(2px round 4px); offset-distance: 60%; text appended to the inline box
+

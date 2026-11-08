@@ -1029,7 +1029,8 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
         auto contentOffset = [&] {
             auto* clampedRenderer = clampedContent->renderer.get();
             auto contentLogicalTop = clampedRenderer->logicalTop() + clampedRenderer->contentBoxLocation().y();
-            for (auto* ancestor = clampedRenderer->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            // The clamped content is in-flow content of this box, so blocks contain it all the way up to this box.
+            for (auto* ancestor = dynamicDowncast<RenderBlock>(clampedRenderer->containingBlock()); ancestor; ancestor = dynamicDowncast<RenderBlock>(ancestor->containingBlock())) {
                 if (ancestor == this)
                     return contentLogicalTop;
                 contentLogicalTop += ancestor->logicalTop();

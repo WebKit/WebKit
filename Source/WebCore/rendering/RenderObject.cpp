@@ -604,9 +604,12 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             simplifiedNormalFlowLayout = false;
 
         if (hasOutOfFlowPosition) {
+            // Out-of-flow boxes are laid out by the formatting context that lays out their containing block: the out-of-flow boxes of
+            // an inline box by the block that establishes its inline formatting context (which may be anonymous), others by the
+            // enclosing non-anonymous block.
+            auto isContainedByInlineBox = ancestor->isInlineBox();
             bool willSkipRelativelyPositionedInlines = !ancestor->isRenderBlock() || ancestor->isAnonymousBlock();
-            // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
-            while (ancestor && (!ancestor->isRenderBlock() || ancestor->isAnonymousBlock()))
+            while (ancestor && (!ancestor->isRenderBlock() || (ancestor->isAnonymousBlock() && !isContainedByInlineBox)))
                 ancestor = ancestor->container();
             if (!ancestor || ancestor->outOfFlowChildNeedsLayout())
                 return { };
@@ -717,7 +720,7 @@ RenderBlock* RenderElement::nearestNonAnonymousContainingBlockIncludingSelf() co
     return downcast<RenderBlock>(renderer);
 }
 
-RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionType, const RenderObject& renderer)
+RenderBoxModelObject* RenderObject::containingBlockForPositionType(PositionType positionType, const RenderObject& renderer)
 {
     if (positionType == PositionType::Static || positionType == PositionType::Relative || positionType == PositionType::Sticky) {
         auto containingBlockForObjectInFlow = [&] {
@@ -729,42 +732,44 @@ RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionT
         return containingBlockForObjectInFlow();
     }
 
+    // The containing block of an out-of-flow box is established by its nearest ancestor that can contain it. Inline boxes form containing blocks
+    // themselves while anonymous blocks forward to their nearest non-anonymous containing block.
+    auto containingBlockForOutOfFlowBox = [](RenderElement* ancestor) -> RenderBoxModelObject* {
+        if (!ancestor)
+            return nullptr;
+        if (ancestor->isInlineBox())
+            return downcast<RenderBoxModelObject>(ancestor);
+        return ancestor->nearestNonAnonymousContainingBlockIncludingSelf();
+    };
+
     if (positionType == PositionType::Absolute) {
-        auto containingBlockForAbsolutePosition = [&] {
-            CheckedPtr ancestor = renderer.parent();
-            while (ancestor && !ancestor->canContainAbsolutelyPositionedObjects())
-                ancestor = ancestor->parent();
-            // Make sure we only return non-anonymous RenderBlock as containing block (e.g. a relatively positioned inline box
-            // forwards its absolute positioned descendants to its nearest non-anonymous containing block).
-            return ancestor ? ancestor->nearestNonAnonymousContainingBlockIncludingSelf() : nullptr;
-        };
-        return containingBlockForAbsolutePosition();
+        CheckedPtr ancestor = renderer.parent();
+        while (ancestor && !ancestor->canContainAbsolutelyPositionedObjects())
+            ancestor = ancestor->parent();
+        return containingBlockForOutOfFlowBox(ancestor.get());
     }
 
     if (positionType == PositionType::Fixed) {
-        auto containingBlockForFixedPosition = [&] () -> RenderBlock* {
-            CheckedPtr ancestor = renderer.parent();
-            while (ancestor && !ancestor->canContainFixedPositionObjects()) {
-                if (isInTopLayerOrBackdrop(ancestor->style(), ancestor->element()))
-                    return &renderer.view();
-                ancestor = ancestor->parent();
-            }
-            return ancestor ? ancestor->nearestNonAnonymousContainingBlockIncludingSelf() : nullptr;
-        };
-        return containingBlockForFixedPosition();
+        CheckedPtr ancestor = renderer.parent();
+        while (ancestor && !ancestor->canContainFixedPositionObjects()) {
+            if (isInTopLayerOrBackdrop(ancestor->style(), ancestor->element()))
+                return &renderer.view();
+            ancestor = ancestor->parent();
+        }
+        return containingBlockForOutOfFlowBox(ancestor.get());
     }
 
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-RenderBlock* RenderObject::containingBlock() const
+RenderBoxModelObject* RenderObject::containingBlock() const
 {
     // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=270977 for RenderLineBreak special treatment.
     if (isAnyOf<RenderText, RenderLineBreak>(*this))
         return containingBlockForPositionType(PositionType::Static, *this);
 
-    auto containingBlockForRenderer = [](const auto& renderer) -> RenderBlock* {
+    auto containingBlockForRenderer = [](const auto& renderer) -> RenderBoxModelObject* {
         if (isInTopLayerOrBackdrop(renderer.style(), renderer.element()))
             return &renderer.view();
         return containingBlockForPositionType(renderer.style().position(), renderer);
@@ -1799,8 +1804,9 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     // This method is extremely similar to containingBlock(), but with a few notable
     // exceptions.
     // (1) For normal flow elements, it just returns the parent.
-    // (2) For absolute positioned elements, it will return a relative positioned inline, while
-    // containingBlock() skips to the non-anonymous containing block.
+    // (2) For out-of-flow positioned elements, it will return the positioned ancestor even when it is an anonymous block or
+    // a box that is not a block (e.g. a relatively positioned table section), while containingBlock() skips to the nearest
+    // non-anonymous block.
     // This does mean that computeOutOfFlowPositionedLogicalWidth and computeOutOfFlowPositionedLogicalHeight have to use container().
     // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=270977 for RenderLineBreak special treatment.
     if (!is<RenderElement>(renderer) || isAnyOf<RenderText, RenderLineBreak>(renderer))

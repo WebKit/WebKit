@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" contenteditable="true"><span style="position: relative"><img style="position: absolute" width="10" height="10"></span></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+editor.focus();
+document.execCommand("selectAll");
+// The editor state, which reads the base writing direction at the selection start, is computed after the next rendering update.
+requestAnimationFrame(() => setTimeout(() => {
+    document.body.textContent = "PASS. WebKit didn't crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}));
+</script>
+</body>
+</html>

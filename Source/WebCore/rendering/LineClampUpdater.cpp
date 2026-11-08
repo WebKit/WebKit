@@ -228,7 +228,7 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
             if (blockFlow && blockFlow->inlineLayout()) {
                 // The line-clamp container's block size limit in this block's coordinates, less the border and padding (of the block and its ancestors) still following its lines.
                 auto availableHeightForLines = blockSizeLimit;
-                for (CheckedPtr<const RenderBlock> ancestor = blockFlow; ancestor && ancestor != &lineClampContainer; ancestor = ancestor->containingBlock())
+                for (CheckedPtr<const RenderBlock> ancestor = blockFlow; ancestor && ancestor != &lineClampContainer; ancestor = downcast<RenderBlock>(ancestor->containingBlock()))
                     availableHeightForLines -= ancestor->logicalTop() + ancestor->borderAndPaddingAfter();
                 lineCount += blockFlow->inlineLayout()->lineCountForHeight(LayoutUnit::max()).first;
                 fittingLineCount += blockFlow->inlineLayout()->lineCountForHeight(availableHeightForLines).first;
@@ -374,9 +374,10 @@ std::optional<LayoutRect> LineClampUpdater::blockEndClipRect(const RenderBox& fl
         return { };
     // The line-clamp container whose block formatting context the float is in.
     auto lineClampContainerForFloat = [&] -> CheckedPtr<const RenderBlockFlow> {
-        CheckedPtr formattingContextRoot = floatBox.containingBlock();
+        // Floats and the blocks that don't establish a new formatting context are in-flow, so they are contained by blocks.
+        CheckedPtr formattingContextRoot = downcast<RenderBlock>(floatBox.containingBlock());
         while (formattingContextRoot && !formattingContextRoot->createsNewFormattingContext())
-            formattingContextRoot = formattingContextRoot->containingBlock();
+            formattingContextRoot = downcast<RenderBlock>(formattingContextRoot->containingBlock());
         CheckedPtr lineClampContainer = dynamicDowncast<RenderBlockFlow>(formattingContextRoot.get());
         if (!lineClampContainer || !lineClampContainer->establishesLineClampContainer())
             return nullptr;

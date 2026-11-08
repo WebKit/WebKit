@@ -177,7 +177,7 @@ public:
 
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.
-    void computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, std::optional<LayoutUnit> availableSpaceAdjustedWithFloats, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const;
+    void computeInlineDirectionMargins(const RenderBoxModelObject& containingBlock, LayoutUnit containerWidth, std::optional<LayoutUnit> availableSpaceAdjustedWithFloats, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const;
 
     // Used to resolve margins in the containing block's block-flow direction.
     void computeBlockDirectionMargins(const RenderBlock& containingBlock, LayoutUnit& marginBefore, LayoutUnit& marginAfter) const;
@@ -505,8 +505,9 @@ public:
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     LayoutRect firstFragmentBorderBoxRect() const override;
+    LayoutRect firstFragmentBorderBoxRectFromBlockStart() const final { return { location(), borderBoxSize() }; }
 
-    NODELETE LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
+    NODELETE LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const final;
     NODELETE LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     NODELETE LayoutPoint flipForWritingMode(const LayoutPoint&) const;
     NODELETE LayoutSize flipForWritingMode(const LayoutSize&) const;
@@ -548,7 +549,6 @@ public:
 
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
     bool hasFragmentRangeInFragmentedFlow() const;
-    virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     NODELETE RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
 
     // True if this box can have a range in an outside fragmentation context.
@@ -670,10 +670,11 @@ protected:
     bool overflowChangesMayAffectLayout() const final;
     virtual std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths() const { return computeIntrinsicLogicalWidths(); }
 
+    void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
+
 private:
     bool isBlockSizeResolvableForStretch() const;
 
-    void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
     void addMarginBoxOverflow(const RenderBox&, LayoutSize offsetFromThis, OptionSet<ComputeOverflowOptions>);
 
     void updateShapeOutsideInfoAfterStyleChange(const Style::ComputedStyle&, const Style::ComputedStyle* oldStyle, Style::Difference);

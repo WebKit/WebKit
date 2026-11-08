@@ -1188,7 +1188,12 @@ RenderBlock* rendererForCaretPainting(const Node* node)
         if (caretRendersInsideNode(*node))
             return blockFlow;
     }
-    return renderer->containingBlock();
+    // Otherwise by the nearest block in its containing block chain.
+    for (SUPPRESS_UNCHECKED_LOCAL RenderBoxModelObject* containingBlock = renderer->containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+        if (SUPPRESS_UNCHECKED_LOCAL auto* block = dynamicDowncast<RenderBlock>(*containingBlock))
+            return block;
+    }
+    return nullptr;
 }
 
 LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition& caretPosition, RenderBlock*& caretPainter)
