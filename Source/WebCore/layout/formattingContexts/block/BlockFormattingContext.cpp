@@ -736,6 +736,22 @@ PlacedFloats BlockFormattingContext::floatsAtHypotheticalPosition() const
     return floats;
 }
 
+// The content box of a border box, which the scrollbars take space from, up to all of the padding box (RenderBox::paddingBoxWidth). The
+// border box stays the sum of its parts, which a padding the box does not use (a table with collapsed borders) leaves negative.
+static void setContentBoxInlineSize(BoxGeometry& geometry, LayoutUnit borderBoxInlineSize)
+{
+    auto scrollbarInlineSize = std::min(geometry.horizontalSpaceForScrollbar(), std::max(0_lu, borderBoxInlineSize - geometry.horizontalBorder()));
+    geometry.setHorizontalSpaceForScrollbar(scrollbarInlineSize);
+    geometry.setContentBoxWidth(borderBoxInlineSize - geometry.horizontalBorderAndPadding() - scrollbarInlineSize);
+}
+
+static void setContentBoxBlockSize(BoxGeometry& geometry, LayoutUnit borderBoxBlockSize)
+{
+    auto scrollbarBlockSize = std::min(geometry.verticalSpaceForScrollbar(), std::max(0_lu, borderBoxBlockSize - geometry.verticalBorder()));
+    geometry.setVerticalSpaceForScrollbar(scrollbarBlockSize);
+    geometry.setContentBoxHeight(borderBoxBlockSize - geometry.verticalBorderAndPadding() - scrollbarBlockSize);
+}
+
 static bool decidesItsOwnInlineSize(const RenderBox&, WritingMode);
 
 // A box that establishes a formatting context of its own, a table or a block-level replaced element goes beside the floats before it without
@@ -1028,8 +1044,8 @@ LayoutUnit BlockFormattingContext::layoutIndependentFormattingContextThroughRend
 
     geometry.setBorder(layoutResult.border);
     geometry.setPadding(layoutResult.padding);
-    geometry.setContentBoxWidth(layoutResult.borderBoxInlineSize - geometry.horizontalBorderAndPadding());
-    geometry.setContentBoxHeight(layoutResult.borderBoxBlockSize - geometry.verticalBorderAndPadding());
+    setContentBoxInlineSize(geometry, layoutResult.borderBoxInlineSize);
+    setContentBoxBlockSize(geometry, layoutResult.borderBoxBlockSize);
     CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
     auto [marginStart, marginEnd] = BlockFormattingUtils::inlineMargins(box, layoutResult.borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle);
     geometry.setHorizontalMargin({ marginStart, marginEnd });
@@ -1156,10 +1172,10 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowIndependentFormattingCo
         auto borderBoxSize = integrationUtils().layoutOutOfFlowIndependentFormattingContext(root, inlineAxis.borderBoxSize, borderBoxBlockSize);
         return { inlineAxis, outOfFlowGeometry.computeBlockAxisGeometry(borderBoxSize.height() - geometry.verticalBorderAndPadding(), inlineAxis.borderBoxSize) };
     }();
-    geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
+    setContentBoxInlineSize(geometry, inlineAxis.borderBoxSize);
     geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
     geometry.setLeft(containingBlock.inlineStart + inlineAxis.borderBoxStart);
-    geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
+    setContentBoxBlockSize(geometry, blockAxis.borderBoxSize);
     geometry.setVerticalMargin({ blockAxis.marginStart, blockAxis.marginEnd });
     geometry.setTop(containingBlock.blockStart + blockAxis.borderBoxStart);
     // And it stays where its own layout leaves it.
@@ -1195,13 +1211,20 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     blockLayoutState.setLastFormattedLineRoots(Vector { m_blockLayoutState.lastFormattedLineRoots() });
     auto contentFormattingContext = BlockFormattingContext { box, integrationUtils(), blockLayoutState };
     auto contentInlineSizes = outOfFlowGeometry.needsContentInlineSizes() ? std::optional { contentFormattingContext.computeIntrinsicInlineSizes(box) } : std::nullopt;
+    // Its scrollbars take part in the sizes of its content (RenderBlock::computeIntrinsicLogicalWidths).
+    if (contentInlineSizes) {
+        auto scrollbarInlineSize = LayoutUnit { box->intrinsicScrollbarLogicalWidthIncludingGutter() };
+        contentInlineSizes = IntrinsicWidthConstraints { contentInlineSizes->minimum + scrollbarInlineSize, contentInlineSizes->maximum + scrollbarInlineSize };
+    }
     auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry(contentInlineSizes);
-    geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
-    auto contentBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize(inlineAxis.borderBoxSize);
+    setContentBoxInlineSize(geometry, inlineAxis.borderBoxSize);
+    auto contentBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize(inlineAxis.borderBoxSize).transform([&](auto contentBoxBlockSize) {
+        return std::max(0_lu, contentBoxBlockSize - geometry.verticalSpaceForScrollbar());
+    });
 
     auto intrinsicContentBlockSize = LayoutUnit { };
     if (box->firstChild()) {
-        auto horizontalConstraints = HorizontalConstraints { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() };
+        auto horizontalConstraints = HorizontalConstraints { geometry.borderAndPaddingStart() + scrollbarInlineStartSpace(box, geometry), geometry.contentBoxWidth() };
         // Coverage keeps out the -webkit-fill-available block sizes inside, and the percentage block sizes of replaced elements in quirks mode.
         auto availableBlockSize = contentBoxBlockSize.value_or(0_lu);
         auto relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth());
@@ -1215,8 +1238,8 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     if (box->shouldApplySizeContainment())
         intrinsicContentBlockSize = box->explicitIntrinsicInnerLogicalHeight().value_or(0_lu);
 
-    auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize, inlineAxis.borderBoxSize);
-    geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
+    auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize + geometry.verticalSpaceForScrollbar(), inlineAxis.borderBoxSize);
+    setContentBoxBlockSize(geometry, blockAxis.borderBoxSize);
 
     // The result is in the logical coordinates of the containing block, whose inline axis is the box's block axis in an orthogonal flow. Border
     // and padding keep the box's own sides.
@@ -1267,7 +1290,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
     return {
         .blockContainer = blockContainer,
         .geometry = geometry,
-        .inlineRange = { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() },
+        .inlineRange = { geometry.borderAndPaddingStart() + scrollbarInlineStartSpace(blockContainer, geometry), geometry.contentBoxWidth() },
         .borderBoxLogicalLeftInRoot = parentState.borderBoxLogicalLeftInRoot + BoxGeometry::borderBoxLeft(geometry),
         .borderBoxLogicalTop = { },
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
@@ -1303,7 +1326,33 @@ BoxGeometry BlockFormattingContext::computeBorderAndPadding(const RenderBox& box
         { padding(style->paddingStart(writingMode)), padding(style->paddingEnd(writingMode)) },
         { padding(style->paddingBefore(writingMode)), padding(style->paddingAfter(writingMode)) }
     });
+    // The scrollbars of a scroll container take space from its padding box, between it and the border, which its content box gives up
+    // (RenderBox::verticalScrollbarWidth, horizontalScrollbarHeight), twice in the inline axis with scrollbar-gutter: stable both-edges
+    // (RenderBox::contentBoxWidth).
+    if (box.hasNonVisibleOverflow()) {
+        auto spaceForScrollbars = LayoutSize { box.verticalScrollbarWidth(), box.horizontalScrollbarHeight() };
+        if (!writingMode.isHorizontal())
+            spaceForScrollbars = spaceForScrollbars.transposedSize();
+        if (style->scrollbarGutter().isStableBothEdges())
+            spaceForScrollbars.setWidth(spaceForScrollbars.width() * 2);
+        geometry.setSpaceForScrollbar(spaceForScrollbars);
+    }
     return geometry;
+}
+
+// Where the content box of a scroll container starts in its padding box: past a vertical scrollbar on its inline-start side, or past the
+// gutter on that side with scrollbar-gutter: stable both-edges (RenderBlockFlow::determineLogicalLeftPositionForChild).
+LayoutUnit BlockFormattingContext::scrollbarInlineStartSpace(const RenderBox& box, const BoxGeometry& geometry) const
+{
+    auto inlineSpace = geometry.horizontalSpaceForScrollbar();
+    if (!inlineSpace)
+        return { };
+    if (box.style().scrollbarGutter().isStableBothEdges())
+        return inlineSpace / 2;
+    // In the box's own direction, which border and padding follow.
+    auto writingMode = box.writingMode();
+    auto isOnLogicalLeft = writingMode.isHorizontal() && box.shouldPlaceVerticalScrollbarOnLeft();
+    return isOnLogicalLeft == writingMode.isLogicalLeftInlineStart() ? inlineSpace : 0_lu;
 }
 
 // The min-content and max-content sizes of a box whose preferred aspect ratio gives its inline size: the size the ratio gives, floored by the
@@ -1351,6 +1400,9 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
         if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode) && !fitsContent && !BlockFormattingUtils::hasAspectRatioAutomaticMinimumInlineSize(box, aspectRatioBorderBoxInlineSize, writingMode))
             return { };
         auto sizes = computeIntrinsicInlineSizes(*blockContainer);
+        // With its scrollbars (RenderBlockFlow::computeIntrinsicLogicalWidths).
+        auto scrollbarInlineSize = LayoutUnit { box.intrinsicScrollbarLogicalWidthIncludingGutter() };
+        sizes = { sizes.minimum + scrollbarInlineSize, sizes.maximum + scrollbarInlineSize };
         if (!aspectRatioBorderBoxInlineSize)
             return sizes;
         return aspectRatioContentInlineSizes(box, std::max(0_lu, *aspectRatioBorderBoxInlineSize - horizontalBorderAndPadding), sizes, horizontalBorderAndPadding, writingMode);
@@ -1360,7 +1412,7 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     if (!style->logicalWidth(writingMode).isSpecified())
         aspectRatioInlineSizeLimits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding(), containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), writingMode);
     auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes, aspectRatioInlineSizeLimits, aspectRatioBorderBoxInlineSize, availableInlineSize);
-    geometry.setContentBoxWidth(borderBoxInlineSize - geometry.horizontalBorderAndPadding());
+    setContentBoxInlineSize(geometry, borderBoxInlineSize);
     // Unlike border and padding, start and end margins follow the direction of the containing block.
     geometry.setHorizontalMargin({ marginStart, marginEnd });
 }
@@ -1397,6 +1449,9 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
     };
     auto outerInlineSizes = [&](const RenderBox& box, IntrinsicWidthConstraints contentSizes) -> IntrinsicWidthConstraints {
         CheckedRef style = box.style();
+        // The scrollbars of a scroll container take part in the sizes of its content (RenderBlockFlow::computeIntrinsicLogicalWidths).
+        auto scrollbarInlineSize = LayoutUnit { box.intrinsicScrollbarLogicalWidthIncludingGutter() };
+        contentSizes = { contentSizes.minimum + scrollbarInlineSize, contentSizes.maximum + scrollbarInlineSize };
         auto zoom = style->usedZoomForLength();
         auto borderAndPadding = computeBorderAndPadding(box, 0_lu).horizontalBorderAndPadding();
         auto verticalBorderAndPadding = computeBorderAndPadding(box, 0_lu).verticalBorderAndPadding();
@@ -1628,10 +1683,12 @@ void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit i
     if (box.shouldApplySizeContainment())
         intrinsicContentBlockSize = box.explicitIntrinsicInnerLogicalHeight().value_or(0_lu);
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
-    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, percentageBasis(box, containingBlockState), stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode(), containingBlockIsTableCell(containingBlockState));
+    // An auto block size takes the scrollbar in the block axis too (RenderBlockFlow::layoutBlock).
+    auto scrollbarBlockSize = geometry.verticalSpaceForScrollbar();
+    auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize + scrollbarBlockSize, percentageBasis(box, containingBlockState), stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode(), containingBlockIsTableCell(containingBlockState));
     if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, containingBlockState.contentBoxBlockSize, stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), root().writingMode(), intrinsicContentBlockSize))
         blockSize = *aspectRatioBlockSize;
-    geometry.setContentBoxHeight(blockSize - borderAndPaddingBlockSize);
+    setContentBoxBlockSize(geometry, blockSize);
 }
 
 ConstraintsForInlineContent BlockFormattingContext::constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const
@@ -1640,9 +1697,11 @@ ConstraintsForInlineContent BlockFormattingContext::constraintsForInlineContent(
     auto& geometry = blockContainerState.geometry;
     auto horizontalConstraints = HorizontalConstraints { blockContainerState.inlineRange.min(), blockContainerState.inlineRange.size() };
     auto visualLeft = blockContainer.writingMode().isLogicalLeftInlineStart() ? geometry.borderAndPaddingStart() : geometry.borderAndPaddingEnd();
-    // The vertical scrollbar of a root sits between its left border and padding (LayoutIntegration::BoxGeometryUpdater::formattingContextConstraints),
-    // which is in the block axis in vertical writing modes.
-    if (blockContainer.shouldPlaceVerticalScrollbarOnLeft() && blockContainer.writingMode().isHorizontal())
+    // The vertical scrollbar of a scroll container sits between its left border and padding (LayoutIntegration::BoxGeometryUpdater::formattingContextConstraints),
+    // which is in the block axis in vertical writing modes, and so does one of the gutters with scrollbar-gutter: stable both-edges.
+    if (blockContainer.style().scrollbarGutter().isStableBothEdges())
+        visualLeft += geometry.horizontalSpaceForScrollbar() / 2;
+    else if (blockContainer.shouldPlaceVerticalScrollbarOnLeft() && blockContainer.writingMode().isHorizontal())
         visualLeft += geometry.horizontalSpaceForScrollbar();
     // The physical size of the border box, of which the inline formatting context only needs the inline size (InlineDisplayLineBuilder's
     // mapLineRectLogicalToVisual).
