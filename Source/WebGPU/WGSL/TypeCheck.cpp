@@ -484,7 +484,9 @@ Result<void> TypeChecker::declareBuiltins()
     CHECK(introduceValue(AST::Identifier::make("uniform"_s), m_types.addressSpaceType()));
     CHECK(introduceValue(AST::Identifier::make("storage"_s), m_types.addressSpaceType()));
 
-    // This file contains the declarations generated from `TypeDeclarations.rb`
+    // This file contains the declarations generated from `TypeDeclarations.rb`, which refer to the
+    // type store as `types`.
+    auto& types = m_types;
 #include "TypeDeclarations.h" // NOLINT
 
     return { };
@@ -2250,7 +2252,7 @@ Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceS
         valueArguments.append(type);
     }
 
-    auto selectedOverload = resolveOverloads(m_types, overload->overloads, valueArguments, typeArguments);
+    auto selectedOverload = resolveOverloads(m_types, m_shaderModule.overloadCandidates(*overload), valueArguments, typeArguments);
     if (selectedOverload.has_value()) {
         ASSERT(selectedOverload->parameters.size() == callArguments.size());
         if (m_discardResult == DiscardResult::Yes && overload->mustUse) [[unlikely]]
@@ -2697,9 +2699,8 @@ Result<void> TypeChecker::introduceFunction(const AST::Identifier& name, const T
 std::optional<FailedCheck> typeCheck(ShaderModule& shaderModule)
 {
     auto result = TypeChecker(shaderModule).check();
-    // Every module builds its own copy of the builtin overload candidates, several hundred kilobytes
-    // of them, and nothing resolves an overload after this. Free them now rather than when the page
-    // lets go of the module.
+    // Every module builds its own copy of the candidates of the builtins it calls, and nothing
+    // resolves an overload after this. Free them now rather than when the page lets go of the module.
     shaderModule.releaseOverloadCandidates();
     return result;
 }
