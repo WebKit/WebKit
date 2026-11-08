@@ -33,7 +33,7 @@
 #include <mach/mach.h>
 #include <wtf/RAMSize.h>
 #elif OS(UNIX)
-#if OS(FREEBSD) || OS(LINUX)
+#if OS(LINUX)
 #include <sys/sysinfo.h>
 #endif
 #include <unistd.h>
@@ -83,7 +83,7 @@ static size_t computeAvailableMemory()
     // Round up the memory size to a multiple of 128MB because max_mem may not be exactly 512MB
     // (for example) and we have code that depends on those boundaries.
     return roundUpToMultipleOf<128 * MB>(sizeAccordingToKernel);
-#elif OS(FREEBSD) || OS(LINUX)
+#elif OS(LINUX)
     struct sysinfo info;
     if (!sysinfo(&info))
         return info.totalram * info.mem_unit;
