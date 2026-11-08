@@ -30,6 +30,7 @@
 #include <WebCore/ColorConversion.h>
 #include <WebCore/ColorSerialization.h>
 #include <WebCore/ColorTypes.h>
+#include <WebCore/ColorUtilities.h>
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 
@@ -455,6 +456,222 @@ TEST(Color, ColorWithAlphaMultipliedBy)
         EXPECT_FLOAT_EQ(b, 1.);
         EXPECT_FLOAT_EQ(a, 0.);
     }
+}
+
+template<typename T> concept CanPremultiply = requires(const T& color) { premultiplied(color); };
+template<typename T> concept CanPremultiplyFlooring = requires(const T& color) { premultipliedFlooring(color); };
+template<typename T> concept CanUnpremultiply = requires(const T& color) { unpremultiplied(color); };
+template<typename T> concept CanResolve = requires(const T& color) { color.resolved(); };
+template<typename Output, typename Input> concept CanConvertColor = requires(const Input& color) { convertColor<Output>(color); };
+template<typename Output, typename Input> concept CanConvertColorCarryingForwardMissing = requires(const Input& color) { convertColorCarryingForwardMissing<Output>(color); };
+template<typename T> concept CanWrapInPremultiplied = requires { typename Premultiplied<T>; };
+
+using ResolvedSRGBA = ResolvedColorType<SRGBA<float>>;
+using UnresolvedSRGBA = UnresolvedColorType<SRGBA<float>>;
+
+static_assert(std::same_as<ResolvedPremultiplied<SRGBA<float>>, Premultiplied<ResolvedColorType<SRGBA<float>>>>);
+static_assert(std::same_as<UnresolvedPremultiplied<SRGBA<float>>, Premultiplied<UnresolvedColorType<SRGBA<float>>>>);
+
+static_assert(CanWrapInPremultiplied<ResolvedSRGBA>);
+static_assert(CanWrapInPremultiplied<UnresolvedSRGBA>);
+static_assert(!CanWrapInPremultiplied<SRGBA<float>>);
+static_assert(!CanWrapInPremultiplied<ResolvedPremultiplied<SRGBA<float>>>);
+
+static_assert(std::same_as<decltype(premultiplied(std::declval<UnresolvedSRGBA>())), UnresolvedPremultiplied<SRGBA<float>>>);
+static_assert(std::same_as<decltype(premultiplied(std::declval<ResolvedSRGBA>())), ResolvedPremultiplied<SRGBA<float>>>);
+
+static_assert(CanResolve<ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(!CanResolve<UnresolvedPremultiplied<SRGBA<float>>>);
+
+static_assert(CanPremultiply<UnresolvedSRGBA>);
+static_assert(CanPremultiply<ResolvedSRGBA>);
+static_assert(CanPremultiply<ResolvedColorType<ExtendedSRGBA<float>>>);
+static_assert(CanPremultiply<ResolvedColorType<HSLA<float>>>);
+static_assert(CanPremultiply<ResolvedColorType<HWBA<float>>>);
+static_assert(CanPremultiply<ResolvedColorType<LCHA<float>>>);
+static_assert(CanPremultiply<ResolvedColorType<OKLCHA<float>>>);
+static_assert(CanPremultiply<ResolvedColorType<Lab<float>>>);
+static_assert(CanPremultiply<ResolvedColorType<OKLab<float>>>);
+static_assert(CanPremultiply<ResolvedColorType<XYZA<float, WhitePoint::D65>>>);
+static_assert(!CanPremultiply<SRGBA<float>>);
+static_assert(!CanPremultiply<UnresolvedPremultiplied<SRGBA<float>>>);
+static_assert(!CanPremultiply<ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(!CanPremultiply<ResolvedColorType<SRGBA<uint8_t>>>);
+
+static_assert(CanPremultiplyFlooring<SRGBA<uint8_t>>);
+static_assert(!CanPremultiplyFlooring<ResolvedPremultiplied<SRGBA<uint8_t>>>);
+
+static_assert(std::same_as<decltype(unpremultiplied(std::declval<UnresolvedPremultiplied<SRGBA<float>>>())), UnresolvedSRGBA>);
+static_assert(std::same_as<decltype(unpremultiplied(std::declval<ResolvedPremultiplied<SRGBA<float>>>())), ResolvedSRGBA>);
+static_assert(std::same_as<decltype(unpremultiplied(std::declval<ResolvedPremultiplied<SRGBA<uint8_t>>>())), ResolvedColorType<SRGBA<uint8_t>>>);
+static_assert(std::is_convertible_v<ResolvedColorType<SRGBA<uint8_t>>, std::optional<Color>>);
+
+static_assert(CanUnpremultiply<UnresolvedPremultiplied<SRGBA<float>>>);
+static_assert(CanUnpremultiply<ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(CanUnpremultiply<ResolvedPremultiplied<SRGBA<uint8_t>>>);
+static_assert(!CanUnpremultiply<SRGBA<float>>);
+static_assert(!CanUnpremultiply<SRGBA<uint8_t>>);
+
+static_assert(CanConvertColor<LinearSRGBA<float>, SRGBA<float>>);
+static_assert(!CanConvertColor<LinearSRGBA<float>, UnresolvedPremultiplied<SRGBA<float>>>);
+static_assert(!CanConvertColor<LinearSRGBA<float>, ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(!CanConvertColor<ResolvedPremultiplied<LinearSRGBA<float>>, SRGBA<float>>);
+static_assert(!CanConvertColor<ResolvedPremultiplied<LinearSRGBA<float>>, ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(!CanConvertColorCarryingForwardMissing<LinearSRGBA<float>, ResolvedPremultiplied<SRGBA<float>>>);
+
+static_assert(!std::is_convertible_v<SRGBA<float>, ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(!std::is_convertible_v<ResolvedSRGBA, ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(!std::is_convertible_v<ResolvedPremultiplied<SRGBA<float>>, SRGBA<float>>);
+static_assert(!std::is_constructible_v<SRGBA<float>, ResolvedPremultiplied<SRGBA<float>>>);
+static_assert(!std::is_constructible_v<Color, ResolvedPremultiplied<SRGBA<float>>>);
+
+TEST(Color, PremultipliedFloat)
+{
+    auto [r, g, b, a] = premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.unresolved());
+    EXPECT_FLOAT_EQ(r, 0.5f);
+    EXPECT_FLOAT_EQ(g, 0.25f);
+    EXPECT_FLOAT_EQ(b, 0.125f);
+    EXPECT_FLOAT_EQ(a, 0.5f);
+}
+
+TEST(Color, PremultipliedExtended)
+{
+    auto [r, g, b, a] = premultiplied(ExtendedSRGBA<float> { 2.0f, -0.5f, 0.25f, 0.5f }.unresolved());
+    EXPECT_FLOAT_EQ(r, 1.0f);
+    EXPECT_FLOAT_EQ(g, -0.25f);
+    EXPECT_FLOAT_EQ(b, 0.125f);
+    EXPECT_FLOAT_EQ(a, 0.5f);
+}
+
+TEST(Color, PremultipliedRectangularNonRGB)
+{
+    auto [L, a, b, alpha] = premultiplied(OKLab<float> { 0.5f, 0.25f, -0.25f, 0.5f }.unresolved());
+    EXPECT_FLOAT_EQ(L, 0.25f);
+    EXPECT_FLOAT_EQ(a, 0.125f);
+    EXPECT_FLOAT_EQ(b, -0.125f);
+    EXPECT_FLOAT_EQ(alpha, 0.5f);
+}
+
+TEST(Color, PremultipliedLeavesHue)
+{
+    auto color = premultiplied(LCHA<float> { 50.0f, 40.0f, 120.0f, 0.5f }.unresolved());
+
+    auto [lightness, chroma, hue, alpha] = color;
+    EXPECT_FLOAT_EQ(lightness, 25.0f);
+    EXPECT_FLOAT_EQ(chroma, 20.0f);
+    EXPECT_FLOAT_EQ(hue, 120.0f);
+    EXPECT_FLOAT_EQ(alpha, 0.5f);
+
+    auto [unpremultipliedLightness, unpremultipliedChroma, unpremultipliedHue, unpremultipliedAlpha] = unpremultiplied(color);
+    EXPECT_FLOAT_EQ(unpremultipliedLightness, 50.0f);
+    EXPECT_FLOAT_EQ(unpremultipliedChroma, 40.0f);
+    EXPECT_FLOAT_EQ(unpremultipliedHue, 120.0f);
+    EXPECT_FLOAT_EQ(unpremultipliedAlpha, 0.5f);
+}
+
+TEST(Color, PremultipliedMissingComponent)
+{
+    auto [r, g, b, a] = premultiplied(SRGBA<float> { std::numeric_limits<float>::quiet_NaN(), 0.5f, 0.25f, 0.5f }.unresolved());
+    EXPECT_TRUE(std::isnan(r));
+    EXPECT_FLOAT_EQ(g, 0.25f);
+    EXPECT_FLOAT_EQ(b, 0.125f);
+    EXPECT_FLOAT_EQ(a, 0.5f);
+}
+
+TEST(Color, PremultipliedMissingAlpha)
+{
+    auto [r, g, b, a] = premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, std::numeric_limits<float>::quiet_NaN() }.unresolved());
+    EXPECT_FLOAT_EQ(r, 1.0f);
+    EXPECT_FLOAT_EQ(g, 0.5f);
+    EXPECT_FLOAT_EQ(b, 0.25f);
+    EXPECT_TRUE(std::isnan(a));
+}
+
+TEST(Color, PremultipliedResolved)
+{
+    auto color = premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.resolved());
+
+    auto [r, g, b, a] = color;
+    EXPECT_FLOAT_EQ(r, 0.5f);
+    EXPECT_FLOAT_EQ(g, 0.25f);
+    EXPECT_FLOAT_EQ(b, 0.125f);
+    EXPECT_FLOAT_EQ(a, 0.5f);
+
+    auto [unpremultipliedR, unpremultipliedG, unpremultipliedB, unpremultipliedA] = unpremultiplied(color);
+    EXPECT_FLOAT_EQ(unpremultipliedR, 1.0f);
+    EXPECT_FLOAT_EQ(unpremultipliedG, 0.5f);
+    EXPECT_FLOAT_EQ(unpremultipliedB, 0.25f);
+    EXPECT_FLOAT_EQ(unpremultipliedA, 0.5f);
+}
+
+TEST(Color, PremultipliedResolvedMissingAlpha)
+{
+    auto [r, g, b, a] = premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, std::numeric_limits<float>::quiet_NaN() }.resolved());
+    EXPECT_FLOAT_EQ(r, 0.0f);
+    EXPECT_FLOAT_EQ(g, 0.0f);
+    EXPECT_FLOAT_EQ(b, 0.0f);
+    EXPECT_FLOAT_EQ(a, 0.0f);
+}
+
+TEST(Color, UnpremultipliedFloat)
+{
+    auto [r, g, b, a] = unpremultiplied(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.unresolved())).resolved();
+    EXPECT_FLOAT_EQ(r, 1.0f);
+    EXPECT_FLOAT_EQ(g, 0.5f);
+    EXPECT_FLOAT_EQ(b, 0.25f);
+    EXPECT_FLOAT_EQ(a, 0.5f);
+}
+
+TEST(Color, UnpremultipliedFloatTransparent)
+{
+    auto [r, g, b, a] = unpremultiplied(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.0f }.unresolved())).resolved();
+    EXPECT_FLOAT_EQ(r, 0.0f);
+    EXPECT_FLOAT_EQ(g, 0.0f);
+    EXPECT_FLOAT_EQ(b, 0.0f);
+    EXPECT_FLOAT_EQ(a, 0.0f);
+}
+
+TEST(Color, UnpremultipliedMissingComponent)
+{
+    auto [r, g, b, a] = unpremultiplied(Premultiplied { SRGBA<float> { std::numeric_limits<float>::quiet_NaN(), 0.25f, 0.125f, 0.5f }.unresolved() });
+    EXPECT_TRUE(std::isnan(r));
+    EXPECT_FLOAT_EQ(g, 0.5f);
+    EXPECT_FLOAT_EQ(b, 0.25f);
+    EXPECT_FLOAT_EQ(a, 0.5f);
+}
+
+TEST(Color, UnpremultipliedMissingAlpha)
+{
+    auto [r, g, b, a] = unpremultiplied(Premultiplied { SRGBA<float> { 0.5f, 0.25f, 0.125f, std::numeric_limits<float>::quiet_NaN() }.unresolved() });
+    EXPECT_FLOAT_EQ(r, 0.5f);
+    EXPECT_FLOAT_EQ(g, 0.25f);
+    EXPECT_FLOAT_EQ(b, 0.125f);
+    EXPECT_TRUE(std::isnan(a));
+}
+
+TEST(Color, PremultipliedFlooring)
+{
+    EXPECT_TRUE((premultipliedFlooring(SRGBA<uint8_t> { 255, 128, 64, 128 }) == Premultiplied { SRGBA<uint8_t> { 128, 64, 32, 128 }.resolved() }));
+    EXPECT_TRUE((premultipliedFlooring(SRGBA<uint8_t> { 10, 20, 30, 255 }) == Premultiplied { SRGBA<uint8_t> { 10, 20, 30, 255 }.resolved() }));
+    EXPECT_TRUE((premultipliedFlooring(SRGBA<uint8_t> { 10, 20, 30, 0 }) == Premultiplied { SRGBA<uint8_t> { 0, 0, 0, 0 }.resolved() }));
+}
+
+TEST(Color, ConvertComponentTypeOfPremultiplied)
+{
+    auto color = convertComponentType<uint8_t>(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.0f, 0.5f }.resolved()));
+    EXPECT_TRUE((color == Premultiplied { SRGBA<uint8_t> { 128, 64, 0, 128 }.resolved() }));
+}
+
+TEST(Color, ColorComponentsOfPremultiplied)
+{
+    EXPECT_EQ(asColorComponents(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.unresolved())), (ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }));
+    EXPECT_EQ(asColorComponents(premultiplied(SRGBA<float> { 1.0f, 0.5f, 0.25f, 0.5f }.resolved())), (ColorComponents<float, 4> { 0.5f, 0.25f, 0.125f, 0.5f }));
+}
+
+TEST(Color, PackedColorFromPremultiplied)
+{
+    EXPECT_EQ(PackedColor::RGBA { premultipliedFlooring(SRGBA<uint8_t> { 255, 128, 64, 128 }) }.value, 0x80402080u);
+    EXPECT_EQ(PackedColor::ARGB { premultipliedFlooring(SRGBA<uint8_t> { 255, 128, 64, 128 }) }.value, 0x80804020u);
 }
 
 } // namespace TestWebKitAPI

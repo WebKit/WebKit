@@ -34,12 +34,15 @@
 
 namespace WebCore {
 
-SRGBA<float> premultiplied(const SRGBA<float>&);
-SRGBA<float> unpremultiplied(const SRGBA<float>&);
+template<IsColorTypeWithComponentType<float> ColorType> constexpr UnresolvedPremultiplied<ColorType> premultiplied(const UnresolvedColorType<ColorType>&);
+template<IsColorTypeWithComponentType<float> ColorType> constexpr ResolvedPremultiplied<ColorType> premultiplied(const ResolvedColorType<ColorType>&);
 
-NODELETE WEBCORE_EXPORT SRGBA<uint8_t> premultipliedFlooring(SRGBA<uint8_t>);
-NODELETE SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t>);
-NODELETE SRGBA<uint8_t> unpremultiplied(SRGBA<uint8_t>);
+template<IsColorTypeWithComponentType<float> ColorType> constexpr UnresolvedColorType<ColorType> unpremultiplied(const UnresolvedPremultiplied<ColorType>&);
+template<IsColorTypeWithComponentType<float> ColorType> constexpr ResolvedColorType<ColorType> unpremultiplied(const ResolvedPremultiplied<ColorType>&);
+
+NODELETE WEBCORE_EXPORT ResolvedPremultiplied<SRGBA<uint8_t>> premultipliedFlooring(SRGBA<uint8_t>);
+NODELETE ResolvedPremultiplied<SRGBA<uint8_t>> premultipliedCeiling(SRGBA<uint8_t>);
+NODELETE ResolvedColorType<SRGBA<uint8_t>> unpremultiplied(ResolvedPremultiplied<SRGBA<uint8_t>>);
 
 uint8_t convertPrescaledSRGBAFloatToSRGBAByte(float);
 
@@ -93,6 +96,51 @@ constexpr bool isWhite(const XYZA<float, W>&);
 constexpr uint16_t fastMultiplyBy255(uint16_t);
 constexpr uint16_t fastDivideBy255(uint16_t);
 
+template<typename ColorType, unsigned Index> constexpr float premultipliedComponent(float component, float alpha)
+{
+    if constexpr (ColorType::Model::componentInfo[Index].type == ColorComponentType::Angle)
+        return component;
+    else
+        return component * alpha;
+}
+
+template<typename ColorType, unsigned Index> constexpr float unpremultipliedComponent(float component, float alpha)
+{
+    if constexpr (ColorType::Model::componentInfo[Index].type == ColorComponentType::Angle)
+        return component;
+    else
+        return component / alpha;
+}
+
+template<IsColorTypeWithComponentType<float> ColorType> constexpr UnresolvedPremultiplied<ColorType> premultiplied(const UnresolvedColorType<ColorType>& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    if (isNaNConstExpr(alpha))
+        return Premultiplied { color };
+    return Premultiplied { ColorType { premultipliedComponent<ColorType, 0>(c1, alpha), premultipliedComponent<ColorType, 1>(c2, alpha), premultipliedComponent<ColorType, 2>(c3, alpha), alpha }.unresolved() };
+}
+
+template<IsColorTypeWithComponentType<float> ColorType> constexpr ResolvedPremultiplied<ColorType> premultiplied(const ResolvedColorType<ColorType>& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    return Premultiplied { ColorType { premultipliedComponent<ColorType, 0>(c1, alpha), premultipliedComponent<ColorType, 1>(c2, alpha), premultipliedComponent<ColorType, 2>(c3, alpha), alpha }.resolved() };
+}
+
+template<IsColorTypeWithComponentType<float> ColorType> constexpr UnresolvedColorType<ColorType> unpremultiplied(const UnresolvedPremultiplied<ColorType>& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    if (!alpha || isNaNConstExpr(alpha))
+        return ColorType { c1, c2, c3, alpha }.unresolved();
+    return makeFromComponentsClampingExceptAlpha<ColorType>(unpremultipliedComponent<ColorType, 0>(c1, alpha), unpremultipliedComponent<ColorType, 1>(c2, alpha), unpremultipliedComponent<ColorType, 2>(c3, alpha), alpha).unresolved();
+}
+
+template<IsColorTypeWithComponentType<float> ColorType> constexpr ResolvedColorType<ColorType> unpremultiplied(const ResolvedPremultiplied<ColorType>& color)
+{
+    auto [c1, c2, c3, alpha] = color;
+    if (!alpha)
+        return ColorType { c1, c2, c3, alpha }.resolved();
+    return makeFromComponentsClampingExceptAlpha<ColorType>(unpremultipliedComponent<ColorType, 0>(c1, alpha), unpremultipliedComponent<ColorType, 1>(c2, alpha), unpremultipliedComponent<ColorType, 2>(c3, alpha), alpha).resolved();
+}
 
 inline uint8_t convertPrescaledSRGBAFloatToSRGBAByte(float value)
 {
