@@ -411,9 +411,12 @@ Heap::~Heap()
 
     m_mutatorMarkStack->clear();
 
-    while (WeakBlock* block = m_detachedWeakBlocks.removeHead())
-        WeakBlock::destroy(*this, block);
-    destroyAllPooledWeakBlocks();
+    {
+        Locker locker { m_weakBlockLock };
+        while (WeakBlock* block = m_detachedWeakBlocks.removeHead())
+            WeakBlock::destroy(*this, block);
+        destroyAllPooledWeakBlocks();
+    }
     ASSERT(!m_weakBlockCount);
 }
 
@@ -1291,7 +1294,10 @@ void Heap::sweepSynchronously()
     }
     m_objectSpace.sweepBlocks();
     m_objectSpace.shrink();
-    destroyAllPooledWeakBlocks();
+    {
+        Locker locker { m_weakBlockLock };
+        destroyAllPooledWeakBlocks();
+    }
 #if ENABLE(WEBASSEMBLY)
     Wasm::TypeInformation::cleanupIfRequested();
 #endif
@@ -2129,33 +2135,41 @@ bool Heap::shouldSweepSynchronously()
     return overCriticalMemoryThreshold() || Options::sweepSynchronously() || VM::isInMiniMode();
 }
 
-void Heap::addDetachedWeakBlock(WeakBlock* block)
+void Heap::addDetachedWeakBlock(Locker<Lock>& locker, WeakBlock* block)
 {
     RELEASE_ASSERT(!block->next() && !block->prev());
     ASSERT(&block->heap() == this);
-    block->setDetached();
+    block->setDetached(locker);
     m_detachedWeakBlocks.append(block);
 }
 
-void Heap::releaseDetachedWeakBlock(WeakBlock* block)
+void Heap::releaseDetachedWeakBlock(Locker<Lock>& locker, WeakBlock* block, IsConcurrent isConcurrent)
 {
     ASSERT(&block->heap() == this);
     m_detachedWeakBlocks.remove(block);
-    returnWeakBlockToPool(block);
+    returnWeakBlockToPool(locker, block, isConcurrent);
 }
 
-void Heap::returnWeakBlockToPool(WeakBlock* block)
+void Heap::returnWeakBlockToPool(Locker<Lock>& locker, WeakBlock* block, IsConcurrent isConcurrent)
 {
-    RELEASE_ASSERT(!block->next() && !block->prev());
     ASSERT(&block->heap() == this);
     ASSERT(block->isEmpty());
 
-    if (m_pooledWeakBlockCount >= maxPooledWeakBlocks()) {
-        WeakBlock::destroy(*this, block);
-        return;
-    }
+    addWeakBlockToPool(locker, block);
 
-    block->setPooled();
+    // Destroying a block updates the mutator's block accounting, so a concurrent caller can leave the
+    // pool over its limit for the mutator to trim here.
+    if (isConcurrent == IsConcurrent::No) {
+        unsigned maxPooled = maxPooledWeakBlocks();
+        while (m_pooledWeakBlockCount > maxPooled)
+            WeakBlock::destroy(*this, takeWeakBlockFromPool());
+    }
+}
+
+void Heap::addWeakBlockToPool(Locker<Lock>& locker, WeakBlock* block)
+{
+    RELEASE_ASSERT(!block->next() && !block->prev());
+    block->setPooled(locker);
     m_pooledWeakBlocks.push(block);
     ++m_pooledWeakBlockCount;
 }

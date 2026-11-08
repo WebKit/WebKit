@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2016, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "Heap.h"
 #include "VM.h"
+#include "WeakSetInlines.h"
 
 namespace JSC {
 
@@ -42,52 +43,70 @@ WeakSet::~WeakSet()
     RELEASE_ASSERT(m_blocks.isEmpty());
 }
 
+bool WeakSet::isEmpty() const
+{
+    Locker locker { weakBlockLock() };
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
+        if (!block->isEmpty())
+            return false;
+    }
+
+    return true;
+}
+
+bool WeakSet::isTriviallyDestructible() const
+{
+    Locker locker { weakBlockLock() };
+    if (!m_blocks.isEmpty())
+        return false;
+    if (isOnList())
+        return false;
+    return true;
+}
+
 void WeakSet::lastChanceToFinalize()
 {
     // A finalizer may allocate a handle into this WeakSet, and that handle has to be finalized too.
     auto hasLiveHandles = [&] {
+        Locker locker { weakBlockLock() };
         for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
-            if (block->hasLiveHandles())
+            if (block->hasLiveHandles(locker))
                 return true;
         }
         return false;
     };
     do {
-        for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-            block->reapAllLiveHandles();
+        {
+            Locker locker { weakBlockLock() };
+            for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+                block->reapAllLiveHandles(locker);
+        }
         sweep();
     } while (hasLiveHandles());
 }
 
 void WeakSet::reap()
 {
-    forEachBlock([](WeakBlock& block) {
-        block.reap();
+    Locker locker { weakBlockLock() };
+    forEachBlock([&](WeakBlock& block) {
+        block.reap(locker);
     });
 }
 
-void WeakSet::didBecomeEmpty(WeakBlock* block)
+void WeakSet::tryReleaseBlock(Locker<Lock>& locker, WeakBlock* block, IsConcurrent isConcurrent)
 {
-    Locker locker { heap()->weakBlockLock() };
-    tryReleaseBlock(locker, block);
-}
-
-void WeakSet::tryReleaseBlock(const AbstractLocker&, WeakBlock* block)
-{
-    if (block->m_isIterationTarget)
+    locker.assertIsHolding(heap()->weakBlockLock());
+    if (block->isIterationTarget())
         return;
 
-    // Past this point the caller must be the thread with heap access, or the world must be stopped.
-    // Nothing tracks which thread has heap access, and many clients clear Weak<>s without holding the
-    // API lock
-
-    // The fast path allocates out of m_currentBlock without consulting the list, so that block
-    // can't be changed concurrently; a later shrink() will collect it.
+    // The fast path allocates out of m_currentBlock without the lock.
     if (block == m_currentBlock)
         return;
 
+    // No other block can be allocated from while the lock is held, since changing m_currentBlock
+    // takes it. A concurrent caller releases only empty blocks; the mutator detaches the rest.
     bool isEmpty = block->isEmpty();
-    if (!isEmpty && !block->hasOnlyFinalizedHandles())
+    if (!isEmpty && (isConcurrent == IsConcurrent::Yes || !block->hasOnlyFinalizedHandles(locker)))
         return;
 
     if (block == m_nextAllocator)
@@ -95,81 +114,78 @@ void WeakSet::tryReleaseBlock(const AbstractLocker&, WeakBlock* block)
 
     m_blocks.remove(block);
     if (isEmpty)
-        heap()->returnWeakBlockToPool(block);
+        heap()->returnWeakBlockToPool(locker, block, isConcurrent);
     else
-        heap()->addDetachedWeakBlock(block);
+        heap()->addDetachedWeakBlock(locker, block);
 
-    if (m_blocks.isEmpty() && isOnList())
+    // Only the mutator changes the active lists. releaseBlocks() and shrink() drop a WeakSet that a
+    // concurrent caller emptied.
+    if (isConcurrent == IsConcurrent::No && m_blocks.isEmpty() && isOnList())
         remove();
 }
 
 void WeakSet::sweep()
 {
-    // WeakBlock::sweep calls finalizer and it can allocate/deallocate WeakImpls. This means,
-    //
-    // 1. New WeakBlock can be allocated and chained to m_blocks during iteration.
-    // 2. WeakBlocks get empty and removed from m_blocks.
-    //
-    // So our approach is,
-    //
-    // 1. We are iterating doubly-linked list, so it is fine when a new WeakBlock is appended to m_blocks.
-    // 2. During sweeping, we mark WeakBlock via WeakBlock::IterationScope. This defers empty / logically-empty chaining.
-    //    Thus we do not unchain the currently swept block from m_blocks.
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
-        WeakBlock::IterationScope iterationScope(*block);
-        block->sweep();
-    }
+    // A WeakSet with blocks is always on one of MarkedSpace's active lists.
+    if (!isOnList())
+        return;
 
+    finalizeDeadHandles();
     releaseBlocks();
 }
 
 void WeakSet::finalizeDeadHandles()
 {
-    Lock& lock = heap()->weakBlockLock();
+    // Finalizers run during sweep() and may take weakBlockLock(). Marking the swept block as the
+    // iteration target keeps tryReleaseBlock() from unlinking it while the lock is dropped. A block a
+    // finalizer appends is still reached through next().
     WeakBlock* block;
     {
-        Locker locker { lock };
+        Locker locker { weakBlockLock() };
         block = m_blocks.head();
         if (!block)
             return;
-        ASSERT(!block->m_isIterationTarget);
-        block->m_isIterationTarget = true;
+        ASSERT(!block->isIterationTarget());
+        block->setIterationTarget(locker, true);
     }
 
     while (block) {
         block->sweep();
 
-        Locker locker { lock };
-        block->m_isIterationTarget = false;
+        Locker locker { weakBlockLock() };
+        block->setIterationTarget(locker, false);
         block = block->next();
         if (block) {
-            ASSERT(!block->m_isIterationTarget);
-            block->m_isIterationTarget = true;
+            ASSERT(!block->isIterationTarget());
+            block->setIterationTarget(locker, true);
         }
     }
 }
 
 void WeakSet::releaseBlocks()
 {
-    if (m_blocks.isEmpty())
-        return;
+    Locker locker { weakBlockLock() };
+    assertIsHoldingWeakBlockLock();
 
     // A finalizer can clear the last live handle in a block a sweep already let go of. Nothing
-    // revisits a block when its live count reaches zero, so classify every block, including the one
+    // revisits a block when its last live handle is cleared, so classify every block, including the one
     // the allocator was using.
-    Locker locker { heap()->weakBlockLock() };
     m_currentBlock = nullptr;
     WeakBlock* next;
     for (WeakBlock* block = m_blocks.head(); block; block = next) {
         next = block->next();
-        tryReleaseBlock(locker, block);
+        tryReleaseBlock(locker, block, IsConcurrent::No);
     }
-    resetAllocator(locker);
+    resetAllocator();
+
+    if (m_blocks.isEmpty() && isOnList())
+        remove();
 }
 
 void WeakSet::shrink()
 {
-    Locker locker { heap()->weakBlockLock() };
+    Locker locker { weakBlockLock() };
+    assertIsHoldingWeakBlockLock();
     m_currentBlock = nullptr;
 
     WeakBlock* next;
@@ -177,10 +193,13 @@ void WeakSet::shrink()
         next = block->next();
 
         if (block->isEmpty())
-            tryReleaseBlock(locker, block);
+            tryReleaseBlock(locker, block, IsConcurrent::No);
     }
 
-    resetAllocator(locker);
+    resetAllocator();
+
+    if (m_blocks.isEmpty() && isOnList())
+        remove();
 }
 
 WeakBlock* WeakSet::findAllocator(CellContainer container)
@@ -193,6 +212,8 @@ WeakBlock* WeakSet::findAllocator(CellContainer container)
 
 WeakBlock* WeakSet::tryFindAllocator()
 {
+    Locker locker { weakBlockLock() };
+    assertIsHoldingWeakBlockLock();
     while (m_nextAllocator) {
         WeakBlock* block = m_nextAllocator;
         m_nextAllocator = m_nextAllocator->next();
@@ -209,20 +230,23 @@ WeakBlock* WeakSet::addAllocator(CellContainer container)
     if (!isOnList())
         heap()->objectSpace().addActiveWeakSet(this);
 
-    WeakBlock* block = heap()->takeWeakBlockFromPool();
-    if (block)
-        block->reattach(container);
-    else {
+    WeakBlock* block;
+    {
+        Locker locker { heap()->weakBlockLock() };
+        block = heap()->takeWeakBlockFromPool();
+        if (block)
+            block->reattach(locker, container);
+    }
+    if (!block) {
         block = WeakBlock::create(*heap(), container);
         // Only a block that is new memory counts against the eden trigger. One taken from the
         // pool adds no footprint.
         heap()->didAllocate(WeakBlock::blockSize);
     }
 
-    {
-        Locker locker { heap()->weakBlockLock() };
-        m_blocks.append(block);
-    }
+    Locker locker { weakBlockLock() };
+    assertIsHoldingWeakBlockLock();
+    m_blocks.append(block);
     ASSERT(block->hasFreeCell());
     return m_currentBlock = block;
 }

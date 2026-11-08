@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/MarkedBlockInlines.h>
 #include <JavaScriptCore/MarkedSpace.h>
+#include <JavaScriptCore/WeakSetInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -100,6 +101,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visito
                 if (m_current) {
                     auto* block = m_current;
                     m_current = m_current->next();
+                    block->assertWorldIsStopped();
                     if (!block->hasLiveHandles())
                         continue;
                     results[resultsSize++] = block;
@@ -109,13 +111,17 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visito
                 }
 
                 if (m_newActiveCursor != m_markedSpace.m_newActiveWeakSets.end()) {
-                    m_current = m_newActiveCursor->head();
+                    WeakSet& weakSet = *m_newActiveCursor;
+                    weakSet.assertWorldIsStopped();
+                    m_current = weakSet.head();
                     ++m_newActiveCursor;
                     continue;
                 }
 
                 if (m_activeCursor != m_markedSpace.m_activeWeakSets.end()) {
-                    m_current = m_activeCursor->head();
+                    WeakSet& weakSet = *m_activeCursor;
+                    weakSet.assertWorldIsStopped();
+                    m_current = weakSet.head();
                     ++m_activeCursor;
                     continue;
                 }

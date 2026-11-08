@@ -48,7 +48,9 @@ public:
     // The handle is already dead when finalize is called. Thus, it must follow the same rules as any `destroy`: no entering into
     // JS, allocating GC objects, no looking at GC member values. The last one includes Structure, which means `downcast`/`is`
     // cannot be used, `static_cast` should be used instead.
-    // A finalizer may clear other handles only on the mutator, never when WeakSet::finalizeDeadHandles() runs it on another thread.
+    // WeakSet::finalizeDeadHandles() may run a finalizer off the thread with heap access, so a finalizer must not allocate a handle,
+    // which needs heap access, and may clear other handles only with Weak::clearConcurrently(). That includes not destroying an
+    // object that holds a Weak<>, since ~Weak calls clear().
     virtual FinalizeResult finalize(Handle<Unknown>, void* context);
 
 private:

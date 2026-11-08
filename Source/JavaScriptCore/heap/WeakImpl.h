@@ -39,6 +39,7 @@ class WeakImpl {
 public:
     enum State {
         Live        = 0x0,
+        // FIXME: Rename to Finalizable, since a Dead handle is one waiting for its finalizer.
         Dead        = 0x1,
         Finalized   = 0x2,
         Deallocated = 0x3
@@ -53,6 +54,11 @@ public:
 
     State state();
     NODELETE void clear();
+
+    // This should generally only be called from a finalizer. It must run on a GC aware thread, one that
+    // stop-the-world pauses halt, so it never runs while the world is stopped. On the thread with heap
+    // access, clear() is faster and does better bookkeeping.
+    JS_EXPORT_PRIVATE void clearConcurrently();
 
     JSValue jsValue() { return JSValue::decode(m_jsValue.load<MemoryOrder::Relaxed>()); }
     WeakHandleOwner* weakHandleOwner() { return weakHandleOwnerOf(stateWord()); }
@@ -78,6 +84,7 @@ private:
     void setDead();
     WeakImplSnapshot trySetFinalized(uintptr_t deadStateWord);
     uintptr_t stateWord();
+    State setDeallocated();
 
     Atomic<EncodedJSValue> m_jsValue;
     Atomic<uintptr_t> m_weakHandleOwner;
