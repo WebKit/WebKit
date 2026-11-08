@@ -136,6 +136,11 @@ TEST(Fullscreen, VisibilityChangeNotDispatched)
     [[window contentView] addSubview:webView.get()];
     [window makeKeyAndOrderFront:nil];
 
+    receivedWillEnterFullscreenMessage = false;
+    receivedDidEnterFullscreenMessage = false;
+    receivedWillExitFullscreenMessage = false;
+    receivedDidExitFullscreenMessage = false;
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"FullscreenDelegate" withExtension:@"html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedLoadedMessage);

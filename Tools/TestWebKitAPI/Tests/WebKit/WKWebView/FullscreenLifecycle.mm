@@ -35,12 +35,10 @@
 
 static NSString * const canEnterFullscreenKeyPath = @"_canEnterFullscreen";
 static NSString * const fullscreenStateKeyPath = @"fullscreenState";
-#if PLATFORM(MAC)
-static bool canEnterFullscreenChanged;
-#endif
-static bool fullscreenStateChanged;
 
 @interface FullscreenLifecycleObserver : NSObject
+@property (nonatomic) BOOL canEnterFullscreenChanged;
+@property (nonatomic) BOOL fullscreenStateChanged;
 @end
 
 @implementation FullscreenLifecycleObserver
@@ -48,12 +46,10 @@ static bool fullscreenStateChanged;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
 {
     ASSERT([object isKindOfClass:WKWebView.class]);
-    if ([keyPath isEqualToString:canEnterFullscreenKeyPath]) {
-#if PLATFORM(MAC)
-        canEnterFullscreenChanged = true;
-#endif
-    } else if ([keyPath isEqualToString:fullscreenStateKeyPath])
-        fullscreenStateChanged = true;
+    if ([keyPath isEqualToString:canEnterFullscreenKeyPath])
+        _canEnterFullscreenChanged = YES;
+    else if ([keyPath isEqualToString:fullscreenStateKeyPath])
+        _fullscreenStateChanged = YES;
     else
         ASSERT_NOT_REACHED();
 }
@@ -103,7 +99,7 @@ static void runTest(WKWebViewConfiguration *configuration)
         return [webView _canEnterFullscreen];
     });
     ASSERT_TRUE([webView _canEnterFullscreen]);
-    ASSERT_TRUE(canEnterFullscreenChanged);
+    ASSERT_TRUE([observer canEnterFullscreenChanged]);
 
     [webView _enterFullscreen];
 
@@ -111,25 +107,25 @@ static void runTest(WKWebViewConfiguration *configuration)
         return [webView fullscreenState] == WKFullscreenStateInFullscreen;
     });
     ASSERT_EQ([webView fullscreenState], WKFullscreenStateInFullscreen);
-    ASSERT_TRUE(fullscreenStateChanged);
+    ASSERT_TRUE([observer fullscreenStateChanged]);
 
-    fullscreenStateChanged = false;
+    [observer setFullscreenStateChanged:NO];
     [webView closeAllMediaPresentationsWithCompletionHandler:^{ }];
 
     TestWebKitAPI::Util::waitFor([&] {
         return [webView fullscreenState] == WKFullscreenStateNotInFullscreen;
     });
     ASSERT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
-    ASSERT_TRUE(fullscreenStateChanged);
+    ASSERT_TRUE([observer fullscreenStateChanged]);
 
-    canEnterFullscreenChanged = false;
+    [observer setCanEnterFullscreenChanged:NO];
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
 
     TestWebKitAPI::Util::waitFor([&] {
         return ![webView _canEnterFullscreen];
     });
     ASSERT_FALSE([webView _canEnterFullscreen]);
-    ASSERT_TRUE(canEnterFullscreenChanged);
+    ASSERT_TRUE([observer canEnterFullscreenChanged]);
 
     [webView removeObserver:observer.get() forKeyPath:canEnterFullscreenKeyPath];
     [webView removeObserver:observer.get() forKeyPath:fullscreenStateKeyPath];
@@ -184,14 +180,14 @@ TEST(Fullscreen, VideoPausesAfterExitingFullscreen)
         return [webView fullscreenState] == WKFullscreenStateInFullscreen;
     });
     ASSERT_EQ([webView fullscreenState], WKFullscreenStateInFullscreen);
-    ASSERT_TRUE(fullscreenStateChanged);
+    ASSERT_TRUE([observer fullscreenStateChanged]);
 
-    fullscreenStateChanged = false;
+    [observer setFullscreenStateChanged:NO];
     [webView closeAllMediaPresentationsWithCompletionHandler:^{ }];
     [webView waitForMessage:@"paused"];
 
     ASSERT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
-    ASSERT_TRUE(fullscreenStateChanged);
+    ASSERT_TRUE([observer fullscreenStateChanged]);
 }
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
