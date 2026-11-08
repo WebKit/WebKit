@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+.base, .base::picker(select) {
+    appearance: base-select;
+}
+#container {
+    white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+<div id="container">
+<select id="disabledDropdown" class="base" disabled><option>one</option></select>
+<select id="disabledMultipleDropdown" class="base" multiple size="1" disabled><option>one</option></select>
+<select id="multipleDropdown" class="base" multiple size="1"><optgroup label="group"><option>one</option></optgroup><option>two</option></select>
+<select id="listBox" class="base" size="4"><optgroup label="group"><option>one</option></optgroup><option>two</option></select>
+</div>
+<script>
+description("A base appearance select has the styles of its own box type, also where a native select with the same attributes has another box type.");
+
+function style(id)
+{
+    return getComputedStyle(document.getElementById(id));
+}
+
+debug("A disabled multiple dropdown box looks disabled, like a disabled single one.");
+shouldBeEqualToString('style("disabledMultipleDropdown").cursor', "not-allowed");
+for (const property of ["color", "backgroundColor", "borderTopColor"])
+    shouldBe(`style("disabledMultipleDropdown").${property}`, `style("disabledDropdown").${property}`);
+
+debug("");
+debug("Only an optgroup that is not the first child gets a separator, not an option after an optgroup.");
+for (const id of ["multipleDropdown", "listBox"])
+    shouldBeEqualToString(`getComputedStyle(${id}.querySelector("optgroup + option")).borderBlockStartStyle`, "none");
+
+debug("");
+debug("A list box inherits white-space and keeps its border when focused.");
+shouldBeEqualToString('style("listBox").whiteSpace', "pre-wrap");
+const unfocusedBorderColor = style("listBox").borderTopColor;
+listBox.focus();
+shouldBeTrue("listBox.matches(':focus')");
+shouldBe('style("listBox").borderTopColor', "unfocusedBorderColor");
+
+container.remove();
+</script>
+</body>
+</html>
