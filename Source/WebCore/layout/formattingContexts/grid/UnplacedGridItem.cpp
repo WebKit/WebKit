@@ -27,6 +27,7 @@
 #include "UnplacedGridItem.h"
 
 #include "LayoutElementBox.h"
+#include "NamedGridLines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -43,18 +44,40 @@ namespace Layout {
 // A negative index is not a valid matrix position on its own; GridFormattingContext computes the
 // most-negative line across all items and shifts every line forward by that magnitude (the number
 // of leading implicit tracks) so, e.g., -2 above maps to matrix index 0. See GridPosition::create().
-NODELETE static int explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount)
+// A line given with a name counts only the lines with that name instead, and continues into the
+// implicit grid past the last of them (see below).
+NODELETE static int explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount, const NamedGridLines& namedGridLines)
 {
     ASSERT(position.isExplicit());
     auto line = position.explicitPosition();
     // A value of zero makes the declaration invalid.
     ASSERT(line);
-    return line > 0 ? line - 1 : static_cast<int>(explicitTrackCount) + 1 + line;
+    auto& lineName = position.namedGridLine();
+    if (lineName.value.isEmpty())
+        return line > 0 ? line - 1 : static_cast<int>(explicitTrackCount) + 1 + line;
+
+    // https://drafts.csswg.org/css-grid-1/#grid-placement-int
+    // "If a name is given as a <custom-ident>, only lines with that name are counted. If not enough lines with that name exist,
+    // all implicit grid lines are assumed to have that name for the purpose of finding this position."
+    // The Nth line with the name is the Nth entry of its lines (from the end for a negative N). Past the last one, the lines
+    // after the end of the explicit grid (or before its start) count, one per line. Style clamps line numbers to +-maxTracks,
+    // and the lines and the explicit track count are limited by maxTracks as well, so none of this overflows an int.
+    auto linesWithName = namedGridLines.lines(lineName);
+    if (line > 0) {
+        auto count = static_cast<size_t>(line);
+        if (count <= linesWithName.size())
+            return static_cast<int>(linesWithName[count - 1]);
+        return static_cast<int>(explicitTrackCount + (count - linesWithName.size()));
+    }
+    auto count = static_cast<size_t>(-static_cast<int64_t>(line));
+    if (count <= linesWithName.size())
+        return static_cast<int>(linesWithName[linesWithName.size() - count]);
+    return -static_cast<int>(count - linesWithName.size());
 }
 
-UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount, size_t maxTracks)
+UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines& namedGridLines, size_t leadingImplicitTracksCount, size_t maxTracks)
 {
-    auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount, maxTracks);
+    auto explicitRange = UnplacedGridItem::resolveDefinitePosition(start, end, explicitTrackCount, namedGridLines, maxTracks);
     if (!explicitRange) {
         // An axis with no explicit line is auto-positioned; carry the span forward for the
         // placement algorithm to resolve.
@@ -78,7 +101,7 @@ UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Styl
     return DefinitePosition { static_cast<size_t>(startLine), static_cast<size_t>(endLine) };
 }
 
-std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t maxTracks)
+std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines& namedGridLines, size_t maxTracks)
 {
     // An axis is only definite when one of its edges references an explicit line. Anything
     // else (auto/auto, span/auto, auto/span) is auto-positioned and has no explicit line range.
@@ -88,8 +111,8 @@ std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(con
     int startLine = 0;
     int endLine = 0;
     if (start.isExplicit() && end.isExplicit()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount);
-        endLine = explicitLineToIndex(end, explicitTrackCount);
+        startLine = explicitLineToIndex(start, explicitTrackCount, namedGridLines);
+        endLine = explicitLineToIndex(end, explicitTrackCount, namedGridLines);
 
         // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
         // "If the placement for a grid item contains two lines, and the start line is further
@@ -101,17 +124,17 @@ std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(con
         else if (startLine == endLine)
             endLine = startLine + 1;
     } else if (start.isExplicit() && end.isSpan()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount);
+        startLine = explicitLineToIndex(start, explicitTrackCount, namedGridLines);
         endLine = startLine + end.spanPosition();
     } else if (start.isSpan() && end.isExplicit()) {
-        endLine = explicitLineToIndex(end, explicitTrackCount);
+        endLine = explicitLineToIndex(end, explicitTrackCount, namedGridLines);
         startLine = endLine - static_cast<int>(start.spanPosition());
     } else if (start.isExplicit() && end.isAuto()) {
-        startLine = explicitLineToIndex(start, explicitTrackCount);
+        startLine = explicitLineToIndex(start, explicitTrackCount, namedGridLines);
         endLine = startLine + 1;
     } else {
         ASSERT(start.isAuto() && end.isExplicit());
-        endLine = explicitLineToIndex(end, explicitTrackCount);
+        endLine = explicitLineToIndex(end, explicitTrackCount, namedGridLines);
         startLine = endLine - 1;
     }
 
@@ -155,10 +178,10 @@ size_t UnplacedGridItem::GridPosition::span() const
 
 UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosition nonAutoFlowStart, Style::GridPosition nonAutoFlowEnd,
     Style::GridPosition autoFlowStart, Style::GridPosition autoFlowEnd, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount,
-    size_t leadingImplicitNonAutoFlowTracksCount, size_t leadingImplicitAutoFlowTracksCount, size_t maxTracks)
+    const NamedGridLines& namedNonAutoFlowLines, const NamedGridLines& namedAutoFlowLines, size_t leadingImplicitNonAutoFlowTracksCount, size_t leadingImplicitAutoFlowTracksCount, size_t maxTracks)
     : m_layoutBox(layoutBox)
-    , m_nonAutoFlowPosition(GridPosition::create(nonAutoFlowStart, nonAutoFlowEnd, explicitNonAutoFlowTracksCount, leadingImplicitNonAutoFlowTracksCount, maxTracks))
-    , m_autoFlowPosition(GridPosition::create(autoFlowStart, autoFlowEnd, explicitAutoFlowTracksCount, leadingImplicitAutoFlowTracksCount, maxTracks))
+    , m_nonAutoFlowPosition(GridPosition::create(nonAutoFlowStart, nonAutoFlowEnd, explicitNonAutoFlowTracksCount, namedNonAutoFlowLines, leadingImplicitNonAutoFlowTracksCount, maxTracks))
+    , m_autoFlowPosition(GridPosition::create(autoFlowStart, autoFlowEnd, explicitAutoFlowTracksCount, namedAutoFlowLines, leadingImplicitAutoFlowTracksCount, maxTracks))
 {
 }
 

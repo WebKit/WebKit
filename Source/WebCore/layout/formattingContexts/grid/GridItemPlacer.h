@@ -44,7 +44,7 @@ public:
     NODELETE GridItemPlacer(GridAutoFlowOptions);
 
     // Runs the grid item placement algorithm over the grid's in-flow children.
-    GridItemPlacementResult placeItems(const LogicalGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, size_t maxTracks) const;
+    GridItemPlacementResult placeItems(const LogicalGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, const NamedGridLines& namedColumnLines, const NamedGridLines& namedRowLines, size_t maxTracks) const;
 
 private:
     const GridAutoFlowOptions m_autoFlowOptions;

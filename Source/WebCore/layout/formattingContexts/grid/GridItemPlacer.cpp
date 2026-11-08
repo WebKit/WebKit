@@ -40,7 +40,7 @@ GridItemPlacer::GridItemPlacer(GridAutoFlowOptions autoFlowOptions)
 // The only place that maps between the columns and rows of the style and GridAreaLines and the non-auto-flow and auto-flow
 // tracks the placement works in (see UnplacedGridItem.h). For grid-auto-flow: row the auto-flow tracks are the rows and for
 // column they are the columns.
-static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, size_t leadingNonAutoFlowTracksCount, size_t leadingAutoFlowTracksCount, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount, size_t maxTracks, GridAutoFlowDirection direction)
+static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, size_t leadingNonAutoFlowTracksCount, size_t leadingAutoFlowTracksCount, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount, const NamedGridLines& namedNonAutoFlowLines, const NamedGridLines& namedAutoFlowLines, size_t maxTracks, GridAutoFlowDirection direction)
 {
     UnplacedGridItems unplacedGridItems;
     for (auto& gridItem : logicalGridItems) {
@@ -64,6 +64,8 @@ static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logi
             gridItemAutoFlowEnd,
             explicitNonAutoFlowTracksCount,
             explicitAutoFlowTracksCount,
+            namedNonAutoFlowLines,
+            namedAutoFlowLines,
             leadingNonAutoFlowTracksCount,
             leadingAutoFlowTracksCount,
             maxTracks
@@ -96,7 +98,7 @@ static GridAreaLines toGridAreaLines(const FlowRelativeAreaLines& area, GridAuto
 //
 // Step 3 (determining the non-auto-flow tracks in the implicit grid, the columns for grid-auto-flow: row) is handled while the grid is built, in
 // ImplicitGrid::createInitialGrid().
-GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, size_t maxTracks) const
+GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, const NamedGridLines& namedColumnLines, const NamedGridLines& namedRowLines, size_t maxTracks) const
 {
     auto direction = m_autoFlowOptions.direction;
     bool isColumnFlow = direction == GridAutoFlowDirection::Column;
@@ -105,7 +107,11 @@ GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logic
     auto explicitNonAutoFlowTracksCount = isColumnFlow ? explicitRowsCount : explicitColumnsCount;
     auto explicitAutoFlowTracksCount = isColumnFlow ? explicitColumnsCount : explicitRowsCount;
 
-    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingNonAutoFlowTracksCount, leadingAutoFlowTracksCount, explicitNonAutoFlowTracksCount, explicitAutoFlowTracksCount, maxTracks, direction);
+    // The name tables go with the style axis that the properties come from, like the track counts.
+    auto& namedNonAutoFlowLines = isColumnFlow ? namedRowLines : namedColumnLines;
+    auto& namedAutoFlowLines = isColumnFlow ? namedColumnLines : namedRowLines;
+
+    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingNonAutoFlowTracksCount, leadingAutoFlowTracksCount, explicitNonAutoFlowTracksCount, explicitAutoFlowTracksCount, namedNonAutoFlowLines, namedAutoFlowLines, maxTracks, direction);
     auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingNonAutoFlowTracksCount, leadingAutoFlowTracksCount, explicitNonAutoFlowTracksCount, explicitAutoFlowTracksCount, maxTracks);
 
     GridAreas gridAreas;

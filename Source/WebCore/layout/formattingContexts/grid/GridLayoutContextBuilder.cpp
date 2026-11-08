@@ -29,6 +29,7 @@
 #include "ExplicitGridResolver.h"
 #include "GridLayoutUtils.h"
 #include "LayoutChildIterator.h"
+#include "NamedGridLines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "UnplacedGridItem.h"
 
@@ -74,7 +75,7 @@ static size_t maxGridTracks()
     return static_cast<size_t>(Style::GridPosition::max());
 }
 
-static LeadingImplicitTracks computeLeadingImplicitTracks(const LogicalGridItems& logicalGridItems, const ExplicitGridTrackSizes& explicitGridTrackSizes, size_t maxTracks)
+static LeadingImplicitTracks computeLeadingImplicitTracks(const LogicalGridItems& logicalGridItems, const ExplicitGridTrackSizes& explicitGridTrackSizes, const NamedGridLines& namedColumnLines, const NamedGridLines& namedRowLines, size_t maxTracks)
 {
     // Negative line placements are resolved against the explicit grid track count, which can still
     // produce a negative line when the placement counts past the start edge of the explicit grid.
@@ -88,11 +89,11 @@ static LeadingImplicitTracks computeLeadingImplicitTracks(const LogicalGridItems
     int minimumRowLine = 0;
     for (auto& gridItem : logicalGridItems) {
         CheckedRef gridItemStyle = gridItem->style();
-        if (auto columnRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), explicitColumnCount, maxTracks)) {
+        if (auto columnRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), explicitColumnCount, namedColumnLines, maxTracks)) {
             auto [startLine, endLine] = *columnRange;
             minimumColumnLine = std::min({ minimumColumnLine, startLine, endLine });
         }
-        if (auto rowRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd(), explicitRowCount, maxTracks)) {
+        if (auto rowRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd(), explicitRowCount, namedRowLines, maxTracks)) {
             auto [startLine, endLine] = *rowRange;
             minimumRowLine = std::min({ minimumRowLine, startLine, endLine });
         }
@@ -258,7 +259,9 @@ GridLayoutContext GridLayoutContextBuilder::build(const GridLayoutContextInput& 
     auto usedRowGap = resolveGap(gridStyle->rowGap(), gridStyle);
     auto maxTracks = maxGridTracks();
     auto explicitGridTrackSizes = ExplicitGridResolver::resolve(gridStyle, input.inlineAxis.autoRepeat, input.blockAxis.autoRepeat, usedColumnGap, usedRowGap, maxTracks);
-    auto leadingImplicitTracks = computeLeadingImplicitTracks(logicalGridItems, explicitGridTrackSizes, maxTracks);
+    auto namedColumnLines = NamedGridLines::create(gridStyle->gridTemplateColumns(), explicitGridTrackSizes.columnAutoRepeatTracksIndexes.distance(), explicitGridTrackSizes.columnAutoRepeatTruncatedByLimit, explicitGridTrackSizes.columnsCount());
+    auto namedRowLines = NamedGridLines::create(gridStyle->gridTemplateRows(), explicitGridTrackSizes.rowAutoRepeatTracksIndexes.distance(), explicitGridTrackSizes.rowAutoRepeatTruncatedByLimit, explicitGridTrackSizes.rowsCount());
+    auto leadingImplicitTracks = computeLeadingImplicitTracks(logicalGridItems, explicitGridTrackSizes, namedColumnLines, namedRowLines, maxTracks);
 
     GridAutoFlowOptions autoFlowOptions {
         .strategy = gridStyle->gridAutoFlow().isDense() ? PackingStrategy::Dense : PackingStrategy::Sparse,
@@ -296,7 +299,7 @@ GridLayoutContext GridLayoutContextBuilder::build(const GridLayoutContextInput& 
     // https://drafts.csswg.org/css-grid-1/#layout-algorithm
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
     // The placement does not depend on the axis constraints.
-    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.explicitGridTrackSizes.columnsCount(), gridDefinition.explicitGridTrackSizes.rowsCount(), maxTracks);
+    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.explicitGridTrackSizes.columnsCount(), gridDefinition.explicitGridTrackSizes.rowsCount(), namedColumnLines, namedRowLines, maxTracks);
 
     auto& gridAreas = gridItemPlacementResult.gridAreas;
     auto collapsedColumnTracks = gridStyle->gridTemplateColumns().autoRepeatType == AutoRepeatType::Fit ? collapsedColumnTracksList(gridDefinition.explicitGridTrackSizes, leadingImplicitTracks, gridAreas) : BitVector { };

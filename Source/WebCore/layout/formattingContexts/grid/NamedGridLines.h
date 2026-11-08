@@ -50,7 +50,7 @@ public:
     NamedGridLines() = default;
 
     // autoRepeatTracksCount, autoRepeatTruncatedByLimit and explicitTracksCount are what ExplicitGridResolver resolved for the axis.
-    // Nothing calls this yet.
+    // GridLayoutContextBuilder creates one per axis.
     static NamedGridLines create(const Style::GridTemplateList&, size_t autoRepeatTracksCount, bool autoRepeatTruncatedByLimit, size_t explicitTracksCount);
 
     // Empty when no line has the name.
