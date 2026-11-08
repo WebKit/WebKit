@@ -1676,32 +1676,6 @@
         }
     },
 
-    "imported/w3c/webdriver/tests/classic/close_window/user_prompts.py": {
-        "subtests": {
-            "test_dismiss_and_notify[beforeunload-None]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_accept[beforeunload]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_accept_and_notify[beforeunload-None]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_default[beforeunload-None]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_dismiss[beforeunload]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_ignore[beforeunload]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            },
-            "test_handle_prompt_accept": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/188118"}}
-            }
-        }
-    },
-
     "imported/w3c/webdriver/tests/classic/execute_async_script/arguments.py": {
         "subtests": {
             "test_element_reference[frame]": {
@@ -1980,9 +1954,6 @@
             "test_resettable_element_does_not_satisfy_validation_constraints[month-foo]": {
                 "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/320961"}}
             },
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
@@ -2005,9 +1976,6 @@
 
     "imported/w3c/webdriver/tests/classic/element_click/click.py": {
         "subtests": {
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             }
@@ -2209,9 +2177,6 @@
         "subtests": {
             "test_surrogates": {
                 "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
@@ -2447,9 +2412,6 @@
             "test_anchor_href[relative]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320961"}}
             },
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             }
@@ -2458,9 +2420,6 @@
 
     "imported/w3c/webdriver/tests/classic/get_element_css_value/get.py": {
         "subtests": {
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             }
@@ -2484,9 +2443,6 @@
             "test_web_reference[shadowRoot-ShadowRoot]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320453"}}
             },
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             }
@@ -2495,9 +2451,6 @@
 
     "imported/w3c/webdriver/tests/classic/get_element_tag_name/get.py": {
         "subtests": {
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
@@ -2552,9 +2505,6 @@
             },
             "test_pretty_print_xml": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
@@ -2716,9 +2666,6 @@
             "test_xml_always_not_enabled": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/205923"}}
             },
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             }
@@ -2727,9 +2674,6 @@
 
     "imported/w3c/webdriver/tests/classic/is_element_selected/selected.py": {
         "subtests": {
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
-            },
             "test_no_such_element_with_shadow_root": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             }
@@ -3042,13 +2986,6 @@
             },
             "test_implicit_wait_shadow_root[None]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "WebKit doesn't accept null timeouts"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/classic/get_element_shadow_root/get.py": {
-        "subtests": {
-            "test_no_top_browsing_context": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             }
         }
     },

@@ -36,6 +36,7 @@
 #include "CoordinateSystem.h"
 #include "ImageOptions.h"
 #include "InspectorPassthroughChannel.h"
+#include "Logging.h"
 #include "PageLoadState.h"
 #include "SameDocumentNavigationType.h"
 #include "WebAutomationSessionMacros.h"
@@ -105,6 +106,8 @@ String AutomationCommandError::toProtocolString()
 // §8. Sessions
 // https://www.w3.org/TR/webdriver/#dfn-session-page-load-timeout
 static const Seconds defaultPageLoadTimeout = 300_s;
+// How long Close Window waits for the client to close the page before completing anyway.
+static constexpr Seconds closeBrowsingContextTimeout = 5_s;
 // https://www.w3.org/TR/webdriver/#dfn-page-loading-strategy
 static const Inspector::Protocol::Automation::PageLoadStrategy defaultPageLoadStrategy = Inspector::Protocol::Automation::PageLoadStrategy::Normal;
 
@@ -290,6 +293,11 @@ void WebAutomationSession::sendInspectorMessageToClient(const String& browsingCo
 
 void WebAutomationSession::terminate()
 {
+    for (auto& identifier : copyToVector(m_pendingCloseBrowsingContextCallbacksPerPage.keys())) {
+        for (auto& callback : m_pendingCloseBrowsingContextCallbacksPerPage.take(identifier))
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+    }
+
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     for (auto& identifier : copyToVector(m_pendingKeyboardEventsFlushedCallbacksPerPage.keys())) {
         auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(identifier);
@@ -594,10 +602,36 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
     auto page = webPageProxyForHandle(handle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
+    // The client closes the page, and some clients do that later than the next run loop iteration
+    // (GTK MiniBrowser destroys the view's window, which GTK disposes of later). The reply to the
+    // WebDriver Close Window command lists the remaining windows, so the command completes from
+    // willClosePage(), once the page has really gone.
+    // A close that is already pending for the page (BiDi can send two, and a Classic and a BiDi close can overlap)
+    // gets the same reply; the client is not asked again, since it may be partway through closing the page.
+    auto pageID = page->identifier();
+    auto addResult = m_pendingCloseBrowsingContextCallbacksPerPage.add(pageID, Vector<Inspector::CommandCallback<void>> { });
+    addResult.iterator->value.append(WTF::move(callback));
+    if (!addResult.isNewEntry)
+        return;
+
     page->closePage();
 
-    RunLoop::mainSingleton().dispatch([callback = WTF::move(callback)] {
-        callback({ });
+    // A client that closes the page synchronously (e.g. MiniBrowser on Mac) has already completed the command.
+    if (!m_pendingCloseBrowsingContextCallbacksPerPage.contains(pageID))
+        return;
+
+    // Closing is a request to the client, which may hide the view instead or do nothing at all. A command that is
+    // still pending after a bounded wait completes as it did before, rather than hanging the session.
+    RunLoop::mainSingleton().dispatchAfter(closeBrowsingContextTimeout, [weakThis = WeakPtr { *this }, pageID] {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        auto callbacks = protectedThis->m_pendingCloseBrowsingContextCallbacksPerPage.take(pageID);
+        if (callbacks.isEmpty())
+            return;
+        RELEASE_LOG(Automation, "[s:%s] closeBrowsingContext completed after %.0f s although the client did not close page %" PRIu64, protectedThis->sessionIdentifier().utf8(), closeBrowsingContextTimeout.seconds(), pageID.toUInt64());
+        for (auto& callback : callbacks)
+            callback({ });
     });
 }
 
@@ -1582,6 +1616,10 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     contextDestroyedForPage(page);
     m_bidiProcessor->inputAgent().willClosePage(handle);
 #endif
+
+    // After the context is reported destroyed, so that browsingContext.close replies after its contextDestroyed event.
+    for (auto& callback : m_pendingCloseBrowsingContextCallbacksPerPage.take(page.identifier()))
+        callback({ });
 
     // Cancel pending interactions on this page. By providing an error, this will cause subsequent
     // actions to be aborted and the SimulatedInputDispatcher::run() call will unwind and fail.

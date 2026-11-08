@@ -525,6 +525,81 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     g_assert_true(s_slowScriptWasServed);
 }
 
+static bool browsingContextsResponseListsHandle(const JSON::Object& response, const String& handle)
+{
+    auto result = response.getObject("result"_s);
+    g_assert_nonnull(result.get());
+    auto contexts = result->getArray("contexts"_s);
+    g_assert_nonnull(contexts.get());
+    for (auto& context : *contexts) {
+        auto object = context->asObject();
+        if (object && object->getString("handle"_s) == handle)
+            return true;
+    }
+    return false;
+}
+
+// Only one automation session can be established per test process, so this runs inside the session of
+// testAutomationSessionRequestSession() instead of being a test of its own.
+static void checkCloseWindowWaitsForThePageToClose(AutomationTest* test)
+{
+    // A client may close the view some time after it is asked to, as GTK MiniBrowser does: it destroys the view's
+    // window, which GTK disposes of later. Close Window replies with the remaining windows, so it must not complete
+    // before the page is gone.
+    auto webView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+    auto createResponse = JSON::Value::parseJSON(String::fromUTF8(test->m_message.span()));
+    g_assert_nonnull(createResponse.get());
+    auto createResult = createResponse->asObject()->getObject("result"_s);
+    g_assert_nonnull(createResult.get());
+    String pageHandle = createResult->getString("handle"_s);
+    g_assert_false(pageHandle.isEmpty());
+
+    unsigned closeRequests = 0;
+    auto closeSignalID = g_signal_connect(webView.get(), "close", G_CALLBACK(+[](WebKitWebView*, unsigned* closeRequests) {
+        ++*closeRequests;
+    }), &closeRequests);
+
+    auto closeCommandID = test->sendCommandToBackend("closeBrowsingContext"_s, makeString("{\"handle\":\""_s, pageHandle, "\"}"_s));
+    test->waitUntil([&] {
+        return closeRequests > 0;
+    });
+
+    // A second close while the first is pending gets the same reply, without asking the client again.
+    auto secondCloseCommandID = test->sendCommandToBackend("closeBrowsingContext"_s, makeString("{\"handle\":\""_s, pageHandle, "\"}"_s));
+
+    // The client has not closed the view yet: commands sent after the close are answered, the close is not.
+    auto barrierID = test->sendCommandToBackend("getBrowsingContexts"_s);
+    auto barrierResponse = test->waitForResponse(barrierID);
+    g_assert_true(browsingContextsResponseListsHandle(*barrierResponse, pageHandle));
+    g_assert_null(test->responseForCommand(closeCommandID).get());
+    g_assert_null(test->responseForCommand(secondCloseCommandID).get());
+    g_assert_cmpuint(closeRequests, ==, 1);
+
+    // The client closes the view later, from an idle callback. Disposing of the view closes its page.
+    g_signal_handler_disconnect(webView.get(), closeSignalID);
+    g_idle_add([](gpointer userData) -> gboolean {
+        auto& view = *static_cast<GRefPtr<WebKitWebView>*>(userData);
+        g_object_run_dispose(G_OBJECT(view.get()));
+        view = nullptr;
+        return G_SOURCE_REMOVE;
+    }, &webView);
+    test->waitUntil([&] {
+        return !webView;
+    });
+
+    // Disposing of the view replied to both closes, so the replies come before the reply to a command sent after it.
+    // Had the closes been left to the fallback timeout instead, they would come after it.
+    auto contextsResponse = test->waitForResponse(test->sendCommandToBackend("getBrowsingContexts"_s));
+    auto closeResponse = test->responseForCommand(closeCommandID);
+    g_assert_nonnull(closeResponse.get());
+    g_assert_nonnull(closeResponse->getObject("result"_s).get());
+    auto secondCloseResponse = test->responseForCommand(secondCloseCommandID);
+    g_assert_nonnull(secondCloseResponse.get());
+    g_assert_nonnull(secondCloseResponse->getObject("result"_s).get());
+    g_assert_false(browsingContextsResponseListsHandle(*contextsResponse, pageHandle));
+}
+
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
     auto sessionID = createVersion4UUIDString().utf8();
@@ -603,6 +678,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_true(test->createNewTab(newWebViewInTab.get()));
 
     checkNavigationCommandsAwaitTheirOwnNavigation(test);
+    checkCloseWindowWaitsForThePageToClose(test);
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), FALSE);
 }
