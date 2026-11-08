@@ -63,7 +63,7 @@ public:
     void layoutOutOfFlowBoxes(const RenderBlock& containingBlock);
 
 private:
-    void updateRenderers(const Layout::BlockLayoutResult&, PaintInvalidation&);
+    bool updateRenderers(const Layout::BlockLayoutResult&, PaintInvalidation&);
     void layoutOutOfFlowBoxes(const RenderBlock& containingBlock, PaintInvalidation&);
 
     RenderBlockFlow& rootRenderer() const { return m_rootRenderer; }
