@@ -10,6 +10,6 @@ PASS Link preload "as" value for "video" should be "video".
 PASS Link preload "as" value for "audio" should be "audio".
 PASS Link preload "as" value for "track" should be "track".
 PASS Link preload "as" value for "fetch" should be "fetch".
-FAIL Link preload "as" value for "json" should be "json". assert_equals: expected "json" but got ""
+PASS Link preload "as" value for "json" should be "json".
 FAIL Link preload "as" value for "text" should be "text". assert_equals: expected "text" but got ""
 
