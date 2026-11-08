@@ -5178,6 +5178,12 @@ String Document::userAgent(const URL& url) const
     return frame ? frame->loader().userAgent(url) : String();
 }
 
+String Document::navigatorPlatform() const
+{
+    RefPtr frame = this->frame();
+    return frame ? frame->loader().navigatorPlatform() : String();
+}
+
 void Document::disableEval(const String& errorMessage)
 {
     RefPtr frame = this->frame();

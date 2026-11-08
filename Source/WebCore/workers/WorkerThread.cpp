@@ -68,6 +68,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         name.isolatedCopy(),
         inspectorIdentifier.isolatedCopy(),
         userAgent.isolatedCopy(),
+        navigatorPlatform.isolatedCopy(),
         isOnline,
         contentSecurityPolicyResponseHeaders.isolatedCopy(),
         shouldBypassMainWorldContentSecurityPolicy,

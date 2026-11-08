@@ -179,8 +179,10 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     } else if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 
-    if (m_destination == FetchOptions::Destination::Sharedworker)
+    if (m_destination == FetchOptions::Destination::Sharedworker) {
         m_userAgentForSharedWorker = scriptExecutionContext.userAgent(m_url);
+        m_navigatorPlatformForSharedWorker = scriptExecutionContext.navigatorPlatform();
+    }
 
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);

@@ -105,6 +105,7 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         emptyString(),
         makeString("serviceworker:"_s, generateInspectorObjectIdentifierString()),
         WTF::move(userAgent),
+        { },
         platformStrategies()->loaderStrategy()->isOnLine(),
         contextData.contentSecurityPolicy,
         false,

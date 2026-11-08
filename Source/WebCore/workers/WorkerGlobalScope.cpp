@@ -119,6 +119,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_ownerURL(params.ownerURL)
     , m_inspectorIdentifier(params.inspectorIdentifier)
     , m_userAgent(params.userAgent)
+    , m_navigatorPlatform(params.navigatorPlatform)
     , m_isOnline(params.isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
     , m_isSecureContext(params.isSecureContext == IsSecureContext::Yes)
@@ -359,7 +360,7 @@ void WorkerGlobalScope::close()
 WorkerNavigator& WorkerGlobalScope::navigator()
 {
     if (!m_navigator)
-        lazyInitialize(m_navigator, WorkerNavigator::create(*this, m_userAgent, m_isOnline));
+        lazyInitialize(m_navigator, WorkerNavigator::create(*this, m_userAgent, m_navigatorPlatform, m_isOnline));
     return *m_navigator;
 }
 

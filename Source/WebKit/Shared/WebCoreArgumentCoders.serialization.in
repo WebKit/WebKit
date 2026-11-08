@@ -4336,6 +4336,7 @@ struct WebCore::WorkerInitializationData {
     std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     String userAgent;
+    String navigatorPlatform;
     std::optional<bool> globalPrivacyControlEnabled;
 };
 

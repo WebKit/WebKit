@@ -253,6 +253,7 @@ void Worker::notifyFinished(std::optional<ScriptExecutionContextIdentifier> main
         m_clientIdentifier,
         scriptLoader->advancedPrivacyProtections(),
         context->userAgent(scriptLoader->responseURL()),
+        context->navigatorPlatform(),
         scriptLoader->globalPrivacyControlEnabled()
     };
     m_contextProxy.startWorkerGlobalScope(scriptLoader->responseURL(), *sessionID, m_options.name, WTF::move(initializationData), scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);

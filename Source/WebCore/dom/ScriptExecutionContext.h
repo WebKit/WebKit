@@ -160,6 +160,7 @@ public:
     virtual const URL& cookieURL() const = 0;
 
     virtual String userAgent(const URL&) const = 0;
+    virtual String navigatorPlatform() const { return { }; }
 
     NODELETE virtual const SettingsValues& settingsValues() const = 0;
 

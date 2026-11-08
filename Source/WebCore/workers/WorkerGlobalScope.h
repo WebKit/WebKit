@@ -208,6 +208,7 @@ private:
 
     URL parseURL(const String&) const final;
     String userAgent(const URL&) const final;
+    String navigatorPlatform() const final { return m_navigatorPlatform; }
 
     EventTarget* errorEventTarget() final;
     String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
@@ -229,6 +230,7 @@ private:
     URL m_ownerURL;
     String m_inspectorIdentifier;
     String m_userAgent;
+    String m_navigatorPlatform;
 
     const RefPtr<WorkerLocation> m_location;
     const RefPtr<WorkerNavigator> m_navigator;

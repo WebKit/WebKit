@@ -1470,6 +1470,34 @@ TEST(WebpagePreferences, WebsitePoliciesCustomNavigatorPlatform)
     EXPECT_STREQ("Test Custom Platform", [[webView stringByEvaluatingJavaScript:@"navigator.platform"] UTF8String]);
 }
 
+TEST(WebpagePreferences, WebsitePoliciesCustomNavigatorPlatformInWorkers)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/index.html"_s, { "hello"_s } },
+        { "/worker.js"_s, { {{ "Content-Type"_s, "text/javascript"_s }}, "postMessage(navigator.platform);"_s } },
+        { "/nested.js"_s, { {{ "Content-Type"_s, "text/javascript"_s }}, "new Worker('worker.js').onmessage = event => postMessage(event.data);"_s } },
+        { "/shared.js"_s, { {{ "Content-Type"_s, "text/javascript"_s }}, "onconnect = event => event.ports[0].postMessage(navigator.platform);"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr delegate = adoptNS([[CustomNavigatorPlatformDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate];
+    [webView loadRequest:server.request("/index.html"_s)];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    NSArray<NSString *> *platforms = [webView objectByCallingAsyncFunction:@""
+        "return await Promise.all(["
+        "    new Promise(resolve => new Worker('worker.js').onmessage = event => resolve(event.data)),"
+        "    new Promise(resolve => new Worker('nested.js').onmessage = event => resolve(event.data)),"
+        "    new Promise(resolve => new SharedWorker('shared.js').port.onmessage = event => resolve(event.data)),"
+        "]);" withArguments:@{ }];
+
+    EXPECT_EQ(platforms.count, 3U);
+    for (NSString *platform in platforms)
+        EXPECT_WK_STREQ("Test Custom Platform", platform);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 static constexpr auto deviceOrientationEventTestBytes = R"TESTRESOURCE(

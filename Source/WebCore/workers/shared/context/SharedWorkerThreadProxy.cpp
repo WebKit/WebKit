@@ -75,6 +75,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         workerOptions.name,
         makeString("sharedworker:"_s, generateInspectorObjectIdentifierString()),
         WTF::move(initializationData.userAgent),
+        WTF::move(initializationData.navigatorPlatform),
         platformStrategies()->loaderStrategy()->isOnLine(),
         workerFetchResult.contentSecurityPolicy,
         false,

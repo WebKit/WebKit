@@ -79,6 +79,7 @@ public:
     String name;
     String inspectorIdentifier;
     String userAgent;
+    String navigatorPlatform;
     bool isOnline;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
     bool shouldBypassMainWorldContentSecurityPolicy;
