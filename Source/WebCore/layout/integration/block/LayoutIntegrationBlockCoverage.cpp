@@ -65,7 +65,6 @@ enum class BlockAvoidanceReason : uint8_t {
     RootIsInLineGridContext,
     RootHasColumns,
     RootHasAlignContent,
-    RootHasStableBothEdgesScrollbarGutter,
     ContentHasFloat,
     ContentHasOutOfFlowBox,
     ContentHasOutOfFlowNonBlockContainer,
@@ -158,8 +157,6 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootHasColumns;
     if (!style->alignContent().isNormal())
         return BlockAvoidanceReason::RootHasAlignContent;
-    if (style->scrollbarGutter().isStableBothEdges())
-        return BlockAvoidanceReason::RootHasStableBothEdgesScrollbarGutter;
     return { };
 }
 
@@ -868,8 +865,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "root: columns"_s;
     case BlockAvoidanceReason::RootHasAlignContent:
         return "root: align-content"_s;
-    case BlockAvoidanceReason::RootHasStableBothEdgesScrollbarGutter:
-        return "root: scrollbar-gutter both-edges"_s;
     case BlockAvoidanceReason::ContentHasFloat:
         return "float"_s;
     case BlockAvoidanceReason::ContentHasOutOfFlowBox:

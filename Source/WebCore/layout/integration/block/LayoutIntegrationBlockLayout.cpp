@@ -124,8 +124,9 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
     // writing modes and the horizontal one, at the bottom, in vertical writing modes. The block formatting context measures from the inline
     // start, so it counts when it is on that side, like RenderBlockFlow::determineLogicalLeftPositionForChild, which measures from the logical
     // left (top in vertical writing modes) and clamps it to the space it has.
+    // With scrollbar-gutter: stable both-edges, a gutter is on that side either way.
     auto scrollbarIsOnLogicalLeft = writingMode.isHorizontal() && rootRenderer.shouldPlaceVerticalScrollbarOnLeft();
-    if (scrollbarIsOnLogicalLeft == writingMode.isLogicalLeftInlineStart())
+    if (rootRenderer.style().scrollbarGutter().isStableBothEdges() || scrollbarIsOnLogicalLeft == writingMode.isLogicalLeftInlineStart())
         contentBoxLogicalLeft += std::min<LayoutUnit>(rootRenderer.scrollbarLogicalWidth(), std::max(0_lu, rootRenderer.logicalWidth() - rootRenderer.borderAndPaddingLogicalWidth()));
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLogicalLeft, rootRenderer.contentBoxLogicalWidth() };
     return { { horizontalConstraints, borderBefore + rootRenderer.paddingBefore() }, contentBoxBlockSizeForPercentages(rootRenderer), rootRenderer.availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding),

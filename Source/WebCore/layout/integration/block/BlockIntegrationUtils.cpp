@@ -348,6 +348,9 @@ Layout::BoxGeometry BlockIntegrationUtils::rootGeometry(const RenderBlockFlow& r
     auto spaceForScrollbar = LayoutSize { std::max(0_lu, paddingBoxIncludingScrollbar.width() - root.paddingBoxWidth()), std::max(0_lu, paddingBoxIncludingScrollbar.height() - root.paddingBoxHeight()) };
     if (!writingMode.isHorizontal())
         spaceForScrollbar = spaceForScrollbar.transposedSize();
+    // scrollbar-gutter: stable both-edges takes the same space on the other side too (RenderBox::contentBoxWidth).
+    if (style->scrollbarGutter().isStableBothEdges())
+        spaceForScrollbar.setWidth(spaceForScrollbar.width() * 2);
     geometry.setHorizontalSpaceForScrollbar(spaceForScrollbar.width());
     geometry.setVerticalSpaceForScrollbar(spaceForScrollbar.height());
     return geometry;
