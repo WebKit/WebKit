@@ -10,11 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/elementsFromPoint.js
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/geometry-utils-cross-origin-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/geometry-utils-cross-origin-middle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/geometry-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/iframe1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/iframe2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/resources/matchMedia.js

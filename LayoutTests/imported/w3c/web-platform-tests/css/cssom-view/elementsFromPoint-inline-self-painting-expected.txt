@@ -1,0 +1,9 @@
+Text
+Text
+Textafter
+
+PASS elementsFromPoint includes an inline whose only child is position: relative
+PASS elementsFromPoint includes nested inline ancestors of a position: relative inline
+PASS elementsFromPoint includes an inline whose position: relative child is followed by text
+PASS elementsFromPoint includes an inline at its own text that follows a position: relative child
+

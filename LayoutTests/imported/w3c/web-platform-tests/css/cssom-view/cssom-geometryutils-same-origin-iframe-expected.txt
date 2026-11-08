@@ -1,0 +1,5 @@
+
+
+FAIL getBoxQuads() works in a same-origin iframe document promise_test: Unhandled rejection with value: object "TypeError: inner.getBoxQuads is not a function. (In 'inner.getBoxQuads()', 'inner.getBoxQuads' is undefined)"
+FAIL GeometryUtils converts same-origin iframe content to the outer document promise_test: Unhandled rejection with value: object "TypeError: inner.getBoxQuads is not a function. (In 'inner.getBoxQuads({relativeTo: inner})', 'inner.getBoxQuads' is undefined)"
+

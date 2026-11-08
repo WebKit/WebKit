@@ -1,0 +1,12 @@
+
+FAIL getBoxQuads() matches getBoundingClientRect() for transform, transform-origin, skew, rotate and scale element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+FAIL getBoxQuads() matches getBoundingClientRect() for individual translate, rotate and scale element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+FAIL getBoxQuads() matches getBoundingClientRect() for zoom with transform element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+FAIL getBoxQuads() matches getBoundingClientRect() for perspective and perspective-origin element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+FAIL getBoxQuads() matches getBoundingClientRect() for transform-style: preserve-3d element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+FAIL getBoxQuads() matches getBoundingClientRect() for offset-path, offset-distance and offset-rotate element.getBoxQuads is not a function. (In 'element.getBoxQuads(options)', 'element.getBoxQuads' is undefined)
+FAIL getBoxQuads() preserves non-axis-aligned corners for CSS transforms document.getElementById("css-transform").getBoxQuads is not a function. (In 'document.getElementById("css-transform").getBoxQuads()', 'document.getElementById("css-transform").getBoxQuads' is undefined)
+PASS Motion path properties used by this test are supported
+FAIL getBoxQuads() returns a zero-size bounds for scale(0) document.getElementById("scale-zero").getBoxQuads is not a function. (In 'document.getElementById("scale-zero").getBoxQuads()', 'document.getElementById("scale-zero").getBoxQuads' is undefined)
+FAIL getBoxQuads({relativeTo}) matches convertQuadFromNode() in a transformed subtree source.getBoxQuads is not a function. (In 'source.getBoxQuads({relativeTo: target})', 'source.getBoxQuads' is undefined)
+

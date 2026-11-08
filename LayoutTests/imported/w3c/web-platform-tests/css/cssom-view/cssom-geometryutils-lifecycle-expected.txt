@@ -1,0 +1,7 @@
+
+
+FAIL getBoxQuads() updates a dirty embedding document promise_test: Unhandled rejection with value: object "TypeError: target.getBoxQuads is not a function. (In 'target.getBoxQuads({relativeTo: document})', 'target.getBoxQuads' is undefined)"
+FAIL getBoxQuads() updates a dirty display-locked subtree target.getBoxQuads is not a function. (In 'target.getBoxQuads()', 'target.getBoxQuads' is undefined)
+FAIL getBoxQuads() immediately after a transform style update promise_test: Unhandled rejection with value: object "TypeError: target.getBoxQuads is not a function. (In 'target.getBoxQuads({relativeTo: stage})', 'target.getBoxQuads' is undefined)"
+FAIL getBoxQuads() updates unrelated display-locked endpoints source.getBoxQuads is not a function. (In 'source.getBoxQuads({relativeTo: target})', 'source.getBoxQuads' is undefined)
+

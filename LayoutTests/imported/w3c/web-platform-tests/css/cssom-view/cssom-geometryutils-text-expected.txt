@@ -1,0 +1,5 @@
+GeometryUtils text fragments wrap here.
+
+FAIL Text.getBoxQuads() matches Range.getClientRects() fragments textNode.getBoxQuads is not a function. (In 'textNode.getBoxQuads()', 'textNode.getBoxQuads' is undefined)
+FAIL convertPointFromNode() converts from a Text node textNode.getBoxQuads is not a function. (In 'textNode.getBoxQuads({relativeTo: textNode})', 'textNode.getBoxQuads' is undefined)
+

@@ -1,0 +1,10 @@
+
+FAIL Negative z-index input inside a stacking context is hit assert_equals: expected Element node <input type="text" class="negative"></input> but got Element node <div class="stacking-context"><input type="text" class="n...
+FAIL Negative z-index inline-block inside a stacking context is hit assert_equals: expected Element node <span class="negative box" id="target"></span> but got Element node <div class="stacking-context">text <span class="negative ...
+PASS A negative z-index child with pointer-events:none falls through to its stacking context
+FAIL elementsFromPoint places a negative z-index child before its stacking context background assert_array_equals: expected property 0 to be Element node <span class="negative box"></span> but got Element node <div class="stacking-context"><span class="negative box">... (expected array [Element node <span class="negative box"></span>, Element node <div class="stacking-context"><span class="negative box">...] got [Element node <div class="stacking-context"><span class="negative box">..., Element node <span class="negative box"></span>])
+PASS An inline ancestor remains above its negative z-index child
+PASS A first-line background stays above negative z-index children
+PASS A non-stacking block ancestor remains above a negative z-index child
+FAIL Scrolling preserves hit testing of negative z-index inline content assert_equals: expected Element node <span class="negative box"></span> but got Element node <div class="stacking-context" style="width: 100px; overfl...
+

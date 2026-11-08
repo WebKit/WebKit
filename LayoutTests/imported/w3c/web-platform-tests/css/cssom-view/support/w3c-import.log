@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/1x1-green.png
@@ -39,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/ruler-v-100px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/ruler-v-50px.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/scroll-behavior.js
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/scroll-to-fragment-target.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/scrollIntoView-iframes-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/square-purple.png
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/support/square-teal.png
