@@ -3074,7 +3074,7 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288104"}},
         "subtests": {
             "test_simple_prompts[alert-accept]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_simple_prompts[alert-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -3083,7 +3083,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_simple_prompts[confirm-accept]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_simple_prompts[confirm-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -3092,7 +3092,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_simple_prompts[prompt-accept]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_simple_prompts[prompt-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -3101,7 +3101,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_default_handler[alert-accept]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_default_handler[alert-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -3110,7 +3110,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_default_handler[confirm-accept]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_default_handler[confirm-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -3119,7 +3119,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_default_handler[prompt-accept]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_default_handler[prompt-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -3384,7 +3384,7 @@
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
             },
             "test_subscribe_to_one_context": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
+                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288336"}}
@@ -3915,31 +3915,31 @@
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[none-Interrupted immediately]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[none-Interrupted on DOMContentLoaded]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[none-Interrupted on load]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[interactive-Interrupted immediately]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[interactive-Interrupted on DOMContentLoaded]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[interactive-Interrupted on load]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[complete-Interrupted immediately]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[complete-Interrupted on DOMContentLoaded]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_interrupted_navigation[complete-Interrupted on load]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288330"}}
@@ -4189,10 +4189,10 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/reload/wait.py": {
         "subtests": {
             "test_slow_page[none-False]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_slow_script_blocks_domContentLoaded[none-False]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_slow_image_blocks_load[complete-True]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"},  "all": { "status": ["PASS"]}}
