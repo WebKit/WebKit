@@ -112,7 +112,7 @@ ImageDrawResult PaintImage::drawAsPattern(GraphicsContext& context, const Render
     if (!buffer)
         return ImageDrawResult::DidNothing;
 
-    return drawPatternBuffer(context, *buffer, descriptor, destination, tile, patternTransform, phase, spacing);
+    return drawPatternBuffer(context, *buffer, size, descriptor, destination, tile, patternTransform, phase, spacing);
 }
 
 Vector<WTF::String> PaintImage::paintArguments() const

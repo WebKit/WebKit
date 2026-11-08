@@ -159,7 +159,7 @@ ImageDrawResult GradientImage::drawAsPattern(GraphicsContext& context, const Ren
             cached->setPatternBuffer(newBuffer.releaseNonNull(), descriptor, adjustedSize, scaleFactor);
     }
 
-    return drawPatternBuffer(context, *buffer, descriptor, destination, adjustedTile, patternTransform, phase, spacing);
+    return drawPatternBuffer(context, *buffer, adjustedSize, descriptor, destination, adjustedTile, patternTransform, phase, spacing);
 }
 
 bool GradientImage::knownToBeOpaque(const RenderElement& renderer) const

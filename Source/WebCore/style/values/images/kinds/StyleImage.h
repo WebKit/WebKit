@@ -196,7 +196,7 @@ protected:
     static ImageDrawResult drawResolvedTiled(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing);
     static ImageDrawResult drawResolvedNinePiece(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const NinePieceGeometry&);
 
-    static ImageDrawResult drawPatternBuffer(GraphicsContext&, ImageBuffer&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
+    static ImageDrawResult drawPatternBuffer(GraphicsContext&, ImageBuffer&, const FloatSize&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing);
 
     using DestinationPaint = ImageDrawResult(GraphicsContext&);
     using PatternBufferPaint = void(GraphicsContext&);
