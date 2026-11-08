@@ -1967,6 +1967,7 @@ public:
     void resetStateAfterProcessTermination(ProcessTerminationReason);
     void provisionalProcessDidTerminate();
     void provisionalLoadWasCancelledBeforeStarting(WebCore::NavigationIdentifier);
+    void markProcessesIneligibleForWebProcessCache();
     void mainFrameProcessDidTerminate(WebProcessProxy&);
     void nonMainFrameProcessDidTerminate(WebProcessProxy&);
     void dispatchProcessDidTerminate(ProcessID, ProcessTerminationScope, ProcessTerminationReason);
