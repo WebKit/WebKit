@@ -567,10 +567,7 @@ auto PrintContext::beginWithPageBoxSize(const IntSize& defaultPageBoxSize, const
     if (pageBox.pageAreaSize.isEmpty())
         pageBox = { defaultPageAreaSize, defaultPageMargin };
 
-    // FIXME: Make the first page's page area the initial containing block, as css-page-3 does (rdar://191464194).
-    // Only its width is used. Viewport units and percentage heights still resolve against the view, since
-    // LocalFrameView::calculateSizeForCSSViewportUnitsOverride() has no printing case and
-    // RenderView::availableLogicalHeight() uses the layout size. Real printing has the same problem.
+    // FIXME: Fixed-position boxes and boxes positioned against the view still size against the view, not the page area.
     if (pageBox.pageAreaSize != defaultPageAreaSize)
         frame->setPrinting(true, pageBox.pageAreaSize, pageBox.pageAreaSize, 1, AdjustViewSize::Yes);
 

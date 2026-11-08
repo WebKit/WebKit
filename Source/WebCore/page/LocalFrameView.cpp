@@ -6408,6 +6408,9 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
         pageLogicalHeight = isHorizontalWritingMode ? maxPageSize.height() : maxPageSize.width();
 
         renderView->setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
+        // Viewport units resolve against the page area, which just grew.
+        if (RefPtr document = m_frame->document())
+            document->updateViewportUnitsOnResize();
         renderView->setNeedsLayoutAndInvalidateContentLogicalWidths();
         forceLayout();
         if (hasOneRef())
@@ -7209,8 +7212,23 @@ static bool hasDelegatedPageScale(const LocalFrameView& view)
     return page && page->delegatesScaling();
 }
 
+static std::optional<FloatSize> printedPageAreaSize(const LocalFrameView& view)
+{
+    CheckedPtr renderView = view.renderView();
+    if (!renderView)
+        return std::nullopt;
+    auto pageAreaLogicalSize = renderView->printedPageAreaLogicalSize();
+    if (!pageAreaLogicalSize)
+        return std::nullopt;
+    FloatSize size { *pageAreaLogicalSize };
+    return renderView->writingMode().isHorizontal() ? size : size.transposedSize();
+}
+
 FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize> override) const
 {
+    if (auto pageAreaSize = printedPageAreaSize(*this))
+        return *pageAreaSize;
+
     OverrideViewportSize viewportSize;
 
     if (override) {
@@ -7243,6 +7261,9 @@ FloatSize LocalFrameView::calculateSizeForCSSViewportUnitsOverride(std::optional
 
 FloatSize LocalFrameView::sizeForCSSDynamicViewportUnits() const
 {
+    if (auto pageAreaSize = printedPageAreaSize(*this))
+        return *pageAreaSize;
+
     bool useFixedLayout = this->useFixedLayout();
 
     if (useFixedLayout && sizeForCSSSmallViewportUnits() == sizeForCSSLargeViewportUnits())
