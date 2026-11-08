@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GridItemPlacer.h"
 
+#include "GridLineResolution.h"
 #include "ImplicitGrid.h"
 #include "NamedLineResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -59,15 +60,8 @@ static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logi
 
         UnplacedGridItem unplacedGridItem {
             gridItem,
-            gridItemNonAutoFlowStart,
-            gridItemNonAutoFlowEnd,
-            gridItemAutoFlowStart,
-            gridItemAutoFlowEnd,
-            nonAutoFlowNamedLineResolver,
-            autoFlowNamedLineResolver,
-            leadingNonAutoFlowTracksCount,
-            leadingAutoFlowTracksCount,
-            maxTracks
+            resolveAxisPosition(gridItemNonAutoFlowStart, gridItemNonAutoFlowEnd, nonAutoFlowNamedLineResolver, leadingNonAutoFlowTracksCount, maxTracks),
+            resolveAxisPosition(gridItemAutoFlowStart, gridItemAutoFlowEnd, autoFlowNamedLineResolver, leadingAutoFlowTracksCount, maxTracks)
         };
 
         // https://drafts.csswg.org/css-grid-1/#auto-placement-algo

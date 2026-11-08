@@ -28,11 +28,11 @@
 
 #include "ExplicitGridResolver.h"
 #include "GridLayoutUtils.h"
+#include "GridLineResolution.h"
 #include "LayoutChildIterator.h"
 #include "NamedGridLines.h"
 #include "NamedLineResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "UnplacedGridItem.h"
 
 namespace WebCore {
 namespace Layout {
@@ -88,11 +88,11 @@ static LeadingImplicitTracks computeLeadingImplicitTracks(const LogicalGridItems
     int minimumRowLine = 0;
     for (auto& gridItem : logicalGridItems) {
         CheckedRef gridItemStyle = gridItem->style();
-        if (auto columnRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), columnNamedLineResolver, maxTracks)) {
+        if (auto columnRange = resolveDefinitePosition(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), columnNamedLineResolver, maxTracks)) {
             auto [startLine, endLine] = *columnRange;
             minimumColumnLine = std::min({ minimumColumnLine, startLine, endLine });
         }
-        if (auto rowRange = UnplacedGridItem::resolveDefinitePosition(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd(), rowNamedLineResolver, maxTracks)) {
+        if (auto rowRange = resolveDefinitePosition(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd(), rowNamedLineResolver, maxTracks)) {
             auto [startLine, endLine] = *rowRange;
             minimumRowLine = std::min({ minimumRowLine, startLine, endLine });
         }
@@ -341,7 +341,7 @@ PlacedGridItems GridLayoutContextBuilder::constructPlacedGridItems(const GridAre
     PlacedGridItems placedGridItems(ReserveCapacityTag { }, gridAreas.size());
     CheckedRef gridContainerStyle = m_gridBox->style();
     for (auto& [ unplacedGridItem, gridAreaLines ] : gridAreas) {
-        CheckedRef gridItem = unplacedGridItem.m_layoutBox;
+        CheckedRef gridItem = unplacedGridItem.layoutBox();
         placedGridItems.constructAndAppend(gridItem, gridAreaLines, gridContainerStyle);
     }
     return placedGridItems;

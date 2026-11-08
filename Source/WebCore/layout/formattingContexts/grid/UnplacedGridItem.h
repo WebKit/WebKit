@@ -25,15 +25,14 @@
 
 #pragma once
 
-#include "StyleGridPosition.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Range.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace Layout {
 
 class ElementBox;
-class GridLayout;
-class NamedLineResolver;
 
 // Grid item placement is written in terms of grid-auto-flow instead of columns and rows. From
 // https://drafts.csswg.org/css-grid-1/#grid-auto-flow-property:
@@ -51,7 +50,7 @@ struct FlowRelativeAreaLines {
 };
 
 class UnplacedGridItem {
-private:
+public:
     // https://drafts.csswg.org/css-grid-1/#placement
     // A definite value for any two of Start, End, and Span in a given dimension implies
     // a definite value for the third.
@@ -70,13 +69,15 @@ private:
         size_t span { 1 };
     };
 
-    class GridPosition {
+    class AxisPosition {
     public:
-        // The NamedLineResolver is the axis's: it resolves lines given with a name, and holds the number of
-        // explicit tracks that negative lines count back from. The leading implicit track count then shifts negative
-        // resolved lines forward so the range maps to non-negative matrix indices. See
-        // UnplacedGridItem::resolveDefinitePosition().
-        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, const NamedLineResolver&, size_t leadingImplicitTracksCount, size_t maxTracks);
+        AxisPosition(DefinitePosition position)
+            : m_position(position)
+        {
+            ASSERT(position.startLine < position.endLine);
+        }
+        AxisPosition(AutoPosition position)
+            : m_position(position) { }
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -88,16 +89,12 @@ private:
     private:
         using Value = Variant<DefinitePosition, AutoPosition>;
 
-        GridPosition(DefinitePosition position)
-            : m_position(position) { }
-        GridPosition(AutoPosition position)
-            : m_position(position) { }
-
         Value m_position;
     };
 
-public:
-    UnplacedGridItem(const ElementBox&, Style::GridPosition nonAutoFlowStart, Style::GridPosition nonAutoFlowEnd, Style::GridPosition autoFlowStart, Style::GridPosition autoFlowEnd, const NamedLineResolver& nonAutoFlowNamedLineResolver, const NamedLineResolver& autoFlowNamedLineResolver, size_t leadingImplicitNonAutoFlowTracksCount, size_t leadingImplicitAutoFlowTracksCount, size_t maxTracks);
+    UnplacedGridItem(const ElementBox&, AxisPosition nonAutoFlowPosition, AxisPosition autoFlowPosition);
+
+    const ElementBox& layoutBox() const { return m_layoutBox; }
 
     NODELETE bool hasDefiniteAutoFlowPosition() const;
     NODELETE bool hasDefiniteNonAutoFlowPosition() const;
@@ -107,24 +104,13 @@ public:
     WTF::Range<size_t> definiteAutoFlowRange() const;
     WTF::Range<size_t> definiteNonAutoFlowRange() const;
 
-    // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
-    // axis is auto-positioned (neither edge is a line, which is an <integer> or a lone <custom-ident>).
-    // The NamedLineResolver is the axis's and resolves the lines given with a name, and the negative lines
-    // against the end of the explicit grid; the resolved lines may still be negative
-    // for negative line placements that count past the start edge, and the leading implicit track
-    // count is applied later in GridPosition::create(). maxTracks limits the resolved lines, see
-    // https://drafts.csswg.org/css-grid-1/#overlarge-grids.
-    static std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, const NamedLineResolver&, size_t maxTracks);
-
 private:
     CheckedRef<const ElementBox> m_layoutBox;
 
     // https://drafts.csswg.org/css-grid-1/#typedef-grid-row-start-grid-line
     // The position in the non-auto-flow tracks and in the auto-flow tracks.
-    GridPosition m_nonAutoFlowPosition;
-    GridPosition m_autoFlowPosition;
-
-    friend class GridLayoutContextBuilder;
+    AxisPosition m_nonAutoFlowPosition;
+    AxisPosition m_autoFlowPosition;
 };
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo

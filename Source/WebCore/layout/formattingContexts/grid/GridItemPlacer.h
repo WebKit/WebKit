@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace Layout {
 
+class NamedLineResolver;
+
 struct GridItemPlacementResult {
     GridAreas gridAreas;
     size_t columnsCount { 0 };
