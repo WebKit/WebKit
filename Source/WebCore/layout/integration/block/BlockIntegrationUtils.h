@@ -30,6 +30,7 @@
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/PlacedFloats.h>
+#include <WebCore/SubtreeScrollbarChangesState.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/WeakHashMap.h>
 
@@ -172,9 +173,17 @@ public:
     // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
     static bool laysOutThroughRenderTree(const RenderBox&);
 
+    // The root whose layout lays it out again when scrollbars that come or go in its content change the size the block formatting context gave
+    // a box from its content.
+    void setRootForScrollbarChanges(RenderBlockFlow& root) { m_rootForScrollbarChanges = &root; }
+    void trackScrollbarChangesForContentSizes();
+    Vector<RendererScrollbarChange> takeScrollbarChangesForContentSizes();
+
 private:
     static std::optional<InlineContentLayoutResult> keptInlineContentWithBlockLevelBoxesLayoutResult(const RenderBlockFlow&, const LineLayout&);
     PaintInvalidation& m_paintInvalidation;
+    CheckedPtr<RenderBlockFlow> m_rootForScrollbarChanges;
+    std::optional<SubtreeScrollbarChangesStateScope> m_scrollbarChangesForContentSizes;
 };
 
 } // namespace LayoutIntegration

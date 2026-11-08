@@ -166,6 +166,7 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
 {
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
+    integrationUtils.setRootForScrollbarChanges(rootRenderer());
     // The line-clamp budget of the root's block formatting context: the root's LineClampUpdater sets it up and reads back what the content left
     // of it. The boxes in the content laid out through the render tree do not see it, since the lines of independent formatting contexts do not
     // count (css-overflow-4 §5.2).
@@ -208,7 +209,16 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren, LayoutUnit& repaintL
         result = layoutContent(Layout::BlockLayoutState::LastFormattedLineRoots { lastFormattedLineRoots });
     // RenderBlock::layout lays a scroll container out again, once, when its auto scrollbars come or go (RelayoutScopeForScrollbarChange). The
     // ones the block formatting context lays out take their new scrollbars when it lays out the content again, and the ones in it keep theirs
-    // then.
+    // then. So do the boxes it gave a size from their content, which they change (SubtreeScrollbarChangesHandler).
+    for (auto& change : integrationUtils.takeScrollbarChangesForContentSizes()) {
+        if (change.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Block)) {
+            change.renderer->setNeedsLayout(MarkingBehavior::OnlyThis);
+            change.renderer->markContainingBlocksForLayout(&rootRenderer());
+        }
+        if (change.sizesAffectedFromScrollbarChanges.contains(LogicalBoxAxis::Inline))
+            change.renderer->invalidateContentLogicalWidths(MarkingBehavior::ContainingBlockChain, &rootRenderer());
+        hasAutoScrollbarChanges = true;
+    }
     if (hasAutoScrollbarChanges)
         result = layoutContent(WTF::move(lastFormattedLineRoots));
     layoutContext->setTextBoxTrim(renderTreeTextBoxTrim);
