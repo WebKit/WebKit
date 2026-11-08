@@ -80,10 +80,11 @@ ExplicitGridResolver::ResolveTrackSizesResult ExplicitGridResolver::resolveTrack
     auto repetitionCount = AutoRepeatResolver::resolveRepetitions(gridTemplateList, autoRepeatConstraint, usedGap, zoom);
     // The tracks before the repeat() can already reach the limit, which leaves no room for auto-repeated tracks.
     auto remainingTracksCount = insertionPoint < maxTracks ? maxTracks - insertionPoint : 0;
-    auto autoRepeatTracksCount = std::min(repetitionCount * autoRepeatSizes.size(), remainingTracksCount);
     // The limit cuts the auto-repeat when the repetitions the container fits do not all fit in the tracks left before it, including
     // when only part of the last one does. Compared by division so that a huge repetition count cannot overflow.
     bool truncatedByLimit = repetitionCount > remainingTracksCount / autoRepeatSizes.size();
+    // The tracks of all the repetitions are only multiplied out when they fit in the tracks left, so the product cannot wrap on a 32-bit size_t.
+    auto autoRepeatTracksCount = truncatedByLimit ? remainingTracksCount : repetitionCount * autoRepeatSizes.size();
     return { trackSizesWithAutoRepetitions(gridTemplateList, autoRepeatTracksCount, maxTracks), { insertionPoint, insertionPoint + autoRepeatTracksCount }, truncatedByLimit };
 }
 
