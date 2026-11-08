@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; margin-bottom: 5px; }
+.box { background: green; }
+.scroller { height: 39px; overflow: auto; }
+.content { width: 10px; height: 40px; background: orange; }
+table { border-spacing: 0; }
+td { padding: 0; }
+</style>
+<div class="root"><div class="box" style="width: max-content"><table><tr><td><div class="scroller"><div class="content"></div></div></td></tr></table></div></div>
+<div class="root"><div class="box" style="width: fit-content"><div style="display: flex; overflow: auto; height: 39px"><div class="content"></div></div></div></div>
+<div class="root"><div class="box" style="width: min-content"><div style="display: grid"><div class="scroller"><div class="content"></div></div></div></div></div>
+<div class="root"><div class="box" style="width: max-content"><div class="scroller"><div class="content"></div></div></div></div>
