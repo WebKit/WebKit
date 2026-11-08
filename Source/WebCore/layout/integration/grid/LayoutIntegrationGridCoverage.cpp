@@ -58,7 +58,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemIsReplacedElement,
     GridItemIsSubgrid,
     GridHasGridTemplateAreas,
-    GridHasColumnAutoFlow,
     GridHasNonFixedGaps,
     GridIsOutOfFlow,
     GridHasSizeOrInlineSizeContainment,
@@ -342,12 +341,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (!renderGridStyle->isOverflowVisible())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasNonVisibleOverflow, reasons, reasonCollectionMode);
-
-    // GFC currently supports grid-auto-flow: row and row dense
-    // Column auto-flow is not yet supported
-    auto gridAutoFlow = renderGridStyle->gridAutoFlow();
-    if (gridAutoFlow.isColumn())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasColumnAutoFlow, reasons, reasonCollectionMode);
 
     // Check for non-fixed gaps. GFC currently only supports fixed-length gaps.
     if (!renderGridStyle->rowGap().isNormal()) {
@@ -679,9 +672,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasGridTemplateAreas:
         stream << "grid has grid-template-areas";
-        break;
-    case GridAvoidanceReason::GridHasColumnAutoFlow:
-        stream << "grid has column auto-flow";
         break;
     case GridAvoidanceReason::GridHasNonFixedGaps:
         stream << "grid has non-fixed gaps";

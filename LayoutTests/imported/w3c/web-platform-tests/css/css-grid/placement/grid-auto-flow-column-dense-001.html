@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: 'grid-auto-flow: column dense' backfills holes</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-placement-algo">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#propdef-grid-auto-flow">
+<meta name="assert" content="Dense packing with column flow restarts the cursor at the start of the grid for every item, so a later item can fill a hole that sparse packing skips.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; width: 400px; background: lightgray; margin-bottom: 10px; grid-template-rows: 20px 30px 40px; grid-auto-columns: 50px 70px; }
+.grid > div { background: green; }
+#sparse { grid-auto-flow: column; }
+#dense { grid-auto-flow: column dense; }
+</style>
+<div class="grid" id="sparse">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="70" data-expected-height="90" style="grid-row: span 3"></div>
+  <div data-offset-x="120" data-offset-y="0" data-expected-width="50" data-expected-height="20"></div>
+  <div data-offset-x="120" data-offset-y="20" data-expected-width="50" data-expected-height="30"></div>
+</div>
+<div class="grid" id="dense">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="70" data-expected-height="90" style="grid-row: span 3"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="40"></div>
+  <div data-offset-x="120" data-offset-y="0" data-expected-width="50" data-expected-height="20"></div>
+</div>

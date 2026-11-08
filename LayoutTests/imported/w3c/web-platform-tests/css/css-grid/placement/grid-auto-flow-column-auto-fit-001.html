@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: column auto-flow with auto-fit columns</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-placement-algo">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#propdef-grid-auto-flow">
+<meta name="assert" content="With repeat(auto-fit) columns, a repetition that no item occupies collapses, also when the items are placed by column auto-flow.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; grid-auto-flow: column; width: 340px; grid-auto-columns: 25px; background: lightgray; margin-bottom: 10px; column-gap: 10px; grid-template-columns: repeat(auto-fit, 60px); grid-template-rows: 20px 30px; }
+.grid > div { background: green; }
+</style>
+<!-- 5 repetitions fit (340px); the 3 items fill 2 of them, the other 3 collapse. -->
+<div class="grid">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="60" data-expected-height="20"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="60" data-expected-height="30"></div>
+  <div data-offset-x="70" data-offset-y="0" data-expected-width="60" data-expected-height="20"></div>
+</div>
+<!-- The item in the last repetition keeps it, the ones in between collapse. -->
+<div class="grid">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="60" data-expected-height="20"></div>
+  <div data-offset-x="70" data-offset-y="0" data-expected-width="60" data-expected-height="20" style="grid-column: 5"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="60" data-expected-height="30"></div>
+</div>
+<!-- Placed items extend into the implicit grid. -->
+<div class="grid">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="60" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="70" data-offset-y="0" data-expected-width="60" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="140" data-offset-y="0" data-expected-width="60" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="210" data-offset-y="0" data-expected-width="60" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="280" data-offset-y="0" data-expected-width="60" data-expected-height="50" style="grid-row: span 2"></div>
+  <div data-offset-x="350" data-offset-y="0" data-expected-width="25" data-expected-height="50" style="grid-row: span 2"></div>
+</div>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: 'grid-auto-flow: column' with a definite row or column</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#auto-placement-algo">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#propdef-grid-auto-flow">
+<meta name="assert" content="With grid-auto-flow: column, items with a definite row position are placed before items with auto positions, and an item with a definite column and an auto row searches that column.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; grid-auto-flow: column; width: 400px; background: lightgray; margin-bottom: 10px; grid-template-rows: 20px 30px 40px; grid-auto-columns: 50px 70px; }
+.grid > div { background: green; }
+</style>
+<!-- Definite row, auto column. The two auto items fill around them. -->
+<div class="grid">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="30" style="grid-row: 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="40"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="70" data-expected-height="30" style="grid-row: 2"></div>
+  <div data-offset-x="120" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-row: 1 / span 2"></div>
+  <div data-offset-x="120" data-offset-y="50" data-expected-width="50" data-expected-height="40"></div>
+</div>
+<!-- Definite column, auto row. -->
+<div class="grid">
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="30"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="70" data-expected-height="20" style="grid-column: 2"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="70" data-expected-height="30" style="grid-column: 2"></div>
+  <div data-offset-x="50" data-offset-y="50" data-expected-width="70" data-expected-height="40" style="grid-column: 2; grid-row: span 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="40"></div>
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20" style="grid-column: 1"></div>
+</div>
+<!-- Definite row and auto column, with a span in the column axis. -->
+<div class="grid">
+  <div data-offset-x="120" data-offset-y="50" data-expected-width="120" data-expected-height="40" style="grid-row: 3; grid-column: span 2"></div>
+  <div data-offset-x="240" data-offset-y="50" data-expected-width="50" data-expected-height="40" style="grid-row: 3"></div>
+  <div data-offset-x="50" data-offset-y="50" data-expected-width="70" data-expected-height="40" style="grid-row: 3; grid-column: 2"></div>
+  <div data-offset-x="290" data-offset-y="0" data-expected-width="70" data-expected-height="20"></div>
+</div>
