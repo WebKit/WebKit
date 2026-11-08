@@ -445,16 +445,10 @@ bool BlockFormattingUtils::isAlignedByJustifySelf(const RenderBox& box, const St
     return !box.isAnonymous() && !style->justifySelf().resolve(&containingBlockStyle).isNormalStretchOrLegacy();
 }
 
-bool BlockFormattingUtils::autoInlineSizeFitsContent(const RenderBox& box, const Style::ComputedStyle& containingBlockStyle)
+// FIXME: The direction of a marquee is not mapped to its writing mode (RenderBox::sizesLogicalWidthToFitContent, RenderMarquee::direction).
+static bool scrollsHorizontally(const RenderElement& marquee)
 {
-    if (isAlignedByJustifySelf(box, containingBlockStyle))
-        return true;
-    if (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLButtonElement, HTMLTextAreaElement, HTMLLegendElement>(box.element()))
-        return true;
-    // FIXME: The direction of a marquee is not mapped to its writing mode (RenderBox::sizesLogicalWidthToFitContent).
-    if (!box.parent()->isHTMLMarquee())
-        return false;
-    switch (box.parent()->style().marqueeDirection()) {
+    switch (marquee.style().marqueeDirection()) {
     case MarqueeDirection::Auto:
     case MarqueeDirection::Forward:
     case MarqueeDirection::Backward:
@@ -467,6 +461,21 @@ bool BlockFormattingUtils::autoInlineSizeFitsContent(const RenderBox& box, const
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+bool BlockFormattingUtils::autoInlineSizeFitsContent(const RenderBox& box, const Style::ComputedStyle& containingBlockStyle)
+{
+    if (isAlignedByJustifySelf(box, containingBlockStyle))
+        return true;
+    if (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLButtonElement, HTMLTextAreaElement, HTMLLegendElement>(box.element()))
+        return true;
+    return box.parent()->isHTMLMarquee() && scrollsHorizontally(*box.parent());
+}
+
+bool BlockFormattingUtils::isScrollingHorizontalMarquee(const RenderBox& box)
+{
+    // One with behavior none does not scroll (RenderLayerScrollableArea::createOrDestroyMarquee).
+    return box.isHTMLMarquee() && box.style().marqueeBehavior() != MarqueeBehavior::None && scrollsHorizontally(box);
 }
 
 bool BlockFormattingUtils::isFormControlBlockContainer(const RenderBox& box)
