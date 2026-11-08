@@ -123,7 +123,7 @@ FlowRelativeAreaLines ImplicitGrid::insertUnplacedGridItem(const UnplacedGridIte
     return markAreaAsOccupied(unplacedGridItem.definiteNonAutoFlowRange(), unplacedGridItem.definiteAutoFlowRange());
 }
 
-FlowRelativeAreaLines ImplicitGrid::insertDefiniteAutoFlowItem(const UnplacedGridItem& unplacedGridItem, GridAutoFlowOptions autoFlowOptions)
+FlowRelativeAreaLines ImplicitGrid::insertDefiniteAutoFlowItem(const UnplacedGridItem& unplacedGridItem, PackingStrategy packingStrategy)
 {
     // Step 2 of CSS Grid auto-placement algorithm:
     // Process items locked to a given auto-flow track (definite auto-flow position, auto non-auto-flow position)
@@ -133,14 +133,14 @@ FlowRelativeAreaLines ImplicitGrid::insertDefiniteAutoFlowItem(const UnplacedGri
     auto autoFlowRange = unplacedGridItem.definiteAutoFlowRange();
 
     auto nonAutoFlowSpan = nonAutoFlowSpanLimitedToGrid(unplacedGridItem);
-    std::optional<size_t> nonAutoFlowPosition = findNonAutoFlowPositionForDefiniteAutoFlowItem(autoFlowRange, nonAutoFlowSpan, autoFlowOptions);
+    std::optional<size_t> nonAutoFlowPosition = findNonAutoFlowPositionForDefiniteAutoFlowItem(autoFlowRange, nonAutoFlowSpan, packingStrategy);
 
     WTF::Range<size_t> nonAutoFlowRange;
     if (!nonAutoFlowPosition) {
         auto nonAutoFlowStart = growNonAutoFlowTracksForDefiniteAutoFlowItem(nonAutoFlowSpan, autoFlowRange);
 
         // Retry finding position in the grown grid
-        nonAutoFlowPosition = findNonAutoFlowPositionForDefiniteAutoFlowItem(autoFlowRange, nonAutoFlowSpan, autoFlowOptions);
+        nonAutoFlowPosition = findNonAutoFlowPositionForDefiniteAutoFlowItem(autoFlowRange, nonAutoFlowSpan, packingStrategy);
         if (nonAutoFlowPosition) {
             nonAutoFlowRange = { *nonAutoFlowPosition, *nonAutoFlowPosition + nonAutoFlowSpan };
             ASSERT(isCellRangeEmpty(nonAutoFlowRange, autoFlowRange));
@@ -156,7 +156,7 @@ FlowRelativeAreaLines ImplicitGrid::insertDefiniteAutoFlowItem(const UnplacedGri
     }
     auto gridAreaLines = markAreaAsOccupied(nonAutoFlowRange, autoFlowRange);
 
-    if (autoFlowOptions.strategy != PackingStrategy::Dense) {
+    if (packingStrategy != PackingStrategy::Dense) {
         for (auto autoFlowTrack : std::views::iota(autoFlowRange.begin(), autoFlowRange.end()))
             m_autoFlowTrackCursors.set(autoFlowTrack, nonAutoFlowRange.end());
     }
@@ -194,19 +194,11 @@ void ImplicitGrid::determineImplicitGridNonAutoFlowTracks(const Vector<UnplacedG
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
 // Step 4 of CSS Grid auto-placement algorithm: Position the remaining grid items
-FlowRelativeAreaLines ImplicitGrid::insertAutoPositionedItem(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
+FlowRelativeAreaLines ImplicitGrid::insertAutoPositionedItem(const UnplacedGridItem& item, PackingStrategy packingStrategy)
 {
-    if (autoFlowOptions.direction != GridAutoFlowDirection::Row) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        // Not a real placement: column flow is rejected by grid coverage before placement runs.
-        // Return a single cell rather than an empty area, since a zero span underflows the interior
-        // gutter count in GridLinePositions::areaSize().
-        return { 0, 1, 0, 1 };
-    }
-
     if (item.hasDefiniteNonAutoFlowPosition())
-        return placeAutoPositionedItemWithDefiniteNonAutoFlowPosition(item, autoFlowOptions);
-    return placeAutoPositionedItemWithAutoPositionInBothAxes(item, autoFlowOptions);
+        return placeAutoPositionedItemWithDefiniteNonAutoFlowPosition(item, packingStrategy);
+    return placeAutoPositionedItemWithAutoPositionInBothAxes(item, packingStrategy);
 }
 
 std::optional<size_t> ImplicitGrid::findFirstAvailableNonAutoFlowPosition(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, size_t startSearchPosition) const
@@ -226,15 +218,15 @@ std::optional<size_t> ImplicitGrid::findFirstAvailableNonAutoFlowPosition(WTF::R
     return std::nullopt;
 }
 
-std::optional<size_t> ImplicitGrid::findNonAutoFlowPositionForDefiniteAutoFlowItem(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, GridAutoFlowOptions autoFlowOptions) const
+std::optional<size_t> ImplicitGrid::findNonAutoFlowPositionForDefiniteAutoFlowItem(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, PackingStrategy packingStrategy) const
 {
-    if (autoFlowOptions.strategy == PackingStrategy::Dense) {
+    if (packingStrategy == PackingStrategy::Dense) {
         // Dense packing: always start searching from the first non-auto-flow track
         return findFirstAvailableNonAutoFlowPosition(autoFlowRange, nonAutoFlowSpan, 0);
     }
     // Sparse packing: use per-auto-flow-track cursors to maintain placement order
     // For items spanning several auto-flow tracks, use the maximum cursor position across all spanned tracks
-    ASSERT(autoFlowOptions.strategy == PackingStrategy::Sparse);
+    ASSERT(packingStrategy == PackingStrategy::Sparse);
     size_t startSearchPosition = 0;
     for (auto autoFlowTrack : std::views::iota(autoFlowRange.begin(), autoFlowRange.end()))
         startSearchPosition = std::max(startSearchPosition, m_autoFlowTrackCursors.get(autoFlowTrack));
@@ -314,7 +306,7 @@ void ImplicitGrid::growAutoFlowTracksToFit(size_t requiredAutoFlowIndex)
 }
 
 // FIXME: optimize cursor setting by setting to an empty slot instead of to the start for dense placement.
-FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithDefiniteNonAutoFlowPosition(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
+FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithDefiniteNonAutoFlowPosition(const UnplacedGridItem& item, PackingStrategy packingStrategy)
 {
     ASSERT(item.hasDefiniteNonAutoFlowPosition());
     ASSERT(!item.hasDefiniteAutoFlowPosition());
@@ -328,7 +320,7 @@ FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithDefiniteNonAutoFl
     // has a definite non-auto-flow position, so the cells this searches are always in bounds.
     ASSERT(nonAutoFlowRange.end() <= nonAutoFlowTracksCount());
 
-    if (autoFlowOptions.strategy == PackingStrategy::Dense) {
+    if (packingStrategy == PackingStrategy::Dense) {
         // Set the auto-flow position of the cursor to the start-most auto-flow line in the implicit grid.
         m_autoPlacementCursorAutoFlowPosition = 0;
     } else {
@@ -359,7 +351,7 @@ FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithDefiniteNonAutoFl
 }
 
 // FIXME: optimize cursor setting by setting to an empty slot instead of to the start for dense placement.
-FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithAutoPositionInBothAxes(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
+FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithAutoPositionInBothAxes(const UnplacedGridItem& item, PackingStrategy packingStrategy)
 {
     ASSERT(!item.hasDefiniteNonAutoFlowPosition() && !item.hasDefiniteAutoFlowPosition());
 
@@ -373,7 +365,7 @@ FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithAutoPositionInBot
 
     // Position items with automatic grid position in both axes.
     // Search along the non-auto-flow tracks, then along the auto-flow tracks.
-    if (autoFlowOptions.strategy == PackingStrategy::Dense) {
+    if (packingStrategy == PackingStrategy::Dense) {
         // Set the cursor to the start-most position in the implicit grid.
         m_autoPlacementCursorAutoFlowPosition = 0;
         m_autoPlacementCursorNonAutoFlowPosition = 0;
@@ -401,7 +393,7 @@ FlowRelativeAreaLines ImplicitGrid::placeAutoPositionedItemWithAutoPositionInBot
             // Sparse packing: Advance cursor past this item to maintain document order.
             // Spec: "Set the auto-placement cursor to the end of the item's grid area."
             // Dense packing: Cursor will be reset to (0, 0) before the next fully-auto item.
-            if (autoFlowOptions.strategy == PackingStrategy::Sparse)
+            if (packingStrategy == PackingStrategy::Sparse)
                 m_autoPlacementCursorNonAutoFlowPosition += nonAutoFlowSpan;
             return gridAreaLines;
         }

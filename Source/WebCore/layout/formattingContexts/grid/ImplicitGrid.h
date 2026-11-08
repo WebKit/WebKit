@@ -34,7 +34,7 @@ namespace WebCore {
 
 namespace Layout {
 
-struct GridAutoFlowOptions;
+enum class PackingStrategy : bool;
 struct UnplacedGridItems;
 
 // https://drafts.csswg.org/css-grid-1/#implicit-grids
@@ -52,14 +52,14 @@ public:
     size_t nonAutoFlowTracksCount() const { return m_nonAutoFlowTracksCount; }
 
     FlowRelativeAreaLines insertUnplacedGridItem(const UnplacedGridItem&);
-    FlowRelativeAreaLines insertDefiniteAutoFlowItem(const UnplacedGridItem&, GridAutoFlowOptions);
+    FlowRelativeAreaLines insertDefiniteAutoFlowItem(const UnplacedGridItem&, PackingStrategy);
     void determineImplicitGridNonAutoFlowTracks(const Vector<UnplacedGridItem>&);
-    FlowRelativeAreaLines insertAutoPositionedItem(const UnplacedGridItem&, GridAutoFlowOptions);
+    FlowRelativeAreaLines insertAutoPositionedItem(const UnplacedGridItem&, PackingStrategy);
 
 private:
     using AutoFlowTrackCursors = HashMap<size_t, size_t, WTF::DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
     NODELETE std::optional<size_t> findFirstAvailableNonAutoFlowPosition(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, size_t startSearchPosition) const;
-    std::optional<size_t> findNonAutoFlowPositionForDefiniteAutoFlowItem(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, GridAutoFlowOptions) const;
+    std::optional<size_t> findNonAutoFlowPositionForDefiniteAutoFlowItem(WTF::Range<size_t> autoFlowRange, size_t nonAutoFlowSpan, PackingStrategy) const;
     size_t growNonAutoFlowTracksForDefiniteAutoFlowItem(size_t nonAutoFlowSpan, WTF::Range<size_t> autoFlowRange);
     NODELETE bool isCellRangeEmpty(WTF::Range<size_t> nonAutoFlowRange, WTF::Range<size_t> autoFlowRange) const;
     NODELETE FlowRelativeAreaLines markAreaAsOccupied(WTF::Range<size_t> nonAutoFlowRange, WTF::Range<size_t> autoFlowRange);
@@ -69,8 +69,8 @@ private:
     // Helper functions for auto-positioned items
     void growNonAutoFlowTracksToFit(size_t requiredCount);
     void growAutoFlowTracksToFit(size_t requiredAutoFlowIndex);
-    FlowRelativeAreaLines placeAutoPositionedItemWithDefiniteNonAutoFlowPosition(const UnplacedGridItem&, GridAutoFlowOptions);
-    FlowRelativeAreaLines placeAutoPositionedItemWithAutoPositionInBothAxes(const UnplacedGridItem&, GridAutoFlowOptions);
+    FlowRelativeAreaLines placeAutoPositionedItemWithDefiniteNonAutoFlowPosition(const UnplacedGridItem&, PackingStrategy);
+    FlowRelativeAreaLines placeAutoPositionedItemWithAutoPositionInBothAxes(const UnplacedGridItem&, PackingStrategy);
 
     GridMatrix m_gridMatrix;
 
