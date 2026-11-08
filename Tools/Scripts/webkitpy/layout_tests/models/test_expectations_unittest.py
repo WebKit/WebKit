@@ -336,6 +336,33 @@ class SkippedTests(Base):
             'The following test foo/bar/baz.html from the Skipped list doesn\'t exist\n',
         )
 
+    def test_overlapping_skipped_entries_most_specific_wins_in_any_order(self):
+        # A list, not a set, so the order of the input is kept: each order must give the same winner.
+        for skips in (['failures/expected', 'failures/expected/text.html'],
+                      ['failures/expected/text.html', 'failures/expected']):
+            port = MockHost().port_factory.get('mac')
+            port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
+            expectations_dict = OrderedDict()
+            expectations_dict['expectations'] = ''
+            port.expectations_dict = lambda **kwargs: expectations_dict
+            port.skipped_layout_tests = lambda **kwargs: skips
+            exp = TestExpectations(port, ['failures/expected/text.html'])
+            exp.parse_all_expectations()
+            self.assertEqual(exp.model().get_expectation_line('failures/expected/text.html').name, 'failures/expected/text.html')
+
+    def test_test_list_line_supersedes_synthetic_pass(self):
+        port = MockHost().port_factory.get('mac')
+        port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = ''
+        port.expectations_dict = lambda **kwargs: expectations_dict
+        exp = TestExpectations(port, ['failures/expected/text.html'])
+        exp.parse_all_expectations(test_list_expectations=[('test-list.txt', 1, 'Bug(x) failures/expected/text.html [ Failure ]')])
+        lines = exp.model().get_expectation_lines('failures/expected/text.html')
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0].filename, 'test-list.txt')
+        self.assertEqual(exp.model().get_expectations('failures/expected/text.html'), set([FAIL]))
+
 
 class ExpectationSyntaxTests(Base):
     def test_unrecognized_expectation(self):

@@ -1099,8 +1099,8 @@ class TestExpectations(object):
             self._expectations += expectations
             self._expectations_dict_index += 1
 
-    def parse_all_expectations(self):
-        # type: () -> None
+    def parse_all_expectations(self, test_list_expectations=None):
+        # type: (Optional[List[Tuple[str, int, str]]]) -> None
         self._expectations_dict = self._expectations_to_lint or self._port.expectations_dict(device_type=self._device_type)  # type: Dict[str, str]
         self._expectations_dict_index = 0
 
@@ -1113,6 +1113,7 @@ class TestExpectations(object):
         self.add_skipped_tests(self._port.skipped_layout_tests(device_type=self._device_type))
 
         self._report_warnings()
+        self.add_test_list_expectations(test_list_expectations)
         self._process_tests_without_expectations()
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
@@ -1225,12 +1226,14 @@ class TestExpectations(object):
                 assert test.line_number is not None
                 test.warnings.append('%s:%d %s is also in a Skipped file.' % (test.filename, test.line_number, test.name))
 
-        for test_name in tests_to_skip:
+        # Skipped lines bypass the specificity check, so the last one added wins: sort them so that a
+        # parent directory comes before its children, and the most specific entry wins.
+        for test_name in sorted(tests_to_skip):
             expectation_line = self._parser.expectation_for_skipped_test(test_name)
             self._model.add_expectation_line(expectation_line, in_skipped=True)
 
     def add_test_list_expectations(self, test_list_expectations):
-        # type: (List[Tuple[str, int, str]]) -> None
+        # type: (Optional[List[Tuple[str, int, str]]]) -> None
         if not test_list_expectations:
             return
 
