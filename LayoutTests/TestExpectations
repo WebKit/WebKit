@@ -8095,7 +8095,6 @@ webkit.org/b/288831 [ Debug ] fast/css/shadow-box-recursion-depth.html [ Pass Ti
 imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-link.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-style-subresource.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-style.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/329514 imported/w3c/web-platform-tests/css/cssom/CSSKeyframeRule-keyText.html [ Pass Failure ]
 webkit.org/b/329514 imported/w3c/web-platform-tests/css/cssom/CSSImportRule-insertRule-styleSheet-parentStyleSheet.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-blocks-wasm.tentative.sub.html [ Pass Failure ]

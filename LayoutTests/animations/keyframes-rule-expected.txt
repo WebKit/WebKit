@@ -82,9 +82,9 @@ PASS rule.cssText is '10% { left: 10px; }'
 PASS rule.type is window.CSSRule.KEYFRAME_RULE
 PASS rule.cssText is '10% { left: 10px; }'
 PASS rule.type is window.CSSRule.KEYFRAME_RULE
-FAIL rule.cssText should be 10%,20%  { left: 10px; }. Was 10%,20% { left: 1020px; }.
+FAIL rule.cssText should be 10%, 20%  { left: 10px; }. Was 10%, 20% { left: 1020px; }.
 PASS rule.type is window.CSSRule.KEYFRAME_RULE
-FAIL rule.cssText should be 10%,20%  { left: 10px; }. Was 10%,20% { left: 1020px; }.
+FAIL rule.cssText should be 10%, 20%  { left: 10px; }. Was 10%, 20% { left: 1020px; }.
 PASS rule is null
 PASS rule.type is window.CSSRule.KEYFRAME_RULE
 PASS rule.cssText is '0% { left: 0px; }'
@@ -100,7 +100,7 @@ PASS rule.type is window.CSSRule.KEYFRAME_RULE
 PASS rule.cssText is '10% { left: 10px; }'
 PASS rulesDeleteLast.length is 6
 PASS rule.type is window.CSSRule.KEYFRAME_RULE
-PASS rule.cssText is '10%,20% { left: 1020px; }'
+PASS rule.cssText is '10%, 20% { left: 1020px; }'
 PASS rulesDeleteLast.length is 6
 PASS rulesDeleteLast.length is 5
 PASS rule.type is window.CSSRule.KEYFRAME_RULE
