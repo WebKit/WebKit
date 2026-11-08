@@ -167,17 +167,23 @@ private:
     LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
     BlockLayoutResult layoutContent(const ConstraintsForBlockContent&, const BoxGeometry& rootGeometry);
+    struct BorderBoxLogicalTops {
+        Vector<LayoutUnit> borderBoxLogicalTops;
+        Vector<bool> hasClearance;
+    };
     void resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState);
     void placePendingFloats(LayoutUnit borderBoxLogicalTop, const RenderBox* blockContainer = nullptr);
     std::optional<ContainingBlockState::Clearance> clearanceAtBlockStart(const RenderBox&) const;
-    void placeCollapsedThroughBoxWithClearance(const RenderBox&, ContainingBlockState&&, BlockLayoutResult&);
+    void placeCollapsedThroughBoxWithClearance(const RenderBox&, ContainingBlockState&&, std::span<const ContainingBlockState* const> statesWaitingForTop, const BorderBoxLogicalTops&, BlockLayoutResult&);
     LayoutSize borderBoxOffsetInRoot(const ContainingBlockState&);
     void addFloats(PlacedFloats::List&&, const ContainingBlockState&);
     void addInlineContentFloats(const PlacedFloats::List&);
+    BorderBoxLogicalTops borderBoxLogicalTopsWaitingForTop(std::span<const ContainingBlockState* const> statesWaitingForTop, LayoutUnit marginsLogicalBottom) const;
+    Vector<const ContainingBlockState*> statesWaitingForTop() const;
+    void placePendingFloats(std::span<const ContainingBlockState* const> statesWaitingForTop, const BorderBoxLogicalTops&);
     struct HypotheticalPosition {
         LayoutUnit borderBoxLogicalTop;
-        LayoutUnit pendingFloatsBorderBoxLogicalTop;
-        CheckedPtr<const RenderBox> clearedBlockContainer;
+        Vector<std::pair<CheckedRef<const RenderBox>, LayoutUnit>> blockContainerLogicalTops;
     };
     HypotheticalPosition hypotheticalPosition() const;
     PlacedFloats floatsAtHypotheticalPosition() const;
