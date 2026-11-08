@@ -41,6 +41,9 @@ enum TestCertificates {
 }
 
 extension TestCertificates {
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses the internal SDK's declaration of SecIdentityCreate")
+    #endif
     fileprivate static func makeIdentity(privateKey: Data, certificate: Data) -> SecIdentity {
         let pkcs8HeaderLength = 26
         let attributes: [CFString: Any] = [
