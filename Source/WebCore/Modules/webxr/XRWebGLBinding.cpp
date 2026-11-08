@@ -263,10 +263,10 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateColorTex
 
             // Layout / textureType differences (size, array length, texture target) are baked into the swapchain at construction time.
             Vector<RefPtr<WebGLOpaqueTexture>> textures;
-            auto& backing = downcast<XRWebGLLayerBacking>(layer.backing());
-            uint32_t textureCount = backing.requiresPerViewColorTextures() ? 2 : 1;
+            Ref backing = downcast<XRWebGLLayerBacking>(layer.backing());
+            uint32_t textureCount = backing->requiresPerViewColorTextures() ? 2 : 1;
             for (uint32_t index = 0; index < textureCount; ++index) {
-                RefPtr currentColorTexture = backing.currentColorTexture(index);
+                RefPtr currentColorTexture = backing->currentColorTexture(index);
                 if (!currentColorTexture)
                     return Exception { ExceptionCode::InvalidStateError, "Failed to get the current color texture."_s };
                 textures.append(currentColorTexture);
@@ -294,10 +294,10 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateDepthTex
             ASSERT(depthFormatIsSupportedForNonProjectionLayer(*init.depthFormat));
             ASSERT(layer.layout() != XRLayerLayout::Default);
 
-            auto& backing = downcast<XRWebGLLayerBacking>(layer.backing());
-            uint32_t textureCount = backing.requiresPerViewColorTextures() ? 2 : 1;
+            Ref backing = downcast<XRWebGLLayerBacking>(layer.backing());
+            uint32_t textureCount = backing->requiresPerViewColorTextures() ? 2 : 1;
             for (uint32_t index = 0; index < textureCount; ++index) {
-                RefPtr currentDepthTexture = backing.currentDepthTexture(index);
+                RefPtr currentDepthTexture = backing->currentDepthTexture(index);
                 if (!currentDepthTexture)
                     return Exception { ExceptionCode::InvalidStateError, "Failed to get the current depth texture."_s };
                 textures.append(currentDepthTexture);
@@ -446,7 +446,7 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateColorTex
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create a projection layer with a lost WebGL context"_s };
 
             Vector<RefPtr<WebGLOpaqueTexture>> textures;
-            auto& backing = downcast<XRWebGLLayerBacking>(layer.backing());
+            Ref backing = downcast<XRWebGLLayerBacking>(layer.backing());
             switch (layer.layout()) {
             case XRLayerLayout::Mono:
                 return Exception { ExceptionCode::NotSupportedError, "Mono layout not implemented."_s };
@@ -455,11 +455,11 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateColorTex
                 for (auto& view : m_session->views()) {
                     if (!view.active)
                         continue;
-                    textures.append(backing.currentColorTexture());
+                    textures.append(backing->currentColorTexture());
                 }
                 break;
             case XRLayerLayout::StereoLeftRight:
-                textures.append(backing.currentColorTexture());
+                textures.append(backing->currentColorTexture());
                 break;
             case XRLayerLayout::StereoTopBottom:
                 return Exception { ExceptionCode::NotSupportedError, "Stereo top bottom not implemented."_s };
@@ -494,7 +494,7 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateDepthTex
             if (baseContext->isWebGL1() && !baseContext->extensionIsEnabled("WEBGL_depth_texture"_s))
                 return textures;
 
-            auto& depthBacking = downcast<XRWebGLLayerBacking>(layer.backing());
+            Ref depthBacking = downcast<XRWebGLLayerBacking>(layer.backing());
             switch (layer.layout()) {
             case XRLayerLayout::Mono:
                 return Exception { ExceptionCode::NotSupportedError, "Mono layout not implemented."_s };
@@ -503,11 +503,11 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateDepthTex
                 for (auto& view : m_session->views()) {
                     if (!view.active)
                         continue;
-                    textures.append(depthBacking.currentDepthTexture());
+                    textures.append(depthBacking->currentDepthTexture());
                 }
                 break;
             case XRLayerLayout::StereoLeftRight:
-                textures.append(depthBacking.currentDepthTexture());
+                textures.append(depthBacking->currentDepthTexture());
                 break;
             case XRLayerLayout::StereoTopBottom:
                 return Exception { ExceptionCode::NotSupportedError, "Stereo top bottom not implemented."_s };
@@ -541,7 +541,7 @@ ExceptionOr<Ref<XREquirectLayer>> XRWebGLBinding::createEquirectLayer(ScriptExec
             if (baseContext->isContextLost())
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create an equirect layer with a lost WebGL context"_s };
 
-            if (!init.space->isReferenceSpace())
+            if (!protect(init.space)->isReferenceSpace())
                 return Exception { ExceptionCode::TypeError, "The space is not a reference space."_s };
 
             if (downcast<WebXRReferenceSpace>(init.space).type() == XRReferenceSpaceType::Viewer)
@@ -592,7 +592,7 @@ ExceptionOr<Ref<XRCylinderLayer>> XRWebGLBinding::createCylinderLayer(ScriptExec
             if (baseContext->isContextLost())
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create a cylinder layer with a lost WebGL context"_s };
 
-            if (!init.space->isReferenceSpace())
+            if (!protect(init.space)->isReferenceSpace())
                 return Exception { ExceptionCode::TypeError, "The space is not a reference space."_s };
 
             if (downcast<WebXRReferenceSpace>(init.space).type() == XRReferenceSpaceType::Viewer)
@@ -646,7 +646,7 @@ ExceptionOr<Ref<XRCubeLayer>> XRWebGLBinding::createCubeLayer(ScriptExecutionCon
             if (baseContext->isContextLost())
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create a cube layer with a lost WebGL context"_s };
 
-            if (!init.space->isReferenceSpace())
+            if (!protect(init.space)->isReferenceSpace())
                 return Exception { ExceptionCode::TypeError, "The space is not a reference space."_s };
 
             if (downcast<WebXRReferenceSpace>(init.space).type() == XRReferenceSpaceType::Viewer)
@@ -755,7 +755,8 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getSubImage(XRCompositionLayer
             Ref subImage = createSubImageResult.releaseReturnValue();
             subImage->setImageIndex(init.textureType == XRTextureType::TextureArray ? index : 0);
 
-            if (layer.backing().allColorTexturesAreBound()) {
+            Ref backing = layer.backing();
+            if (backing->allColorTexturesAreBound()) {
                 ActiveDOMObject::queueTaskKeepingObjectAlive(m_session.get(), TaskSource::WebXR, [layerRef = protect(layer)](auto&) {
                     layerRef->setNeedsRedraw(false);
                 });
@@ -766,11 +767,11 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getSubImage(XRCompositionLayer
             if (layer.isXRCubeLayer() && init.textureType == XRTextureType::TextureArray) {
                 // Each eye occupies 6 consecutive array layers (one per face). index is the base layer for the current eye (0 for left/mono, 6 for right eye).
                 for (uint32_t face = 0; face < 6; ++face)
-                    layer.backing().clearTexturesIfNeeded(clearRect, static_cast<uint32_t>(index) + face);
+                    backing->clearTexturesIfNeeded(clearRect, static_cast<uint32_t>(index) + face);
             } else {
                 // For non texture array cubes the clear slice selects the eye's cubemap texture. For other layer types it is the array layer (imageIndex).
                 auto clearSlice = layer.isXRCubeLayer() ? std::optional<uint32_t>(colorTextureIndex) : subImage->imageIndex();
-                layer.backing().clearTexturesIfNeeded(clearRect, clearSlice);
+                backing->clearTexturesIfNeeded(clearRect, clearSlice);
             }
             return subImage;
         },
@@ -831,7 +832,8 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getViewSubImage(XRProjectionLa
     Ref subImage = subImageResult.releaseReturnValue();
     subImage->setImageIndex(textureType == XRTextureType::TextureArray && view.eye() == XREye::Right ? 1 : 0);
     const auto& vp = subImage->viewport();
-    layer.backing().clearTexturesIfNeeded(IntRect(vp.x(), vp.y(), vp.width(), vp.height()), subImage->imageIndex());
+    Ref backing = layer.backing();
+    backing->clearTexturesIfNeeded(IntRect(vp.x(), vp.y(), vp.width(), vp.height()), subImage->imageIndex());
     return subImage;
 }
 

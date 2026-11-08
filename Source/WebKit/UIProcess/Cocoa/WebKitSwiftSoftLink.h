@@ -63,6 +63,9 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentOpenID4VPVerifie
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentRequest);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentRequestAuthenticationCertificate);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextAnimationManager)
+#if ENABLE(WEBXR) && PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKWebXRImmersiveSpaceHost)
+#endif
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUSDConfiguration)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeReceiver)

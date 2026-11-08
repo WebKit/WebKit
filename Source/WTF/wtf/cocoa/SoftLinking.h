@@ -656,6 +656,9 @@ static void* lib##Library(bool = false) \
 #define SOFT_LINK_FUNCTION_FOR_HEADER_WITH_CF_RETURNS_RETAINED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, CF_RETURNS_RETAINED)
 
+#define SOFT_LINK_FUNCTION_FOR_HEADER_WITH_OS_OBJECT_RETURNS_RETAINED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, OS_OBJECT_RETURNS_RETAINED)
+
 #define SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
