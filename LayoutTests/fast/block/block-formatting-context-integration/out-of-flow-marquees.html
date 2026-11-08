@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px monospace; }
+.root { display: flow-root; position: relative; width: 250px; height: 60px; border: 1px solid; margin-bottom: 4px; }
+marquee { display: block; position: absolute; border: 2px solid green; padding: 3px; }
+.b { background: lightblue; }
+</style>
+<div class="root"><marquee behavior="alternate" scrollamount="0">out-of-flow marquee</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0">out-of-flow marquee text that is long enough to overflow the box</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="left: 10px; right: 10px">left and right</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="width: min-content">min-content</marquee></div>
+<div class="root"><marquee behavior="none">behavior none out-of-flow marquee text that is long</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" direction="up" height="40">vertical out-of-flow marquee text that wraps</marquee></div>
+<div class="root"><marquee behavior="alternate" scrollamount="0" style="right: 0"><div class="b">block child</div><div class="b" style="width: 50px">fixed</div></marquee></div>
+<div class="root" style="direction: rtl"><marquee behavior="alternate" scrollamount="0">rtl containing block</marquee></div>
+<div class="root">text before <marquee behavior="alternate" scrollamount="0">static position after text</marquee></div>

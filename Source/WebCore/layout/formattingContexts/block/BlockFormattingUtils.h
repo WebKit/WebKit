@@ -77,6 +77,7 @@ public:
     // An auto inline size fits the content of a box justify-self aligns, of a child of a horizontal marquee, and of a form control or a legend
     // (RenderBox::sizesLogicalWidthToFitContent).
     static bool autoInlineSizeFitsContent(const RenderBox&, const Style::ComputedStyle& containingBlockStyle);
+    static bool isScrollingHorizontalMarquee(const RenderBox&);
     // A text control, list box, progress bar, meter or file input: a block container whose renderer sizes it and lays out its content its own
     // way (RenderTextControlSingleLine::layout, RenderListBox::computeLogicalHeight), so its own formatting context lays it out, like a flex
     // container.
