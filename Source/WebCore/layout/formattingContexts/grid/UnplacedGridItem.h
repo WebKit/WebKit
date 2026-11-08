@@ -33,7 +33,7 @@ namespace Layout {
 
 class ElementBox;
 class GridLayout;
-class NamedGridLines;
+class NamedLineResolver;
 
 // Grid item placement is written in terms of grid-auto-flow instead of columns and rows. From
 // https://drafts.csswg.org/css-grid-1/#grid-auto-flow-property:
@@ -72,12 +72,11 @@ private:
 
     class GridPosition {
     public:
-        // explicitTrackCount is the number of explicit tracks in the axis, used to resolve negative
-        // lines against the end of the explicit grid, and the NamedGridLines are the axis's, used to
-        // resolve lines given with a name. The leading implicit track count then shifts negative
+        // The NamedLineResolver is the axis's: it resolves lines given with a name, and holds the number of
+        // explicit tracks that negative lines count back from. The leading implicit track count then shifts negative
         // resolved lines forward so the range maps to non-negative matrix indices. See
         // UnplacedGridItem::resolveDefinitePosition().
-        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines&, size_t leadingImplicitTracksCount, size_t maxTracks);
+        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, const NamedLineResolver&, size_t leadingImplicitTracksCount, size_t maxTracks);
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -98,7 +97,7 @@ private:
     };
 
 public:
-    UnplacedGridItem(const ElementBox&, Style::GridPosition nonAutoFlowStart, Style::GridPosition nonAutoFlowEnd, Style::GridPosition autoFlowStart, Style::GridPosition autoFlowEnd, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount, const NamedGridLines& namedNonAutoFlowLines, const NamedGridLines& namedAutoFlowLines, size_t leadingImplicitNonAutoFlowTracksCount, size_t leadingImplicitAutoFlowTracksCount, size_t maxTracks);
+    UnplacedGridItem(const ElementBox&, Style::GridPosition nonAutoFlowStart, Style::GridPosition nonAutoFlowEnd, Style::GridPosition autoFlowStart, Style::GridPosition autoFlowEnd, const NamedLineResolver& nonAutoFlowNamedLineResolver, const NamedLineResolver& autoFlowNamedLineResolver, size_t leadingImplicitNonAutoFlowTracksCount, size_t leadingImplicitAutoFlowTracksCount, size_t maxTracks);
 
     NODELETE bool hasDefiniteAutoFlowPosition() const;
     NODELETE bool hasDefiniteNonAutoFlowPosition() const;
@@ -110,12 +109,12 @@ public:
 
     // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
     // axis is auto-positioned (neither edge is a line, which is an <integer> or a lone <custom-ident>).
-    // explicitTrackCount is used to resolve negative lines against the end of the explicit grid, and
-    // the NamedGridLines to resolve lines given with a name; the resolved lines may still be negative
+    // The NamedLineResolver is the axis's and resolves the lines given with a name, and the negative lines
+    // against the end of the explicit grid; the resolved lines may still be negative
     // for negative line placements that count past the start edge, and the leading implicit track
     // count is applied later in GridPosition::create(). maxTracks limits the resolved lines, see
     // https://drafts.csswg.org/css-grid-1/#overlarge-grids.
-    static std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, const NamedGridLines&, size_t maxTracks);
+    static std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, const NamedLineResolver&, size_t maxTracks);
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;

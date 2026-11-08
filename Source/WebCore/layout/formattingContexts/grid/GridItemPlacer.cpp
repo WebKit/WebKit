@@ -27,6 +27,7 @@
 #include "GridItemPlacer.h"
 
 #include "ImplicitGrid.h"
+#include "NamedLineResolver.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
@@ -40,7 +41,7 @@ GridItemPlacer::GridItemPlacer(GridAutoFlowOptions autoFlowOptions)
 // The only place that maps between the columns and rows of the style and GridAreaLines and the non-auto-flow and auto-flow
 // tracks the placement works in (see UnplacedGridItem.h). For grid-auto-flow: row the auto-flow tracks are the rows and for
 // column they are the columns.
-static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, size_t leadingNonAutoFlowTracksCount, size_t leadingAutoFlowTracksCount, size_t explicitNonAutoFlowTracksCount, size_t explicitAutoFlowTracksCount, const NamedGridLines& namedNonAutoFlowLines, const NamedGridLines& namedAutoFlowLines, size_t maxTracks, GridAutoFlowDirection direction)
+static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logicalGridItems, size_t leadingNonAutoFlowTracksCount, size_t leadingAutoFlowTracksCount, const NamedLineResolver& nonAutoFlowNamedLineResolver, const NamedLineResolver& autoFlowNamedLineResolver, size_t maxTracks, GridAutoFlowDirection direction)
 {
     UnplacedGridItems unplacedGridItems;
     for (auto& gridItem : logicalGridItems) {
@@ -62,10 +63,8 @@ static UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems& logi
             gridItemNonAutoFlowEnd,
             gridItemAutoFlowStart,
             gridItemAutoFlowEnd,
-            explicitNonAutoFlowTracksCount,
-            explicitAutoFlowTracksCount,
-            namedNonAutoFlowLines,
-            namedAutoFlowLines,
+            nonAutoFlowNamedLineResolver,
+            autoFlowNamedLineResolver,
             leadingNonAutoFlowTracksCount,
             leadingAutoFlowTracksCount,
             maxTracks
@@ -98,20 +97,20 @@ static GridAreaLines toGridAreaLines(const FlowRelativeAreaLines& area, GridAuto
 //
 // Step 3 (determining the non-auto-flow tracks in the implicit grid, the columns for grid-auto-flow: row) is handled while the grid is built, in
 // ImplicitGrid::createInitialGrid().
-GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount, const NamedGridLines& namedColumnLines, const NamedGridLines& namedRowLines, size_t maxTracks) const
+GridItemPlacementResult GridItemPlacer::placeItems(const LogicalGridItems& logicalGridItems, LeadingImplicitTracks leadingImplicitTracks, const NamedLineResolver& columnNamedLineResolver, const NamedLineResolver& rowNamedLineResolver, size_t maxTracks) const
 {
     auto direction = m_autoFlowOptions.direction;
     bool isColumnFlow = direction == GridAutoFlowDirection::Column;
     auto leadingNonAutoFlowTracksCount = isColumnFlow ? leadingImplicitTracks.rowsCount : leadingImplicitTracks.columnsCount;
     auto leadingAutoFlowTracksCount = isColumnFlow ? leadingImplicitTracks.columnsCount : leadingImplicitTracks.rowsCount;
-    auto explicitNonAutoFlowTracksCount = isColumnFlow ? explicitRowsCount : explicitColumnsCount;
-    auto explicitAutoFlowTracksCount = isColumnFlow ? explicitColumnsCount : explicitRowsCount;
 
-    // The name tables go with the style axis that the properties come from, like the track counts.
-    auto& namedNonAutoFlowLines = isColumnFlow ? namedRowLines : namedColumnLines;
-    auto& namedAutoFlowLines = isColumnFlow ? namedColumnLines : namedRowLines;
+    // The resolvers go with the style axis that the properties come from, like the track counts.
+    auto& nonAutoFlowNamedLineResolver = isColumnFlow ? rowNamedLineResolver : columnNamedLineResolver;
+    auto& autoFlowNamedLineResolver = isColumnFlow ? columnNamedLineResolver : rowNamedLineResolver;
+    auto explicitNonAutoFlowTracksCount = nonAutoFlowNamedLineResolver.explicitTrackCount();
+    auto explicitAutoFlowTracksCount = autoFlowNamedLineResolver.explicitTrackCount();
 
-    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingNonAutoFlowTracksCount, leadingAutoFlowTracksCount, explicitNonAutoFlowTracksCount, explicitAutoFlowTracksCount, namedNonAutoFlowLines, namedAutoFlowLines, maxTracks, direction);
+    auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingNonAutoFlowTracksCount, leadingAutoFlowTracksCount, nonAutoFlowNamedLineResolver, autoFlowNamedLineResolver, maxTracks, direction);
     auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingNonAutoFlowTracksCount, leadingAutoFlowTracksCount, explicitNonAutoFlowTracksCount, explicitAutoFlowTracksCount, maxTracks);
 
     GridAreas gridAreas;
