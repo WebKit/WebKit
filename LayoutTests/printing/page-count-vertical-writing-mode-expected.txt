@@ -1,0 +1,19 @@
+Tests that page counting and page numbers agree in vertical writing modes. Each block starts a new page.
+
+
+horizontal-tb:
+PASS: number of pages is 3
+PASS: page number of "first" is 0
+PASS: page number of "second" is 1
+PASS: page number of "third" is 2
+vertical-rl:
+PASS: number of pages is 3
+PASS: page number of "first" is 0
+PASS: page number of "second" is 1
+PASS: page number of "third" is 2
+vertical-lr:
+PASS: number of pages is 3
+PASS: page number of "first" is 0
+PASS: page number of "second" is 1
+PASS: page number of "third" is 2
+All tests passed
