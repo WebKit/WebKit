@@ -29,10 +29,10 @@
 
 #include "Attr.h"
 #include "Attribute.h"
-#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "ElementInlines.h"
 #include "NodeTraversal.h"
+#include "XPathUtil.h"
 
 namespace WebCore::XPath {
 
@@ -189,16 +189,6 @@ void NodeSet::sortOneTree() const
         sortedNodes.append(WTF::move(parentMatrix[i][0]));
 
     m_nodes = WTF::move(sortedNodes);
-}
-
-static Node& treeRoot(Node& node)
-{
-    if (auto* attr = dynamicDowncast<Attr>(node)) {
-        if (auto* element = attr->ownerElement())
-            return element->rootNode();
-        return node;
-    }
-    return node.rootNode();
 }
 
 bool NodeSet::allNodesAreInOneTree() const
