@@ -174,6 +174,12 @@ private:
     LayoutSize borderBoxOffsetInRoot(const ContainingBlockState&);
     void addFloats(PlacedFloats::List&&, const ContainingBlockState&);
     void addInlineContentFloats(const PlacedFloats::List&);
+    struct HypotheticalPosition {
+        LayoutUnit borderBoxLogicalTop;
+        LayoutUnit pendingFloatsBorderBoxLogicalTop;
+        CheckedPtr<const RenderBox> clearedBlockContainer;
+    };
+    HypotheticalPosition hypotheticalPosition() const;
     PlacedFloats floatsAtHypotheticalPosition() const;
 
     const RenderBlockFlow& root() const { return m_root; }
