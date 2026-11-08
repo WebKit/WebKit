@@ -109,6 +109,7 @@ public:
     using SuspendedUnderLock = MediaSessionHelperClient::SuspendedUnderLock;
 
     void activeAudioRouteDidChange(ShouldPause);
+    WEBCORE_EXPORT void simulateActiveOutputDeviceChangeForTesting();
     void applicationWillEnterForeground(SuspendedUnderLock);
     void applicationDidEnterBackground(SuspendedUnderLock);
     void applicationWillBecomeInactive();

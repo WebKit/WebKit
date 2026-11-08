@@ -5991,6 +5991,22 @@ void Internals::activeAudioRouteDidChange(bool shouldPause)
 #endif
 }
 
+void Internals::simulateActiveOutputDeviceChange()
+{
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    protect(MediaSessionHelper::sharedHelper())->simulateActiveOutputDeviceChangeForTesting();
+#endif
+}
+
+bool Internals::activeVideoRouteSupportsAirPlayVideo() const
+{
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    return MediaSessionHelper::sharedHelper().activeVideoRouteSupportsAirPlayVideo();
+#else
+    return false;
+#endif
+}
+
 bool Internals::elementIsBlockingDisplaySleep(const HTMLMediaElement& element) const
 {
     return element.isDisablingSleep();

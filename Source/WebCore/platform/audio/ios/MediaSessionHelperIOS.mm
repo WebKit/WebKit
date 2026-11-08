@@ -172,6 +172,14 @@ void MediaSessionHelper::activeAudioRouteDidChange(ShouldPause shouldPause)
     });
 }
 
+void MediaSessionHelper::simulateActiveOutputDeviceChangeForTesting()
+{
+    activeAudioRouteDidChange(ShouldPause::No);
+    Ref target = MediaPlaybackTargetCocoa::create();
+    auto supportsAirPlayVideo = target->supportsRemoteVideoPlayback() ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No;
+    activeVideoRouteDidChange(supportsAirPlayVideo, WTF::move(target));
+}
+
 void MediaSessionHelper::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
 {
     m_clients.forEach([&](auto& client) {
@@ -222,6 +230,10 @@ void MediaSessionHelper::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomot
 
 void MediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<MediaPlaybackTarget>&& playbackTarget)
 {
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    if (playbackTarget->targetType() != MediaPlaybackTargetType::WirelessPlayback && MediaDeviceRouteController::singleton().mostRecentActiveRoute())
+        return;
+#endif
     m_playbackTarget = WTF::move(playbackTarget);
     m_activeVideoRouteSupportsAirPlayVideo = supportsAirPlayVideo == SupportsAirPlayVideo::Yes;
     m_clients.forEach([&](auto& client) {
