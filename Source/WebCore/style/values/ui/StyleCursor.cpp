@@ -73,7 +73,7 @@ std::optional<WebCore::Cursor> Cursor::selectImageCursor(const RenderObject* ren
         if (styleImage->errorOccurred() || !styleImage->canDraw(*renderElement))
             continue;
 
-        auto concreteCursorSize = styleImage->negotiate(*renderElement, CursorSizing { styleImage->imageScaleFactor() });
+        auto concreteCursorSize = styleImage->negotiate(*renderElement, CursorSizing { narrowPrecisionToFloat(styleImage->imageResolution().value) });
         auto cursorSize = concreteCursorSize.size();
         if (cursorSize.isEmpty())
             continue;

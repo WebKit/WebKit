@@ -56,40 +56,40 @@ namespace Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedImage);
 
-Ref<CachedImage> CachedImage::create(URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFactor)
+Ref<CachedImage> CachedImage::create(URL&& url, Ref<CSSImageValue>&& cssValue, Resolution<> resolution)
 {
-    return adoptRef(*new CachedImage(WTF::move(url), WTF::move(cssValue), scaleFactor));
+    return adoptRef(*new CachedImage(WTF::move(url), WTF::move(cssValue), resolution));
 }
 
-Ref<CachedImage> CachedImage::create(const URL& url, const Ref<CSSImageValue>& cssValue, float scaleFactor)
+Ref<CachedImage> CachedImage::create(const URL& url, const Ref<CSSImageValue>& cssValue, Resolution<> resolution)
 {
-    return CachedImage::create(URL { url }, cssValue.copyRef(), scaleFactor);
+    return CachedImage::create(URL { url }, cssValue.copyRef(), resolution);
 }
 
-Ref<CachedImage> CachedImage::create(WebCore::CachedImage& cachedImage, WTF::URL&& authoredURL, OptionSet<SVGReferencingMode> referencingModes, float scaleFactor)
+Ref<CachedImage> CachedImage::create(WebCore::CachedImage& cachedImage, WTF::URL&& authoredURL, OptionSet<SVGReferencingMode> referencingModes, Resolution<> resolution)
 {
     auto url = authoredURL.isNull() ? cachedImage.url() : WTF::move(authoredURL);
-    return adoptRef(*new CachedImage(URL { .resolved = WTF::move(url), .modifiers = { } }, CSSImageValue::create(cachedImage), scaleFactor, referencingModes));
+    return adoptRef(*new CachedImage(URL { .resolved = WTF::move(url), .modifiers = { } }, CSSImageValue::create(cachedImage), resolution, referencingModes));
 }
 
-Ref<CachedImage> CachedImage::copyOverridingScaleFactor(CachedImage& other, float scaleFactor)
+Ref<CachedImage> CachedImage::copyOverridingResolution(CachedImage& other, Resolution<> resolution)
 {
-    if (other.m_scaleFactor == scaleFactor)
+    if (other.m_resolution == resolution)
         return other;
-    return adoptRef(*new CachedImage(URL { other.m_url }, other.m_cssValue.copyRef(), scaleFactor, other.m_referencingModes));
+    return adoptRef(*new CachedImage(URL { other.m_url }, other.m_cssValue.copyRef(), resolution, other.m_referencingModes));
 }
 
-CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFactor)
-    : CachedImage { WTF::move(url), WTF::move(cssValue), scaleFactor, { SVGReferencingMode::AnimatedImageDocument, SVGReferencingMode::ResourceDocument } }
+CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, Resolution<> resolution)
+    : CachedImage { WTF::move(url), WTF::move(cssValue), resolution, { SVGReferencingMode::AnimatedImageDocument, SVGReferencingMode::ResourceDocument } }
 {
 }
 
-CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFactor, OptionSet<SVGReferencingMode> referencingModes)
+CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, Resolution<> resolution, OptionSet<SVGReferencingMode> referencingModes)
     : Image { Type::CachedImage }
     , m_url { WTF::move(url) }
     , m_cssValue { WTF::move(cssValue) }
     , m_referencingModes { referencingModes }
-    , m_scaleFactor { scaleFactor }
+    , m_resolution { resolution }
 {
     m_cachedImage = m_cssValue->cachedImage();
     if (m_cachedImage)
@@ -115,7 +115,7 @@ bool CachedImage::equals(const CachedImage& other) const
 {
     if (&other == this)
         return true;
-    if (m_scaleFactor != other.m_scaleFactor)
+    if (m_resolution != other.m_resolution)
         return false;
     if (m_cssValue.ptr() == other.m_cssValue.ptr() || m_cssValue->equals(other.m_cssValue.get()))
         return true;
@@ -491,9 +491,9 @@ bool CachedImage::currentFrameIsComplete(const RenderElement*) const
     return m_cachedImage && protect(m_cachedImage)->currentFrameIsComplete();
 }
 
-float CachedImage::imageScaleFactor() const
+Resolution<> CachedImage::imageResolution() const
 {
-    return m_scaleFactor;
+    return m_resolution;
 }
 
 bool CachedImage::knownToBeOpaque(const RenderElement&) const

@@ -58,7 +58,7 @@ private:
 
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
-    ImageWithScale selectBestFitImage(const Document&) final;
+    ImageWithResolution selectBestFitImage(const Document&) final;
 
     const Ref<Image> m_image;
     const std::optional<HotSpot> m_hotSpot;

@@ -102,7 +102,7 @@ Ref<DeprecatedCSSOMValue> CursorImage::computedStyleDeprecatedCSSOMValue(CSSValu
     return computedStyleValue(style)->createDeprecatedCSSOMWrapper(owner);
 }
 
-ImageWithScale CursorImage::selectBestFitImage(const Document& document)
+ImageWithResolution CursorImage::selectBestFitImage(const Document& document)
 {
     using namespace CSS::Literals;
 

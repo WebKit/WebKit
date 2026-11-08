@@ -72,11 +72,11 @@ RefPtr<Style::Image> CSSImageSetValue::createStyleImage(const Style::BuilderStat
 {
     size_t length = this->length();
 
-    Vector<Style::ImageWithScale> images(length, [&](size_t i) {
+    Vector<Style::ImageWithResolution> images(length, [&](size_t i) {
         RefPtr<const CSSImageSetOptionValue> option = downcast<CSSImageSetOptionValue>(item(i));
-        return Style::ImageWithScale {
+        return Style::ImageWithResolution {
             .image = state.createStyleImage(option->image()),
-            .scaleFactor = Style::toStyle(option->resolution(), state),
+            .resolution = Style::toStyle(option->resolution(), state),
             .mimeType = Style::toStyle(option->type(), state),
         };
     });
@@ -87,7 +87,7 @@ RefPtr<Style::Image> CSSImageSetValue::createStyleImage(const Style::BuilderStat
     std::iota(sortedIndices.begin(), sortedIndices.end(), 0);
 
     std::stable_sort(sortedIndices.begin(), sortedIndices.end(), [&images](size_t lhs, size_t rhs) {
-        return images[lhs].scaleFactor.value < images[rhs].scaleFactor.value;
+        return images[lhs].resolution.value < images[rhs].resolution.value;
     });
 
     return Style::ImageSet::create(WTF::move(images), WTF::move(sortedIndices));

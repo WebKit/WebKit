@@ -855,7 +855,8 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
     LayoutSize imageIntrinsicSize;
     if (image) {
         imageIntrinsicSize = renderer.calculateImageIntrinsicDimensions(*image, layerSizing, RenderBoxModelObject::ScaleByUsedZoom::Yes);
-        imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
+        auto inverseResolution = narrowPrecisionToFloat(1 / image->imageResolution().value);
+        imageIntrinsicSize.scale(inverseResolution, inverseResolution);
     } else
         imageIntrinsicSize = positioningAreaSize;
 

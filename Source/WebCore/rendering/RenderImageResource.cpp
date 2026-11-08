@@ -189,7 +189,7 @@ LayoutSize RenderImageResource::intrinsicSize(float multiplier) const
 
     auto size = ReplacedElementIntrinsicSizing { density() }.resolve(naturalDimensions()).size();
     size.scale(multiplier);
-    return LayoutSize(size / protect(m_styleImage)->imageScaleFactor());
+    return LayoutSize(size / narrowPrecisionToFloat(protect(m_styleImage)->imageResolution().value));
 }
 
 } // namespace WebCore

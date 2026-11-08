@@ -80,10 +80,10 @@ void MultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions&
     }
 
     if (RefPtr styleCachedImage = dynamicDowncast<CachedImage>(bestFitImage.image)) {
-        if (styleCachedImage->imageScaleFactor() == bestFitImage.scaleFactor.value)
+        if (styleCachedImage->imageResolution() == bestFitImage.resolution)
             m_selectedImage = WTF::move(styleCachedImage);
         else
-            m_selectedImage = CachedImage::copyOverridingScaleFactor(*styleCachedImage, bestFitImage.scaleFactor.value);
+            m_selectedImage = CachedImage::copyOverridingResolution(*styleCachedImage, bestFitImage.resolution);
 
         if (protect(m_selectedImage)->isPending())
             protect(m_selectedImage)->load(loader, options);
@@ -193,11 +193,11 @@ bool MultiImage::currentFrameIsComplete(const RenderElement* renderer) const
     return m_selectedImage && protect(m_selectedImage)->currentFrameIsComplete(renderer);
 }
 
-float MultiImage::imageScaleFactor() const
+Resolution<> MultiImage::imageResolution() const
 {
     if (!m_selectedImage)
         return 1;
-    return protect(m_selectedImage)->imageScaleFactor();
+    return protect(m_selectedImage)->imageResolution();
 }
 
 bool MultiImage::knownToBeOpaque(const RenderElement& renderer) const

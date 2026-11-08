@@ -34,27 +34,27 @@ namespace Style {
 class ImageSet final : public MultiImage {
     WTF_MAKE_TZONE_ALLOCATED(ImageSet);
 public:
-    NODELETE static Ref<ImageSet> create(Vector<ImageWithScale>&&, Vector<size_t>&&);
+    NODELETE static Ref<ImageSet> create(Vector<ImageWithResolution>&&, Vector<size_t>&&);
     virtual ~ImageSet();
 
     bool operator==(const Image& other) const;
     bool equals(const ImageSet&) const;
 
-    ImageWithScale selectBestFitImage(const Document&) final;
+    ImageWithResolution selectBestFitImage(const Document&) final;
 
 private:
-    explicit ImageSet(Vector<ImageWithScale>&&, Vector<size_t>&&);
+    explicit ImageSet(Vector<ImageWithResolution>&&, Vector<size_t>&&);
 
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
 
-    ImageWithScale bestImageForScaleFactor();
+    ImageWithResolution bestImageForScaleFactor();
     NODELETE void updateDeviceScaleFactor(const Document&);
 
     bool m_accessedBestFitImage { false };
-    ImageWithScale m_bestFitImage;
+    ImageWithResolution m_bestFitImage;
     float m_deviceScaleFactor { 1 };
-    Vector<ImageWithScale> m_images;
+    Vector<ImageWithResolution> m_images;
     Vector<size_t> m_sortedIndices;
 };
 

@@ -71,13 +71,13 @@ static LayoutBoxExtent computeSlices(const LayoutSize& size, const WidthValues& 
 }
 
 template<typename SliceValues>
-static LayoutBoxExtent computeSlices(const LayoutSize& size, const SliceValues& slices, float scaleFactor)
+static LayoutBoxExtent computeSlices(const LayoutSize& size, const SliceValues& slices, Style::Resolution<> resolution)
 {
     return {
-        LayoutUnit { std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.top(),    size.height())) * scaleFactor },
-        LayoutUnit { std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.right(),  size.width()))  * scaleFactor },
-        LayoutUnit { std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.bottom(), size.height())) * scaleFactor },
-        LayoutUnit { std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.left(),   size.width()))  * scaleFactor },
+        LayoutUnit { std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.top(),    size.height())) * resolution.value },
+        LayoutUnit { std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.right(),  size.width()))  * resolution.value },
+        LayoutUnit { std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.bottom(), size.height())) * resolution.value },
+        LayoutUnit { std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.left(),   size.width()))  * resolution.value },
     };
 }
 
@@ -208,7 +208,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     auto& style = usedStyle.computedStyle();
     auto zoom = style.usedZoomForLength();
 
-    auto sourceSlices      = computeSlices(source, ninePieceImage.slice(), styleImage->imageScaleFactor());
+    auto sourceSlices      = computeSlices(source, ninePieceImage.slice(), styleImage->imageResolution());
     auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), usedStyle.borderWidths(), sourceSlices, zoom);
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);

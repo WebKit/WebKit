@@ -37,14 +37,14 @@ class Document;
 
 namespace Style {
 
-struct ImageWithScale {
+struct ImageWithResolution {
     RefPtr<Image> image { InvalidImage::create() };
-    Style::Resolution<> scaleFactor { 1 };
+    Style::Resolution<> resolution { 1 };
     std::optional<FunctionNotation<CSSValueID::Type, Style::String>> mimeType;
 
-    bool operator==(const ImageWithScale& other) const
+    bool operator==(const ImageWithResolution& other) const
     {
-        return image == other.image && scaleFactor == other.scaleFactor;
+        return image == other.image && resolution == other.resolution;
     }
 };
 
@@ -58,7 +58,7 @@ protected:
 
     bool equals(const MultiImage& other) const;
 
-    virtual ImageWithScale selectBestFitImage(const Document&) = 0;
+    virtual ImageWithResolution selectBestFitImage(const Document&) = 0;
     WebCore::CachedImage* cachedImage() const final;
 
 private:
@@ -82,7 +82,7 @@ private:
     RefPtr<NativeImage> nativeImage(const RenderElement&, const ImageDrawDescriptor&, float resolutionScale) const final;
     bool currentFrameIsComplete(const RenderElement*) const final;
     std::optional<IntPoint> hotSpot() const final;
-    float imageScaleFactor() const final;
+    Resolution<> imageResolution() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool canDraw(const RenderElement&) const final;
     bool containsCurrentColor() const final;
