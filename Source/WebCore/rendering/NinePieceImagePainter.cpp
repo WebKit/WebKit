@@ -71,13 +71,13 @@ static LayoutBoxExtent computeSlices(const LayoutSize& size, const WidthValues& 
 }
 
 template<typename SliceValues>
-static LayoutBoxExtent computeSlices(const LayoutSize& size, const SliceValues& slices, int scaleFactor)
+static LayoutBoxExtent computeSlices(const LayoutSize& size, const SliceValues& slices, float scaleFactor)
 {
     return {
-        std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.top(),    size.height())) * scaleFactor,
-        std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.right(),  size.width()))  * scaleFactor,
-        std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.bottom(), size.height())) * scaleFactor,
-        std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.left(),   size.width()))  * scaleFactor,
+        LayoutUnit { std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.top(),    size.height())) * scaleFactor },
+        LayoutUnit { std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.right(),  size.width()))  * scaleFactor },
+        LayoutUnit { std::min(size.height(),  Style::evaluate<LayoutUnit>(slices.values.bottom(), size.height())) * scaleFactor },
+        LayoutUnit { std::min(size.width(),   Style::evaluate<LayoutUnit>(slices.values.left(),   size.width()))  * scaleFactor },
     };
 }
 
