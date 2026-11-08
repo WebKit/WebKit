@@ -496,11 +496,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     unsigned long long imageBufferForCanvasLimit = 0;
 };
 
-enum RenderingMode {
-    "Unaccelerated",
-    "Accelerated"
-};
-
 enum ContentsFormat {
     "RGBA8",
 #if defined(ENABLE_PIXEL_FORMAT_RGB10)
