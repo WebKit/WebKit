@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`route.playbackRate = 1`);
+                run(`route.timeRange = { start: 0, duration: 60 }`);
+                run(`video.play()`);
+                await urlPromise;
+
+                const playingPromise = waitFor(video, 'playing');
+                run(`route.ready = true`);
+                await playingPromise;
+                testExpected('video.webkitCurrentPlaybackTargetIsWireless', true);
+
+                const resultPromise = Promise.race([
+                    waitFor(video, 'error', true).then(() => 'error'),
+                    waitFor(video, 'canplaythrough', true).then(() => 'canplaythrough'),
+                ]);
+                run(`internals.mockMediaDeviceRouteController.deactivateRoute(route)`);
+                consoleWrite(`EVENT(${await resultPromise})`);
+
+                testExpected('video.error', null);
+                testExpected('video.webkitCurrentPlaybackTargetIsWireless', false);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that deactivating the active MediaDeviceRoute returns the video element to local playback instead of failing with an error.</p>
+    </body>
+</html>
