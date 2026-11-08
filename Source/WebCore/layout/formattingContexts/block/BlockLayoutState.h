@@ -107,11 +107,24 @@ struct ContainingBlockState {
         // The floats waiting for their block container's top go with it, from the one their block containers get.
         LayoutUnit floatsLogicalBottomFor(LayoutUnit borderBoxLogicalTop) const
         {
-            return pendingFloatsLogicalBottomFromTop ? std::max(floatsLogicalBottom, borderBoxLogicalTop + *pendingFloatsLogicalBottomFromTop) : floatsLogicalBottom;
+            return floatsLogicalBottomFor([&](auto&) {
+                return borderBoxLogicalTop;
+            });
+        }
+        template<typename BorderBoxLogicalTopFor> LayoutUnit floatsLogicalBottomFor(const BorderBoxLogicalTopFor& borderBoxLogicalTopFor) const
+        {
+            auto logicalBottom = floatsLogicalBottom;
+            for (auto& pending : pendingFloats)
+                logicalBottom = std::max(logicalBottom, borderBoxLogicalTopFor(pending.blockContainer.get()) + pending.logicalBottomFromTop);
+            return logicalBottom;
         }
 
+        struct PendingFloats {
+            CheckedRef<const RenderBox> blockContainer;
+            LayoutUnit logicalBottomFromTop;
+        };
         LayoutUnit floatsLogicalBottom { LayoutUnit::min() };
-        std::optional<LayoutUnit> pendingFloatsLogicalBottomFromTop;
+        Vector<PendingFloats> pendingFloats;
         LayoutUnit marginsBeforeLogicalBottom;
     };
     std::optional<Clearance> clearance { };
