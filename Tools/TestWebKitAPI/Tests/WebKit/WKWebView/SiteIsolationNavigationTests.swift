@@ -119,6 +119,9 @@ struct SiteIsolationNavigationTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test
     func shutDownFrameProcessesAfterNavigation() async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {

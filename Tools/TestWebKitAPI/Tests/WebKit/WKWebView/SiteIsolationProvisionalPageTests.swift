@@ -41,6 +41,9 @@ import struct Swift.String
 @MainActor
 struct SiteIsolationProvisionalPageTests {
     // The navigation's response moves it to a new browsing context group, whose process the web process cache can keep.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test
     func cancelledNavigationToNewBrowsingContextGroupClosesItsPage() async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {

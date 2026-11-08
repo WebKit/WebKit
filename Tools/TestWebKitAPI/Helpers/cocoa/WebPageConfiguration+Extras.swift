@@ -37,6 +37,9 @@ extension WebPage.Configuration {
     ///   - testPlugInClass: The type of the plug-in class to use.
     ///   - configureJSCForTesting: If `true`, relaxes JSC's security hardening so that tests can freely modify JSC options, config,
     ///   and behavior that would otherwise be more secured.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     public init(testPlugInClass: (some WKWebProcessPlugIn).Type, configureJSCForTesting: Bool = true) {
         self.init()
 

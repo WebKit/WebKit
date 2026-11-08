@@ -28,6 +28,9 @@ private import WebKit_Private.WKPreferencesPrivate
 
 @MainActor
 struct CodingTests {
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests coding of javaScriptEnabled")
+    #endif
     @Test
     func wkPreferences() throws {
         let a = WKPreferences()
@@ -53,6 +56,9 @@ struct CodingTests {
         #expect(a.tabFocusesLinks == b.tabFocusesLinks)
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests coding of process pools")
+    #endif
     @Test
     func wkProcessPoolShared() throws {
         let a = try #require(WKProcessPool._shared())
@@ -61,6 +67,9 @@ struct CodingTests {
         #expect(a === b)
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests coding of process pools")
+    #endif
     @Test
     func wkProcessPool() throws {
         let pool = try encodeAndDecode(WKProcessPool())
@@ -148,6 +157,9 @@ struct CodingTests {
         #endif
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests coding of process pools")
+    #endif
     @Test
     func wkWebViewSameConfiguration() throws {
         // First, encode two WKWebViews sharing the same configuration.
@@ -161,7 +173,7 @@ struct CodingTests {
         }()
 
         // Then, decode and verify that the important configuration properties are the same.
-        let array = try #require(NSKeyedUnarchiver.unarchiveObject(with: data) as? NSArray)
+        let array = try #require(unarchivedObjectWithoutSecureCoding(from: data) as? NSArray)
 
         let aView = try #require(array[0] as? WKWebView)
         let bView = try #require(array[1] as? WKWebView)
@@ -187,5 +199,12 @@ private func encodeAndDecode<T>(_ value: T) throws -> T where T: NSCoding, T: NS
     let data = try NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: false)
     // Tautologically guaranteed.
     // swift-format-ignore: NeverForceUnwrap
-    return NSKeyedUnarchiver.unarchiveObject(with: data) as! T
+    return try unarchivedObjectWithoutSecureCoding(from: data) as! T
+}
+
+private func unarchivedObjectWithoutSecureCoding(from data: Data) throws -> Any? {
+    let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+    defer { unarchiver.finishDecoding() }
+    unarchiver.requiresSecureCoding = false
+    return unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey)
 }

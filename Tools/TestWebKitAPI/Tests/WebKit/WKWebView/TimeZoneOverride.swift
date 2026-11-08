@@ -36,6 +36,9 @@ import struct Swift.String
 struct TimeZoneOverrideTests {
     private let webView: TestWKWebView
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     init() {
         let processPoolConfiguration = _WKProcessPoolConfiguration()
         processPoolConfiguration.timeZoneOverride = "Europe/Berlin"

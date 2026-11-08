@@ -181,6 +181,9 @@ private final class SessionFixture {
 
     var captured: [String] { capturedStorage.strings }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses process pool SPI")
+    #endif
     init(allowInspectorTesting: Bool) async throws {
         let page = WebPage()
         self.page = page

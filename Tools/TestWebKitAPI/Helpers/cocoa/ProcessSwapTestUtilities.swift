@@ -30,6 +30,9 @@ public import WebKit
 private import WebKit_Private.WKProcessPoolPrivate
 private import WebKit_Private._WKProcessPoolConfiguration
 
+#if hasAttribute(diagnose)
+@diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+#endif
 extension WKProcessPool {
     /// Creates a process pool that swaps web content processes on navigation, like the process pools of the tests in
     /// ProcessSwapOnNavigation.mm.
