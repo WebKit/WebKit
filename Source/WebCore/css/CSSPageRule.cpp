@@ -23,9 +23,10 @@
 #include "CSSPageRule.h"
 
 #include "CSSPageDescriptors.h"
-#include "CSSSelectorParser.h"
+#include "CSSParser.h"
 #include "CSSSerializationContext.h"
 #include "CSSStyleSheet.h"
+#include "CSSTokenizer.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
 #include "MutableStyleProperties.h"
@@ -68,13 +69,14 @@ void CSSPageRule::setSelectorText(const String& selectorText)
 {
     RefPtr sheet = parentStyleSheet();
     RefPtr sheetContents = sheet ? &sheet->contents() : nullptr;
-    auto selectorList = CSSSelectorParser::parseSelectorList(selectorText, parserContext(), sheetContents.get());
-    if (!selectorList)
+    CSSTokenizer tokenizer(selectorText);
+    auto selectorList = CSSParser::parsePageSelector(tokenizer.tokenRange(), sheetContents.get());
+    if (selectorList.isEmpty())
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    protect(m_pageRule)->wrapperAdoptSelectorList(WTF::move(*selectorList));
+    protect(m_pageRule)->wrapperAdoptSelectorList(WTF::move(selectorList));
 }
 
 String CSSPageRule::cssText() const
