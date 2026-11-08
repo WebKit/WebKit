@@ -28,7 +28,7 @@ a style error handler should implement the following methods.
 
 Methods:
 
-  __call__(self, line_number, category, confidence, message):
+  __call__(self, line_number, category, confidence, message, column_number=None):
 
     Handle the occurrence of a style error.
 
@@ -45,6 +45,8 @@ Methods:
                   5 means that we are certain of the problem, and the
                   value 1 means that it could be a legitimate construct.
       message: The error message to report.
+      column_number: The optional integer column number of the error within
+                     the line.
 
 """
 
@@ -135,7 +137,7 @@ class DefaultStyleErrorHandler(object):
     def turn_off_line_filtering(self):
         self._line_numbers = None
 
-    def __call__(self, line_number, category, confidence, message):
+    def __call__(self, line_number, category, confidence, message, column_number=None):
         """Handle the occurrence of a style error.
 
         See the docstring of this module for more information.
@@ -161,7 +163,8 @@ class DefaultStyleErrorHandler(object):
                                               confidence_in_error=confidence,
                                               file_path=self._file_path,
                                               line_number=line_number,
-                                              message=message)
+                                              message=message,
+                                              column_number=column_number)
         if category_total == max_reports:
             _log.error("Suppressing further [%s] reports "
                                              "for this file." % category)

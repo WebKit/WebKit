@@ -50,11 +50,11 @@ class SwiftChecker(object):
     def _swift_format(self, file_path, lines, error):
         lint_result = subprocess.run(['/usr/bin/swift', 'format', 'lint', '--strict', file_path], capture_output=True, text=True)
 
-        # matches <filename>:<line>: error: [<category>] <message>
+        # matches <filename>:<line>:<column>: error: [<category>] <message>
         pattern = re.compile(
             r'^(?P<filename>[^:]+):'
             r'(?P<line_number>\d+):'
-            r'\d+:'
+            r'(?P<column_number>\d+):'
             r'\s*(?P<kind>warning|error):'
             r'\s*\[(?P<category>[^\]]+)\]\s*'
             r'(?P<message>.+)$'
@@ -66,11 +66,12 @@ class SwiftChecker(object):
                 continue
 
             line_number = match.group("line_number")
+            column_number = match.group("column_number")
             category = match.group("category")
             message = match.group("message")
 
             self.has_swift_format_errors = True
-            self.handle_style_error(int(line_number), category, 5, message)
+            self.handle_style_error(int(line_number), category, 5, message, column_number=int(column_number))
 
     def _check_unsafe(self, lines):
         in_block_comment = False

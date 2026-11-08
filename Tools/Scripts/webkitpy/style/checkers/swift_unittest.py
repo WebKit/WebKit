@@ -64,8 +64,8 @@ class SwiftCheckerTest(unittest.TestCase):
         """Test check() method."""
         errors = []
 
-        def _mock_handle_style_error(line_number, category, confidence, message):
-            error = (line_number, category, confidence, message)
+        def _mock_handle_style_error(line_number, category, confidence, message, column_number=None):
+            error = (line_number, column_number, category, confidence, message)
             errors.append(error)
 
         current_dir = os.path.dirname(__file__)
@@ -75,9 +75,9 @@ class SwiftCheckerTest(unittest.TestCase):
         checker.check(lines=[])
 
         expected_errors = [
-            (3, "NeverForceUnwrap", 5, "do not force unwrap \'URL(string: \"https://www.apple.com\")\'"),
-            (2, "Spacing", 5, "remove 1 space"),
-            (3, "Indentation", 5, "replace leading whitespace with 4 spaces"),
+            (3, 10, "NeverForceUnwrap", 5, "do not force unwrap \'URL(string: \"https://www.apple.com\")\'"),
+            (2, 11, "Spacing", 5, "remove 1 space"),
+            (3, 1, "Indentation", 5, "replace leading whitespace with 4 spaces"),
         ]
 
         self.assertEqual(errors, expected_errors)

@@ -1186,15 +1186,22 @@ class StyleProcessorConfiguration(object):
                           confidence_in_error,
                           file_path,
                           line_number,
-                          message):
+                          message,
+                          column_number=None):
         """Write a style error to the configured stderr."""
         if self._output_format == 'vs7':
             format_string = "%s(%s): error: [%s]  %s"
+            location_separator = ','
         else:
             format_string = f"{ANSIColor.WHITE}%s:%s:{ANSIColor.RESET} {ANSIColor.RED}error:{ANSIColor.RESET} {ANSIColor.YELLOW}[%s]{ANSIColor.RESET} {ANSIColor.WHITE}%s{ANSIColor.RESET}"
+            location_separator = ':'
+
+        location = line_number
+        if column_number is not None:
+            location = '%s%s%s' % (line_number, location_separator, column_number)
 
         _log.log(41, format_string % (file_path,
-                                      line_number,
+                                      location,
                                       category,
                                       message))
 

@@ -727,13 +727,14 @@ class StyleProcessorConfigurationTest(LoggingTestCase):
         # Test the category check code path by varying the category.
         self.assertFalse(config.is_reportable("whitespace/line", 4, "foo.txt"))
 
-    def _call_write_style_error(self, output_format):
+    def _call_write_style_error(self, output_format, column_number=None):
         config = self._style_checker_configuration(output_format=output_format)
         config.write_style_error(category="whitespace/tab",
                                  confidence_in_error=5,
                                  file_path="foo.h",
                                  line_number=100,
-                                 message="message")
+                                 message="message",
+                                 column_number=column_number)
 
     def test_write_style_error_emacs(self):
         """Test the write_style_error() method."""
@@ -745,6 +746,17 @@ class StyleProcessorConfigurationTest(LoggingTestCase):
         """Test the write_style_error() method."""
         self._call_write_style_error("vs7")
         self.assertLog(["foo.h(100): error: [whitespace/tab]  message\n"])
+
+    def test_write_style_error_emacs_with_column(self):
+        """Test the write_style_error() method with a column number."""
+        self._call_write_style_error("emacs", column_number=7)
+        expected = f"{ANSIColor.WHITE}foo.h:100:7:{ANSIColor.RESET} {ANSIColor.RED}error:{ANSIColor.RESET} {ANSIColor.YELLOW}[whitespace/tab]{ANSIColor.RESET} {ANSIColor.WHITE}message{ANSIColor.RESET}\n"
+        self.assertLog([expected])
+
+    def test_write_style_error_vs7_with_column(self):
+        """Test the write_style_error() method with a column number."""
+        self._call_write_style_error("vs7", column_number=7)
+        self.assertLog(["foo.h(100,7): error: [whitespace/tab]  message\n"])
 
 
 class StyleProcessor_EndToEndTest(LoggingTestCase):
