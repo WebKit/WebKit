@@ -3,8 +3,8 @@ This tests that using the 'Copy Image' context menu item codepath does not copy 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL event.clipboardData.items.length should be 2. Was 0.
-FAIL event.clipboardData.items[0].type should be text/html. Threw exception TypeError: undefined is not an object (evaluating 'event.clipboardData.items[0].type')
+FAIL event.clipboardData.items.length should be 2. Was 1.
+PASS event.clipboardData.items[0].type is 'text/html'
 FAIL event.clipboardData.items[1].type should be image/png. Threw exception TypeError: undefined is not an object (evaluating 'event.clipboardData.items[1].type')
 PASS successfullyParsed is true
 Some tests failed.

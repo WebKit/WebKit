@@ -128,6 +128,12 @@ void WebPasteboardProxy::writeToClipboard(const String&, SelectionData&& selecti
             setClipboardContentFromSpan(content.get(), "text/html", selectionData.markup().utf8().span());
         if (selectionData.hasURIList())
             setClipboardContentFromSpan(content.get(), "text/uri-list", selectionData.uriList().utf8().span());
+        if (selectionData.canSmartReplace()) {
+            GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
+            wpe_clipboard_content_set_bytes(content.get(), "application/vnd.wpewebkit.smartpaste", bytes.get());
+        }
+        if (selectionData.hasCustomData())
+            wpe_clipboard_content_set_bytes(content.get(), PasteboardCustomData::wpeType().characters(), selectionData.customData()->createGBytes().get());
 
         auto* clipboard = wpe_display_get_clipboard(wpe_display_get_primary());
         wpe_clipboard_set_content(clipboard, content.get());
@@ -160,26 +166,26 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const S
 #if ENABLE(WPE_PLATFORM)
     if (WKWPE::isUsingWPEPlatformAPI()) {
         auto* clipboard = wpe_display_get_clipboard(wpe_display_get_primary());
+        ListHashSet<String> domTypes;
         if (GRefPtr<GBytes> bytes = adoptGRef(wpe_clipboard_read_bytes(clipboard, PasteboardCustomData::wpeType().characters()))) {
-            ListHashSet<String> domTypes;
             Ref buffer = SharedBuffer::create(bytes.get());
             auto customData = PasteboardCustomData::fromSharedBuffer(buffer.get());
             if (customData.origin() == origin) {
                 for (auto& type : customData.orderedTypes())
                     domTypes.add(type);
             }
-
-            for (const char* format : span(wpe_clipboard_get_formats(clipboard))) {
-                String formatString = String::fromUTF8(format);
-                if (formatString == PasteboardCustomData::wpeType())
-                    continue;
-
-                if (Pasteboard::isSafeTypeForDOMToReadAndWrite(formatString))
-                    domTypes.add(formatString);
-            }
-            completionHandler(copyToVector(domTypes));
-            return;
         }
+
+        for (const char* format : span(wpe_clipboard_get_formats(clipboard))) {
+            String formatString = String::fromUTF8(format);
+            if (formatString == PasteboardCustomData::wpeType())
+                continue;
+
+            if (Pasteboard::isSafeTypeForDOMToReadAndWrite(formatString))
+                domTypes.add(formatString);
+        }
+        completionHandler(copyToVector(domTypes));
+        return;
     }
 #endif
     completionHandler({ });

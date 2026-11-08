@@ -37,7 +37,9 @@ namespace WebCore {
 
 bool Pasteboard::canSmartReplace()
 {
-    return false;
+    if (m_selectionData)
+        return m_selectionData->canSmartReplace();
+    return platformStrategies()->pasteboardStrategy()->types(m_name).contains("application/vnd.wpewebkit.smartpaste"_s);
 }
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
