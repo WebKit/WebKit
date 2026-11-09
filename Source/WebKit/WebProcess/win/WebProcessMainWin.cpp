@@ -30,10 +30,26 @@
 #include "WebProcess.h"
 #include <objbase.h>
 
+#if USE(SKIA_OPENTYPE_SVG)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkGraphics.h>
+#include <skia/modules/svg/SkSVGOpenTypeSVGDecoder.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
 class WebProcessMainWin final : public AuxiliaryProcessMainBase<WebProcess> {
+public:
+    bool platformInitialize() override
+    {
+#if USE(SKIA_OPENTYPE_SVG)
+        // Glyph bounds are measured here even though the GPU process paints them.
+        SkGraphics::SetOpenTypeSVGDecoderFactory(SkSVGOpenTypeSVGDecoder::Make);
+#endif
+        return true;
+    }
 };
 
 int WebProcessMain(int argc, char** argv)
