@@ -830,7 +830,7 @@ bool TextBoxPainter::paintForegroundForShapeRange(TextPainter& textPainter)
         // FIXME: Setup a semi-inifite rect for the (visually) first box where x is -inifite with fixed maxX.
         return rect;
     };
-    context.save();
+    GraphicsContextStateSaver stateSaver(context);
     context.clip(clipRect());
     auto shapedContent = ShapedContent { };
     buildTextForShaping(shapedContent, makeIterator());
@@ -847,7 +847,6 @@ bool TextBoxPainter::paintForegroundForShapeRange(TextPainter& textPainter)
     run.disableSpacing();
 
     textPainter.paintRange(run, paintRect, textOriginFromPaintRect(paintRect), 0, shapedContent.text.length());
-    context.restore();
     return true;
 }
 
