@@ -60,6 +60,7 @@ enum class GraphicsLayerCompositingCoordinatesOrientation : uint8_t;
 // in the platform specific GraphicsLayer.
 class WEBCORE_EXPORT GraphicsLayerContentsDisplayDelegate : public ThreadSafeRefCounted<GraphicsLayerContentsDisplayDelegate> {
 public:
+    NODELETE GraphicsLayerContentsDisplayDelegate();
     virtual ~GraphicsLayerContentsDisplayDelegate();
 
 #if USE(CA)

@@ -82,7 +82,9 @@
 #include "ProgressResolutionData.h"
 #include "StyleAppearance.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#if !defined(__OBJC__) || !PLATFORM(MAC)
 #include "StyleComputedStyle+SettersInlines.h"
+#endif
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
 
@@ -248,6 +250,42 @@
 #include "WindowOrWorkerGlobalScope.h"
 #include "WritingDirection.h"
 
+#include "Chrome.h"
+#include "CustomElementReactionQueue.h"
+#include "DocumentInlines.h"
+#include "DocumentLoader.h"
+#include "HTMLFormControlElement.h"
+#include "JSDOMWrapperCache.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGRenderSupport.h"
+#if !defined(__OBJC__) || !PLATFORM(MAC)
+#include "SVGURIReference.h"
+#endif
+#if !defined(__OBJC__) || !PLATFORM(MAC)
+#include "StyleResolver.h"
+#endif
+#include "StyleScope.h"
+
+#if PLATFORM(MAC)
+#if !defined(__OBJC__)
+#include "JSDOMConvert.h"
+#include "NodeRareData.h"
+#include "HTMLCanvasElement.h"
+#include "CSSCalcRandomCachingKeyMap.h"
+#include "CSSFontSelector.h"
+#include "ScrollingCoordinator.h"
+#include "GraphicsLayer.h"
+#include "RenderElementStyleInlines.h"
+#include "AXTextRun.h"
+#include "DocumentResourceLoader.h"
+#include "EventNames.h"
+#include "PlatformRenderTheme.h"
+#include "StyleDocumentScope.h"
+#include "ScriptController.h"
+#include "IntersectionObserver.h"
+#include "RenderBoxModelObjectInlines.h"
+#endif
+#endif
 
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())

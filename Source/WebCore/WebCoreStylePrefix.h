@@ -87,6 +87,18 @@
 #include "ThemeTypes.h"
 #include "TreeResolutionState.h"
 
+#include "AcceleratedEffectOffsetPath.h"
+#include "FontCascadeFonts.h"
+#include "RenderSVGModelObject.h"
+
+#if PLATFORM(MAC)
+#include "CSSCalcSizeFunction.h"
+#include "StyleGradient.h"
+#include "BlockFormattingState.h"
+#include "Grid.h"
+#include "InlineFormattingUtils.h"
+#endif
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())
 #endif

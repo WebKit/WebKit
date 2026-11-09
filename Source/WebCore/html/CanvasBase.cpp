@@ -67,6 +67,7 @@ static std::optional<uint64_t> canvasNoiseHashSaltIfNeeded(ScriptExecutionContex
     return { };
 }
 
+CanvasDisplayBufferObserver::CanvasDisplayBufferObserver() = default;
 CanvasDisplayBufferObserver::~CanvasDisplayBufferObserver() = default;
 
 CanvasBase::CanvasBase(IntSize size, ScriptExecutionContext& context)

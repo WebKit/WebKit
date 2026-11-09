@@ -59,10 +59,7 @@ public:
     RefPtr<CSSValue> toCSSValue() const final;
 
 private:
-    explicit CSSOMKeywordValue(const String& value)
-        : m_value(value)
-    {
-    }
+    explicit CSSOMKeywordValue(const String&);
 
     String m_value;
 };

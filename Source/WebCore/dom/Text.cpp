@@ -51,6 +51,12 @@ Ref<Text> Text::createEditingText(Document& document, String&& data)
     return node;
 }
 
+Text::Text(Document& document, String&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
+    : CharacterData(document, WTF::move(data), type, typeFlags | TypeFlag::IsText)
+{
+    ASSERT(!isContainerNode());
+}
+
 Text::~Text() = default;
 
 RenderText* Text::renderer() const

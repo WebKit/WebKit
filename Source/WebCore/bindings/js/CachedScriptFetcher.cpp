@@ -37,6 +37,21 @@
 
 namespace WebCore {
 
+CachedScriptFetcher::CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriority, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+    : m_nonce(nonce)
+    , m_charset(charset)
+    , m_initiatorType(initiatorType)
+    , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
+    , m_referrerPolicy(referrerPolicy)
+    , m_fetchPriority(fetchPriority)
+{
+}
+
+CachedScriptFetcher::CachedScriptFetcher(const AtomString& charset)
+    : m_charset(charset)
+{
+}
+
 Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
 {
     return adoptRef(*new CachedScriptFetcher(charset));

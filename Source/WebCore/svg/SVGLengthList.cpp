@@ -31,6 +31,23 @@
 
 namespace WebCore {
 
+SVGLengthList::SVGLengthList(SVGLengthMode lengthMode)
+    : m_lengthMode(lengthMode)
+{
+}
+
+SVGLengthList::SVGLengthList(SVGPropertyOwner* owner, SVGPropertyAccess access, SVGLengthMode lengthMode)
+    : Base(owner, access)
+    , m_lengthMode(lengthMode)
+{
+}
+
+SVGLengthList::SVGLengthList(const SVGLengthList& other, SVGPropertyAccess access)
+    : Base(other, access)
+    , m_lengthMode(other.lengthMode())
+{
+}
+
 bool SVGLengthList::parse(StringView value)
 {
     Vector<SVGLengthValue> lengths;

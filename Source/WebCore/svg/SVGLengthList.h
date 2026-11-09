@@ -57,22 +57,9 @@ public:
     String valueAsString() const override;
     
 private:
-    SVGLengthList(SVGLengthMode lengthMode)
-        : m_lengthMode(lengthMode)
-    {
-    }
-
-    SVGLengthList(SVGPropertyOwner* owner, SVGPropertyAccess access, SVGLengthMode lengthMode)
-        : Base(owner, access)
-        , m_lengthMode(lengthMode)
-    {
-    }
-
-    SVGLengthList(const SVGLengthList& other, SVGPropertyAccess access)
-        : Base(other, access)
-        , m_lengthMode(other.lengthMode())
-    {
-    }
+    SVGLengthList(SVGLengthMode);
+    SVGLengthList(SVGPropertyOwner*, SVGPropertyAccess, SVGLengthMode);
+    SVGLengthList(const SVGLengthList& other, SVGPropertyAccess);
 
     SVGLengthMode m_lengthMode { SVGLengthMode::Other };
 };

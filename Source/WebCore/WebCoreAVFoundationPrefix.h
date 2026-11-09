@@ -49,7 +49,9 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
+#if !PLATFORM(MAC)
 #import <AVFoundation/AVFoundation.h>
+#endif
 #import <QuartzCore/QuartzCore.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
