@@ -1,0 +1,4 @@
+
+PASS serialization test Ed25519
+PASS serialization test {name: Ed25519}
+

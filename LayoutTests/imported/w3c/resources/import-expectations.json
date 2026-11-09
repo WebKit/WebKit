@@ -5,6 +5,8 @@
     "web-platform-tests/FileAPI": "import",
     "web-platform-tests/IndexedDB": "import",
     "web-platform-tests/WebCryptoAPI": "import",
+    "web-platform-tests/WebCryptoAPI/modern-algos": "skip",
+    "web-platform-tests/WebCryptoAPI/secure-curves": "skip",
     "web-platform-tests/accelerometer": "skip",
     "web-platform-tests/accessibility": "import",
     "web-platform-tests/accname": "import",

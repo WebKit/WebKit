@@ -1,18 +1,12 @@
 // META: title=WebCryptoAPI: digest()
+// META: script=../util/helpers.js
+// META: script=digest_test_data.js
+// META: script=digest.js
 // META: timeout=long
 
     var subtle = crypto.subtle; // Change to test prefixed implementations
 
-    var sourceData = {
-        empty: new Uint8Array(0),
-        short: new Uint8Array([21, 110, 234, 124, 193, 76, 86, 203, 148, 219, 3, 10, 74, 157, 149, 255]),
-        medium: new Uint8Array([182, 200, 249, 223, 100, 140, 208, 136, 183, 15, 56, 231, 65, 151, 177, 140, 184, 30, 30, 67, 80, 213, 11, 204, 184, 251, 90, 115, 121, 200, 123, 178, 227, 214, 237, 84, 97, 237, 30, 159, 54, 243, 64, 163, 150, 42, 68, 107, 129, 91, 121, 75, 75, 212, 58, 68, 3, 80, 32, 119, 178, 37, 108, 200, 7, 131, 127, 58, 172, 209, 24, 235, 75, 156, 43, 174, 184, 151, 6, 134, 37, 171, 172, 161, 147])
-    };
-
-    sourceData.long = new Uint8Array(1024 * sourceData.medium.byteLength);
-    for (var i=0; i<1024; i++) {
-        sourceData.long.set(sourceData.medium, i * sourceData.medium.byteLength);
-    }
+    var sourceData = getDigestSourceData(true);
 
     var digestedData = {
         "sha-1": {
@@ -42,63 +36,35 @@
     }
 
     // Try every combination of hash with source data size. Variations tested are
-    // hash name in upper, lower, or mixed case, and upper-case version with the
-    // source buffer altered after call.
-    Object.keys(sourceData).forEach(function(size) {
-        Object.keys(digestedData).forEach(function(alg) {
+    // hash name in upper, lower, or mixed case, plus buffer mutation and transfer.
+    runDigestTests(subtle, sourceData, function (size) {
+        var vectors = [];
+        Object.keys(digestedData).forEach(function (alg) {
             var upCase = alg.toUpperCase();
             var downCase = alg.toLowerCase();
-            var mixedCase = upCase.substr(0, 1) + downCase.substr(1);
+            var mixedCase = upCase.slice(0, 1) + downCase.slice(1);
+            var expected = digestedData[alg][size];
 
-            promise_test(function(test) {
-                var promise = subtle.digest({name: upCase}, sourceData[size])
-                .then(function(result) {
-                    assert_true(equalBuffers(result, digestedData[alg][size]), "digest() yielded expected result for " + alg + ":" + size);
-                }, function(err) {
-                    assert_unreached("digest() threw an error for " + alg + ":" + size + " - " + err.message);
-                });
-
-                return promise;
-            }, upCase + " with " + size + " source data");
-
-            promise_test(function(test) {
-                var promise = subtle.digest({name: downCase}, sourceData[size])
-                .then(function(result) {
-                    assert_true(equalBuffers(result, digestedData[alg][size]), "digest() yielded expected result for " + alg + ":" + size);
-                }, function(err) {
-                    assert_unreached("digest() threw an error for " + alg + ":" + size + " - " + err.message);
-                });
-
-                return promise;
-            }, downCase + " with " + size + " source data");
-
-            promise_test(function(test) {
-                var promise = subtle.digest({name: mixedCase}, sourceData[size])
-                .then(function(result) {
-                    assert_true(equalBuffers(result, digestedData[alg][size]), "digest() yielded expected result for " + alg + ":" + size);
-                }, function(err) {
-                    assert_unreached("digest() threw an error for " + alg + ":" + size + " - " + err.message);
-                });
-
-                return promise;
-            }, mixedCase + " with " + size + " source data");
-
-            promise_test(function(test) {
-                var copiedBuffer = copyBuffer(sourceData[size]);
-                var promise = subtle.digest({name: upCase}, copiedBuffer)
-                .then(function(result) {
-                    assert_true(equalBuffers(result, digestedData[alg][size]), "digest() yielded expected result for " + alg + ":" + size);
-                }, function(err) {
-                    assert_unreached("digest() threw an error for " + alg + ":" + size + " - " + err.message);
-                });
-
-                copiedBuffer[0] = 255 - copiedBuffer;
-                return promise;
-            }, upCase + " with " + size + " source data and altered buffer after call");
-
+            vectors.push({
+                algorithm: {name: upCase},
+                expected: expected,
+                emptyExpected: digestedData[alg].empty,
+                label: upCase + " with " + size + " source data",
+                mutations: true,
+            });
+            vectors.push({
+                algorithm: {name: downCase},
+                expected: expected,
+                label: downCase + " with " + size + " source data",
+            });
+            vectors.push({
+                algorithm: {name: mixedCase},
+                expected: expected,
+                label: mixedCase + " with " + size + " source data",
+            });
         });
+        return vectors;
     });
-
     // Call digest() with bad algorithm names to get an error
     var badNames = ["AES-GCM", "RSA-OAEP", "PBKDF2", "AES-KW"];
     Object.keys(sourceData).forEach(function(size) {
@@ -134,33 +100,3 @@
 
 
     done();
-
-
-    // Returns a copy of the sourceBuffer it is sent.
-    function copyBuffer(sourceBuffer) {
-        var source = new Uint8Array(sourceBuffer);
-        var copy = new Uint8Array(sourceBuffer.byteLength)
-
-        for (var i=0; i<source.byteLength; i++) {
-            copy[i] = source[i];
-        }
-
-        return copy;
-    }
-
-    function equalBuffers(a, b) {
-        if (a.byteLength !== b.byteLength) {
-            return false;
-        }
-
-        var aBytes = new Uint8Array(a);
-        var bBytes = new Uint8Array(b);
-
-        for (var i=0; i<a.byteLength; i++) {
-            if (aBytes[i] !== bBytes[i]) {
-                return false;
-            }
-        }
-
-        return true;
-    }

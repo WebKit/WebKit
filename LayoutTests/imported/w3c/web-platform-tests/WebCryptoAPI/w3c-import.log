@@ -10,15 +10,17 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/README.md
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/algorithm-discards-context.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/crypto_key_cached_slots.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/export-key-error-order.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/normalize-algorithm-name.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/randomUUID.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sharedarraybuffer.https.any.js

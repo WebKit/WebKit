@@ -1,0 +1,5 @@
+
+PASS serialization test {name: ECDH, namedCurve: P-256}
+PASS serialization test {name: ECDH, namedCurve: P-384}
+PASS serialization test {name: ECDH, namedCurve: P-521}
+

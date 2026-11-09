@@ -15,6 +15,14 @@ PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, true, [deriveK
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, false, [deriveKey])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, true, [deriveBits])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, false, [deriveBits])
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-256}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [encrypt])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, false, [encrypt])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [decrypt])
@@ -31,6 +39,14 @@ PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [deriveKe
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, false, [deriveKey])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [deriveBits])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, false, [deriveBits])
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-256}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, encrypt])
@@ -91,6 +107,46 @@ PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [derive
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, unwrapKey])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, encrypt])
@@ -151,6 +207,46 @@ PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, 
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, unwrapKey])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [encrypt])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, false, [encrypt])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [decrypt])
@@ -167,6 +263,14 @@ PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [deriveK
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, false, [deriveKey])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [deriveBits])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, false, [deriveBits])
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-384}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [encrypt])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, false, [encrypt])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [decrypt])
@@ -183,6 +287,14 @@ PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [deriveKe
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, false, [deriveKey])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [deriveBits])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, false, [deriveBits])
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-384}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, encrypt])
@@ -243,6 +355,46 @@ PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [derive
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, unwrapKey])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, encrypt])
@@ -303,6 +455,46 @@ PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, 
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, unwrapKey])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [encrypt])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, false, [encrypt])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [decrypt])
@@ -319,6 +511,14 @@ PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [deriveK
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, false, [deriveKey])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [deriveBits])
 PASS Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, false, [deriveBits])
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(spki, {name: ECDH, namedCurve: P-521}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [encrypt])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, false, [encrypt])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [decrypt])
@@ -335,6 +535,14 @@ PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [deriveKe
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, false, [deriveKey])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [deriveBits])
 PASS Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, false, [deriveBits])
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(raw, {name: ECDH, namedCurve: P-521}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [encrypt])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, encrypt])
@@ -395,6 +603,46 @@ PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [derive
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, unwrapKey])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
 PASS Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(pkcs8, {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [encrypt])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, encrypt])
@@ -455,6 +703,46 @@ PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, 
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, unwrapKey])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
 PASS Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, unwrapKey])
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, encapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateKey]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, deriveKey, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
+FAIL Bad usages: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, false, [deriveKey, deriveBits, deriveKey, deriveBits, decapsulateBits]) assert_equals: Bad usages not supported. expected "SyntaxError" but got "TypeError"
 PASS Empty usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, true, [])
 PASS Empty usages: importKey(pkcs8, {name: ECDH, namedCurve: P-256}, false, [])
 PASS Empty usages: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [])
@@ -619,10 +907,4 @@ PASS Invalid 'use' field: importKey(jwk(private), {name: ECDH, namedCurve: P-521
 PASS Invalid 'crv' field: importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits])
 PASS Invalid 'crv' field: importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits])
 PASS Invalid 'crv' field: importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits])
-PASS Invalid 'alg' field 'ecdh': importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits])
-PASS Invalid 'alg' field 'ECDH': importKey(jwk(private), {name: ECDH, namedCurve: P-256}, true, [deriveKey, deriveBits])
-PASS Invalid 'alg' field 'ecdh': importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits])
-PASS Invalid 'alg' field 'ECDH': importKey(jwk(private), {name: ECDH, namedCurve: P-384}, true, [deriveKey, deriveBits])
-PASS Invalid 'alg' field 'ecdh': importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits])
-PASS Invalid 'alg' field 'ECDH': importKey(jwk(private), {name: ECDH, namedCurve: P-521}, true, [deriveKey, deriveBits])
 

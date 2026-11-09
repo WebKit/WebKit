@@ -1,8 +1,6 @@
 function run_test(algorithmNames) {
     var subtle = crypto.subtle; // Change to test prefixed implementations
 
-    setup({explicit_timeout: true});
-
 // These tests check that importKey and exportKey throw an error, and that
 // the error is of the right type, for a wide set of incorrect parameters.
 
@@ -19,6 +17,12 @@ function run_test(algorithmNames) {
 
     var allTestVectors = [ // Parameters that should work for importKey / exportKey
         {name: "Ed25519", privateUsages: ["sign"], publicUsages: ["verify"]},
+        {name: "ML-DSA-44", privateUsages: ["sign"], publicUsages: ["verify"]},
+        {name: "ML-DSA-65", privateUsages: ["sign"], publicUsages: ["verify"]},
+        {name: "ML-DSA-87", privateUsages: ["sign"], publicUsages: ["verify"]},
+        {name: "ML-KEM-512", privateUsages: ["decapsulateKey", "decapsulateBits"], publicUsages: ["encapsulateKey", "encapsulateBits"]},
+        {name: "ML-KEM-768", privateUsages: ["decapsulateKey", "decapsulateBits"], publicUsages: ["encapsulateKey", "encapsulateBits"]},
+        {name: "ML-KEM-1024", privateUsages: ["decapsulateKey", "decapsulateBits"], publicUsages: ["encapsulateKey", "encapsulateBits"]},
         {name: "Ed448", privateUsages: ["sign"], publicUsages: ["verify"]},
         {name: "ECDSA", privateUsages: ["sign"], publicUsages: ["verify"]},
         {name: "X25519",  privateUsages: ["deriveKey", "deriveBits"], publicUsages: []},
@@ -43,7 +47,7 @@ function run_test(algorithmNames) {
 
         var jwk_label = "";
         if (format === "jwk")
-            jwk_label = data.d === undefined ? " (public) " : "(private)";
+            jwk_label = isPublicKey(data) ? " (public) " : "(private)";
 
         var result = "(" +
                         objectToString(format) + jwk_label + ", " +
@@ -73,16 +77,15 @@ function run_test(algorithmNames) {
         }, testTag + ": importKey" + parameterString(format, algorithm, extractable, usages, keyData));
     }
 
-    // Don't create an exhaustive list of all invalid usages,
-    // because there would usually be nearly 2**8 of them,
-    // way too many to test. Instead, create every singleton
+    // Don't create an exhaustive list of all invalid usages because
+    // there would be too many to test. Instead, create every singleton
     // of an illegal usage, and "poison" every valid usage
     // with an illegal one.
     function invalidUsages(validUsages, mandatoryUsages) {
         var results = [];
 
         var illegalUsages = [];
-        ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey", "deriveKey", "deriveBits"].forEach(function(usage) {
+        allKeyUsages.forEach(function(usage) {
             if (!validUsages.includes(usage)) {
                 illegalUsages.push(usage);
             }
@@ -101,18 +104,22 @@ function run_test(algorithmNames) {
     }
 
     function validUsages(usages, format, data) {
-        if (format === 'spki' || format === 'raw') return usages.publicUsages
-        if (format === 'pkcs8') return usages.privateUsages
+        if (format === 'spki' || format === 'raw' || format === 'raw-public') return usages.publicUsages
+        if (format === 'pkcs8' || format === 'raw-private' || format === 'raw-seed') return usages.privateUsages
         if (format === 'jwk') {
             if (data === undefined)
                 return [];
-            return data.d === undefined ? usages.publicUsages : usages.privateUsages;
+            return isPublicKey(data) ? usages.publicUsages : usages.privateUsages;
         }
         return [];
     }
 
+    function isPublicKey(data) {
+        return data.d === undefined && data.priv === undefined;
+    }
+
     function isPrivateKey(data) {
-        return data.d !== undefined;
+        return !isPublicKey(data);
     }
 
 // Now test for properly handling errors
@@ -213,7 +220,7 @@ function run_test(algorithmNames) {
         allAlgorithmSpecifiersFor(name).forEach(function(algorithm) {
             getValidKeyData(algorithm).forEach(function(test) {
                 if (test.format === "jwk") {
-                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, d: test.data.d};
+                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, y: test.data.y};
                     data.kty = getMismatchedKtyField(algorithm);
                     var usages =  validUsages(vector, 'jwk', test.data);
                     testError('jwk', algorithm, data, name, usages, true, "DataError", "Invalid 'kty' field");
@@ -228,7 +235,7 @@ function run_test(algorithmNames) {
         allAlgorithmSpecifiersFor(name).forEach(function(algorithm) {
             getValidKeyData(algorithm).forEach(function(test) {
                 if (test.format === "jwk") {
-                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, d: test.data.d};
+                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, y: test.data.y};
                     data.ext = false;
                     var usages =  validUsages(vector, 'jwk', test.data);
                     testError('jwk', algorithm, data, name, usages, true, "DataError", "Import from a non-extractable");
@@ -243,7 +250,7 @@ function run_test(algorithmNames) {
         allAlgorithmSpecifiersFor(name).forEach(function(algorithm) {
             getValidKeyData(algorithm).forEach(function(test) {
                 if (test.format === "jwk") {
-                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, d: test.data.d};
+                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, y: test.data.y};
                     data.use = "invalid";
                     var usages =  validUsages(vector, 'jwk', test.data);
                     if (usages.length !== 0)
@@ -259,7 +266,7 @@ function run_test(algorithmNames) {
         allAlgorithmSpecifiersFor(name).forEach(function(algorithm) {
             getValidKeyData(algorithm).forEach(function(test) {
                 if (test.format === "jwk") {
-                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, d: test.data.d};
+                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, y: test.data.y};
                     data.crv = getMismatchedCrvField(algorithm)
                     var usages =  validUsages(vector, 'jwk', test.data);
                     testError('jwk', algorithm, data, name, usages, true, "DataError", "Invalid 'crv' field");
@@ -271,12 +278,12 @@ function run_test(algorithmNames) {
     // Use an 'alg' field with incorrect casing.
     testVectors.forEach(function(vector) {
         var name = vector.name;
-        if (name === "X25519")
-            return; // "X25519" ignores the 'alg' field.
+        if (name !== "Ed25519" && name !== "Ed448")
+            return; // The rest ignore the 'alg' field.
         allAlgorithmSpecifiersFor(name).forEach(function(algorithm) {
             getValidKeyData(algorithm).forEach(function(test) {
                 if (test.format === "jwk") {
-                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, d: test.data.d};
+                    var data = {crv: test.data.crv, kty: test.data.kty, d: test.data.d, x: test.data.x, y: test.data.y};
                     var usages =  validUsages(vector, 'jwk', test.data);
                     [name.toLowerCase(), name.toUpperCase()].forEach(function(algName) {
                         data.alg = algName;

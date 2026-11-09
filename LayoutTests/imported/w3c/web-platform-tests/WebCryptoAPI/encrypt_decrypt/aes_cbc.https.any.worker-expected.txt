@@ -3,15 +3,33 @@ PASS setup
 PASS AES-CBC 128-bit key
 PASS AES-CBC 192-bit key
 PASS AES-CBC 256-bit key
-PASS AES-CBC 128-bit key with altered plaintext
-PASS AES-CBC 192-bit key with altered plaintext
-PASS AES-CBC 256-bit key with altered plaintext
+PASS AES-CBC 128-bit key with altered plaintext during call
+PASS AES-CBC 192-bit key with altered plaintext during call
+PASS AES-CBC 256-bit key with altered plaintext during call
+PASS AES-CBC 128-bit key with altered plaintext after call
+PASS AES-CBC 192-bit key with altered plaintext after call
+PASS AES-CBC 256-bit key with altered plaintext after call
+PASS AES-CBC 128-bit key with transferred plaintext during call
+PASS AES-CBC 192-bit key with transferred plaintext during call
+PASS AES-CBC 256-bit key with transferred plaintext during call
+PASS AES-CBC 128-bit key with transferred plaintext after call
+PASS AES-CBC 192-bit key with transferred plaintext after call
+PASS AES-CBC 256-bit key with transferred plaintext after call
 PASS AES-CBC 128-bit key decryption
 PASS AES-CBC 192-bit key decryption
 PASS AES-CBC 256-bit key decryption
-PASS AES-CBC 128-bit key decryption with altered ciphertext
-PASS AES-CBC 192-bit key decryption with altered ciphertext
-PASS AES-CBC 256-bit key decryption with altered ciphertext
+PASS AES-CBC 128-bit key decryption with altered ciphertext during call
+PASS AES-CBC 192-bit key decryption with altered ciphertext during call
+PASS AES-CBC 256-bit key decryption with altered ciphertext during call
+PASS AES-CBC 128-bit key decryption with altered ciphertext after call
+PASS AES-CBC 192-bit key decryption with altered ciphertext after call
+PASS AES-CBC 256-bit key decryption with altered ciphertext after call
+FAIL AES-CBC 128-bit key decryption with transferred ciphertext during call assert_unreached: decrypt should not have succeeded for AES-CBC 128-bit key Reached unreachable code
+FAIL AES-CBC 192-bit key decryption with transferred ciphertext during call assert_unreached: decrypt should not have succeeded for AES-CBC 192-bit key Reached unreachable code
+FAIL AES-CBC 256-bit key decryption with transferred ciphertext during call assert_unreached: decrypt should not have succeeded for AES-CBC 256-bit key Reached unreachable code
+PASS AES-CBC 128-bit key decryption with transferred ciphertext after call
+PASS AES-CBC 192-bit key decryption with transferred ciphertext after call
+PASS AES-CBC 256-bit key decryption with transferred ciphertext after call
 PASS AES-CBC 128-bit key without encrypt usage
 PASS AES-CBC 192-bit key without encrypt usage
 PASS AES-CBC 256-bit key without encrypt usage
