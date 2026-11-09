@@ -42,8 +42,11 @@
 #include "IntRect.h"
 #include "RenderListBox.h"
 #include "RenderObjectInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityListBoxOption);
 
 using namespace HTMLNames;
 

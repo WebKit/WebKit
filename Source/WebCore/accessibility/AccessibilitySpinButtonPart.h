@@ -26,10 +26,12 @@
 #pragma once
 
 #include "AccessibilityMockObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class AccessibilitySpinButtonPart final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilitySpinButtonPart);
 public:
     static Ref<AccessibilitySpinButtonPart> create(AXID, AXObjectCache&);
     virtual ~AccessibilitySpinButtonPart() = default;

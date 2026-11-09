@@ -27,8 +27,11 @@
 #include "AccessibilityMockObject.h"
 
 #include "AccessibilityObjectInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityMockObject);
 
 AccessibilityMockObject::AccessibilityMockObject(AXID axID, AXObjectCache& cache)
     : AccessibilityObject(axID, cache)

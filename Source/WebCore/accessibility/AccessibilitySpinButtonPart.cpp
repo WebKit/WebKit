@@ -28,8 +28,11 @@
 
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilitySpinButton.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilitySpinButtonPart);
 
 AccessibilitySpinButtonPart::AccessibilitySpinButtonPart(AXID axID, AXObjectCache& cache)
     : AccessibilityMockObject(axID, cache)

@@ -32,8 +32,11 @@
 #include "AccessibilityObjectInlines.h"
 #include "ContainerNodeInlines.h"
 #include "RenderElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilitySpinButton);
 
 AccessibilitySpinButton::AccessibilitySpinButton(AXID axID, SpinButtonElement& spinButtonElement, AXObjectCache& cache)
     : AccessibilityMockObject(axID, cache)

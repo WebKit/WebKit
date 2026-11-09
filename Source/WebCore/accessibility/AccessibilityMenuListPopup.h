@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AccessibilityMockObject.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class AccessibilityMenuListOption;
 class HTMLElement;
 
 class AccessibilityMenuListPopup final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityMenuListPopup);
     friend class AXObjectCache;
 public:
     static Ref<AccessibilityMenuListPopup> create(AXID axID, AXObjectCache& cache) { return adoptRef(*new AccessibilityMenuListPopup(axID, cache)); }

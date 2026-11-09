@@ -33,6 +33,7 @@
 #include "PluginViewBase.h"
 #include "RenderObject.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -54,6 +55,7 @@ class RenderView;
 class VisibleSelection;
 
 class AccessibilityRenderObject : public AccessibilityNodeObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilityRenderObject);
 public:
     NODELETE static Ref<AccessibilityRenderObject> create(AXID, RenderObject&, AXObjectCache&);
     NODELETE static Ref<AccessibilityRenderObject> create(AXID, Node&, AXObjectCache&);

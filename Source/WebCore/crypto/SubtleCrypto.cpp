@@ -76,9 +76,12 @@
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SubtleCrypto);
 using namespace JSC;
 
 SubtleCrypto::SubtleCrypto(ScriptExecutionContext* context)

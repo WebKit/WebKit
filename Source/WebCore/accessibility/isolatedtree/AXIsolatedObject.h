@@ -41,6 +41,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -51,6 +52,7 @@ class AXIsolatedTree;
 struct AXTextRuns;
 
 class AXIsolatedObject final : public AXCoreObject {
+    WTF_MAKE_TZONE_ALLOCATED(AXIsolatedObject);
     friend class AXIsolatedTree;
 public:
     static Ref<AXIsolatedObject> create(IsolatedObjectData&&);

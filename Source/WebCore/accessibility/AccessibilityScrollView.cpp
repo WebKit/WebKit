@@ -51,8 +51,11 @@
 #include "RenderElementInlines.h"
 #include "RenderObjectStyle.h"
 #include "Widget.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilityScrollView);
 
 using namespace HTMLNames;
 

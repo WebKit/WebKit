@@ -28,11 +28,13 @@
 #include "AccessibilityMockObject.h"
 #include "AccessibilitySpinButtonPart.h"
 #include "SpinButtonElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // Currently only represents native spinbuttons (i.e. <input type="number">) and not role="spinbutton" elements.
 class AccessibilitySpinButton final : public AccessibilityMockObject {
+    WTF_MAKE_TZONE_ALLOCATED(AccessibilitySpinButton);
 public:
     static Ref<AccessibilitySpinButton> create(AXID, SpinButtonElement&, AXObjectCache&);
     virtual ~AccessibilitySpinButton();

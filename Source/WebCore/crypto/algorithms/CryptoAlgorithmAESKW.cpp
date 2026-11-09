@@ -29,8 +29,11 @@
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
 #include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmAESKW);
 
 namespace CryptoAlgorithmAESKWInternal {
 static constexpr auto ALG128 = "A128KW"_s;

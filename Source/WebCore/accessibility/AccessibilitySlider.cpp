@@ -42,8 +42,13 @@
 #include "StyleAppearance.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilitySlider);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AccessibilitySliderThumb);
 
 using namespace HTMLNames;
 

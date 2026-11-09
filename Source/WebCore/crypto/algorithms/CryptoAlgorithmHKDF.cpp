@@ -32,8 +32,11 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmHKDF);
 
 Ref<CryptoAlgorithm> CryptoAlgorithmHKDF::create()
 {

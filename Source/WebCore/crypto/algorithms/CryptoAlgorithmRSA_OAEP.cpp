@@ -33,8 +33,11 @@
 #include "CryptoKeyRSA.h"
 #include "ExceptionOr.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CryptoAlgorithmRSA_OAEP);
 
 namespace CryptoAlgorithmRSA_OAEPInternal {
 static constexpr auto ALG1 = "RSA-OAEP"_s;
