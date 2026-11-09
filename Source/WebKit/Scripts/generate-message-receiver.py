@@ -77,6 +77,9 @@ def main(argv):
     parser.add_argument('--additions-dir', action='append', default=[], metavar='DIR',
                         help='Directory to search for <Receiver>Additions.messages.in fragments. May be repeated; '
                              'the first directory containing a given fragment wins.')
+    parser.add_argument('--write-if-changed', action='store_true',
+                        help='Do not rewrite output files whose contents did not change, so that build systems that check '
+                             'whether outputs changed (like ninja\'s restat) do not rebuild their dependents.')
 
     args = parser.parse_args(argv[1:])
 
@@ -138,31 +141,35 @@ def main(argv):
             return os.path.join(output_dir, filename)
         return filename
 
+    def write_output(filename, contents):
+        path = output_path(filename)
+        if args.write_if_changed:
+            try:
+                with open(path) as existing_output:
+                    if existing_output.read() == contents:
+                        return
+            except FileNotFoundError:
+                pass
+        with open(path, "w+") as output:
+            output.write(contents)
+
     for receiver in receivers:
         if receiver.has_attribute(webkit.model.BUILTIN_ATTRIBUTE):
             continue
         receiver_dir = receiver_dirs.get(receiver.name, '')
         if receiver_dir and not os.path.isdir(output_path(receiver_dir)):
             os.makedirs(output_path(receiver_dir))
-        with open(output_path(os.path.join(receiver_dir, '%sMessageReceiver.cpp' % receiver.name)), "w+") as implementation_output:
-            implementation_output.write(webkit.messages.generate_message_handler(receiver))
+        write_output(os.path.join(receiver_dir, '%sMessageReceiver.cpp' % receiver.name), webkit.messages.generate_message_handler(receiver))
         if receiver.swift_receiver or receiver.swift_receiver_build_enabled_by:
-            with open(output_path('%sMessageReceiver.swift' % receiver.name), "w+") as swift_implementation_output:
-                swift_implementation_output.write(webkit.messages.generate_swift_message_handler(receiver))
+            write_output('%sMessageReceiver.swift' % receiver.name, webkit.messages.generate_swift_message_handler(receiver))
 
         receiver_message_header = '%sMessages.h' % receiver.name
         receiver_header_files.append(receiver_message_header)
-        with open(output_path(receiver_message_header), "w+") as header_output:
-            header_output.write(webkit.messages.generate_messages_header(receiver))
+        write_output(receiver_message_header, webkit.messages.generate_messages_header(receiver))
 
-    with open(output_path('MessageNames.h'), "w+") as message_names_header_output:
-        message_names_header_output.write(webkit.messages.generate_message_names_header(receivers))
-
-    with open(output_path('MessageNames.cpp'), "w+") as message_names_implementation_output:
-        message_names_implementation_output.write(webkit.messages.generate_message_names_implementation(receivers))
-
-    with open(output_path('MessageArgumentDescriptions.cpp'), "w+") as message_descriptions_implementation_output:
-        message_descriptions_implementation_output.write(webkit.messages.generate_message_argument_description_implementation(receivers, receiver_header_files))
+    write_output('MessageNames.h', webkit.messages.generate_message_names_header(receivers))
+    write_output('MessageNames.cpp', webkit.messages.generate_message_names_implementation(receivers))
+    write_output('MessageArgumentDescriptions.cpp', webkit.messages.generate_message_argument_description_implementation(receivers, receiver_header_files))
 
     return 0
 
