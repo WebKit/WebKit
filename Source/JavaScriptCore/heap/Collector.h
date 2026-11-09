@@ -125,6 +125,13 @@ public:
 #if ASSERT_ENABLED
     // For asserts that accept more than one role, which thread-safety analysis cannot express.
     bool currentThreadIsConductor() const;
+    // Asserts that the current thread is the conductor or one of its marking helpers.
+    void assertIsConductorOrHelper() const;
+    // Asserts that every member heap's world is stopped and that the current thread is a marker, meaning the
+    // conductor or one of its marking helpers: the only threads that run against a stopped heap.
+    void assertIsMarkerWithWorldStopped() const;
+#else
+    ALWAYS_INLINE void assertIsMarkerWithWorldStopped() const { }
 #endif
 
 private:

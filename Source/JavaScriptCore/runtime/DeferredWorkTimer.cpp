@@ -27,6 +27,7 @@
 #include "DeferredWorkTimer.h"
 
 #include "GlobalObjectMethodTable.h"
+#include "HeapInlines.h"
 #include "JSGlobalObject.h"
 #include "TopExceptionScope.h"
 #include "VM.h"
@@ -42,6 +43,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DeferredWorkTimer::Ticket);
 namespace DeferredWorkTimerInternal {
 static constexpr bool verbose = false;
 }
+
+#if ASSERT_ENABLED
+static bool currentThreadMayAccessTickets(VM& vm)
+{
+    return vm.currentThreadIsHoldingAPILock() || (vm.heap.worldIsStopped() && vm.heap.currentThreadIsConductor());
+}
+#endif
 
 inline DeferredWorkTimer::Ticket::Ticket(WorkType type, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies)
     : m_type(type)
@@ -193,7 +201,7 @@ void DeferredWorkTimer::runRunLoop()
 
 DeferredWorkTimer::WeakTicket DeferredWorkTimer::addPendingWork(WorkType type, VM& vm, JSObject* target, Vector<JSCell*>&& dependencies)
 {
-    ASSERT_UNUSED(vm, vm.currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && vm.heap.worldIsStopped()));
+    ASSERT_UNUSED(vm, currentThreadMayAccessTickets(vm));
     for (unsigned i = 0; i < dependencies.size(); ++i)
         ASSERT(dependencies[i] != target && dependencies[i]);
 
@@ -216,7 +224,7 @@ bool DeferredWorkTimer::hasPendingWork(Ticket& ticket)
     auto result = m_pendingTickets.find(&ticket);
     if (result == m_pendingTickets.end() || ticket.isCancelled())
         return false;
-    ASSERT(ticket.vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket.vm().heap.worldIsStopped()));
+    ASSERT(currentThreadMayAccessTickets(ticket.vm()));
     return true;
 }
 
@@ -225,7 +233,7 @@ bool DeferredWorkTimer::hasDependencyInPendingWork(Ticket& ticket, JSCell* depen
     auto result = m_pendingTickets.find(&ticket);
     if (result == m_pendingTickets.end() || ticket.isCancelled())
         return false;
-    ASSERT(ticket.vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket.vm().heap.worldIsStopped()));
+    ASSERT(currentThreadMayAccessTickets(ticket.vm()));
     return (*result)->dependencies().contains(dependency);
 }
 
@@ -247,7 +255,7 @@ bool DeferredWorkTimer::scheduleWorkSoonIfActive(const WeakTicket& weakTicket, T
 bool DeferredWorkTimer::cancelPendingWork(Ticket& ticket)
 {
     ASSERT(m_pendingTickets.contains(&ticket));
-    ASSERT(ticket.isCancelled() || ticket.vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket.vm().heap.worldIsStopped()));
+    ASSERT(ticket.isCancelled() || currentThreadMayAccessTickets(ticket.vm()));
 
     bool result = false;
     if (!ticket.isCancelled()) {
@@ -314,13 +322,13 @@ void DeferredWorkTimer::didResumeScriptExecutionOwner()
 
 bool DeferredWorkTimer::hasAnyPendingWork() const
 {
-    ASSERT(m_apiLock->vm()->currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && m_apiLock->vm()->heap.worldIsStopped()));
+    ASSERT(currentThreadMayAccessTickets(*m_apiLock->vm()));
     return !m_pendingTickets.isEmpty();
 }
 
 bool DeferredWorkTimer::hasImminentlyScheduledWork() const
 {
-    ASSERT(m_apiLock->vm()->currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && m_apiLock->vm()->heap.worldIsStopped()));
+    ASSERT(currentThreadMayAccessTickets(*m_apiLock->vm()));
     for (auto& ticket : m_pendingTickets) {
         if (ticket->isCancelled())
             continue;

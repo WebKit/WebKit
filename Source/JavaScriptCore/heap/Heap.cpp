@@ -2450,7 +2450,7 @@ Vector<std::unique_ptr<MarkingConstraint>> Heap::createCoreConstraints()
                 // If we tried to scan while not under a safepoint we could stop a thread that's in the process of calling
                 // one of the callees we are looking for.
                 // FIXME: Should we have two constraints for this? One for concurrent and one under safepoint at the bitter end.
-                ASSERT(worldIsStopped());
+                m_collector->assertIsMarkerWithWorldStopped();
                 ConservativeRoots conservativeRoots(*this);
 
                 gatherStackRoots(conservativeRoots);
@@ -2610,7 +2610,7 @@ Vector<std::unique_ptr<MarkingConstraint>> Heap::createCoreConstraints()
             IsoSubspace* subspace = m_pinballCompletionSpace.get();
             if (!subspace)
                 return;
-            ASSERT(worldIsStopped());
+            m_collector->assertIsMarkerWithWorldStopped();
             // ConservativeRoots gathering requires an up-to-date precise allocations snapshot.
             m_objectSpace.prepareForConservativeScan();
             // FIXME: Add a second CellState for PinballCompletion so we can skip
