@@ -27,6 +27,7 @@
 #include "SessionStateConversion.h"
 
 #include "SessionState.h"
+#include "WebHistoryItemClient.h"
 #include <WebCore/BlobData.h>
 #include <WebCore/FormData.h>
 #include <WebCore/HistoryItem.h>
@@ -205,8 +206,10 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
     }
 }
 
-Ref<HistoryItem> toHistoryItem(HistoryItemClient& client, const FrameState& frameState)
+Ref<HistoryItem> toHistoryItem(WebHistoryItemClient& client, const FrameState& frameState)
 {
+    // The UI process sent this state, so don't send it back.
+    auto ignoreHistoryItemChangesForScope = client.ignoreChangesForScope();
     Ref historyItem = HistoryItem::create(client, frameState.urlString, frameState.title, { }, frameState.itemID, frameState.frameItemID);
     applyFrameState(client, historyItem, frameState);
     return historyItem;

@@ -49,9 +49,9 @@ WebHistoryItemClient::WebHistoryItemClient(WebPage& page)
 
 ScopeExit<CompletionHandler<void()>> WebHistoryItemClient::ignoreChangesForScope()
 {
-    m_shouldIgnoreChanges = true;
-    return makeScopeExit(CompletionHandler<void()> { [this, protectedThis = Ref { *this }] {
-        m_shouldIgnoreChanges = false;
+    bool wasIgnoringChanges = std::exchange(m_shouldIgnoreChanges, true);
+    return makeScopeExit(CompletionHandler<void()> { [this, protectedThis = Ref { *this }, wasIgnoringChanges] {
+        m_shouldIgnoreChanges = wasIgnoringChanges;
     } });
 }
 
