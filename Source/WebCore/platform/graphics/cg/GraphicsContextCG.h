@@ -28,6 +28,7 @@
 #if USE(CG)
 
 #include <WebCore/ColorSpaceCG.h>
+#include <WebCore/GradientRendererCG.h>
 #include <WebCore/GraphicsContext.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -75,6 +76,7 @@ public:
     using GraphicsContext::fillRect;
     void fillRect(const FloatRect&, RequiresClipToRect = RequiresClipToRect::Yes) final;
     void fillRect(const FloatRect&, const Color&) final;
+    void fillRect(const FloatRect&, Gradient&) final;
     void fillRect(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect = RequiresClipToRect::Yes) final;
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final;
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&) final;
@@ -171,6 +173,7 @@ private:
     void setCGStyle(const std::optional<GraphicsStyle>&, bool shadowsIgnoreTransforms);
 
     FloatRect boundsIncludingDropShadow(const FloatRect&);
+    const GradientRendererCG& gradientRenderer(const Gradient&, const std::optional<ColorSpace>&);
     void paintGradientInClip(Gradient&, const AffineTransform& gradientSpaceTransform, NOESCAPE const Invocable<FloatRect()> auto& computeContentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip);
 #if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
     void paintGradientInCGLayer(Gradient&, const AffineTransform& gradientSpaceTransform, const FloatRect& contentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip);
@@ -181,6 +184,14 @@ private:
 
     const RetainPtr<CGContextRef> m_cgContext;
     mutable std::optional<ColorSpace> m_colorSpace;
+
+    // The renderer of the last painted gradient, for repeated draws with the same gradient.
+    struct LastGradientRenderer {
+        uint64_t gradientIdentifier;
+        std::optional<ColorSpace> colorSpace;
+        GradientRendererCG renderer;
+    };
+    std::optional<LastGradientRenderer> m_lastGradientRenderer;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     std::optional<float> m_maxEDRHeadroom;
 #endif

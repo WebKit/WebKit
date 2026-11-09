@@ -31,49 +31,109 @@
 
 #include "GradientRendererCG.h"
 #include "GraphicsContextCG.h"
-#include "PredefinedColorSpace.h"
+#include <atomic>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static std::optional<ColorSpace> nonLinearColorSpace(const ColorSpace& colorSpace)
-{
-    auto predefined = toPredefinedColorSpace(colorSpace);
-    if (!predefined)
-        return colorSpace;
-    switch (*predefined) {
-    case PredefinedColorSpace::SRGBLinear:
-#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
-    case PredefinedColorSpace::DisplayP3Linear:
-#endif
-        return std::nullopt;
-    default:
-        return colorSpace;
-    }
-}
+namespace {
 
-void Gradient::stopsChanged()
+// Process-wide cache of the renderers of non-transient gradients. Those are painted across frames and
+// contexts, in the GPU process also concurrently from the rendering backend work queues and the main
+// thread. The cache holds no reference to the gradients: the entries of destroyed gradients and of
+// replaced color stops become unreachable and are evicted as least recently used.
+class GradientRendererCache {
+    WTF_MAKE_NONCOPYABLE(GradientRendererCache);
+public:
+    GradientRendererCache() = default;
+
+    static GradientRendererCache& singleton()
+    {
+        static NeverDestroyed<GradientRendererCache> cache;
+        return cache;
+    }
+
+    GradientRendererCG renderer(const Gradient& gradient, const std::optional<ColorSpace>& colorSpace)
+    {
+        auto identifier = gradient.rendererIdentifier();
+        {
+            Locker locker { m_lock };
+            if (auto* renderer = findRenderer(identifier, colorSpace))
+                return *renderer;
+        }
+
+        // Create the renderer without holding the lock. Another thread may create one for the same key concurrently.
+        GradientRendererCG renderer { gradient.colorInterpolationMethod(), gradient.stops().sorted(), colorSpace };
+
+        Locker locker { m_lock };
+        if (auto* cachedRenderer = findRenderer(identifier, colorSpace))
+            return *cachedRenderer;
+        m_renderers.ensure(identifier, [] {
+            return Renderers { };
+        }).iterator->value.append({ colorSpace, renderer });
+        if (m_identifiers.size() > capacity)
+            m_renderers.remove(m_identifiers.takeFirst());
+        return renderer;
+    }
+
+private:
+    // A gradient is usually painted in one color space only.
+    struct ColorSpaceRenderer {
+        std::optional<ColorSpace> colorSpace;
+        GradientRendererCG renderer;
+    };
+    using Renderers = Vector<ColorSpaceRenderer, 1>;
+
+    const GradientRendererCG* findRenderer(uint64_t identifier, const std::optional<ColorSpace>& colorSpace) WTF_REQUIRES_LOCK(m_lock)
+    {
+        m_identifiers.appendOrMoveToLast(identifier);
+        auto iterator = m_renderers.find(identifier);
+        if (iterator == m_renderers.end())
+            return nullptr;
+        for (auto& entry : iterator->value) {
+            if (entry.colorSpace == colorSpace)
+                return &entry.renderer;
+        }
+        return nullptr;
+    }
+
+    // Number of gradients whose renderers are kept.
+    static constexpr size_t capacity = 512;
+
+    Lock m_lock;
+    HashMap<uint64_t, Renderers> m_renderers WTF_GUARDED_BY_LOCK(m_lock);
+    // Least recently used first.
+    ListHashSet<uint64_t> m_identifiers WTF_GUARDED_BY_LOCK(m_lock);
+};
+
+} // namespace
+
+uint64_t Gradient::generateRendererIdentifier()
 {
-    m_platformRenderer = { };
+    static std::atomic<uint64_t> lastIdentifier;
+    return ++lastIdentifier;
 }
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 {
     context.clip(rect);
-    paint(context);
+    paint(protect(context.platformContext()), renderer(GradientRendererCG::colorSpaceForDestination(context.colorSpace())));
 }
 
-void Gradient::paint(GraphicsContext& context)
+GradientRendererCG Gradient::renderer(const std::optional<ColorSpace>& colorSpace) const
 {
-    paint(protect(context.platformContext()), nonLinearColorSpace(context.colorSpace()));
+    if (!m_isTransient)
+        return GradientRendererCache::singleton().renderer(*this, colorSpace);
+    return GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted(), colorSpace };
 }
 
-void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> colorSpace)
+void Gradient::paint(CGContextRef platformContext, const GradientRendererCG& renderer) const
 {
-    if (!m_platformRenderer || m_platformRenderer->colorSpace() != colorSpace)
-        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted(), colorSpace };
-
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {
             switch (m_spreadMethod) {
@@ -104,7 +164,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
                     CGPoint left = CGPointMake(flip ? end : start, 0);
                     CGPoint right = CGPointMake(flip ? start : end, 0);
 
-                    m_platformRenderer->drawLinearGradient(platformContext, left, right, extendOptions);
+                    renderer.drawLinearGradient(platformContext, left, right, extendOptions);
                 };
 
                 auto isLeftOf = [](CGFloat start, CGFloat end, CGRect boundingBox) -> bool {
@@ -154,7 +214,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
             }
             case GradientSpreadMethod::Pad: {
                 CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
-                m_platformRenderer->drawLinearGradient(platformContext, data.point0, data.point1, extendOptions);
+                renderer.drawLinearGradient(platformContext, data.point0, data.point1, extendOptions);
                 break;
             }
             }
@@ -172,7 +232,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
             }
 
             CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
-            m_platformRenderer->drawRadialGradient(platformContext, data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
+            renderer.drawRadialGradient(platformContext, data.point0, data.startRadius, data.point1, data.endRadius, extendOptions);
 
             if (needScaling)
                 CGContextRestoreGState(platformContext);
@@ -182,7 +242,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> col
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-piOverTwoDouble);
             CGContextTranslateCTM(platformContext, -data.point0.x(), -data.point0.y());
-            m_platformRenderer->drawConicGradient(platformContext, data.point0, data.angleRadians);
+            renderer.drawConicGradient(platformContext, data.point0, data.angleRadians);
             CGContextRestoreGState(platformContext);
         }
     );

@@ -51,6 +51,8 @@ Gradient::Gradient(Data&& data, ColorInterpolationMethod colorInterpolationMetho
     , m_stops { WTF::move(stops) }
     , m_isTransient { isTransient }
 {
+    // Sort once at creation, so that reading the stops of a gradient whose stops are not changed afterwards does not mutate it.
+    m_stops.sort();
 }
 
 Gradient::~Gradient()
@@ -108,7 +110,9 @@ void Gradient::addColorStop(GradientColorStop&& stop)
 {
     m_stops.addColorStop(WTF::move(stop));
     m_cachedHash = 0;
-    stopsChanged();
+#if USE(CG)
+    m_rendererIdentifier = generateRendererIdentifier();
+#endif
 }
 
 NODELETE static void add(Hasher& hasher, const Gradient::LinearData& data)

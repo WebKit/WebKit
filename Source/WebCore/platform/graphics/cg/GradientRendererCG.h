@@ -36,25 +36,27 @@ class GradientColorStops;
 struct GradientColorStop;
 using GradientColorStopVector = Vector<GradientColorStop, 2>;
 
+// The CGGradient of a color interpolation method and sorted color stops, in a renderer color space.
+// The CGGradient is immutable, so a renderer can be shared across threads.
 class GradientRendererCG {
 public:
-    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&, std::optional<ColorSpace> = { });
+    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&, const std::optional<ColorSpace>& = { });
 
-    void drawLinearGradient(CGContextRef, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions);
-    void drawRadialGradient(CGContextRef, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions);
-    void drawConicGradient(CGContextRef, CGPoint center, CGFloat angle);
+    // Returns the renderer color space for painting into a destination of the given color space.
+    static std::optional<ColorSpace> colorSpaceForDestination(const ColorSpace&);
 
-    const std::optional<ColorSpace>& colorSpace() const { return m_colorSpace; }
+    void drawLinearGradient(CGContextRef, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions) const;
+    void drawRadialGradient(CGContextRef, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions) const;
+    void drawConicGradient(CGContextRef, CGPoint center, CGFloat angle) const;
 
     static RetainPtr<CGGradientRef> createGradientBySampling(ColorInterpolationMethod, const GradientColorStopVector&, const std::optional<ColorSpace>& = { });
 
 private:
     using Gradient = RetainPtr<CGGradientRef>;
 
-    Gradient makeGradient(ColorInterpolationMethod, const GradientColorStops&) const;
-    Gradient makeGradientBySampling(ColorInterpolationMethod, const GradientColorStops&) const;
+    static Gradient makeGradient(ColorInterpolationMethod, const GradientColorStops&, const std::optional<ColorSpace>&);
+    static Gradient makeGradientBySampling(ColorInterpolationMethod, const GradientColorStops&, const std::optional<ColorSpace>&);
 
-    std::optional<ColorSpace> m_colorSpace;
     Gradient m_gradient;
 };
 

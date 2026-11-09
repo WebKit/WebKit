@@ -40,10 +40,6 @@
 
 namespace WebCore {
 
-void Gradient::stopsChanged()
-{
-}
-
 static void addColorStopRGBA(cairo_pattern_t *gradient, GradientColorStop stop, float globalAlpha)
 {
     auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
