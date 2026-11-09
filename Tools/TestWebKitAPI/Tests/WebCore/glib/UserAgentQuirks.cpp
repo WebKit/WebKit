@@ -117,6 +117,9 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.primevideo.com/");
 #endif
 
+    assertUserAgentForURLHasChromeBrowserQuirk("http://play.xbox.com/");
+    assertUserAgentForURLHasChromeBrowserQuirk("http://chat.xboxlive.com/");
+
     assertUserAgentForURLHasChromeBrowserQuirk("http://luna.amazon.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://luna.amazon.es/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://luna.amazon.fr/");
