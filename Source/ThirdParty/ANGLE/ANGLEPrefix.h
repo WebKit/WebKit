@@ -27,15 +27,36 @@
 
 #include "common/PackedEnums.h"
 
+#include "common/BinaryStream.h"
 #include "common/system_utils.h"
 #include "common/tls.h"
+#include "compiler/translator/Compiler.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
+#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
+#include "libANGLE/Caps.h"
+#include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/ErrorStrings.h"
+#include "libANGLE/Framebuffer.h"
+#include "libANGLE/Program.h"
+#include "libANGLE/ProgramExecutable.h"
+#include "libANGLE/ResourceManager.h"
+#include "libANGLE/ShareGroup.h"
+#include "libANGLE/State.h"
 #include "libANGLE/Thread.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/queryutils.h"
+
+#if defined(__OBJC__) && defined(ANGLE_ENABLE_METAL)
+#import <Foundation/Foundation.h>
+#import <Metal/Metal.h>
+#include "libANGLE/renderer/metal/ContextMtl.h"
+#include "libANGLE/renderer/metal/DisplayMtl.h"
+#include "libANGLE/renderer/metal/mtl_command_buffer.h"
+#endif
 
 #endif
