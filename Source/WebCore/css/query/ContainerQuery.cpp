@@ -80,10 +80,8 @@ void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<AtomString>&
         }
     };
 
-    auto collectFromValue = [&](const std::optional<MQ::Value>& value) {
-        if (!value)
-            return;
-        if (auto* customProperty = std::get_if<Ref<CSSCustomPropertyValue>>(&*value))
+    auto collectFromValue = [&](const MQ::Value& value) {
+        if (auto* customProperty = std::get_if<Ref<CSSCustomPropertyValue>>(&value))
             collectFromCustomPropertyValue(customProperty->get());
     };
 
@@ -92,11 +90,12 @@ void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<AtomString>&
         names.add(feature.name);
 
     // Range operands: a non-name center and the comparison bounds may reference further properties.
-    collectFromValue(feature.subject);
+    if (feature.subject)
+        collectFromValue(*feature.subject);
     if (feature.leftComparison)
-        collectFromValue(feature.leftComparison->value);
+        collectFromValue(feature.leftComparison.value);
     if (feature.rightComparison)
-        collectFromValue(feature.rightComparison->value);
+        collectFromValue(feature.rightComparison.value);
 }
 
 void serialize(StringBuilder& builder, const ContainerCondition& condition)

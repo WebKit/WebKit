@@ -110,7 +110,7 @@ TEST_F(MediaQueryListCapacity, MultipleQueryListIsTightlySized)
     EXPECT_EQ((*queries)[1].mediaType, AtomString { "print"_s });
     // A bare <media-condition> carries no media type.
     EXPECT_TRUE((*queries)[2].mediaType.isNull());
-    EXPECT_TRUE((*queries)[2].condition.has_value());
+    EXPECT_TRUE((*queries)[2].condition);
 }
 
 TEST_F(MediaQueryListCapacity, CommasInsideBlocksDoNotInflateCapacity)
@@ -159,10 +159,10 @@ TEST_F(MediaQueryListCapacity, InvalidComponentsAreStillCountedExactly)
 
     EXPECT_EQ((*queries)[0].mediaType, AtomString { "screen"_s });
     EXPECT_EQ((*queries)[1].mediaType, AtomString { "all"_s });
-    EXPECT_TRUE((*queries)[1].prefix.has_value());
+    EXPECT_TRUE((*queries)[1].prefix);
     EXPECT_EQ((*queries)[2].mediaType, AtomString { "print"_s });
     EXPECT_EQ((*queries)[3].mediaType, AtomString { "all"_s });
-    EXPECT_TRUE((*queries)[3].prefix.has_value());
+    EXPECT_TRUE((*queries)[3].prefix);
 }
 
 } // namespace TestWebKitAPI

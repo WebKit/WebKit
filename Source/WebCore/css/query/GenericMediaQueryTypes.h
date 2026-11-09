@@ -30,7 +30,9 @@
 #include <WebCore/CSSRatio.h>
 #include <WebCore/CSSToLengthConversionData.h>
 #include <WebCore/CSSValueKeywords.h>
+#include <wtf/Box.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Variant.h>
 #include <wtf/text/AtomString.h>
@@ -41,8 +43,11 @@ class RenderElement;
 
 namespace MQ {
 
+struct Condition;
+struct FeatureSchema;
+
 enum class LogicalOperator : uint8_t { And, Or, Not };
-enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
+enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual, None };
 enum class Syntax : uint8_t { Boolean, Plain, Range };
 
 template<typename T>
@@ -59,6 +64,8 @@ bool compare(ComparisonOperator op, T left, T right)
         return left > right;
     case ComparisonOperator::GreaterThanOrEqual:
         return left >= right;
+    case ComparisonOperator::None:
+        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -75,39 +82,38 @@ inline bool isConsistentThreeWayComparison(ComparisonOperator first, ComparisonO
     return (isLessFamily(first) && isLessFamily(second)) || (isGreaterFamily(first) && isGreaterFamily(second));
 }
 
-struct Condition;
-struct FeatureSchema;
-
 using Value = Variant<
+    CSS::Keyword,
     CSS::Integer<>,
     CSS::Number<>,
     CSS::Length<>,
     CSS::Resolution<>,
-    CSS::Ratio,
-    CSS::Keyword,
+    Box<CSS::Ratio>, // Boxed because it is twice the size of any other alternative and rarely used.
     Ref<CSSCustomPropertyValue>
 >;
 
 struct Comparison {
-    ComparisonOperator op;
-    std::optional<Value> value;
+    ComparisonOperator op { ComparisonOperator::None };
+    Value value { };
+    explicit operator bool() const { return op != ComparisonOperator::None; }
 };
 
 struct Feature {
     AtomString name;
     Syntax syntax;
-    std::optional<Comparison> leftComparison { };
-    std::optional<Comparison> rightComparison { };
+    Markable<CSSValueID> functionId { };
+    Comparison leftComparison { };
+    Comparison rightComparison { };
 
     // The center operand of a style range, used when it is not a bare <custom-property-name>
     // (those are stored in `name`, matching the plain/size feature model). For example, the
     // subject of `style(10px < 10em)` or `style(calc(1px + 1px) > --foo)`.
-    std::optional<Value> subject { };
-
-    std::optional<CSSValueID> functionId { };
+    Box<Value> subject { };
 
     const FeatureSchema* schema { nullptr };
 };
+
+static_assert(sizeof(Feature) <= 96, "MQ::Feature should stay small");
 
 struct GeneralEnclosed {
     String name;
@@ -119,8 +125,14 @@ using QueryInParens = Variant<Condition, Feature, GeneralEnclosed>;
 struct Condition {
     LogicalOperator logicalOperator { LogicalOperator::And };
     Vector<QueryInParens> queries;
+    Markable<CSSValueID> functionId { };
 
-    std::optional<CSSValueID> functionId { };
+    bool isEmpty() const { return queries.isEmpty() && !functionId; }
+};
+
+struct ConditionMarkableTraits {
+    static bool isEmptyValue(const Condition& condition) { return condition.isEmpty(); }
+    static Condition emptyValue() { return { }; }
 };
 
 enum class EvaluationResult : uint8_t { False, True, Unknown };

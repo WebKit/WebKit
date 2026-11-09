@@ -29,12 +29,12 @@
 namespace WebCore {
 namespace MQ {
 
-enum class Prefix : bool { Not, Only };
+enum class Prefix : uint8_t { Not, Only };
 
 struct MediaQuery {
-    std::optional<Prefix> prefix;
+    Markable<Prefix> prefix;
     AtomString mediaType;
-    std::optional<Condition> condition { };
+    Markable<Condition, ConditionMarkableTraits> condition { };
 };
 
 using MediaQueryList = Vector<MediaQuery>;
