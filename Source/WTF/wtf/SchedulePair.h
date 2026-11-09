@@ -79,9 +79,7 @@ private:
 inline void add(Hasher& hasher, const SchedulePair& pair)
 {
     // FIXME: Hashing a CFHash here is unfortunate.
-    // FIXME: Static analysis wants us to retain pair.mode() but this doesn't seem necessary given that
-    // SchedulePair::m_mode is const (rdar://163245052).
-    SUPPRESS_UNRETAINED_ARG add(hasher, pair.runLoop(), pair.mode() ? CFHash(pair.mode()) : 0);
+    add(hasher, pair.runLoop(), pair.mode() ? CFHash(pair.mode()) : 0);
 }
 
 struct SchedulePairHash {
