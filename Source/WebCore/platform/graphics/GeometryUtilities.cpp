@@ -348,20 +348,16 @@ float distanceToFarthestSide(FloatPoint p, FloatSize size)
 float distanceToClosestCorner(FloatPoint p, FloatSize size)
 {
     FloatPoint topLeft;
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
+    float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
 
     FloatPoint topRight(size.width(), 0);
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float topRightDistance = FloatSize(p - topRight).diagonalLength();
+    float topRightDistance = FloatSize(p - topRight).diagonalLength();
 
     FloatPoint bottomLeft(0, size.height());
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
+    float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
 
     FloatPoint bottomRight(size.width(), size.height());
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
+    float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
 
     return min4(topLeftDistance, topRightDistance, bottomLeftDistance, bottomRightDistance);
 }
@@ -369,20 +365,16 @@ float distanceToClosestCorner(FloatPoint p, FloatSize size)
 float distanceToFarthestCorner(FloatPoint p, FloatSize size)
 {
     FloatPoint topLeft;
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
+    float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
 
     FloatPoint topRight(size.width(), 0);
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float topRightDistance = FloatSize(p - topRight).diagonalLength();
+    float topRightDistance = FloatSize(p - topRight).diagonalLength();
 
     FloatPoint bottomLeft(0, size.height());
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
+    float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
 
     FloatPoint bottomRight(size.width(), size.height());
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
+    float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
 
     return max4(topLeftDistance, topRightDistance, bottomLeftDistance, bottomRightDistance);
 }

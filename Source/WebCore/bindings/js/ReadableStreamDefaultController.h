@@ -67,8 +67,7 @@ inline JSDOMGlobalObject& ReadableStreamDefaultController::globalObject() const
 {
     ASSERT(m_jsController);
     ASSERT(m_jsController->realm());
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return *static_cast<JSDOMGlobalObject*>(m_jsController->realm());
+    return *static_cast<JSDOMGlobalObject*>(m_jsController->realm());
 }
 
 } // namespace WebCore

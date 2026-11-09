@@ -1771,10 +1771,8 @@ void RenderLayerBacking::updateAnimationExtent()
         if (!styleable || !styleable->isRunningOrAboutToRunAcceleratedTransformRelatedAnimation())
             return { };
         LayoutRect animatedBounds;
-        if (m_owningLayer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(animatedBounds, RenderLayer::IncludeCompositedDescendants)) {
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST return FloatRect(animatedBounds);
-        }
+        if (m_owningLayer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(animatedBounds, RenderLayer::IncludeCompositedDescendants))
+            return FloatRect(animatedBounds);
         return { };
     };
     m_graphicsLayer->setAnimationExtent(computeAnimationExtent());
@@ -2000,8 +1998,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         } else if (hasClippingLayer()) {
             // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
             // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST outSize = FloatSize(clippingBox.size());
+            outSize = FloatSize(clippingBox.size());
             outOffset = toFloatSize(clippingBox.location());
         } else {
             outSize = primaryGraphicsLayerRect.size();

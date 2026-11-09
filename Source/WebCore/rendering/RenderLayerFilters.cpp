@@ -260,8 +260,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
             // If the region was clamped to MaxClampedArea, source from the bounding box to
             // avoid a huge mostly-transparent buffer. Otherwise source the full region.
             bool filterRegionOversized = !referenceBox.isEmpty() && m_filter->filterScale() != m_lastUnclampedFilterScale;
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST sourceImageRect = filterRegionOversized ? FloatRect(referenceBox) : FloatRect(dirtyFilterRegion);
+            sourceImageRect = filterRegionOversized ? FloatRect(referenceBox) : FloatRect(dirtyFilterRegion);
         } else
             sourceImageRect = dirtyFilterRegion;
 

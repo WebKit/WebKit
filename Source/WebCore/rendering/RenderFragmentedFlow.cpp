@@ -249,8 +249,7 @@ bool RenderFragmentedFlow::absoluteQuadsForBox(Vector<FloatQuad>& quads, bool* w
     forEachFragmentInRange(m_fragmentList, *startFragment, *endFragment, [&](auto& fragment) {
         auto rectsInFragment = fragment.fragmentRectsForFlowContentRect(boxRectInFlowCoordinates);
         for (auto rect : rectsInFragment) {
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST auto absoluteQuad = fragment.localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, wasFixed);
+            auto absoluteQuad = fragment.localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, wasFixed);
             quads.append(absoluteQuad);
         }
     });

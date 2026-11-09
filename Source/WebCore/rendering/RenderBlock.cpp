@@ -1418,8 +1418,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
             if (CheckedPtr layer = enclosingLayer()) {
                 gapRectsBounds.moveBy(-paintOffset);
                 if (!hasLayer()) {
-                    // FIXME: Remove suppression once rdar://189998444 is fixed.
-                    SUPPRESS_MEMORY_UNSAFE_CAST gapRectsBounds = localToContainerQuad(FloatRect(gapRectsBounds), &layer->renderer()).enclosingBoundingBox();
+                    gapRectsBounds = localToContainerQuad(FloatRect(gapRectsBounds), &layer->renderer()).enclosingBoundingBox();
                     if (layer->renderer().isRenderBox())
                         gapRectsBounds.moveBy(layer->renderBox()->scrollPosition());
                 }

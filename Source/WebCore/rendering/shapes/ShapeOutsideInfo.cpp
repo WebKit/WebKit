@@ -279,8 +279,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             ASSERT(!styleImage->isPending());
             auto physicalImageSize = writingMode.isHorizontal() ? logicalImageSize : logicalImageSize.transposedSize();
 
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST return LayoutShape::createRasterShape(styleImage, renderer, shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, ConcreteObjectSize::fixed(FloatSize(physicalImageSize)));
+            return LayoutShape::createRasterShape(styleImage, renderer, shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, ConcreteObjectSize::fixed(FloatSize(physicalImageSize)));
         },
         [&](const Style::ShapeOutside::ShapeBox&) {
             auto geometry = computeGeometryForBoxShape(shapeOutside.effectiveCSSBox(), renderer);

@@ -248,8 +248,7 @@ TextStream& operator<<(TextStream& ts, const LayoutRect& r)
     if (ts.hasFormattingFlag(TextStream::Formatting::LayoutUnitsAsIntegers))
         return ts << snappedIntRect(r);
     
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return ts << FloatRect(r);
+    return ts << FloatRect(r);
 }
 
 } // namespace WebCore

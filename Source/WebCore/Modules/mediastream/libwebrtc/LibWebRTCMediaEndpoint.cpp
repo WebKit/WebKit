@@ -962,8 +962,7 @@ template <>
 struct LogArgument<WebCore::RTCStatsLogger> {
     static String toString(const WebCore::RTCStatsLogger& logger)
     {
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return String(logger.toJSONString());
+        return String(logger.toJSONString());
     }
 };
 

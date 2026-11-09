@@ -1894,8 +1894,7 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
 
 static LayoutRect computeLocalExposeRect(const LayoutRect& absoluteRect, RenderBox* box)
 {
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return LayoutRect { box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox() };
+    return LayoutRect { box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox() };
 }
 
 LayoutRect RenderLayerScrollableArea::scrollRectToVisible(const LayoutRect& absoluteRect, const ScrollRectToVisibleOptions& options)
@@ -1954,8 +1953,7 @@ std::optional<LayoutRect> RenderLayerScrollableArea::updateScrollPositionForScro
     IntSize scrollOffsetDifference = realScrollOffset - oldScrollOffset;
     auto localExposeRectScrolled = localExposeRect;
     localExposeRectScrolled.move(-scrollOffsetDifference);
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), MapCoordinatesMode::UseTransforms).boundingBox());
+    return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), MapCoordinatesMode::UseTransforms).boundingBox());
 }
 
 void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea)

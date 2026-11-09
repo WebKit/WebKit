@@ -2094,8 +2094,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
                     // FIXME: this doesn't handle nested columns.
                     if (CheckedPtr multicolContainer = dynamicDowncast<RenderBox>(fragmentedFlow->parent())) {
                         auto overflowRect = multicolContainer->layoutOverflowRect();
-                        // FIXME: Remove suppression once rdar://189998444 is fixed.
-                        SUPPRESS_MEMORY_UNSAFE_CAST result = LayoutRect(multicolContainer->localToAbsoluteQuad(FloatRect(overflowRect), MapCoordinatesMode::UseTransforms, &includesFixedPositionElements).boundingBox());
+                        result = LayoutRect(multicolContainer->localToAbsoluteQuad(FloatRect(overflowRect), MapCoordinatesMode::UseTransforms, &includesFixedPositionElements).boundingBox());
                         computedBounds = true;
                     }
                 }
@@ -2103,8 +2102,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
 
             if (!computedBounds) {
                 LayoutRect overflowRect = box->layoutOverflowRect();
-                // FIXME: Remove suppression once rdar://189998444 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST result = LayoutRect(box->localToAbsoluteQuad(FloatRect(overflowRect), MapCoordinatesMode::UseTransforms, &includesFixedPositionElements).boundingBox());
+                result = LayoutRect(box->localToAbsoluteQuad(FloatRect(overflowRect), MapCoordinatesMode::UseTransforms, &includesFixedPositionElements).boundingBox());
                 boundsIncludeAllDescendantElements = layoutOverflowRectContainsAllDescendants(*box);
             }
         } else

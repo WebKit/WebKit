@@ -1545,10 +1545,8 @@ void AXObjectCache::setFrameGeometry(LocalFrame& frame, const AXFrameGeometry& g
 
     // Reset to zero to avoid leaving a stale value in the case of a null frame.view().
     m_frameViewOriginScrollPosition = { };
-    if (CheckedPtr view = frame.view()) {
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST m_frameViewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
-    }
+    if (CheckedPtr view = frame.view())
+        m_frameViewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
@@ -7240,8 +7238,7 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect, c
                         [&](const Style::BasicShapePath& clipPath) {
                             auto borderRect = renderBox->borderBoxRect();
                             borderRect.inflate(shapePathInflationPx);
-                            // FIXME: Remove suppression once rdar://189998444 is fixed.
-                            SUPPRESS_MEMORY_UNSAFE_CAST auto referenceBox = FloatRect(WTF::move(borderRect));
+                            auto referenceBox = FloatRect(WTF::move(borderRect));
                             auto path = Style::path(clipPath.shape(), referenceBox, renderBox->style().usedZoomForLength());
                             mapPathToPaintRect(path);
                             m_geometryManager->cachePathForID(*axID, WTF::makeUnique<Path>(WTF::move(path)));

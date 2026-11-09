@@ -243,8 +243,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     descriptor = { descriptor, invertContent() };
 #endif
 
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST styleImage->drawNinePiece(graphicsContext, renderer, descriptor, geometry);
+    styleImage->drawNinePiece(graphicsContext, renderer, descriptor, geometry);
 }
 
 // MARK: - Painter entry point

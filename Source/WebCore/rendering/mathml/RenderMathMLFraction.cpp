@@ -212,11 +212,9 @@ LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, MathMLFracti
     LayoutUnit childMarginBoxInlineSize = child.marginStart(child.writingMode()) + child.logicalWidth() + child.marginEnd(child.writingMode());
     switch (align) {
     case MathMLFractionElement::FractionAlignment::Right:
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return LayoutUnit(contentBoxInlineSize - childMarginBoxInlineSize);
+        return LayoutUnit(contentBoxInlineSize - childMarginBoxInlineSize);
     case MathMLFractionElement::FractionAlignment::Center:
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return LayoutUnit((contentBoxInlineSize - childMarginBoxInlineSize) / 2);
+        return LayoutUnit((contentBoxInlineSize - childMarginBoxInlineSize) / 2);
     case MathMLFractionElement::FractionAlignment::Left:
         return 0_lu;
     }

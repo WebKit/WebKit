@@ -584,8 +584,7 @@ std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(cons
         return std::nullopt;
     }
 
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto viewportSize = FloatSize(pageView->baseLayoutViewportSize());
+    auto viewportSize = FloatSize(pageView->baseLayoutViewportSize());
     auto viewportArea = viewportSize.area();
     auto maximumInteractionArea = viewportArea / 3;
     bool isTooBigForInteraction = bounds.area() > maximumInteractionArea;

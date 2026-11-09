@@ -725,8 +725,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
             extentsRect.setY(leftOffset);
             extentsRect.setHeight(rightOffset - leftOffset);
         }
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
+        extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
         if (!textBox->isHorizontal())
             extentsRect = extentsRect.transposedRect();
         bool isFirstOnLine = !textBox->nextLineLeftwardOnLine();
@@ -736,8 +735,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
         bool containsEnd = textBox->start() <= end && textBox->end() >= end;
 
         bool isFixed = false;
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, &isFixed);
+        auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, &isFixed);
         bool boxIsHorizontal = !textBox->isSVGText() ? textBox->isHorizontal() : !writingMode().isVertical();
 
         auto selectionGeometry = SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(protect(textNode())), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x()));
@@ -1584,16 +1582,13 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
         resultRect.unite(rect);
 
-        if (quads) {
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST quads->append(localToContainerQuad(FloatRect(rect), repaintContainer));
-        }
+        if (quads)
+            quads->append(localToContainerQuad(FloatRect(rect), repaintContainer));
     }
 
     if (clipToVisibleContent)
         return computeRectForRepaint(resultRect, repaintContainer);
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return localToContainerQuad(FloatRect(resultRect), repaintContainer).enclosingBoundingBox();
+    return localToContainerQuad(FloatRect(resultRect), repaintContainer).enclosingBoundingBox();
 }
 
 LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>& quads)

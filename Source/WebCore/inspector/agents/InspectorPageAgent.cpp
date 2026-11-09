@@ -853,8 +853,7 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
     if (!m_showPaintRects)
         return;
 
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
+    LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
     RefPtr view = protect(renderer.document())->view();
 
     LayoutRect rootRect = absoluteRect;

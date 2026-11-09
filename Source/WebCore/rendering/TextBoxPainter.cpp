@@ -990,8 +990,7 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
         // Normally text box top is aligned with the parent inline box top (i.e. textBox->logicalTop() == parentInlineBox->logicalTop()) but when inline box sides are trimmed (see: text-box property)
         // inline box gets an offset while text box does not.
         if (&inlineBox->renderer() != &parentInlineBox->renderer()) {
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST auto decoratingBoxContentBoxTop = inlineBox->logicalTop() + (!inlineBox->isRootInlineBox() ? inlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu));
+            auto decoratingBoxContentBoxTop = inlineBox->logicalTop() + (!inlineBox->isRootInlineBox() ? inlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu));
             SUPPRESS_MEMORY_UNSAFE_CAST auto parentInlineBoxContentBoxTop = parentInlineBox->logicalTop() + (!parentInlineBox->isRootInlineBox() ? parentInlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu));
             decoratingBoxLocation.moveBy(FloatPoint { 0.f, decoratingBoxContentBoxTop - parentInlineBoxContentBoxTop + textBoxEdgeAdjustmentForUnderline(parentInlineBox->style()) });
         } else

@@ -670,13 +670,11 @@ bool RenderReplaced::objectViewBoxIsContainedWithinNaturalSize() const
     if (!naturalSize)
         return true;
 
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto viewBox = resolvedObjectViewBox(FloatSize(*naturalSize));
+    auto viewBox = resolvedObjectViewBox(FloatSize(*naturalSize));
     if (!viewBox)
         return true;
 
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return FloatRect({ }, FloatSize(*naturalSize)).contains(*viewBox);
+    return FloatRect({ }, FloatSize(*naturalSize)).contains(*viewBox);
 }
 
 LayoutRect RenderReplaced::computePaintRectForObjectViewBox(const LayoutRect& destRect) const
@@ -688,8 +686,7 @@ LayoutRect RenderReplaced::computePaintRectForObjectViewBox(const LayoutRect& de
 
 LayoutRect RenderReplaced::computePaintRectForObjectViewBox(const LayoutRect& destRect, const LayoutSize& intrinsicSize) const
 {
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST if (auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize)))
+    if (auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize)))
         return LayoutRect(fullRectFromSubrectAndSize(FloatSize(intrinsicSize), *viewBox, FloatRect(destRect)));
     return destRect;
 }
@@ -1155,8 +1152,7 @@ LayoutRect RenderReplaced::selectionRectForRepaint(const RenderLayerModelObject*
     LayoutRect rect = localSelectionRect();
     if (clipToVisibleContent)
         return computeRectForRepaint(rect, repaintContainer);
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
+    return localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
 }
 
 LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const

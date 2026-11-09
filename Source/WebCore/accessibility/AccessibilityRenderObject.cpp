@@ -848,8 +848,7 @@ Path AccessibilityRenderObject::elementPath() const
             std::optional<Path> clipPathResult;
             WTF::switchOn(renderBox->style().clipPath(),
                 [&](const Style::BasicShapePath& clipPath) {
-                    // FIXME: Remove suppression once rdar://189998444 is fixed.
-                    SUPPRESS_MEMORY_UNSAFE_CAST auto referenceBox = FloatRect(renderBox->borderBoxRect());
+                    auto referenceBox = FloatRect(renderBox->borderBoxRect());
                     auto path = Style::path(clipPath.shape(), referenceBox, renderBox->style().usedZoomForLength());
                     mapLocalPathToAbsolute(path, *renderBox);
                     clipPathResult = WTF::move(path);

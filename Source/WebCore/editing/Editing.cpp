@@ -1229,8 +1229,7 @@ IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, c
 
     LayoutRect localRect(rect);
     rendererForCaretPainting->blockStartRelativeToPhysical(localRect);
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), MapCoordinatesMode::UseTransforms, insideFixed).enclosingBoundingBox();
+    return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), MapCoordinatesMode::UseTransforms, insideFixed).enclosingBoundingBox();
 }
 
 HashSet<Ref<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const SimpleRange& range)

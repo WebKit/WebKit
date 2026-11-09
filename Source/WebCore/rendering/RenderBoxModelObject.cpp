@@ -637,8 +637,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     // Finally compute container rect relative to the scrolling ancestor. We pass an empty
     // mode here, because sticky positioning should ignore transforms.
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST FloatRect containerRectRelativeToScrollingAncestor = containingBlock->localToContainerQuad(FloatRect(containerContentRect), enclosingClippingBox.ptr(), { } /* ignore transforms */).boundingBox();
+    FloatRect containerRectRelativeToScrollingAncestor = containingBlock->localToContainerQuad(FloatRect(containerContentRect), enclosingClippingBox.ptr(), { } /* ignore transforms */).boundingBox();
     if (enclosingClippingLayer) {
         FloatPoint containerLocationRelativeToScrollingAncestor = containerRectRelativeToScrollingAncestor.location() -
             FloatSize(enclosingClippingBox->borderLeft() + enclosingClippingBox->paddingLeft(),
@@ -666,8 +665,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // involving inlines, tables, and transformations.
     if (auto* parentBox = dynamicDowncast<RenderBox>(*parent()))
         parentBox->blockStartRelativeToPhysical(stickyBoxRect);
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), enclosingClippingBox.ptr(), { } /* ignore transforms */).boundingBox();
+    auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), enclosingClippingBox.ptr(), { } /* ignore transforms */).boundingBox();
 
     if (enclosingClippingLayer) {
         stickyBoxRelativeToScrollingAncestor.move(-FloatSize(enclosingClippingBox->borderLeft() + enclosingClippingBox->paddingLeft(),
@@ -733,8 +731,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
         clipRect.contract(LayoutSize(enclosingClippingBox.paddingLeft() + enclosingClippingBox.paddingRight(),
             enclosingClippingBox.paddingTop() + enclosingClippingBox.paddingBottom()));
 
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST FloatRect constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
+        FloatRect constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
 
         auto* scrollableArea = enclosingClippingLayer->scrollableArea();
         FloatPoint scrollOffset;

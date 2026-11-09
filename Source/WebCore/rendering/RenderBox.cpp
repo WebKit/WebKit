@@ -1120,8 +1120,7 @@ IntRect RenderBox::absoluteContentBox() const
 FloatQuad RenderBox::absoluteContentQuad() const
 {
     LayoutRect rect = contentBoxRect();
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return localToAbsoluteQuad(FloatRect(rect));
+    return localToAbsoluteQuad(FloatRect(rect));
 }
 
 LayoutRect RenderBox::localOutlineBoundsRepaintRect() const
@@ -1136,12 +1135,10 @@ LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repa
 
     if (repaintContainer != this) {
         FloatQuad containerRelativeQuad;
-        if (geometryMap) {
+        if (geometryMap)
             containerRelativeQuad = geometryMap->mapToContainer(box, repaintContainer);
-        } else {
-            // FIXME: Remove suppression once rdar://189998444 is fixed.
-            SUPPRESS_MEMORY_UNSAFE_CAST containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
-        }
+        else
+            containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
 
         box = LayoutRect(containerRelativeQuad.boundingBox());
     }

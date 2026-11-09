@@ -2847,10 +2847,8 @@ static FloatRect clipRectForTransparencyLayer(const LayoutRect& rect, const Rend
     // content bounds (enclosingIntRect(absoluteTransform.mapRect(decoratedBounds))) - we have to
     // perform the clip for the transparency layer in the same way to avoid losing edge pixels.
     auto absoluteTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-    if (auto inverseTransform = absoluteTransform.inverse()) {
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return inverseTransform->mapRect(FloatRect(enclosingIntRect(absoluteTransform.mapRect(FloatRect(rect)))));
-    }
+    if (auto inverseTransform = absoluteTransform.inverse())
+        return inverseTransform->mapRect(FloatRect(enclosingIntRect(absoluteTransform.mapRect(FloatRect(rect)))));
     return rect;
 }
 
@@ -5420,10 +5418,8 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             ClipRect newOverflowClip = rendererOverflowClipRectForChildLayers({ }, clipRectsContext.overlayScrollbarSizeRelevancy());
 
             if (!newOverflowClip.isInfinite()) {
-                if (needsTransform) {
-                    // FIXME: Remove suppression once rdar://189998444 is fixed.
-                    SUPPRESS_MEMORY_UNSAFE_CAST newOverflowClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newOverflowClip.rect()), &clipRectsContext.rootLayer->renderer()).boundingBox());
-                }
+                if (needsTransform)
+                    newOverflowClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newOverflowClip.rect()), &clipRectsContext.rootLayer->renderer()).boundingBox());
                 newOverflowClip.moveBy(offset);
                 newOverflowClip.setAffectedByRadius(renderer().style().border().hasBorderRadius());
                 clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
@@ -5436,10 +5432,8 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         if (renderer().hasClip()) {
             if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer())) {
                 LayoutRect newPosClip = box->clipRect({ });
-                if (needsTransform) {
-                    // FIXME: Remove suppression once rdar://189998444 is fixed.
-                    SUPPRESS_MEMORY_UNSAFE_CAST newPosClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newPosClip), &clipRectsContext.rootLayer->renderer()).boundingBox());
-                }
+                if (needsTransform)
+                    newPosClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newPosClip), &clipRectsContext.rootLayer->renderer()).boundingBox());
                 newPosClip.moveBy(offset);
                 clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
                 clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));

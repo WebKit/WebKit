@@ -172,16 +172,13 @@ bool PositionIterator::isCandidate(AllowUserSelectNone allowUserSelectNone) cons
     if (renderer->style().visibility() != Visibility::Visible)
         return false;
 
-    if (renderer->isBR()) {
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST return Position(*this).isCandidate();
-    }
+    if (renderer->isBR())
+        return Position(*this).isCandidate();
 
     if (is<RenderText>(*renderer)) {
         if (Position::nodeIsUserSelectNone(anchorNode.get()) && allowUserSelectNone == AllowUserSelectNone::No)
             return false;
-        // FIXME: Remove suppression once rdar://189998444 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST auto resolved = Position(*this).resolvedTextRendererAndOffset();
+        auto resolved = Position(*this).resolvedTextRendererAndOffset();
         CheckedPtr resolvedText = resolved.first;
         return resolvedText && resolvedText->containsCaretOffset(resolved.second);
     }
@@ -197,15 +194,13 @@ bool PositionIterator::isCandidate(AllowUserSelectNone allowUserSelectNone) cons
             if (block->logicalHeight() || is<HTMLBodyElement>(*anchorNode) || anchorNode->isRootEditableElement()) {
                 if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
                     return atStartOfNode() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get()));
-                // FIXME: Remove suppression once rdar://189998444 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST return anchorNode->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get())) && Position(*this).atEditingBoundary();
+                return anchorNode->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get())) && Position(*this).atEditingBoundary();
             }
             return false;
         }
     }
 
-    // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return anchorNode->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get())) && Position(*this).atEditingBoundary();
+    return anchorNode->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get())) && Position(*this).atEditingBoundary();
 }
 
 } // namespace WebCore
