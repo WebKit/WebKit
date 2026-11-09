@@ -215,9 +215,8 @@ EGLImage DMABufBuffer::createEGLImageForQualcommVideoFrame(GLDisplay& display, c
 bool DMABufBuffer::isQualcommVideoFrameBuffer() const
 {
 #if USE(GSTREAMER)
-    // Color space hint is used for Qualcomm video decoder, that exposes
-    // a single fd for two planes using external OES texture.
-    return m_colorSpace && m_sampleRange;
+    // The Qualcomm video decoder exposes a single fd for two planes, imported as an external OES texture.
+    return m_isQualcommVideoFrameBuffer;
 #else
     return false;
 #endif
@@ -420,32 +419,14 @@ SkYUVAInfo DMABufBuffer::yuvaInfo() const
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    SkYUVColorSpace yuvaColorSpace = [&] {
-        switch (m_colorSpace.value_or(DMABufBuffer::ColorSpace::Bt601)) {
-        case DMABufBuffer::ColorSpace::Bt601:
-            return kRec601_Limited_SkYUVColorSpace;
-        case DMABufBuffer::ColorSpace::Bt709:
-            return kRec709_Full_SkYUVColorSpace;
-        case DMABufBuffer::ColorSpace::Bt2020:
-            return kBT2020_8bit_Full_SkYUVColorSpace;
-        case DMABufBuffer::ColorSpace::Smpte240M:
-            return kSMPTE240_Full_SkYUVColorSpace;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }();
-
+    auto sampleBits = m_attributes.fourcc.value == DRM_FORMAT_P010 ? SampleBits::SixteenMSBAligned : SampleBits::Eight;
+    auto yuvaColorSpace = skiaYUVColorSpace(m_colorSpace.value_or(DMABufBuffer::ColorSpace::Bt601), m_sampleRange.value_or(DMABufBuffer::SampleRange::Narrow), sampleBits);
     return SkYUVAInfo(SkISize::Make(m_attributes.size.width(), m_attributes.size.height()), planeConfig, subsampling, yuvaColorSpace);
 }
 
 sk_sp<SkColorSpace> DMABufBuffer::skiaColorSpace() const
 {
-    switch (m_transferFunction.value_or(DMABufBuffer::TransferFunction::Bt709)) {
-    case DMABufBuffer::TransferFunction::Bt709:
-        return SkColorSpace::MakeRGB(SkNamedTransferFn::kRec709, SkNamedGamut::kSRGB);
-    case DMABufBuffer::TransferFunction::Pq:
-        return SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    return skiaColorSpace(m_transferFunction.value_or(DMABufBuffer::TransferFunction::Bt709));
 }
 
 class PromiseDMABufImageContext final : public ThreadSafeRefCounted<PromiseDMABufImageContext> {
@@ -584,3 +565,39 @@ sk_sp<SkImage> DMABufBuffer::createPromiseImageForQualcommVideoFrame(const sk_sp
 } // namespace WebCore
 
 #endif // USE(GBM)
+
+#if USE(COORDINATED_GRAPHICS)
+namespace WebCore {
+
+sk_sp<SkColorSpace> DMABufBuffer::skiaColorSpace(TransferFunction transferFunction)
+{
+    switch (transferFunction) {
+    case DMABufBuffer::TransferFunction::Bt709:
+        return SkColorSpace::MakeRGB(SkNamedTransferFn::kRec709, SkNamedGamut::kSRGB);
+    case DMABufBuffer::TransferFunction::Pq:
+        return SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+SkYUVColorSpace DMABufBuffer::skiaYUVColorSpace(ColorSpace colorSpace, SampleRange sampleRange, SampleBits sampleBits)
+{
+    bool isFullRange = sampleRange == SampleRange::Full;
+    switch (colorSpace) {
+    case DMABufBuffer::ColorSpace::Bt601:
+        return isFullRange ? kJPEG_Full_SkYUVColorSpace : kRec601_Limited_SkYUVColorSpace;
+    case DMABufBuffer::ColorSpace::Bt709:
+        return isFullRange ? kRec709_Full_SkYUVColorSpace : kRec709_Limited_SkYUVColorSpace;
+    case DMABufBuffer::ColorSpace::Bt2020:
+        // Codes in the top bits of 16-bit samples, as in P010, are on the 16-bit code scale.
+        if (sampleBits == SampleBits::SixteenMSBAligned)
+            return isFullRange ? kBT2020_16bit_Full_SkYUVColorSpace : kBT2020_16bit_Limited_SkYUVColorSpace;
+        return isFullRange ? kBT2020_8bit_Full_SkYUVColorSpace : kBT2020_8bit_Limited_SkYUVColorSpace;
+    case DMABufBuffer::ColorSpace::Smpte240M:
+        return isFullRange ? kSMPTE240_Full_SkYUVColorSpace : kSMPTE240_Limited_SkYUVColorSpace;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WebCore
+#endif // USE(COORDINATED_GRAPHICS)

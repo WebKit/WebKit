@@ -28,7 +28,7 @@
 #include <gst/video/video-info.h>
 #include <wtf/glib/GRefPtr.h>
 
-#if USE(GBM)
+#if USE(COORDINATED_GRAPHICS)
 #include "DMABufBuffer.h"
 #endif
 
@@ -111,6 +111,15 @@ public:
 #endif
     const GstVideoInfo& info() const LIFETIME_BOUND { return m_info.info; }
     std::optional<DMABufFormat> dmaBufFormat() const { return m_info.dmaBufFormat; }
+
+#if USE(COORDINATED_GRAPHICS)
+    struct YUVColorimetry {
+        DMABufBuffer::ColorSpace colorSpace;
+        DMABufBuffer::TransferFunction transferFunction;
+        DMABufBuffer::SampleRange sampleRange;
+    };
+    YUVColorimetry yuvColorimetry() const;
+#endif
 
     VideoFrameContentHint contentHint() const;
     PlatformVideoColorSpace nativeColorSpace() const;

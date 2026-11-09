@@ -52,8 +52,9 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <gst/gl/gl.h>
 #endif
 
-#if USE(GBM)
 #include "DMABufBuffer.h"
+
+#if USE(GBM)
 #include <gst/allocators/gstdmabuf.h>
 #endif
 
@@ -307,7 +308,7 @@ void CoordinatedPlatformLayerBufferVideo::createSkiaImageForSinglePlaneGLMemory(
         }, mappedFrame.release());
 }
 
-static std::optional<SkYUVAInfo> buildYUVAInfoFromMappedFrame(GstMappedFrame& mappedFrame)
+static std::optional<SkYUVAInfo> buildYUVAInfoFromMappedFrame(GstMappedFrame& mappedFrame, const VideoFrameGStreamer::YUVColorimetry& yuvColorimetry)
 {
     auto planeConfig = SkYUVAInfo::PlaneConfig::kUnknown;
     auto subsampling = SkYUVAInfo::Subsampling::kUnknown;
@@ -361,25 +362,15 @@ static std::optional<SkYUVAInfo> buildYUVAInfoFromMappedFrame(GstMappedFrame& ma
         return std::nullopt;
     }
 
-    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(mappedFrame.info());
-
-    // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
-    SkYUVColorSpace yuvaColorSpace = kRec601_Limited_SkYUVColorSpace;
-    if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT709))
-        yuvaColorSpace = kRec709_Full_SkYUVColorSpace;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2020))
-        yuvaColorSpace = kBT2020_8bit_Full_SkYUVColorSpace;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2100_PQ))
-        yuvaColorSpace = kBT2020_8bit_Full_SkYUVColorSpace;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_SMPTE240M))
-        yuvaColorSpace = kSMPTE240_Full_SkYUVColorSpace;
-
+    auto sampleBits = GST_VIDEO_INFO_FORMAT(mappedFrame.info()) == GST_VIDEO_FORMAT_P010_10LE ? DMABufBuffer::SampleBits::SixteenMSBAligned : DMABufBuffer::SampleBits::Eight;
+    auto yuvaColorSpace = DMABufBuffer::skiaYUVColorSpace(yuvColorimetry.colorSpace, yuvColorimetry.sampleRange, sampleBits);
     return SkYUVAInfo(SkISize::Make(mappedFrame.width(), mappedFrame.height()), planeConfig, subsampling, yuvaColorSpace);
 }
 
 void CoordinatedPlatformLayerBufferVideo::createSkiaImageForYUVGLMemory(std::unique_ptr<GstMappedFrame>&& mappedFrame, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, Origin origin)
 {
-    auto info = buildYUVAInfoFromMappedFrame(*mappedFrame);
+    auto yuvColorimetry = m_videoFrame->yuvColorimetry();
+    auto info = buildYUVAInfoFromMappedFrame(*mappedFrame, yuvColorimetry);
     if (!info)
         return;
 
@@ -401,14 +392,7 @@ void CoordinatedPlatformLayerBufferVideo::createSkiaImageForYUVGLMemory(std::uni
     for (unsigned i = 0; i < planeCount; ++i)
         planeContexts[i] = makeUnique<PromiseGLVideoPlaneContext>(context.copyRef(), i).release();
 
-    auto colorSpace = [&]() -> sk_sp<SkColorSpace> {
-        const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(videoInfo);
-        if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2100_PQ))
-            return SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020);
-        return SkColorSpace::MakeRGB(SkNamedTransferFn::kRec709, SkNamedGamut::kSRGB);
-    }();
-
-    m_image = SkImages::PromiseTextureFromYUVA(threadSafeGrContext, yuvaBackendTexturesInfo, colorSpace,
+    m_image = SkImages::PromiseTextureFromYUVA(threadSafeGrContext, yuvaBackendTexturesInfo, DMABufBuffer::skiaColorSpace(yuvColorimetry.transferFunction),
         +[](void* userData) -> sk_sp<GrPromiseImageTexture> {
             auto& planeContext = *static_cast<PromiseGLVideoPlaneContext*>(userData);
             return planeContext.context->promiseImageTexture(planeContext.index);

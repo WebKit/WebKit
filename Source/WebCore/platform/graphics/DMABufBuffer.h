@@ -82,10 +82,14 @@ public:
     static EGLImage createEGLImageForQualcommVideoFrame(GLDisplay&, const Attributes&, ColorSpace, SampleRange);
 #endif
     bool isQualcommVideoFrameBuffer() const;
+    void setIsQualcommVideoFrameBuffer() { m_isQualcommVideoFrameBuffer = true; }
     static std::optional<Vector<EGLint>> buildEGLImageAttributes(const Attributes&, Attributes::EnableModifiers = Attributes::EnableModifiers::Yes);
 
     bool importIfNeeded();
+    static sk_sp<SkColorSpace> skiaColorSpace(TransferFunction);
     sk_sp<SkColorSpace> skiaColorSpace() const;
+    enum class SampleBits : bool { Eight, SixteenMSBAligned };
+    static SkYUVColorSpace skiaYUVColorSpace(ColorSpace, SampleRange, SampleBits);
     SkYUVAInfo yuvaInfo() const;
     const GrBackendTexture& backendTexture(size_t) const;
 
@@ -103,6 +107,7 @@ private:
     std::optional<ColorSpace> m_colorSpace;
     std::optional<TransferFunction> m_transferFunction;
     std::optional<SampleRange> m_sampleRange;
+    bool m_isQualcommVideoFrameBuffer { false };
     Vector<GrBackendTexture, 4> m_importedBackendTextures;
     Vector<RefPtr<BitmapTexture>, 4> m_importedTextures;
 };
