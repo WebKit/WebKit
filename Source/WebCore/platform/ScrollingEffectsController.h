@@ -307,6 +307,7 @@ private:
     bool m_isRunningAnimatingCallback { false };
     bool m_isAnimatingRubberBand { false };
     bool m_isAnimatingScrollSnap { false };
+    bool m_isReplacingMomentumAnimation { false };
     bool m_isAnimatingKeyboardScrolling { false };
     bool m_inScrollGesture { false };
 
