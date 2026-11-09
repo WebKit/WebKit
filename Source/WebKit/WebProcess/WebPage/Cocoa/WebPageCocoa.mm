@@ -2077,7 +2077,8 @@ void WebPage::drawPrintingRectToSnapshot(RemoteSnapshotIdentifier snapshotIdenti
     ASSERT(coreFrame->document()->printing());
     PrintContextAccessScope scope { *this };
 
-    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::DisplayList, rect, imageSize, MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+    // Painted at the size of the image.
+    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::DisplayList, IntRect { { }, imageSize }, { 1, 1 }, imageSize, MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         float printingScale = static_cast<float>(imageSize.width()) / rect.width();
         context.scale(printingScale);
 
@@ -2117,7 +2118,7 @@ void WebPage::drawPrintingPagesToSnapshot(RemoteSnapshotIdentifier snapshotIdent
 
     FloatRect mediaBox = printedPageMediaBox(printInfo);
 
-    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, { 1, 1 }, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         drawPrintContextPagesToGraphicsContext(context, mediaBox, first, count);
     });
 }

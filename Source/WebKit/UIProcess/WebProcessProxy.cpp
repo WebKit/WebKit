@@ -1599,7 +1599,7 @@ void WebProcessProxy::gpuProcessConnectionDidBecomeUnresponsive(GPUProcessConnec
 // A frame hosted in another process was painted into a snapshot here. Received by the process rather
 // than a page, because the frame may be going away along with the last of this process's frames in
 // the page, and a request that reached nothing would leave the snapshot waiting for it.
-void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode)
+void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode, const WebCore::FloatSize& scale)
 {
     MESSAGE_CHECK(renderingMode == WebCore::RenderingMode::DisplayList || renderingMode == WebCore::RenderingMode::PDFDocument);
 
@@ -1636,7 +1636,7 @@ void WebProcessProxy::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, cons
     gpuProcess->snapshotFrameWillBeDrawnByProcess(snapshotIdentifier, frameID, frameProcess->coreProcessIdentifier());
     // Also while the frame's process is waiting on this one, as it does for alert(), since this
     // process may itself be blocked waiting for the snapshot.
-    frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rectRelativeToVisibleContent, snapshotIdentifier, renderingMode), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    frameProcess->send(Messages::WebProcess::DrawFrameToSnapshot(frameID, rectRelativeToVisibleContent, snapshotIdentifier, renderingMode, scale), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
 }
 
 #if HAVE(IOSURFACE)

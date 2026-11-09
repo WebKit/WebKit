@@ -647,7 +647,7 @@ private:
     void bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>);
 
 #if ENABLE(GPU_PROCESS)
-    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    void drawFrameToSnapshot(WebCore::FrameIdentifier, const WebCore::IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier, WebCore::RenderingMode, const WebCore::FloatSize& scale);
 #endif
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
     void prepareForPrinting(CompletionHandler<void(bool)>&&);

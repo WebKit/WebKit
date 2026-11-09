@@ -175,7 +175,7 @@ void RemoteGraphicsContextProxy::setCTM(const AffineTransform& transform)
 {
     sendPendingDrawsIfNecessary();
     updateStateForSetCTM(transform);
-    send(Messages::RemoteGraphicsContext::SetCTM(transform));
+    send(Messages::RemoteGraphicsContext::SetCTM(m_ctmToRemote * transform));
 }
 
 void RemoteGraphicsContextProxy::concatCTM(const AffineTransform& transform)

@@ -41,7 +41,10 @@ class RemoteSnapshotRecorderProxy : public RemoteGraphicsContextProxy {
 
 public:
     // renderingMode is RenderingMode::PDFDocument when the snapshot will be sunk into a PDF, and RenderingMode::DisplayList otherwise.
-    RemoteSnapshotRecorderProxy(const WebCore::FloatRect& initialClip, WebCore::RenderingMode, RemoteRenderingBackendProxy&);
+    // scale is the scale the recording is replayed at. The recording starts with it in its CTM, so that what is
+    // rasterized while recording, such as compatible image buffers, is at the resolution of the output. It is not
+    // recorded: the recording is in the units of initialClip, and is replayed relative to the CTM it is drawn at.
+    RemoteSnapshotRecorderProxy(const WebCore::FloatRect& initialClip, const WebCore::FloatSize& scale, WebCore::RenderingMode, RemoteRenderingBackendProxy&);
     RemoteSnapshotRecorderIdentifier identifier() const { return RemoteSnapshotRecorderIdentifier { RemoteGraphicsContextProxy::identifier().toUInt64() }; }
 
     void drawSnapshotFrame(WebCore::FrameIdentifier);

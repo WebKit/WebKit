@@ -150,7 +150,7 @@ public:
     void getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&&);
 
     void createSnapshot(RemoteSnapshotIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, const WebCore::FloatSize&);
-    UniqueRef<RemoteSnapshotRecorderProxy> createSnapshotRecorder(const WebCore::FloatRect& initialClip, RemoteSnapshotIdentifier, WebCore::RenderingMode);
+    UniqueRef<RemoteSnapshotRecorderProxy> createSnapshotRecorder(const WebCore::FloatRect& initialClip, const WebCore::FloatSize& scale, RemoteSnapshotIdentifier, WebCore::RenderingMode);
     void sinkSnapshotRecorderIntoSnapshotFrame(UniqueRef<RemoteSnapshotRecorderProxy>&&, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
 
     Ref<ShapeDetection::RemoteBarcodeDetectorProxy> createBarcodeDetector(const WebCore::ShapeDetection::BarcodeDetectorOptions&);

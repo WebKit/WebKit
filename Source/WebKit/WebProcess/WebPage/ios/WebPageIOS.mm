@@ -3919,7 +3919,7 @@ void WebPage::drawPrintingToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentif
 
     auto mediaBox = IntRect { 0, 0, pageWidth, imageHeight };
 
-    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::DisplayList, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::DisplayList, mediaBox, { 1, 1 }, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
             if (pageIndex >= m_printContext->pageCount())
                 break;
@@ -3996,7 +3996,7 @@ void WebPage::drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier snapshotId
     if (!printInfo.snapshotFirstPage)
         mediaBox = printedPageMediaBox(printInfo);
 
-    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
+    recordRemoteSnapshot(snapshotIdentifier, frameID, RemoteSnapshotRole::Root, RenderingMode::PDFDocument, mediaBox, { 1, 1 }, mediaBox.size(), MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler)), [&](GraphicsContext& context) {
         if (printInfo.snapshotFirstPage) {
             Ref frameView = *coreFrame->view();
             auto originalLayoutViewportOverrideRect = frameView->layoutViewportOverrideRect();

@@ -54,7 +54,9 @@ RefPtr<NativePromise<Ref<NativeImage>, void>> DisplayOnlyImageProxy::create(WebP
     // A root that fails to record fails the snapshot in the GPU process, so that the UI process
     // fails to complete it below.
     auto rootRecorded = MainRunLoopSuccessCallbackAggregator::create(WebPage::failRemoteSnapshotIfRootFails(identifier, [](bool) { }));
-    if (!page.recordRemoteSnapshot(identifier, rootFrameIdentifier, WebPage::RemoteSnapshotRole::Root, RenderingMode::DisplayList, FloatRect { { }, size }, size, WTF::move(rootRecorded), paint))
+    // Recorded at size and drawn at scale. Painting sees the scale, so that what it rasterizes is at
+    // the resolution of the image.
+    if (!page.recordRemoteSnapshot(identifier, rootFrameIdentifier, WebPage::RemoteSnapshotRole::Root, RenderingMode::DisplayList, FloatRect { { }, size }, { scale, scale }, size, WTF::move(rootRecorded), paint))
         return nullptr;
 
     RefPtr connection = WebProcess::singleton().parentProcessConnection();

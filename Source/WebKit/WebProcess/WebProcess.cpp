@@ -1868,7 +1868,7 @@ void WebProcess::prepareForPrinting(CompletionHandler<void(bool)>&& completionHa
 
 // Received by the process rather than a page, because the frame's page may have gone here since the
 // frame was painted, and a request that reached nothing would leave the snapshot waiting for it.
-void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode)
+void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const WebCore::IntRect& rectRelativeToVisibleContent, RemoteSnapshotIdentifier snapshotIdentifier, WebCore::RenderingMode renderingMode, const WebCore::FloatSize& scale)
 {
     RefPtr frame = webFrame(frameID);
     RefPtr page = frame ? frame->page() : nullptr;
@@ -1876,7 +1876,7 @@ void WebProcess::drawFrameToSnapshot(WebCore::FrameIdentifier frameID, const Web
         abandonSnapshotFrame(snapshotIdentifier, frameID);
         return;
     }
-    page->drawFrameToSnapshot(frameID, rectRelativeToVisibleContent, snapshotIdentifier, renderingMode);
+    page->drawFrameToSnapshot(frameID, rectRelativeToVisibleContent, snapshotIdentifier, renderingMode, scale);
 }
 
 void WebProcess::abandonSnapshotFrame(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID)
