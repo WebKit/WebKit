@@ -622,7 +622,11 @@ AudioContextSetSinkIdEnabled:
   humanReadableName: "AudioContext setSinkId"
   humanReadableDescription: "Enable AudioContext.setSinkId() for audio output device selection"
   condition: ENABLE(WEB_AUDIO)
-  defaultValue: false
+  defaultValue:
+    default: false
+    WebKit:
+      "USE(GSTREAMER)": true
+      default: false
 
 AudioControlsScaleWithPageZoom:
   type: bool

@@ -688,10 +688,6 @@ private:
 
 private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final;
-#if ENABLE(MEDIA_STREAM)
-    std::pair<String, GRefPtr<GstDevice>> resolveAudioOutputDevice(const String& deviceId);
-#endif
-    bool applyAudioSinkDevice(GstElement* audioSink, const GRefPtr<GstDevice>&, const String& deviceId);
 
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };

@@ -79,7 +79,7 @@ public:
     // Switches the output device at runtime. persistentDeviceId is a port-specific device id (empty
     // means the default device); isSilent requests a sink that drops audio. The completion handler
     // reports whether the device was acquired; on failure the previous routing stays in effect.
-    // For the moment, no port implements this and the default behavior is to report success without switching.
+    // Only the GStreamer port implements this; other ports report success without switching.
     virtual void setSinkId(const String& persistentDeviceId, bool isSilent, CompletionHandler<void(bool)>&& completionHandler)
     {
         UNUSED_PARAM(persistentDeviceId);

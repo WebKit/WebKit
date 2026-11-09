@@ -185,7 +185,7 @@ GstElement* GStreamerQuirksManager::createAudioSink()
     return nullptr;
 }
 
-GstElement* GStreamerQuirksManager::createWebAudioSink()
+GstElement* GStreamerQuirksManager::createWebAudioSink(const String& deviceId, const GRefPtr<GstDevice>& device)
 {
     for (const auto& quirk : m_quirks) {
         auto* sink = quirk->createWebAudioSink();
@@ -197,7 +197,7 @@ GstElement* GStreamerQuirksManager::createWebAudioSink()
     }
 
     GST_DEBUG("Quirks didn't specify a WebAudioSink, falling back to default sink");
-    return createPlatformAudioSink("webaudio"_s);
+    return createPlatformAudioSink("webaudio"_s, deviceId, device);
 }
 
 GstElement* GStreamerQuirksManager::createHolePunchVideoSink(bool isLegacyPlaybin, const MediaPlayer* player)
