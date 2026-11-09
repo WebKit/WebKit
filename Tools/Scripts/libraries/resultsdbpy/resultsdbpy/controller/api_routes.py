@@ -80,6 +80,7 @@ class APIRoutes(AuthedBlueprint):
         self.add_url_rule('/results/<path:suite>', 'suite-results', self.suite_controller.find_run_results, methods=('GET',))
         self.add_url_rule('/results/<path:suite>/<path:test>', 'test-results', self.test_controller.find_test_result, methods=('GET',))
         self.add_url_rule('/results-summary/<path:suite>/<path:test>', 'test-aggregate-results', self.test_controller.summarize_test_results, methods=('GET',))
+        self.add_url_rule('/logs/<path:suite>/<path:test>', 'test-logs', self.test_controller.find_test_logs, methods=('GET',))
         self.add_url_rule('/results-ews', 'results-ews', self.ews_controller.find, methods=('GET',))
         self.add_url_rule('/results-ews/tests', 'tests-ews', self.ews_controller.list_tests, methods=('GET',))
 

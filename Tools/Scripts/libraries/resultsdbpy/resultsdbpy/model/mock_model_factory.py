@@ -185,14 +185,14 @@ class MockModelFactory(object):
                 commit_index[youngest_next_repo] += 1
 
     @classmethod
-    def add_mock_results(cls, model, configuration=Configuration(), suite='layout-tests', test_results=None):
+    def add_mock_results(cls, model, configuration=Configuration(), suite='layout-tests', test_results=None, timestamp=None):
         if test_results is None:
             test_results = cls.layout_test_results()
 
         configurations = [configuration] if configuration.is_complete() else ConfigurationContextTest.CONFIGURATIONS
 
         with model.upload_context:
-            current = time.time()
+            current = timestamp or time.time()
             old = current - cls.THREE_WEEKS
             for complete_configuration in configurations:
                 if complete_configuration != configuration:

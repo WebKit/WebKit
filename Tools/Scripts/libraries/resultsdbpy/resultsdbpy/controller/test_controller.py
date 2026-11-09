@@ -32,6 +32,7 @@ from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, 
 
 class TestController(HasCommitContext):
     DEFAULT_LIMIT = 1000
+    DEFAULT_LOG_LIMIT = 10
 
     def __init__(self, test_context):
         super(TestController, self).__init__(test_context.commit_context)
@@ -110,6 +111,44 @@ class TestController(HasCommitContext):
                 response.append(dict(
                     configuration=Configuration.Encoder().default(config),
                     results=sorted(results, key=sort_function),
+                ))
+            return jsonify(response)
+
+    @query_as_kwargs()
+    @uuid_range_for_query()
+    @limit_for_query(DEFAULT_LOG_LIMIT)
+    @configuration_for_query()
+    @unescape_argument(
+        suite=['?', '#'],
+        test=['?', '#'],
+    )
+    def find_test_logs(
+        self, suite=None, test=None,
+        configurations=None, recent=None,
+        branch=None, begin=None, end=None,
+        limit=None, **kwargs
+    ):
+        AssertRequest.is_type(['GET'])
+        AssertRequest.query_kwargs_empty(**kwargs)
+
+        recent = boolean_query(*recent)[0] if recent else True
+
+        if not suite:
+            abort(400, description='No suite specified')
+        if not test:
+            abort(400, description='No test specified')
+
+        with self.test_context:
+            response = []
+            for config, results in self.test_context.find_logs_by_commit(
+                suite=suite, test=test,
+                configurations=configurations, recent=recent,
+                branch=branch[0], begin=begin, end=end,
+                limit=limit,
+            ).items():
+                response.append(dict(
+                    configuration=Configuration.Encoder().default(config),
+                    results=sorted(results, key=lambda result: (result['uuid'], result['start_time'])),
                 ))
             return jsonify(response)
 
