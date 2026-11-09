@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+enum class SynthesizedGlyph : uint8_t;
+
 namespace Layout {
 
 class InlineTextBox : public Box {
@@ -55,40 +57,57 @@ public:
         float ascent { 0 };
         float descent { 0 };
     };
-    bool isCombined() const { return m_isCombined; }
+    bool isCombined() const { return m_isCombinedText; }
     NODELETE const CombinedText& combinedText() const LIFETIME_BOUND;
     // Text in a display: contents element has a style of its own instead of inheriting from the parent box.
-    bool inheritsStyleFromDisplayContentsParent() const { return m_inheritsStyleFromDisplayContentsParent; }
+    bool inheritsStyleFromDisplayContentsParent() const { return m_textInheritsStyleFromDisplayContentsParent; }
     // FIXME: This should not be a box's property.
-    bool canUseSimplifiedContentMeasuring() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimplifiedContentMeasuring); }
-    bool canUseSimpleFontCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimpleFontCodepath); }
-    bool shouldUseSimpleGlyphOverflowCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath); }
-    bool hasPositionDependentContentWidth() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasPositionDependentContentWidth); }
-    bool hasStrongDirectionalityContent() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasStrongDirectionalityContent); }
-    bool hasSynthesizedGlyph() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasSynthesizedGlyph); }
+    bool canUseSimplifiedContentMeasuring() const { return contentCharacteristics().contains(ContentCharacteristic::CanUseSimplifiedContentMeasuring); }
+    bool canUseSimpleFontCodePath() const { return contentCharacteristics().contains(ContentCharacteristic::CanUseSimpleFontCodepath); }
+    bool shouldUseSimpleGlyphOverflowCodePath() const { return contentCharacteristics().contains(ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath); }
+    bool hasPositionDependentContentWidth() const { return contentCharacteristics().contains(ContentCharacteristic::HasPositionDependentContentWidth); }
+    bool hasStrongDirectionalityContent() const { return contentCharacteristics().contains(ContentCharacteristic::HasStrongDirectionalityContent); }
+    bool hasSynthesizedGlyph() const { return contentCharacteristics().contains(ContentCharacteristic::HasSynthesizedGlyph); }
+    // A glyph from 'content' (e.g. ::picker-icon) that the UA draws itself rather than rendering the text.
+    std::optional<SynthesizedGlyph> contentGlyph() const;
+    static constexpr float contentGlyphAdvanceRatio = 0.52f;
 
     // BoxTreeUpdater sets these from the renderer.
     void setContent(String newContent, EnumSet<ContentCharacteristic>);
-    void setCanUseSimplifiedContentMeasuring(bool value) { m_contentCharacteristicSet.set(ContentCharacteristic::CanUseSimplifiedContentMeasuring, value); }
+    void setCanUseSimplifiedContentMeasuring(bool);
     void setCombinedText(std::unique_ptr<CombinedText>&&);
 
 protected:
-    explicit InlineTextBox(Style::ComputedStyle&&);
+    InlineTextBox(Style::ComputedStyle&&, std::optional<SynthesizedGlyph>);
     ~InlineTextBox();
 
-    void setInheritsStyleFromDisplayContentsParent(bool value) { m_inheritsStyleFromDisplayContentsParent = value; }
+    void setInheritsStyleFromDisplayContentsParent(bool value) { m_textInheritsStyleFromDisplayContentsParent = value; }
 
 private:
+    EnumSet<ContentCharacteristic> contentCharacteristics() const { return EnumSet<ContentCharacteristic>::fromRaw(m_textContentCharacteristics); }
+
+    // The rest of the state is in Box bits.
     String m_content;
-    bool m_isCombined { false };
-    bool m_inheritsStyleFromDisplayContentsParent { false };
-    EnumSet<ContentCharacteristic> m_contentCharacteristicSet;
 };
+
+inline std::optional<SynthesizedGlyph> InlineTextBox::contentGlyph() const
+{
+    if (!m_textContentGlyph)
+        return { };
+    return static_cast<SynthesizedGlyph>(m_textContentGlyph - 1);
+}
 
 inline void InlineTextBox::setContent(String newContent, EnumSet<ContentCharacteristic> contentCharacteristicSet)
 {
     m_content = WTF::move(newContent);
-    m_contentCharacteristicSet = contentCharacteristicSet;
+    m_textContentCharacteristics = contentCharacteristicSet.toRaw();
+}
+
+inline void InlineTextBox::setCanUseSimplifiedContentMeasuring(bool value)
+{
+    auto contentCharacteristicSet = contentCharacteristics();
+    contentCharacteristicSet.set(ContentCharacteristic::CanUseSimplifiedContentMeasuring, value);
+    m_textContentCharacteristics = contentCharacteristicSet.toRaw();
 }
 
 }

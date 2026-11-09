@@ -95,9 +95,9 @@ bool isDutchLocale(const AtomString& locale)
 }
 
 struct SameSizeAsRenderText : public RenderObject, private Layout::InlineTextBox {
-    float candidateTextSize;
     String text;
-    uint32_t bitfields : 6;
+    uint32_t bitfields : 9;
+    float candidateTextSize;
 };
 
 static_assert(sizeof(RenderText) == sizeof(SameSizeAsRenderText), "RenderText should stay small");
@@ -150,6 +150,12 @@ void SecureTextTimer::fired()
 }
 
 NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
+{
+    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
+    return map;
+}
+
+NODELETE static HashMap<SingleThreadWeakRef<const RenderText>, String>& altTextMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
     return map;
@@ -425,13 +431,13 @@ static FontCascade::CodePath computeFontCodePath(const String& text, bool contai
     return (containsOnlyASCII || text.is8Bit()) ? FontCascade::CodePath::Simple : FontCascade::characterRangeCodePath(text.span16());
 }
 
-inline RenderText::RenderText(Type type, Node& node, const String& text)
+inline RenderText::RenderText(Type type, Node& node, const String& text, std::optional<SynthesizedGlyph> contentGlyph)
     : RenderObject(type, node, TypeFlag::IsText, { })
     // The initial values of an anonymous inline box. The inherited ones come on attach, see inheritStyleFromParent().
-    , Layout::InlineTextBox(Style::ComputedStyle::create())
+    , Layout::InlineTextBox(Style::ComputedStyle::create(), contentGlyph)
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
-    , m_fontCodePath(computeFontCodePath(m_text, m_containsOnlyASCII))
+    , m_fontCodePath(std::to_underlying(computeFontCodePath(m_text, m_containsOnlyASCII)))
 {
     ASSERT(!m_text.isNull());
     ASSERT(isRenderText());
@@ -447,10 +453,16 @@ RenderText::RenderText(Type type, Document& document, const String& text)
 {
 }
 
+RenderText::RenderText(Document& document, SynthesizedGlyph glyph)
+    : RenderText(Type::Text, static_cast<Node&>(document), fallbackText(glyph), glyph)
+{
+}
+
 RenderText::~RenderText()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.
     ASSERT(!originalTextMap().contains(this));
+    ASSERT(!altTextMap().contains(this));
 }
 
 ASCIILiteral RenderText::renderName() const
@@ -618,12 +630,34 @@ void RenderText::willBeDestroyed()
     if (m_originalTextDiffersFromRendered)
         originalTextMap().remove(this);
 
+    if (m_hasAltText)
+        altTextMap().remove(this);
+
     RenderObject::willBeDestroyed();
 }
 
 String RenderText::originalText() const
 {
     return m_originalTextDiffersFromRendered ? originalTextMap().get(this) : m_text;
+}
+
+const String& RenderText::altText() const
+{
+    if (!m_hasAltText)
+        return nullString();
+    return altTextMap().find(this)->value;
+}
+
+void RenderText::setAltText(const String& altText)
+{
+    if (altText.isNull()) {
+        if (m_hasAltText)
+            altTextMap().remove(this);
+        m_hasAltText = false;
+        return;
+    }
+    altTextMap().set(*this, altText);
+    m_hasAltText = true;
 }
 
 void RenderText::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -1352,7 +1386,7 @@ void RenderText::setRenderedText(const String& newText)
     }
 
     m_containsOnlyASCII = text().containsOnlyASCII();
-    m_fontCodePath = computeFontCodePath(text(), m_containsOnlyASCII);
+    m_fontCodePath = std::to_underlying(computeFontCodePath(text(), m_containsOnlyASCII));
 
     if (m_text != originalText) {
         originalTextMap().set(*this, originalText);

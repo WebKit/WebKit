@@ -271,6 +271,13 @@ private:
     // Set when the box may have a first-line style, or for text, its parent. Use of first-line styles is rare.
     bool m_mayHaveFirstLineStyle : 1 { false };
 
+    // InlineTextBox state, packed into the padding before m_style. Byte-sized types so MSVC packs them next to the bools.
+    friend class InlineTextBox;
+    bool m_isCombinedText : 1 { false };
+    bool m_textInheritsStyleFromDisplayContentsParent : 1 { false };
+    uint8_t m_textContentGlyph : 2 { 0 }; // std::optional<SynthesizedGlyph>, 0 is none.
+    uint8_t m_textContentCharacteristics : 6 { 0 }; // EnumSet<InlineTextBox::ContentCharacteristic>
+
     Style::ComputedStyle m_style;
 
     // Primary LayoutState gets a direct cache.

@@ -99,7 +99,6 @@
 		030346BE5CD75A7829AD613F /* UnifiedSource40-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A756860D9AF6A2C15FCF7E3E /* UnifiedSource40-header-RenderStyleGetters.cpp */; };
 		0318396A0000000000000011 /* PathArcLengthMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0318396A0000000000000001 /* PathArcLengthMapper.h */; };
 		0318396A0000000000000013 /* PathCurveSubdivision.h in Headers */ = {isa = PBXBuildFile; fileRef = 0318396A0000000000000003 /* PathCurveSubdivision.h */; };
-		0411A28840867F627E6C4B73 /* RenderGlyph.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A16A7B456429339AA7044E /* RenderGlyph.h */; };
 		043934662F229202E82AB23F /* UnifiedSource55-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3230252036F492BB47909DD0 /* UnifiedSource55-header-RenderStyleGetters.cpp */; };
 		053F6589A66D76BEEA136C23 /* PortalTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 329D390B53E4795024178E9D /* PortalTransform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0562F9601573F88F0031CA16 /* PlatformLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -20949,7 +20948,6 @@
 		C078376023DF253E00C9C5C8 /* AXIsolatedObjectMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AXIsolatedObjectMac.mm; path = mac/AXIsolatedObjectMac.mm; sourceTree = "<group>"; };
 		C078376100000001C9C5C8A1 /* AXIsolatedTreeMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AXIsolatedTreeMac.mm; path = mac/AXIsolatedTreeMac.mm; sourceTree = "<group>"; };
 		C08F13A1244766DC00AB989F /* AXLogger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXLogger.cpp; sourceTree = "<group>"; };
-		C0A16A7B456429339AA7044E /* RenderGlyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderGlyph.h; sourceTree = "<group>"; };
 		C0CEA8722C46A30900A32129 /* AXSearchManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AXSearchManager.cpp; sourceTree = "<group>"; };
 		C0CEA8732C46A30900A32129 /* AXSearchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXSearchManager.h; sourceTree = "<group>"; };
 		C0E208A029379C6E00C0D2D3 /* AXTextMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AXTextMarker.h; sourceTree = "<group>"; };
@@ -42524,7 +42522,6 @@
 				A871DEC90A1530C700B12A68 /* RenderFrameSet.h */,
 				0F3F0E57157030C3006DA57F /* RenderGeometryMap.cpp */,
 				0F3F0E58157030C3006DA57F /* RenderGeometryMap.h */,
-				C0A16A7B456429339AA7044E /* RenderGlyph.h */,
 				BC128B00137C8D4600CAC845 /* RenderGrid.cpp */,
 				BC128A72137C867C00CAC845 /* RenderGrid.h */,
 				A5AA6E9B2C6A857D0037DB40 /* RenderGridLayoutState.cpp */,
@@ -48587,7 +48584,6 @@
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
 				A871DED10A1530C700B12A68 /* RenderFrameSet.h in Headers */,
 				0F3F0E5A157030C3006DA57F /* RenderGeometryMap.h in Headers */,
-				0411A28840867F627E6C4B73 /* RenderGlyph.h in Headers */,
 				BC128A73137C867C00CAC845 /* RenderGrid.h in Headers */,
 				A54CAA142C409C4500D6A999 /* RenderGridLayoutState.h in Headers */,
 				CDCFABBD18C0AF78006F8450 /* RenderHighlight.h in Headers */,

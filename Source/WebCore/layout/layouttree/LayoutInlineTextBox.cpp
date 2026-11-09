@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutInlineTextBox.h"
 
+#include "RenderStyleConstants.h"
 #include "StyleComputedStyle.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -40,33 +41,37 @@ static HashMap<const InlineTextBox*, std::unique_ptr<InlineTextBox::CombinedText
     return map;
 }
 
-InlineTextBox::InlineTextBox(Style::ComputedStyle&& style)
+static_assert(std::to_underlying(InlineTextBox::ContentCharacteristic::HighestEnumValue) < 6, "Content characteristics must fit in Box::m_textContentCharacteristics");
+static_assert(std::to_underlying(SynthesizedGlyph::PickerDown) + 1 < 4, "Content glyph must fit in Box::m_textContentGlyph");
+
+InlineTextBox::InlineTextBox(Style::ComputedStyle&& style, std::optional<SynthesizedGlyph> contentGlyph)
     : Box(WTF::move(style), { NodeType::Text, IsAnonymous::Yes }, Box::InlineTextBoxFlag)
 {
+    m_textContentGlyph = contentGlyph ? std::to_underlying(*contentGlyph) + 1 : 0;
 }
 
 InlineTextBox::~InlineTextBox()
 {
-    if (m_isCombined)
+    if (m_isCombinedText)
         combinedTextMap().remove(this);
 }
 
 const InlineTextBox::CombinedText& InlineTextBox::combinedText() const
 {
-    ASSERT(m_isCombined);
+    ASSERT(m_isCombinedText);
     return *combinedTextMap().get(this);
 }
 
 void InlineTextBox::setCombinedText(std::unique_ptr<CombinedText>&& combinedText)
 {
     if (combinedText) {
-        m_isCombined = true;
+        m_isCombinedText = true;
         combinedTextMap().set(this, WTF::move(combinedText));
         return;
     }
-    if (!m_isCombined)
+    if (!m_isCombinedText)
         return;
-    m_isCombined = false;
+    m_isCombinedText = false;
     combinedTextMap().remove(this);
 }
 

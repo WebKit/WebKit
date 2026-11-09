@@ -48,7 +48,6 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderGlyph.h"
 #include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
@@ -708,13 +707,13 @@ void TextBoxPainter::paintSynthesizedGlyph()
     context.setStrokeStyle(StrokeStyle::SolidStroke);
 
     // Check 'content' before 'list-style-type'.
-    if (CheckedPtr glyphRenderer = dynamicDowncast<RenderGlyph>(m_renderer.get())) {
+    if (auto contentGlyph = m_renderer->layoutBox().contentGlyph()) {
         auto fontSize = m_style->fontCascade().size();
         auto size = fontSize / 4;
-        FloatPoint center { glyphRenderer->advanceRatio() * fontSize / 2, fontMetrics.ascent(FontBaseline::Central) };
+        FloatPoint center { Layout::InlineTextBox::contentGlyphAdvanceRatio * fontSize / 2, fontMetrics.ascent(FontBaseline::Central) };
         center.moveBy(m_paintRect.location());
 
-        bool shouldFlip = (glyphRenderer->glyph() == SynthesizedGlyph::PickerDown) == textBox().writingMode().isLineInverted();
+        bool shouldFlip = (*contentGlyph == SynthesizedGlyph::PickerDown) == textBox().writingMode().isLineInverted();
         GraphicsContextStateSaver stateSaver(context);
         if (shouldFlip) {
             context.concatCTM(AffineTransform { }.translate(center.x(), center.y()).rotate(180).translate(-center.x(), -center.y()));

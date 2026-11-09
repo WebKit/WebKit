@@ -56,9 +56,6 @@ public:
     void setContentString(const String& text);
     StringImpl* contentString() const { return m_contentString.impl(); }
 
-    const String& altText() const LIFETIME_BOUND { return m_altText; }
-    void setAltText(const String& altText) { m_altText = altText; }
-
     // Which quote mark an open-quote/close-quote shows depends on the quotes before it in document order,
     // so RenderTreeUpdater::GeneratedContent fills in the content string once the tree is built.
     std::optional<QuoteType> quoteType() const { return m_quoteType; }
@@ -82,8 +79,6 @@ private:
 
     unsigned m_start;
     unsigned m_end;
-    // Alternative description that can be used for accessibility instead of the native text.
-    String m_altText;
     String m_contentString;
     SingleThreadWeakPtr<RenderBoxModelObject> m_firstLetter;
     std::optional<QuoteType> m_quoteType;

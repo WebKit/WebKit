@@ -36,7 +36,6 @@
 #include "RenderBlockFlowInlines.h"
 #include "RenderCounter.h"
 #include "RenderElementInlines.h"
-#include "RenderGlyph.h"
 #include "RenderListItem.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
@@ -93,7 +92,7 @@ static bool canUseSimplifiedMeasuring(const RenderText& renderer, StringView con
 
 static bool synthesizesGlyph(const RenderText& textRenderer)
 {
-    if (is<RenderGlyph>(textRenderer))
+    if (textRenderer.layoutBox().contentGlyph())
         return true;
 
     // The marker is this text's parent when it is an inline box, and its grandparent when a marker box holds the text in a content container of its own.
