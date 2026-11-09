@@ -1821,6 +1821,12 @@ Vector<String> WebExtensionContext::corsDisablingPatterns()
         patterns.appendVector(pattern->expandedStrings());
     }
 
+    // Also check temporary permissions since an activeTab grant also allows for it.
+    for (Ref tab : openTabs()) {
+        if (RefPtr temporaryPattern = tab->temporaryPermissionMatchPattern())
+            patterns.appendVector(temporaryPattern->expandedStrings());
+    }
+
     removeRepeatedElements(patterns);
 
     return patterns;

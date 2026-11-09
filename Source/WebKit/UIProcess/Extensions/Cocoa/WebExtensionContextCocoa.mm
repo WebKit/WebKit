@@ -1476,6 +1476,11 @@ void WebExtensionContext::didCloseTab(WebExtensionTab& tab, WindowIsClosing wind
     additionsDidCloseTab(tab);
 #endif
 
+    // Stop allowing requests if the tab had an activeTab grant.
+    RefPtr temporaryPattern = tab.temporaryPermissionMatchPattern();
+    if (temporaryPattern && isLoaded())
+        updateCORSDisablingPatternsOnAllExtensionPages();
+
     if (!isLoaded() || !tab.extensionHasAccess() || suppressEvents == SuppressEvents::Yes)
         return;
 
