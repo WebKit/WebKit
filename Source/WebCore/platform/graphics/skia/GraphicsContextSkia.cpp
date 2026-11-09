@@ -736,12 +736,6 @@ IntRect GraphicsContextSkia::clipBounds() const
     return enclosingIntRect(m_canvas.getLocalClipBounds());
 }
 
-void GraphicsContextSkia::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
-{
-    if (auto nativeImage = nativeImageForDrawing(buffer))
-        clipToNativeImage(*nativeImage, destRect);
-}
-
 void GraphicsContextSkia::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
 {
     auto image = nativeImage.platformImage();

@@ -34,6 +34,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "NativeImage.h"
 #include "PixelBuffer.h"
 #include "Timer.h"
 #include <numbers>
@@ -477,15 +478,20 @@ std::optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundi
 
 void ShadowBlur::drawShadowBuffer(GraphicsContext& graphicsContext, ImageBuffer& layerImage, const FloatPoint& layerOrigin, const FloatSize& layerSize)
 {
+    // The layer image is not drawn to after this.
+    RefPtr layerNativeImage = layerImage.createNativeImageReference();
+    if (!layerNativeImage)
+        return;
+
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     IntSize bufferSize = layerImage.backendSize();
     if (bufferSize != layerSize) {
-        // The rect passed to clipToImageBuffer() has to be the size of the entire buffer,
+        // The rect passed to clipToNativeImage() has to be the size of the entire buffer,
         // but we may not have cleared it all, so clip to the filled part first.
         graphicsContext.clip(FloatRect(layerOrigin, layerSize));
     }
-    graphicsContext.clipToImageBuffer(layerImage, FloatRect(layerOrigin, bufferSize));
+    graphicsContext.clipToNativeImage(*layerNativeImage, FloatRect(layerOrigin, bufferSize));
     graphicsContext.setFillColor(m_color);
 
     graphicsContext.clearDropShadow();

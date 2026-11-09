@@ -33,6 +33,7 @@ namespace WebCore {
 
 class AffineTransform;
 class FloatRect;
+class NativeImage;
 class RenderElement;
 class RenderObject;
 
@@ -66,7 +67,7 @@ public:
     bool pathClippingIsEntirelyWithinRendererContents() const { return m_pathClippingIsEntirelyWithinRendererContents; }
 
     static void renderSubtreeToContext(GraphicsContext&, RenderElement&, const AffineTransform&);
-    static void clipToImageBuffer(GraphicsContext&, const FloatRect& targetRect, const FloatSize& scale, RefPtr<ImageBuffer>&, bool safeToClear);
+    static void clipToNativeImage(GraphicsContext&, const FloatRect& targetRect, const FloatSize& scale, RefPtr<NativeImage>&, bool safeToClear);
 
     static float calculateScreenFontSizeScalingFactor(const RenderObject&);
     static AffineTransform calculateTransformationToOutermostCoordinateSystem(const RenderObject&);

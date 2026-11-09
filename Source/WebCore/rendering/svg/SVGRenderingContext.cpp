@@ -36,6 +36,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewInlines.h"
+#include "NativeImage.h"
 #include "PathOperation.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
@@ -261,9 +262,9 @@ void SVGRenderingContext::renderSubtreeToContext(GraphicsContext& context, Rende
     contentTransformation = savedContentTransformation;
 }
 
-void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const FloatRect& targetRect, const FloatSize& scale, RefPtr<ImageBuffer>& imageBuffer, bool safeToClear)
+void SVGRenderingContext::clipToNativeImage(GraphicsContext& context, const FloatRect& targetRect, const FloatSize& scale, RefPtr<NativeImage>& image, bool safeToClear)
 {
-    if (!imageBuffer)
+    if (!image)
         return;
 
     AffineTransform absoluteTransform;
@@ -274,13 +275,13 @@ void SVGRenderingContext::clipToImageBuffer(GraphicsContext& context, const Floa
     // The mask image has been created in the absolute coordinate space, as the image should not be scaled.
     // So the actual masking process has to be done in the absolute coordinate space as well.
     context.concatCTM(valueOrDefault(absoluteTransform.inverse()));
-    context.clipToImageBuffer(*imageBuffer, absoluteTargetRect);
+    context.clipToNativeImage(*image, absoluteTargetRect);
     context.concatCTM(absoluteTransform);
 
     // When nesting resources, with objectBoundingBox as content unit types, there's no use in caching the
-    // resulting image buffer as the parent resource already caches the result.
+    // resulting image as the parent resource already caches the result.
     if (safeToClear && !currentContentTransformation().isIdentity())
-        imageBuffer = nullptr;
+        image = nullptr;
 }
 
 bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)

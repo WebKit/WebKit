@@ -3522,6 +3522,10 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             drawText(maskImageContext, location);
         }
 
+        RefPtr maskNativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(maskImage));
+        if (!maskNativeImage)
+            return;
+
         auto drawShadowAndMaskedFill = [&] {
             // If we have a shadow, we need to draw it before the mask operation.
             // Follow a procedure similar to paintTextWithShadows in TextPainter.
@@ -3550,7 +3554,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             }
 
             GraphicsContextStateSaver stateSaver(*c);
-            c->clipToImageBuffer(*maskImage, maskRect);
+            c->clipToNativeImage(*maskNativeImage, maskRect);
             if (RefPtr gradient = drawStyle.canvasGradient())
                 c->setFillGradient(gradient->gradient());
             else

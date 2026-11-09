@@ -30,6 +30,7 @@
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "NativeImage.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 
@@ -117,27 +118,28 @@ void rotateContextForVerticalWritingMode(GraphicsContext& context, const FloatRe
     context.translate(-rect.location());
 }
 
-RefPtr<ImageBuffer> trackMaskImage(GraphicsContext& context, FloatSize trackRectSize, float deviceScaleFactor, bool isRTL, NSString *coreUISize)
+RefPtr<NativeImage> trackMaskImage(GraphicsContext& context, FloatSize trackRectSize, float deviceScaleFactor, bool isRTL, NSString *coreUISize)
 {
     auto drawingTrackRect = NSMakeRect(0, 0, trackRectSize.width(), trackRectSize.height());
-    auto maskImage = context.createImageBuffer(trackRectSize, deviceScaleFactor);
+    RefPtr maskImage = context.createImageBuffer(trackRectSize, deviceScaleFactor);
     if (!maskImage)
         return nullptr;
 
-    RetainPtr cgContext = maskImage->context().platformContext();
-
     auto coreUIDirection = (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight);
 
-    CGContextStateSaver stateSaver(cgContext);
+    {
+        RetainPtr cgContext = maskImage->context().platformContext();
+        CGContextStateSaver stateSaver(cgContext);
 
-    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
-        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchFillMask,
-        (__bridge NSString *)kCUISizeKey: coreUISize,
-        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: coreUIDirection,
-        (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
-    }];
+        [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
+            (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchFillMask,
+            (__bridge NSString *)kCUISizeKey: coreUISize,
+            (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: coreUIDirection,
+            (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
+        }];
+    }
 
-    return maskImage;
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(maskImage));
 }
 
 } // namespace WebCore::SwitchMacUtilities

@@ -360,24 +360,6 @@ struct ChangeAntialiasBeforeClipPath {
     }
 };
 
-struct ChangeAntialiasBeforeClipToImageBuffer {
-    void operator()(WebCore::GraphicsContext& c)
-    {
-        c.setShouldAntialias(false);
-        c.clipToImageBuffer(createTestImageBuffer().get(), { 0, 1, 77, 99 });
-    }
-
-    static String description()
-    {
-        return R"DL(
-(set-state
-  (change-flags [should-antialias])
-  (should-antialias 0))
-(clip-to-native-image
-  (dest-rect at (0,1) size 77x99)))DL"_s;
-    }
-};
-
 struct ChangeAntialiasBeforeClipToNativeImage {
     void operator()(WebCore::GraphicsContext& c)
     {
@@ -703,7 +685,7 @@ struct SetDefaultShadowsIgnoreTransforms {
 using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
     ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
     ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
-    ChangeAntialiasBeforeClipToImageBuffer, ChangeAntialiasBeforeClipToNativeImage, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect,
+    ChangeAntialiasBeforeClipToNativeImage, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect,
     SetDefaultFillBrush, SetDefaultFillRule, SetDefaultStrokeBrush, SetDefaultStrokeThickness, SetDefaultStrokeStyle,
     SetDefaultCompositeMode, SetDefaultDropShadow, SetDefaultStyle, SetDefaultAlpha, SetDefaultImageInterpolationQuality,
     SetDefaultTextDrawingMode, SetDefaultShouldAntialias, SetDefaultShouldSmoothFonts, SetDefaultShouldSubpixelQuantizeFonts,
@@ -750,9 +732,9 @@ REGISTER_TYPED_TEST_SUITE_P(DisplayListRecorderResultStateTest, StateThroughDisp
 
 INSTANTIATE_TYPED_TEST_SUITE_P(DisplayListRecorderTest, DisplayListRecorderResultStateTest, AllOperations);
 
-// Tests that a recorded clip to an image buffer uses the buffer contents at the time of the recording,
-// and that the recording does not need the buffer to stay alive.
-TEST(DisplayListRecorderTest, ClipToImageBufferUsesContentsAtRecordTime)
+// Tests that a recorded clip to a native image clips the replayed drawing, and that the recording
+// does not need the caller to keep the image alive.
+TEST(DisplayListRecorderTest, ClipToNativeImageClipsReplayedDrawing)
 {
     constexpr WebCore::FloatSize size { 4, 1 };
     auto createBuffer = [&] {
@@ -761,15 +743,16 @@ TEST(DisplayListRecorderTest, ClipToImageBufferUsesContentsAtRecordTime)
     RefPtr mask = createBuffer();
     ASSERT_TRUE(mask);
     mask->context().fillRect({ 0, 0, 2, 1 }, WebCore::Color::black);
+    RefPtr maskImage = WebCore::ImageBuffer::sinkIntoNativeImage(WTF::move(mask));
+    ASSERT_TRUE(maskImage);
 
     Ref recorder = WebCore::DisplayList::RecorderImpl::create(WebCore::FloatRect { { }, size });
     WebCore::GraphicsContext& context = recorder;
-    context.clipToImageBuffer(*mask, { { }, size });
+    context.clipToNativeImage(*maskImage, { { }, size });
     context.fillRect({ { }, size }, WebCore::Color::green);
     Ref displayList = recorder->takeDisplayList();
 
-    mask->context().fillRect({ { }, size }, WebCore::Color::black);
-    mask = nullptr;
+    maskImage = nullptr;
 
     RefPtr target = createBuffer();
     ASSERT_TRUE(target);

@@ -238,15 +238,6 @@ void RemoteGraphicsContextProxy::clipOutRoundedRect(const FloatRoundedRect& rect
     send(Messages::RemoteGraphicsContext::ClipOutRoundedRect(rect));
 }
 
-void RemoteGraphicsContextProxy::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
-{
-    sendPendingDrawsIfNecessary();
-    if (!recordResourceUse(imageBuffer))
-        return;
-    updateStateForClipToImage(destinationRect);
-    send(Messages::RemoteGraphicsContext::ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
-}
-
 void RemoteGraphicsContextProxy::clipToNativeImage(const NativeImage& image, const FloatRect& destinationRect)
 {
     sendPendingDrawsIfNecessary();
