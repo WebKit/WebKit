@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "WebViewTest.h"
+#include <libsoup/soup.h>
 #include <signal.h>
 #include <sys/eventfd.h>
 #include <sys/wait.h>
@@ -91,7 +92,7 @@ public:
     void startTestServer()
     {
         // Prepare argv[] for spawning the server process.
-        GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKitGTK", "InspectorTestServer", nullptr));
+        GUniquePtr<char> testServerPath(g_test_build_filename(G_TEST_BUILT, "InspectorTestServer", nullptr));
 
         int eventFD = eventfd(0, 0);
         g_assert_cmpint(eventFD, !=, -1);
@@ -161,6 +162,37 @@ public:
         }
 
         return false;
+    }
+
+    unsigned sendHTTPRequest(const char* path, const char* host)
+    {
+        GUniquePtr<char> uri(g_strdup_printf("http://%s%s", m_serverAddress.get(), path));
+        GRefPtr<SoupMessage> message = adoptGRef(soup_message_new("GET", uri.get()));
+        soup_message_headers_replace(soup_message_get_request_headers(message.get()), "Host", host);
+        GRefPtr<SoupSession> session = adoptGRef(soup_session_new());
+        GRefPtr<GBytes> body = adoptGRef(soup_session_send_and_read(session.get(), message.get(), nullptr, nullptr));
+        return soup_message_get_status(message.get());
+    }
+
+    unsigned connectWebSocket(const char* origin)
+    {
+        GUniquePtr<char> uri(g_strdup_printf("ws://%s/socket/1/1/WebPage", m_serverAddress.get()));
+        GRefPtr<SoupMessage> message = adoptGRef(soup_message_new("GET", uri.get()));
+        GRefPtr<SoupSession> session = adoptGRef(soup_session_new());
+        GRefPtr<GAsyncResult> connectResult;
+        soup_session_websocket_connect_async(session.get(), message.get(), origin, nullptr, G_PRIORITY_DEFAULT, nullptr, [](GObject*, GAsyncResult* result, gpointer userData) {
+            *static_cast<GRefPtr<GAsyncResult>*>(userData) = result;
+        }, &connectResult);
+        while (!connectResult)
+            g_main_context_iteration(nullptr, TRUE);
+
+        if (GRefPtr<SoupWebsocketConnection> connection = adoptGRef(soup_session_websocket_connect_finish(session.get(), connectResult.get(), nullptr))) {
+            g_signal_connect_swapped(connection.get(), "closed", G_CALLBACK(g_main_loop_quit), m_mainLoop);
+            soup_websocket_connection_close(connection.get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
+            g_main_loop_run(m_mainLoop);
+        }
+
+        return soup_message_get_status(message.get());
     }
 
     static unsigned availablePort()
@@ -317,6 +349,7 @@ public:
     }
 };
 
+#if PLATFORM(GTK)
 // Test to get inspector server page list from the test server.
 // Should contain only one entry pointing to http://127.0.0.1:2999.
 static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer)
@@ -343,6 +376,7 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
     valueString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_nonnull(g_strrstr(valueString.get(), "window.webkit.messageHandlers.inspector.postMessage('1:1:WebPage')"));
 }
+#endif
 
 // Test to get inspector server page list from the HTTP test server.
 // Should contain only one entry pointing to http://127.0.0.1:2999.
@@ -531,6 +565,27 @@ static void testInspectorServerSecondAutomationConnection(InspectorServerTest* t
     g_assert_false(test->m_secondClientWasAccepted);
 }
 
+static void testInspectorHTTPServerRejectsUntrustedRequests(InspectorHTTPServerTest* test, gconstpointer)
+{
+    const char* serverAddress = test->m_serverAddress.get();
+    const char* port = strrchr(serverAddress, ':');
+    GUniquePtr<char> serverOrigin(g_strdup_printf("http://%s", serverAddress));
+    GUniquePtr<char> localhost(g_strdup_printf("localhost%s", port));
+    GUniquePtr<char> rebindingHost(g_strdup_printf("attacker.example%s", port));
+    GUniquePtr<char> rebindingOrigin(g_strdup_printf("http://attacker.example%s", port));
+
+    g_assert_cmpuint(test->sendHTTPRequest("/", serverAddress), ==, SOUP_STATUS_OK);
+    g_assert_cmpuint(test->sendHTTPRequest("/", localhost.get()), ==, SOUP_STATUS_OK);
+    g_assert_cmpuint(test->sendHTTPRequest("/", rebindingHost.get()), ==, SOUP_STATUS_FORBIDDEN);
+    g_assert_cmpuint(test->sendHTTPRequest("/Main.html", rebindingHost.get()), ==, SOUP_STATUS_FORBIDDEN);
+
+    g_assert_cmpuint(test->connectWebSocket(nullptr), ==, SOUP_STATUS_SWITCHING_PROTOCOLS);
+    g_assert_cmpuint(test->connectWebSocket(serverOrigin.get()), ==, SOUP_STATUS_SWITCHING_PROTOCOLS);
+    g_assert_cmpuint(test->connectWebSocket("http://example.com"), ==, SOUP_STATUS_FORBIDDEN);
+    g_assert_cmpuint(test->connectWebSocket("null"), ==, SOUP_STATUS_FORBIDDEN);
+    g_assert_cmpuint(test->connectWebSocket(rebindingOrigin.get()), ==, SOUP_STATUS_FORBIDDEN);
+}
+
 void beforeAll()
 {
     // Terminate the server process if any test fails.
@@ -539,12 +594,15 @@ void beforeAll()
             kill(gActiveServerPid, SIGTERM);
     });
 
+#if PLATFORM(GTK)
     InspectorServerTest::add("WebKitWebInspectorServer", "test-page-list", testInspectorServerPageList);
+#endif
     InspectorServerTest::add("WebKitWebInspectorServer", "invalid-messages", testInspectorServerInvalidMessages);
     InspectorServerTest::add("WebKitWebInspectorServer", "connection-with-multiple-roles", testInspectorServerConnectionWithMultipleRoles);
     InspectorServerTest::add("WebKitWebInspectorServer", "second-client", testInspectorServerSecondClient);
     InspectorServerTest::add("WebKitWebInspectorServer", "second-automation-connection", testInspectorServerSecondAutomationConnection);
     InspectorHTTPServerTest::add("WebKitWebInspectorServer", "http-test-page-list", testInspectorHTTPServerPageList);
+    InspectorHTTPServerTest::add("WebKitWebInspectorServer", "http-rejects-untrusted-requests", testInspectorHTTPServerRejectsUntrustedRequests);
 }
 
 void afterAll()

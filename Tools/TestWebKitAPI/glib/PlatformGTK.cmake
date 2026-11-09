@@ -51,9 +51,7 @@ if (NOT USE_GTK4)
 endif ()
 
 # UI process tests
-ADD_WK2_TEST(InspectorTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/gtk/InspectorTestServer.cpp)
 ADD_WK2_TEST(TestInspector ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/gtk/TestInspector.cpp)
-ADD_WK2_TEST(TestInspectorServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/gtk/TestInspectorServer.cpp)
 ADD_WK2_TEST(TestPrinting ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/gtk/TestPrinting.cpp)
 ADD_WK2_TEST(TestWebKitAccessibility ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/gtk/TestWebKitAccessibility.cpp)
 ADD_WK2_TEST(TestWebKitVersion ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/gtk/TestWebKitVersion.cpp)

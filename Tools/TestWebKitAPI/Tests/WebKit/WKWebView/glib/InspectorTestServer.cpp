@@ -24,15 +24,21 @@
 
 #include "config.h"
 
-#include <WebKit/GtkVersioning.h>
 #include <string.h>
 #include <sys/eventfd.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
+#if PLATFORM(GTK)
+#include <WebKit/GtkVersioning.h>
 #if USE(GTK4)
 #include <webkit/webkit.h>
 #else
 #include <webkit2/webkit2.h>
+#endif
+#elif PLATFORM(WPE)
+#include <wpe/headless/wpe-headless.h>
+#include <wpe/webkit.h>
 #endif
 
 int main(int argc, char** argv)
@@ -40,11 +46,15 @@ int main(int argc, char** argv)
     g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
 
+    int eventFD = argc == 2 ? parseInteger<int>(StringView::fromLatin1(argv[1])).value_or(-1) : -1;
+
+#if PLATFORM(GTK)
     gtk_init(&argc, &argv);
-
-    int eventFD = argc == 2 ? atoi(argv[1]) : -1;
-
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+#elif PLATFORM(WPE)
+    GRefPtr<WPEDisplay> display = adoptGRef(wpe_display_headless_new());
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, "display", display.get(), nullptr));
+#endif
     webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(webView), TRUE);
     g_signal_connect(webView, "load-changed", G_CALLBACK(+[](WebKitWebView*, WebKitLoadEvent loadEvent, int* eventFD) {
         if (loadEvent != WEBKIT_LOAD_FINISHED)
@@ -62,7 +72,10 @@ int main(int argc, char** argv)
         "<html><body><p>WebKitGTK Inspector Test Server</p></body></html>",
         "http://127.0.0.1:2999/");
 
-#if USE(GTK4)
+#if PLATFORM(WPE)
+    GRefPtr<GMainLoop> loop = adoptGRef(g_main_loop_new(nullptr, TRUE));
+    g_main_loop_run(loop.get());
+#elif USE(GTK4)
     GtkWidget* window = gtk_window_new();
     gtk_window_set_child(GTK_WINDOW(window), GTK_WIDGET(webView));
     gtk_widget_show(window);
