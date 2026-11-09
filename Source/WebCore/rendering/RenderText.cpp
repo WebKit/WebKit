@@ -629,7 +629,7 @@ String RenderText::originalText() const
 void RenderText::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     for (auto& run : InlineIterator::textBoxesFor(*this)) {
-        auto rect = LayoutRect { run.visualRectIgnoringBlockDirection() };
+        auto rect = LayoutRect { run.blockStartRelativePhysicalRect() };
         rect.moveBy(accumulatedOffset);
         rects.append(rect);
     }
@@ -741,7 +741,7 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
     Vector<FloatQuad> quads;
     for (auto& textBox : InlineIterator::textBoxesFor(textRenderer)) {
         auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox);
-        auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.visualRectIgnoringBlockDirection();
+        auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.blockStartRelativePhysicalRect();
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
@@ -776,7 +776,7 @@ static FloatRect localQuadForTextBox(const InlineIterator::TextBox& textBox, uns
     if (useSelectionHeight)
         return boxSelectionRect;
 
-    auto rect = textBox.visualRectIgnoringBlockDirection();
+    auto rect = textBox.blockStartRelativePhysicalRect();
     if (textBox.isHorizontal()) {
         boxSelectionRect.setHeight(rect.height());
         boxSelectionRect.setY(rect.y());
@@ -843,7 +843,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
 
             if (!useSelectionHeight) {
                 for (auto& rect : rects) {
-                    auto visualRect = textBox.visualRectIgnoringBlockDirection();
+                    auto visualRect = textBox.blockStartRelativePhysicalRect();
                     if (textBox.isHorizontal()) {
                         rect.setHeight(visualRect.height());
                         rect.setY(visualRect.y());
@@ -863,7 +863,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
 
         if (start <= textBox.start() && textBox.end() <= end) {
             auto* svgTextBox = dynamicDowncast<InlineIterator::SVGTextBox>(textBox);
-            auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.visualRectIgnoringBlockDirection();
+            auto boundaries = svgTextBox ? svgTextBox->calculateBoundariesIncludingSVGTransform() : textBox.blockStartRelativePhysicalRect();
 
             if (useSelectionHeight) {
                 LayoutRect selectionRect = selectionRectForTextBox(textBox, start, end);
@@ -1136,7 +1136,7 @@ IntPoint RenderText::firstRunLocation() const
     auto first = InlineIterator::lineLeftmostTextBoxFor(*this);
     if (!first)
         return { };
-    return IntPoint(first->visualRectIgnoringBlockDirection().location());
+    return IntPoint(first->blockStartRelativePhysicalRect().location());
 }
 
 void RenderText::setSelectionState(HighlightState state)
@@ -1493,9 +1493,9 @@ IntRect RenderText::linesBoundingBox() const
     if (!firstTextBox)
         return { };
 
-    auto boundingBox = firstTextBox->visualRectIgnoringBlockDirection();
+    auto boundingBox = firstTextBox->blockStartRelativePhysicalRect();
     for (auto textBox = firstTextBox; ++textBox;)
-        boundingBox.uniteEvenIfEmpty(textBox->visualRectIgnoringBlockDirection());
+        boundingBox.uniteEvenIfEmpty(textBox->blockStartRelativePhysicalRect());
 
     return enclosingIntRect(boundingBox);
 }

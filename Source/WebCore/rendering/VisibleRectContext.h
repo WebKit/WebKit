@@ -70,7 +70,7 @@ struct VisibleRectContext {
 // that each step's changes are seen by the steps above it, but not by its own caller.
 struct VisibleRectState {
     bool hasPositionFixedDescendant { false };
-    bool dirtyRectIsFlipped { false };
+    bool dirtyRectWasConvertedToPhysical { false };
     bool descendantNeedsEnclosingIntRect { false };
 };
 

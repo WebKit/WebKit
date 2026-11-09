@@ -956,7 +956,7 @@ public:
                 outlineBoundsRect->unite(*other.outlineBoundsRect);
         }
 
-        void flipForWritingMode(LayoutSize containerSize, bool isHorizontalWritingMode)
+        void blockStartRelativeToPhysical(LayoutSize containerSize, bool isHorizontalWritingMode)
         {
             if (isHorizontalWritingMode) {
                 clippedOverflowRect.setY(containerSize.height() - clippedOverflowRect.maxY());

@@ -491,7 +491,7 @@ void InlineDisplayLineBuilder::addLegacyLineClampTrailingLinkBoxIfApplicable(con
         return;
     }
     auto& clampedLine = displayLines[*clampedLineIndex];
-    auto linkContentWidth = displayBoxes[displayBoxes.size() - 2].visualRectIgnoringBlockDirection().width();
+    auto linkContentWidth = displayBoxes[displayBoxes.size() - 2].blockStartRelativePhysicalRect().width();
     if (linkContentWidth >= clampedLine.lineBoxWidth()) {
         // Not enough space for "more info" content.
         return;

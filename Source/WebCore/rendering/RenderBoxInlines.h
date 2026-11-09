@@ -162,9 +162,9 @@ inline LayoutRect RenderBox::contentBoxRect() const
     return { location, size };
 }
 
-inline LayoutRect RenderBox::flippedContentBoxRect() const
+inline LayoutRect RenderBox::blockStartRelativeContentBoxRect() const
 {
-    auto rect = flippedPaddingBoxRect();
+    auto rect = blockStartRelativePaddingBoxRect();
     auto padding = this->padding();
     if (!padding.isZero()) {
         if (writingMode().isBlockFlipped())
@@ -188,7 +188,7 @@ inline LayoutRect RenderBox::marginBoxRect() const
 inline const LayoutRect RenderBox::scrollableContentAreaOverflowRect() const
 {
     if (!m_overflow)
-        return flippedContentBoxRect();
+        return blockStartRelativeContentBoxRect();
 
     return m_overflow->contentArea();
 }
@@ -196,7 +196,7 @@ inline const LayoutRect RenderBox::scrollableContentAreaOverflowRect() const
 inline const LayoutRect RenderBox::scrollablePaddingAreaOverflowRect() const
 {
     if (!m_overflow)
-        return flippedPaddingBoxRect();
+        return blockStartRelativePaddingBoxRect();
 
     auto overflowRect = m_overflow->contentArea();
     blockStartRelativeToPhysical(overflowRect);

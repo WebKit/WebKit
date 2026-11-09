@@ -95,9 +95,9 @@ LineBox Box::lineBox() const
     return lineBoxFor(*m_inlineContent, lineIndex());
 }
 
-FloatRect Box::visualRect() const
+FloatRect Box::physicalRect() const
 {
-    auto rect = visualRectIgnoringBlockDirection();
+    auto rect = blockStartRelativePhysicalRect();
     formattingContextRoot().blockStartRelativeToPhysical(rect);
     return rect;
 }

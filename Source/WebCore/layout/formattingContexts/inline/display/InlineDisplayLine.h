@@ -88,7 +88,7 @@ public:
     struct Ellipsis {
         enum class Type : uint8_t { Inline, Block };
         Type type { Type::Inline };
-        // This is visual rect ignoring block direction.
+        // This is block-start relative, like Box::blockStartRelativePhysicalRect().
         FloatRect visualRect;
         AtomString text;
     };

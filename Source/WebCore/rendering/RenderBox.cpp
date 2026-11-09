@@ -4931,14 +4931,14 @@ bool RenderBox::hasLayoutOverflow() const
     if (!m_overflow)
         return false;
 
-    return !flippedPaddingBoxRect().contains(m_overflow->layoutOverflowRect());
+    return !blockStartRelativePaddingBoxRect().contains(m_overflow->layoutOverflowRect());
 }
 
 LayoutOptionalOutsets RenderBox::allowedLayoutOverflow() const
 {
     LayoutOptionalOutsets allowance;
 
-    // Overflow is in the block's coordinate space and thus is flipped
+    // Overflow is in the block's block-start relative coordinate space and thus is reversed
     // for horizontal-bt and vertical-rl writing modes. This means we can
     // treat horizontal-tb/bt as the same and vertical-lr/rl as the same.
 
@@ -4959,25 +4959,25 @@ LayoutOptionalOutsets RenderBox::allowedLayoutOverflow() const
     return allowance;
 }
 
-LayoutRect RenderBox::clampToAllowedLayoutOverflow(const LayoutRect& rect, const LayoutRect& flippedPaddingBoxRect)
+LayoutRect RenderBox::clampToAllowedLayoutOverflow(const LayoutRect& rect, const LayoutRect& blockStartRelativePaddingBoxRect)
 {
     LayoutOptionalOutsets allowance = allowedLayoutOverflow();
     LayoutRect clippedRect(rect);
     // Non-negative values indicate a limit, let's apply them.
     if (allowance.top())
-        clippedRect.shiftYEdgeTo(std::max(rect.y(), flippedPaddingBoxRect.y() - *allowance.top()));
+        clippedRect.shiftYEdgeTo(std::max(rect.y(), blockStartRelativePaddingBoxRect.y() - *allowance.top()));
     if (allowance.bottom())
-        clippedRect.shiftMaxYEdgeTo(std::min(rect.maxY(), flippedPaddingBoxRect.maxY() + *allowance.bottom()));
+        clippedRect.shiftMaxYEdgeTo(std::min(rect.maxY(), blockStartRelativePaddingBoxRect.maxY() + *allowance.bottom()));
     if (allowance.left())
-        clippedRect.shiftXEdgeTo(std::max(rect.x(), flippedPaddingBoxRect.x() - *allowance.left()));
+        clippedRect.shiftXEdgeTo(std::max(rect.x(), blockStartRelativePaddingBoxRect.x() - *allowance.left()));
     if (allowance.right())
-        clippedRect.shiftMaxXEdgeTo(std::min(rect.maxX(), flippedPaddingBoxRect.maxX() + *allowance.right()));
+        clippedRect.shiftMaxXEdgeTo(std::min(rect.maxX(), blockStartRelativePaddingBoxRect.maxX() + *allowance.right()));
     return clippedRect;
 }
 
 void RenderBox::addLayoutOverflow(const LayoutRect& rect)
 {
-    auto clientBox = flippedPaddingBoxRect();
+    auto clientBox = blockStartRelativePaddingBoxRect();
     if (clientBox.contains(rect) || rect.isEmpty())
         return;
 
@@ -5015,7 +5015,7 @@ void RenderBox::addMarginBoxOverflow(const RenderBox& renderer, LayoutSize offse
 
     // Some in-flow boxes (e.g. grid items) only extend the layout overflow edge.
     if (options.contains(ComputeOverflowOptions::MarginsExtendLayoutOverflow)) {
-        auto clippedChildMarginRect = clampToAllowedLayoutOverflow(childMarginRect, flippedPaddingBoxRect());
+        auto clippedChildMarginRect = clampToAllowedLayoutOverflow(childMarginRect, blockStartRelativePaddingBoxRect());
         if (!layoutOverflowRect().contains(clippedChildMarginRect))
             ensureOverflow().addLayoutOverflow(clippedChildMarginRect);
         ASSERT(!options.containsAny({ ComputeOverflowOptions::MarginsExtendContentAreaX, ComputeOverflowOptions::MarginsExtendContentAreaY })); // If you need this to work, remove the return statement.
@@ -5039,7 +5039,7 @@ void RenderBox::clearOverflow()
 RenderOverflow& RenderBox::ensureOverflow()
 {
     if (!m_overflow)
-        m_overflow = makeUnique<RenderOverflow>(flippedPaddingBoxRect(), borderBoxRect(), flippedContentBoxRect());
+        m_overflow = makeUnique<RenderOverflow>(blockStartRelativePaddingBoxRect(), borderBoxRect(), blockStartRelativeContentBoxRect());
 
     return *m_overflow;
 }
@@ -5206,17 +5206,15 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const WritingMode parentW
     return convertRectToParentWritingMode(rect, parentWritingMode);
 }
 
-LayoutRect RenderBox::flippedPaddingBoxRect() const
+LayoutRect RenderBox::blockStartRelativePaddingBoxRect() const
 {
-    // Because of the special coordinate system used for overflow rectangles (not quite logical, not
-    // quite physical), we need to flip the block progression coordinate in vertical-rl and
+    // Overflow rectangles are block-start relative, so the block axis coordinate needs converting in vertical-rl and
     // horizontal-bt writing modes. Apart from that, this method does the same as paddingBoxRect().
     auto rect = paddingBoxRectIncludingScrollbar();
-    // Flip block progression axis if writing mode is vertical-rl or horizontal-bt.
     physicalToBlockStartRelative(rect);
     if (hasNonVisibleOverflow()) {
         // Subtract space occupied by scrollbars. They are at their physical edge in this coordinate
-        // system, so order is important here: first flip, then subtract scrollbars.
+        // system, so order is important here: first convert, then subtract scrollbars.
         if (isHorizontalWritingMode() && shouldPlaceVerticalScrollbarOnLeft())
             rect.move(verticalScrollbarWidth(), 0);
         rect.contract(verticalScrollbarWidth(), horizontalScrollbarHeight());
@@ -5291,7 +5289,7 @@ void RenderBox::blockStartRelativeToPhysical(RepaintRects& rects) const
     if (!writingMode().isBlockFlipped())
         return;
 
-    rects.flipForWritingMode(borderBoxSize(), isHorizontalWritingMode());
+    rects.blockStartRelativeToPhysical(borderBoxSize(), isHorizontalWritingMode());
 }
 
 LayoutPoint RenderBox::topLeftLocationFromBlockStartRelative() const

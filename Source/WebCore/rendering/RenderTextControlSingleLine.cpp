@@ -268,7 +268,7 @@ void RenderTextControlSingleLine::layout()
         // The placeholder gets layout last, after the parent text control and its other children,
         // so in order to get the correct overflow from the placeholder we need to recompute it now.
         if (neededLayout) {
-            computeInFlowOverflow(flippedContentBoxRect());
+            computeInFlowOverflow(blockStartRelativeContentBoxRect());
             addOverflowFromOutOfFlowBoxes();
         } else if (auto* placeholderLayer = placeholderBox->layer(); placeholderLayer && placeholderBox->location() != oldPlaceholderLocation)
             placeholderLayer->setNeedsPositionUpdate();

@@ -333,7 +333,7 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
     if (!box)
         return;
 
-    ts << ' ' << enclosingIntRect(FloatRect(text.location(), box->visualRectIgnoringBlockDirection().size()));
+    ts << ' ' << enclosingIntRect(FloatRect(text.location(), box->blockStartRelativePhysicalRect().size()));
     
     // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
     ts << " contains 1 chunk(s)"_s;

@@ -237,7 +237,7 @@ CheckedPtr<RenderVTTCue> RenderVTTCue::overlappingObjectForRect(const FloatRect&
 
 bool RenderVTTCue::shouldSwitchDirection(const InlineIterator::InlineBox& firstInlineBox, LayoutUnit step) const
 {
-    auto firstInlineBoxSize = firstInlineBox.visualRectIgnoringBlockDirection().size();
+    auto firstInlineBoxSize = firstInlineBox.blockStartRelativePhysicalRect().size();
     LayoutUnit top = y();
     LayoutUnit left = x();
     LayoutUnit bottom { top + firstInlineBoxSize.height() };
@@ -447,7 +447,7 @@ void RenderVTTCue::repositionGenericCue()
     auto firstInlineBox = InlineIterator::lineLeftmostInlineBoxFor(*box);
     if (downcast<TextTrackCueGeneric>(*m_cue).useDefaultPosition() && firstInlineBox) {
         LayoutUnit parentWidth = containingBlock()->logicalWidth();
-        LayoutUnit width { firstInlineBox->visualRectIgnoringBlockDirection().width() };
+        LayoutUnit width { firstInlineBox->blockStartRelativePhysicalRect().width() };
         LayoutUnit right = (parentWidth / 2) - (width / 2);
         setX(right);
     }

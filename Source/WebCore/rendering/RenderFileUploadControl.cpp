@@ -190,7 +190,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
             if (CheckedPtr buttonRenderer = downcast<RenderButton>(button->renderer())) {
                 if (CheckedPtr buttonTextRenderer = buttonRenderer->textRenderer()) {
                     if (auto textBox = InlineIterator::lineLeftmostTextBoxFor(*buttonTextRenderer)) {
-                        auto textVisualRect = textBox->visualRectIgnoringBlockDirection();
+                        auto textVisualRect = textBox->blockStartRelativePhysicalRect();
                         textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
                         textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, document().deviceScaleFactor()));
 

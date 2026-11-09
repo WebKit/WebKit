@@ -897,7 +897,7 @@ LayoutRect RenderFragmentedFlow::mapFromFragmentedFlowToLocal(const RenderBox* b
     return localRect;
 }
 
-void RenderFragmentedFlow::flipForWritingModeLocalCoordinates(LayoutRect& rect) const
+void RenderFragmentedFlow::physicalToBlockStartRelativeIgnoringSize(LayoutRect& rect) const
 {
     if (!writingMode().isBlockFlipped())
         return;

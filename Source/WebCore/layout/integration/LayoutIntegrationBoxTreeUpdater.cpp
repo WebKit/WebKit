@@ -292,7 +292,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
         addSpacing(stream);
 
         auto& rootInlineBox = boxes[boxIndex++];
-        auto rootInlineBoxRect = rootInlineBox.visualRectIgnoringBlockDirection();
+        auto rootInlineBoxRect = rootInlineBox.blockStartRelativePhysicalRect();
         stream << "  ";
         stream << "Root inline box at (" << rootInlineBoxRect.x() << "," << rootInlineBoxRect.y() << ")" << " size (" << rootInlineBoxRect.width() << "x" << rootInlineBoxRect.height() << ")";
         stream.nextLine();
@@ -310,7 +310,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
 
                 for (auto* ancestor = &box.layoutBox(); ancestor != &rootInlineBox.layoutBox(); ancestor = &ancestor->parent())
                     inlineBoxStream << "  ";
-                auto rect = box.visualRectIgnoringBlockDirection();
+                auto rect = box.blockStartRelativePhysicalRect();
                 inlineBoxStream << "Inline box at (" << rect.x() << "," << rect.y() << ") size (" << rect.width() << "x" << rect.height() << ")";
                 if (isDamaged)
                     inlineBoxStream << " (renderer may be damaged)";

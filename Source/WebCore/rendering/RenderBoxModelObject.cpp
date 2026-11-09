@@ -797,7 +797,7 @@ void RenderBoxModelObject::paintMaskForTextFillBox(GraphicsContext& context, con
     // the painter it should just modify the clip.
     PaintInfo maskInfo(context, LayoutRect { paintRect }, PaintPhase::TextClip, PaintBehavior::ForceBlackText);
     if (inlineBox) {
-        auto paintOffset = scrolledPaintRect.location() - toLayoutSize(LayoutPoint(inlineBox->visualRectIgnoringBlockDirection().location()));
+        auto paintOffset = scrolledPaintRect.location() - toLayoutSize(LayoutPoint(inlineBox->blockStartRelativePhysicalRect().location()));
 
         for (auto& box : inlineBox->leafDescendants()) {
             if (!box.isText())
@@ -1471,7 +1471,7 @@ LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
                 // any post-layout box adjustments.
                 FloatRect result;
                 for (auto& box : InlineIterator::inlineBoxesFor(*this))
-                    result.unite(box.visualRectIgnoringBlockDirection());
+                    result.unite(box.blockStartRelativePhysicalRect());
                 return enclosingIntRect(result);
             }
             return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
@@ -1587,9 +1587,9 @@ auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& re
     auto locationOffset = LayoutSize { };
     if (box) {
         if (isWritingModeRoot()) {
-            if (!isOutOfFlowPositioned() || !state.dirtyRectIsFlipped) {
+            if (!isOutOfFlowPositioned() || !state.dirtyRectWasConvertedToPhysical) {
                 box->blockStartRelativeToPhysical(adjustedRects);
-                state.dirtyRectIsFlipped = true;
+                state.dirtyRectWasConvertedToPhysical = true;
             }
         }
 

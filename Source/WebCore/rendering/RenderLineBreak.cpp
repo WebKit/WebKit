@@ -79,7 +79,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
     if (!run)
         return { };
 
-    return enclosingIntRect(run->visualRectIgnoringBlockDirection());
+    return enclosingIntRect(run->blockStartRelativePhysicalRect());
 }
 
 Vector<FloatRect> RenderLineBreak::localBorderBoxRects() const
@@ -87,7 +87,7 @@ Vector<FloatRect> RenderLineBreak::localBorderBoxRects() const
     auto box = InlineIterator::boxFor(*this);
     if (!box)
         return { };
-    return { box->visualRectIgnoringBlockDirection() };
+    return { box->blockStartRelativePhysicalRect() };
 }
 
 void RenderLineBreak::updateFromStyle()

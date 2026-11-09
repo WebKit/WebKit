@@ -394,7 +394,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren,
         repaintChildrenDuringLayoutIfMoved(this, oldChildRects);
         ASSERT(view().frameView().layoutContext().layoutDeltaMatches(oldLayoutDelta));
 
-        auto contentArea = flippedContentBoxRect();
+        auto contentArea = blockStartRelativeContentBoxRect();
         updateLogicalHeight();
         updateInFlowDescendantTransformsAfterLayout();
         computeInFlowOverflow(contentArea);
@@ -777,7 +777,7 @@ void RenderDeprecatedFlexibleBox::layoutSingleClampedFlexItem()
     setBorderBoxHeight(childBoxBottom + paddingBottom() + borderBottom());
     updateLogicalHeight();
 
-    computeInFlowOverflow(flippedContentBoxRect());
+    computeInFlowOverflow(blockStartRelativeContentBoxRect());
 
     endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 

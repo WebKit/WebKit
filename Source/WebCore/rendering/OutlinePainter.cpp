@@ -486,12 +486,12 @@ void OutlinePainter::collectFocusRingRectsForInlineChildren(const RenderBlockFlo
             continue;
         }
         // FIXME: This is mixing physical and logical coordinates.
-        auto unflippedVisualRect = box.visualRectIgnoringBlockDirection();
-        auto top = std::max(lineBox.contentLogicalTop(), unflippedVisualRect.y());
-        auto bottom = std::min(lineBox.contentLogicalBottom(), unflippedVisualRect.maxY());
-        auto rect = LayoutRect { LayoutUnit { additionalOffset.x() + unflippedVisualRect.x() }
+        auto blockStartRelativePhysicalRect = box.blockStartRelativePhysicalRect();
+        auto top = std::max(lineBox.contentLogicalTop(), blockStartRelativePhysicalRect.y());
+        auto bottom = std::min(lineBox.contentLogicalBottom(), blockStartRelativePhysicalRect.maxY());
+        auto rect = LayoutRect { LayoutUnit { additionalOffset.x() + blockStartRelativePhysicalRect.x() }
             , additionalOffset.y() + top
-            , LayoutUnit { unflippedVisualRect.width() }
+            , LayoutUnit { blockStartRelativePhysicalRect.width() }
             , bottom - top };
         appendIfNotEmpty(rects, WTF::move(rect));
     }

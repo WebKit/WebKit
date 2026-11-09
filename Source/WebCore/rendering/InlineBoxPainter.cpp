@@ -86,7 +86,7 @@ void InlineBoxPainter::paint()
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     if (m_paintInfo.phase == PaintPhase::AXCustomColorCollectBackgrounds) {
         if (!m_isRootInlineBox && renderer().hasVisibleBoxDecorations()) {
-            auto localRect = LayoutRect { m_inlineBox.visualRect() };
+            auto localRect = LayoutRect { m_inlineBox.physicalRect() };
             auto paintRect = LayoutRect { m_paintOffset + localRect.location(), localRect.size() };
             m_paintInfo.axCustomColorBackdropContext()->recordBackdrop(renderer(), FloatRect { paintRect }, m_paintInfo.paintBehavior);
         }
@@ -168,7 +168,7 @@ void InlineBoxPainter::paintMask()
         return;
 
     // Move x/y to our coordinates.
-    auto localRect = LayoutRect { m_inlineBox.visualRect() };
+    auto localRect = LayoutRect { m_inlineBox.physicalRect() };
     LayoutPoint adjustedPaintOffset = m_paintOffset + localRect.location();
 
     auto& maskBorder = renderer().style().maskBorder();
@@ -234,7 +234,7 @@ void InlineBoxPainter::paintDecorations()
         return;
 
     // Move x/y to our coordinates.
-    auto localRect = LayoutRect { m_inlineBox.visualRect() };
+    auto localRect = LayoutRect { m_inlineBox.physicalRect() };
     LayoutPoint adjustedPaintoffset = m_paintOffset + localRect.location();
     GraphicsContext& context = m_paintInfo.context();
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, localRect.size());
@@ -299,7 +299,7 @@ template<typename Layer> void InlineBoxPainter::paintFillLayer(const Color& colo
 
     if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
-        m_paintInfo.context().clip({ rect.location(), m_inlineBox.visualRectIgnoringBlockDirection().size() });
+        m_paintInfo.context().clip({ rect.location(), m_inlineBox.blockStartRelativePhysicalRect().size() });
         backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, { }, op);
         return;
     }
@@ -328,8 +328,8 @@ template<typename Layer> void InlineBoxPainter::paintFillLayer(const Color& colo
     LayoutRect backgroundImageStrip {
         rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu),
         rect.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine),
-        isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().width()),
-        isHorizontal() ? LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().height()) : totalLogicalWidth
+        isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.blockStartRelativePhysicalRect().width()),
+        isHorizontal() ? LayoutUnit(m_inlineBox.blockStartRelativePhysicalRect().height()) : totalLogicalWidth
     };
 
     GraphicsContextStateSaver stateSaver(m_paintInfo.context());

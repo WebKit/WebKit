@@ -74,8 +74,8 @@ public:
     bool isBlockLevelBox() const;
     bool isAtomicInlineBox() const;
 
-    NODELETE FloatRect visualRect() const;
-    FloatRect visualRectIgnoringBlockDirection() const;
+    NODELETE FloatRect physicalRect() const;
+    FloatRect blockStartRelativePhysicalRect() const;
     // Visual in inline direction, logical for writing mode.
     inline FloatRect logicalRectIgnoringInlineDirection() const;
 
@@ -426,9 +426,9 @@ inline bool Box::isRubyBase() const
     return displayBox().isRubyBase();
 }
 
-inline FloatRect Box::visualRectIgnoringBlockDirection() const
+inline FloatRect Box::blockStartRelativePhysicalRect() const
 {
-    return displayBox().visualRectIgnoringBlockDirection();
+    return displayBox().blockStartRelativePhysicalRect();
 }
 
 inline bool Box::isLineBreak() const

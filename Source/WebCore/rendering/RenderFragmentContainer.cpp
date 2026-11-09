@@ -407,7 +407,7 @@ LayoutRect RenderFragmentContainer::computedVisualOverflowRectForBox(const Rende
         return { };
 
     borderBox = rectFlowPortionForBox(box, borderBox);
-    m_fragmentedFlow->flipForWritingModeLocalCoordinates(borderBox);
+    m_fragmentedFlow->physicalToBlockStartRelativeIgnoringSize(borderBox);
     return borderBox;
 }
 
@@ -419,7 +419,7 @@ LayoutRect RenderFragmentContainer::computedLayoutOverflowRectForBox(const Rende
         return { };
 
     clientBox = rectFlowPortionForBox(box, clientBox);
-    m_fragmentedFlow->flipForWritingModeLocalCoordinates(clientBox);
+    m_fragmentedFlow->physicalToBlockStartRelativeIgnoringSize(clientBox);
     return clientBox;
 }
 
@@ -477,9 +477,9 @@ void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox& box, cons
         return;
 
     if (CheckedPtr overflow = overflowForBox(box)) {
-        LayoutRect flippedRect = rect;
-        fragmentedFlow()->flipForWritingModeLocalCoordinates(flippedRect);
-        overflow->addVisualOverflow(flippedRect);
+        LayoutRect blockStartRelativeRect = rect;
+        fragmentedFlow()->physicalToBlockStartRelativeIgnoringSize(blockStartRelativeRect);
+        overflow->addVisualOverflow(blockStartRelativeRect);
     }
 }
 
@@ -520,7 +520,7 @@ LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const
 LayoutRect RenderFragmentContainer::visualOverflowRectForBoxForPropagation(const RenderBox& box)
 {
     LayoutRect rect = visualOverflowRectForBox(box);
-    fragmentedFlow()->flipForWritingModeLocalCoordinates(rect);
+    fragmentedFlow()->blockStartRelativeIgnoringSizeToPhysical(rect);
 
     return rect;
 }

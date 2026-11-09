@@ -683,7 +683,7 @@ void RenderTable::layout()
         // The location or height of one or more sections may have changed.
         invalidateCachedColumnOffsets();
 
-        computeInFlowOverflow(flippedContentBoxRect());
+        computeInFlowOverflow(blockStartRelativeContentBoxRect());
 
         // table can be containing block of positioned elements.
         bool dimensionChanged = oldLogicalWidth != logicalWidth() || oldLogicalHeight != logicalHeight();

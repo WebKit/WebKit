@@ -570,7 +570,7 @@ void RenderBlock::computeInFlowOverflow(LayoutRect contentArea, OptionSet<Comput
     addOverflowFromInFlowChildren(options);
 
     if (hasPotentiallyScrollableOverflow() || isRenderView()) {
-        if (!flippedContentBoxRect().contains(contentArea))
+        if (!blockStartRelativeContentBoxRect().contains(contentArea))
             ensureOverflow();
         if (hasRenderOverflow()) {
             m_overflow->addContentOverflow(contentArea);
@@ -597,7 +597,7 @@ void RenderBlock::clearLayoutOverflow()
     }
 
     m_overflow->setLayoutOverflow(borderBoxRect());
-    m_overflow->setContentArea(flippedContentBoxRect());
+    m_overflow->setContentArea(blockStartRelativeContentBoxRect());
 }
 
 void RenderBlock::addOverflowFromOutOfFlowBoxes()
@@ -722,7 +722,7 @@ bool RenderBlock::simplifiedLayout()
 
     // Recompute our overflow information.
     // FIXME: Skip recalculation if we didn't actually relayout our in-flow boxes and don't have cached overflow.
-    auto contentArea = hasRenderOverflow() ? m_overflow->contentArea() : flippedContentBoxRect();
+    auto contentArea = hasRenderOverflow() ? m_overflow->contentArea() : blockStartRelativeContentBoxRect();
     computeInFlowOverflow(contentArea, ComputeOverflowOptions::RecomputeFloats);
 
     // Lay out our positioned objects if our positioned child bit is set.

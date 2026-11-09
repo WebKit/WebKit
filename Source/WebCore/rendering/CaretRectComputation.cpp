@@ -334,7 +334,7 @@ static LayoutRect computeCaretRectForInline(const RenderBoxModelObject& renderer
     LayoutRect caretRect = computeCaretRectForEmptyElement(renderer, renderer.borderAndPaddingLogicalWidth(), 0, CaretRectMode::Normal);
 
     if (auto firstInlineBox = InlineIterator::lineLeftmostInlineBoxFor(renderer))
-        caretRect.moveBy(LayoutPoint { firstInlineBox->visualRectIgnoringBlockDirection().location() });
+        caretRect.moveBy(LayoutPoint { firstInlineBox->blockStartRelativePhysicalRect().location() });
 
     return caretRect;
 }

@@ -57,8 +57,8 @@ TextRun TextBox::textRun(TextRunMode mode) const
         CheckedRef root = formattingContextRoot();
         auto positionRelativeToContentBox = [&] {
             if (style->writingMode().isBidiLTR())
-                return visualRectIgnoringBlockDirection().x() - root->borderAndPaddingStart();
-            return root->contentBoxWidth() - visualRectIgnoringBlockDirection().maxX();
+                return blockStartRelativePhysicalRect().x() - root->borderAndPaddingStart();
+            return root->contentBoxWidth() - blockStartRelativePhysicalRect().maxX();
         }();
         return positionRelativeToContentBox - line().contentLogicalLeft();
     };

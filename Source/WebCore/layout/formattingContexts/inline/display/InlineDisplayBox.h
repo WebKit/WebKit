@@ -122,17 +122,17 @@ struct Box {
     inline bool isVisibleIgnoringUsedVisibility() const; // Defined in InlineDisplayBoxInlines.h
     bool isFullyTruncated() const { return m_isFullyTruncated; } 
 
-    const FloatRect& visualRectIgnoringBlockDirection() const LIFETIME_BOUND { return m_unflippedVisualRect; }
-    static FloatRect visibleRectIgnoringBlockDirection(const Box&, const FloatRect& visibleLineRect);
+    const FloatRect& blockStartRelativePhysicalRect() const LIFETIME_BOUND { return m_blockStartRelativePhysicalRect; }
+    static FloatRect blockStartRelativeVisibleRect(const Box&, const FloatRect& visibleLineRect);
     const FloatRect& inkOverflow() const LIFETIME_BOUND { return m_inkOverflow; }
 
-    float top() const { return visualRectIgnoringBlockDirection().y(); }
-    float bottom() const { return visualRectIgnoringBlockDirection().maxY(); }
-    float left() const { return visualRectIgnoringBlockDirection().x(); }
-    float right() const { return visualRectIgnoringBlockDirection().maxX(); }
+    float top() const { return blockStartRelativePhysicalRect().y(); }
+    float bottom() const { return blockStartRelativePhysicalRect().maxY(); }
+    float left() const { return blockStartRelativePhysicalRect().x(); }
+    float right() const { return blockStartRelativePhysicalRect().maxX(); }
 
-    float width() const { return visualRectIgnoringBlockDirection().width(); }
-    float height() const { return visualRectIgnoringBlockDirection().height(); }
+    float width() const { return blockStartRelativePhysicalRect().width(); }
+    float height() const { return blockStartRelativePhysicalRect().height(); }
 
     void moveVertically(float offset);
     void moveHorizontally(float offset);
@@ -193,7 +193,7 @@ private:
     friend bool operator==(const Box&, const Box&);
 
     CheckedPtr<const Layout::Box> m_layoutBox;
-    FloatRect m_unflippedVisualRect;
+    FloatRect m_blockStartRelativePhysicalRect;
     FloatRect m_inkOverflow;
 
     unsigned m_lineIndex { 0 };
@@ -221,7 +221,7 @@ private:
 
 inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, bool isFirstFormattedLine, Expansion expansion, std::optional<Text> text, bool hasContent, bool isFullyTruncated, EnumSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_layoutBox(&layoutBox)
-    , m_unflippedVisualRect(physicalRect)
+    , m_blockStartRelativePhysicalRect(physicalRect)
     , m_inkOverflow(inkOverflow)
     , m_lineIndex(lineIndex)
     , m_horizontalExpansion(expansion.horizontalExpansion)
@@ -255,16 +255,16 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
 {
 }
 
-inline FloatRect Box::visibleRectIgnoringBlockDirection(const Box& box, const FloatRect& visibleLineRect)
+inline FloatRect Box::blockStartRelativeVisibleRect(const Box& box, const FloatRect& visibleLineRect)
 {
-    auto visualRectIgnoringBlockDirection = box.visualRectIgnoringBlockDirection();
-    auto visibleBoxLeft = std::max(visualRectIgnoringBlockDirection.x(), visibleLineRect.x());
-    visualRectIgnoringBlockDirection.setX(visibleBoxLeft);
+    auto blockStartRelativePhysicalRect = box.blockStartRelativePhysicalRect();
+    auto visibleBoxLeft = std::max(blockStartRelativePhysicalRect.x(), visibleLineRect.x());
+    blockStartRelativePhysicalRect.setX(visibleBoxLeft);
 
-    auto visibleBoxRight = std::min(visualRectIgnoringBlockDirection.maxX(), visibleLineRect.maxX());
-    visualRectIgnoringBlockDirection.shiftMaxXEdgeTo(visibleBoxRight);
+    auto visibleBoxRight = std::min(blockStartRelativePhysicalRect.maxX(), visibleLineRect.maxX());
+    blockStartRelativePhysicalRect.shiftMaxXEdgeTo(visibleBoxRight);
 
-    return visualRectIgnoringBlockDirection;
+    return blockStartRelativePhysicalRect;
 }
 
 inline void Box::setExpansion(Expansion expansion)
@@ -275,59 +275,59 @@ inline void Box::setExpansion(Expansion expansion)
 
 inline void Box::moveVertically(float offset)
 {
-    m_unflippedVisualRect.move({ { }, offset });
+    m_blockStartRelativePhysicalRect.move({ { }, offset });
     m_inkOverflow.move({ { }, offset });
 }
 
 inline void Box::moveHorizontally(float offset)
 {
-    m_unflippedVisualRect.move({ offset, { } });
+    m_blockStartRelativePhysicalRect.move({ offset, { } });
     m_inkOverflow.move({ offset, { } });
 }
 
 inline void Box::expandVertically(float delta)
 {
-    m_unflippedVisualRect.expand({ { }, delta });
+    m_blockStartRelativePhysicalRect.expand({ { }, delta });
     m_inkOverflow.expand({ { }, delta });
 }
 
 inline void Box::expandHorizontally(float delta)
 {
-    m_unflippedVisualRect.expand({ delta, { } });
+    m_blockStartRelativePhysicalRect.expand({ delta, { } });
     m_inkOverflow.expand({ delta, { } });
 }
 
 inline void Box::setLeft(float physicalLeft)
 {
     auto offset = physicalLeft - left();
-    m_unflippedVisualRect.setX(physicalLeft);
+    m_blockStartRelativePhysicalRect.setX(physicalLeft);
     m_inkOverflow.setX(m_inkOverflow.x() + offset);
 }
 
 inline void Box::setRight(float physicalRight)
 {
     auto offset = physicalRight - right();
-    m_unflippedVisualRect.shiftMaxXEdgeTo(physicalRight);
+    m_blockStartRelativePhysicalRect.shiftMaxXEdgeTo(physicalRight);
     m_inkOverflow.shiftMaxXEdgeTo(m_inkOverflow.maxX() + offset);
 }
 
 inline void Box::setTop(float physicalTop)
 {
     auto offset = physicalTop - top();
-    m_unflippedVisualRect.setY(physicalTop);
+    m_blockStartRelativePhysicalRect.setY(physicalTop);
     m_inkOverflow.setY(m_inkOverflow.y() + offset);
 }
 
 inline void Box::setBottom(float physicalBottom)
 {
     auto offset = physicalBottom - bottom();
-    m_unflippedVisualRect.shiftMaxYEdgeTo(physicalBottom);
+    m_blockStartRelativePhysicalRect.shiftMaxYEdgeTo(physicalBottom);
     m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.maxY() + offset);
 }
 
 inline void Box::setRect(const FloatRect& rect, const FloatRect& inkOverflow)
 {
-    m_unflippedVisualRect = rect;
+    m_blockStartRelativePhysicalRect = rect;
     m_inkOverflow = inkOverflow;
 }
 
@@ -366,7 +366,7 @@ inline bool operator==(const Box& a, const Box& b)
         && a.isFirstFormattedLine() == b.isFirstFormattedLine()
         && a.lineIndex() == b.lineIndex()
         && a.bidiLevel() == b.bidiLevel()
-        && a.visualRectIgnoringBlockDirection() == b.visualRectIgnoringBlockDirection()
+        && a.blockStartRelativePhysicalRect() == b.blockStartRelativePhysicalRect()
         && a.inkOverflow() == b.inkOverflow()
         && a.isFullyTruncated() == b.isFullyTruncated()
         && (!a.isTextOrSoftLineBreak() || (a.text() == b.text()));

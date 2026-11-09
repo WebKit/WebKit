@@ -252,7 +252,7 @@ void InlineContentBuilder::updateInkOverflowForText(std::span<InlineDisplay::Box
 
         CheckedRef textStyle = displayBox.style();
 
-        auto textRunRect = displayBox.visualRectIgnoringBlockDirection();
+        auto textRunRect = displayBox.blockStartRelativePhysicalRect();
         auto inkOverflow = textRunRect;
 
         auto letterSpacing = textStyle->fontCascade().letterSpacing();
@@ -298,7 +298,7 @@ void InlineContentBuilder::updateInkOverflowForInlineBoxes(std::span<InlineDispl
         // the display content, from its renderer), so it only contributes to its parents here.
         if (displayBox.isAtomicInlineBox() || displayBox.isGenericInlineLevelBox()) {
             CheckedRef style = displayBox.style();
-            auto inkOverflowRect = FloatRect { displayBox.visualRectIgnoringBlockDirection() };
+            auto inkOverflowRect = FloatRect { displayBox.blockStartRelativePhysicalRect() };
 
             if (style->hasOutlineInVisualOverflow()) {
                 CheckedRef layoutBox = displayBox.layoutBox();
@@ -319,7 +319,7 @@ void InlineContentBuilder::updateInkOverflowForInlineBoxes(std::span<InlineDispl
         if (displayBox.isNonRootInlineBox()) {
             CheckedRef layoutBox = displayBox.layoutBox();
             CheckedRef style = layoutBox->style();
-            auto inkOverflowRect = FloatRect { displayBox.visualRectIgnoringBlockDirection() };
+            auto inkOverflowRect = FloatRect { displayBox.blockStartRelativePhysicalRect() };
             // Fold the children in before the box's own decorations: an outline or a shadow goes around the
             // whole thing, not just around the box's own rect.
             if (!accumulatedInkOverflowRect.isEmpty())

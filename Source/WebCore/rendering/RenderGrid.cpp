@@ -2517,7 +2517,7 @@ LayoutRect RenderGrid::contentOverflowRect() const
 {
     // FIXME: Handle subgrids and grid lanes.
     if (!hasPotentiallyScrollableOverflow() || isGridLanes() || isSubgridRows() || isSubgridColumns())
-        return flippedContentBoxRect();
+        return blockStartRelativeContentBoxRect();
 
     // Get the grid rectangle.
     LayoutRect contentArea;

@@ -154,7 +154,7 @@ static void buildTextForShaping(ShapedContent& shapedContent, const InlineIterat
 
             shapedContent.text.append(text.renderedContent());
             if (text.isAtShapingBoundaryEnd()) {
-                shapedContent.visualLeft = displayBox.visualRectIgnoringBlockDirection().x();
+                shapedContent.visualLeft = displayBox.blockStartRelativePhysicalRect().x();
                 return;
             }
         }
@@ -178,7 +178,7 @@ static void buildTextForShaping(ShapedContent& shapedContent, const InlineIterat
                 return;
             auto& displayBox = shapingBoundaryIterator->displayBox();
             if (displayBox.isText())
-                shapedContent.textBoxVisualLeft += displayBox.visualRectIgnoringBlockDirection().width();
+                shapedContent.textBoxVisualLeft += displayBox.blockStartRelativePhysicalRect().width();
         }
     };
     computeVisualLeftForTextBox();
@@ -189,7 +189,7 @@ TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineCon
     , m_renderer(m_textBox.renderer())
     , m_document(m_renderer->document())
     , m_style(style)
-    , m_logicalRect(m_textBox.isHorizontal() ? m_textBox.visualRectIgnoringBlockDirection() : m_textBox.visualRectIgnoringBlockDirection().transposedRect())
+    , m_logicalRect(m_textBox.isHorizontal() ? m_textBox.blockStartRelativePhysicalRect() : m_textBox.blockStartRelativePhysicalRect().transposedRect())
     , m_paintTextRun(m_textBox.textRun())
     , m_paintInfo(paintInfo)
     , m_selectableRange(m_textBox.selectableRange())
@@ -312,7 +312,7 @@ void TextBoxPainter::paint()
             return content.lines.size() == 1 && content.boxes.size() == 2;
         }();
 
-        m_document->didPaintText(textBox().formattingContextRoot(), textBox().visualRectIgnoringBlockDirection(), isOnlyTextBoxForElement);
+        m_document->didPaintText(textBox().formattingContextRoot(), textBox().blockStartRelativePhysicalRect(), isOnlyTextBoxForElement);
     }
 
     if (glyphRotation) {
@@ -1700,7 +1700,7 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
             localPaintOffset.move(m_logicalRect.height(), m_logicalRect.width());
     }
 
-    auto visualRect = textBox().visualRectIgnoringBlockDirection();
+    auto visualRect = textBox().blockStartRelativePhysicalRect();
     textBox().formattingContextRoot().blockStartRelativeToPhysical(visualRect);
 
     auto boxOrigin = visualRect.location();

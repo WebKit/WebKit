@@ -779,7 +779,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             if (auto* layer = renderer.layer())
                 layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
-            renderer.setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
+            renderer.setLocation(Layout::toLayoutPoint(box.blockStartRelativePhysicalRect().location()));
         }
     }
 
@@ -1412,7 +1412,7 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderBoxModelObject& inlineBox)
 
     // FIXME: We should be able to flip the display boxes soon after the root block
     // is finished sizing in one go.
-    auto firstBoxRect = Layout::toLayoutRect(firstBox->visualRectIgnoringBlockDirection());
+    auto firstBoxRect = Layout::toLayoutRect(firstBox->blockStartRelativePhysicalRect());
     switch (rootLayoutBox().writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
@@ -1463,7 +1463,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderBoxModelObject& 
 
     Vector<FloatRect> result;
     m_inlineContent->traverseNonRootInlineBoxes(layoutBox, [&](auto& inlineBox) {
-        result.append(inlineBox.visualRectIgnoringBlockDirection());
+        result.append(inlineBox.blockStartRelativePhysicalRect());
     });
     return result;
 }
@@ -1635,7 +1635,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         }
 
         auto lineRect = visibleLineRectIncludingEllipsis(m_inlineContent->displayContent(), box.lineIndex());
-        auto boxRect = toPhysicalRect(protect(flow()), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, lineRect));
+        auto boxRect = toPhysicalRect(protect(flow()), InlineDisplay::Box::blockStartRelativeVisibleRect(box, lineRect));
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))

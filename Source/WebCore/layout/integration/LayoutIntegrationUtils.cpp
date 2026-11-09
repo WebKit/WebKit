@@ -239,7 +239,7 @@ std::pair<LayoutRect, LayoutRect> IntegrationUtils::toMarginAndBorderBoxVisualRe
         marginWidth = logicalGeometry.marginStart() + logicalGeometry.marginEnd();
         marginHeight = logicalGeometry.marginBefore() + logicalGeometry.marginAfter();
     } else {
-        // Invert verticalLogicalMargin() and convert to unflipped coords.
+        // Invert verticalLogicalMargin() and convert to block-start relative coords.
         marginLeft = writingMode.isLineInverted() ? logicalGeometry.marginAfter() : logicalGeometry.marginBefore();
         marginTop = writingMode.isInlineTopToBottom() ? logicalGeometry.marginStart() : logicalGeometry.marginEnd();
         marginWidth = logicalGeometry.marginBefore() + logicalGeometry.marginAfter();

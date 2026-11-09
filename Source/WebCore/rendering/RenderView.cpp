@@ -644,9 +644,9 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
 
     auto adjustedRects = rects;
     if (writingMode().isBlockFlipped()) {
-        // We have to flip by hand since the view's logical height has not been determined.  We
+        // We have to convert by hand since the view's logical height has not been determined. We
         // can use the viewport width and height.
-        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), writingMode().isHorizontal());
+        adjustedRects.blockStartRelativeToPhysical(LayoutSize(viewWidth(), viewHeight()), writingMode().isHorizontal());
     }
 
     if (state.hasPositionFixedDescendant)

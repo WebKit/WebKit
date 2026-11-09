@@ -431,7 +431,7 @@ PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInC
         if (!textBox)
             continue;
         lastBox = *textBox;
-        auto rect = textBox->visualRectIgnoringBlockDirection();
+        auto rect = textBox->blockStartRelativePhysicalRect();
         if (pointInContents.y() < rect.y())
             continue;
         if (pointInContents.y() > rect.maxY())
@@ -447,7 +447,7 @@ PositionWithAffinity RenderSVGText::positionForPoint(const LayoutPoint& pointInC
     if (!closestBox)
         return createPositionWithAffinity(0, Affinity::Downstream);
 
-    return const_cast<RenderObject&>(closestBox->renderer()).positionForPoint({ pointInContents.x(), LayoutUnit(closestBox->visualRectIgnoringBlockDirection().y()) }, source, fragment);
+    return const_cast<RenderObject&>(closestBox->renderer()).positionForPoint({ pointInContents.x(), LayoutUnit(closestBox->blockStartRelativePhysicalRect().y()) }, source, fragment);
 }
 
 bool RenderSVGText::requiresLayer() const

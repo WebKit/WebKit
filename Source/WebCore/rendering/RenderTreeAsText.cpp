@@ -475,7 +475,7 @@ static inline void writeTextRuns(TextStream& ts, auto& textRenderer)
     auto writeTextRun = [&] (auto& textRun) {
         ts << indent;
 
-        auto rect = textRun.visualRectIgnoringBlockDirection();
+        auto rect = textRun.blockStartRelativePhysicalRect();
         int x = rect.x();
         int y = rect.y();
         // FIXME: Use non-logical width. webkit.org/b/206809.

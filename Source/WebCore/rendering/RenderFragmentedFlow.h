@@ -154,7 +154,9 @@ public:
     LayoutRect mapFromFragmentedFlowToLocal(const RenderBox*, const LayoutRect&) const;
     LayoutRect mapFromLocalToFragmentedFlow(const RenderBox*, const LayoutRect&) const;
 
-    NODELETE void flipForWritingModeLocalCoordinates(LayoutRect&) const;
+    // Like RenderBox::physicalToBlockStartRelative(), but mirrors around 0 instead of a border box size. Per-fragment box overflow uses this space.
+    NODELETE void physicalToBlockStartRelativeIgnoringSize(LayoutRect&) const;
+    NODELETE void blockStartRelativeIgnoringSizeToPhysical(LayoutRect& rect) const { physicalToBlockStartRelativeIgnoringSize(rect); }
 
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }

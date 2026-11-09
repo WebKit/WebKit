@@ -117,7 +117,7 @@ public:
 
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
     LayoutPoint contentBoxLocation() const;
-    inline LayoutRect flippedContentBoxRect() const;
+    inline LayoutRect blockStartRelativeContentBoxRect() const;
 
     // This returns the content area of the box (excluding padding and border). The only difference with contentBoxRect is that computedCSSContentBoxRect
     // does include the intrinsic padding in the content box as this is what some callers expect (like getComputedStyle).
@@ -197,14 +197,14 @@ public:
         DoesNotContributeToScrollableOverflow = 1 << 4,
     };
 
-    // Overflow rects are in the coordinate space of the box. This means that they aren't purely physical directions.
+    // Overflow rects are in the coordinate space of the box, which is block-start relative (see blockStartRelativeToPhysical()).
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
-    // respectively are flipped when compared to their physical counterparts. For example minX is on the left in vertical-lr,
+    // respectively are reversed when compared to their physical counterparts. For example minX is on the left in vertical-lr,
     // but it is on the right in vertical-rl.
-    WEBCORE_EXPORT LayoutRect flippedPaddingBoxRect() const;
+    WEBCORE_EXPORT LayoutRect blockStartRelativePaddingBoxRect() const;
     inline const LayoutRect scrollableContentAreaOverflowRect() const;
     inline const LayoutRect scrollablePaddingAreaOverflowRect() const;
-    LayoutRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : flippedPaddingBoxRect(); }
+    LayoutRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : blockStartRelativePaddingBoxRect(); }
     bool hasLayoutOverflow() const;
     inline LayoutUnit logicalLeftLayoutOverflow() const;
     inline LayoutUnit logicalRightLayoutOverflow() const;
@@ -217,7 +217,7 @@ public:
 
     // RenderBox's basic allowedLayoutOverflow() accounts for the writing mode (only).
     virtual LayoutOptionalOutsets allowedLayoutOverflow() const;
-    LayoutRect clampToAllowedLayoutOverflow(const LayoutRect&, const LayoutRect& flippedPaddingBoxRect);
+    LayoutRect clampToAllowedLayoutOverflow(const LayoutRect&, const LayoutRect& blockStartRelativePaddingBoxRect);
     void addLayoutOverflow(const LayoutRect&);
     void addVisualOverflow(const LayoutRect&);
     void clearOverflow();

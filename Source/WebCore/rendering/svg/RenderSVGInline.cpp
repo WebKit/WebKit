@@ -156,7 +156,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
 
     FloatRect textBoundingBox = textAncestor->strokeBoundingBox();
     for (auto& box : InlineIterator::inlineBoxesFor(*this)) {
-        auto boxRect = box.visualRectIgnoringBlockDirection();
+        auto boxRect = box.blockStartRelativePhysicalRect();
         boxRect.moveBy(textBoundingBox.location());
         quads.append(localToAbsoluteQuad(boxRect, MapCoordinatesMode::UseTransforms, wasFixed));
     }
