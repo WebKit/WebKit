@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Check that the checked-out revision discovers the tests a known-good one did.
+
+A test that the finder silently stops discovering never shows up in a test run's
+results, so a run cannot notice it. `check` records what
+`run-webkit-tests --print-expectations --json` reports for this checkout, and
+`diff` lists what differs between two such snapshots.
+
+    check-test-discovery check --save base.json          # snapshot this revision
+    check-test-discovery check --diff-to base.json       # compare with it
+    check-test-discovery diff base.json other.json       # compare two snapshots
+
+Each difference is printed as one JSON object per line: the driver and test, the
+entry it had before ("previous", null for a new test) and after ("new", null for a
+lost test). Filter the output with jq, for example:
+
+    check-test-discovery diff base.json other.json | jq 'select(.previous == null)'
+
+To check every commit of a rebase, run a copy of this script kept outside the
+worktree, because the rebase changes the checkout:
+
+    git rebase -i -x '~/wk/check-test-discovery check --diff-to ~/wk/base.json' origin/main
+
+Exit status: 0 no differences, 1 some differences, 2 a tool error.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+
+SNAPSHOT_VERSION = 3
+
+
+class ToolError(Exception):
+    pass
+
+
+def git(root, *arguments):
+    try:
+        process = subprocess.run(("git",) + arguments, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, check=False)
+    except OSError:
+        return None
+    return process.stdout.strip() if process.returncode == 0 else None
+
+
+def discover(args):
+    root = git(os.getcwd(), "rev-parse", "--show-toplevel")
+    if not root:
+        raise ToolError("not inside a git checkout")
+    command = [os.path.join(root, "Tools", "Scripts", "run-webkit-tests"), "--print-expectations", "--json", "--skipped=ignore", "--release", "--no-build"]
+    if args.root:
+        command += ["--root", args.root]
+    command += args.rwt_arg
+    try:
+        process = subprocess.run(command, cwd=root, stdout=subprocess.PIPE, text=True, check=False)
+    except OSError as error:
+        raise ToolError(f"cannot run {command[0]}: {error}")
+    if process.returncode:
+        raise ToolError(f"run-webkit-tests exited with status {process.returncode}")
+    try:
+        drivers = json.loads(process.stdout)
+    except ValueError as error:
+        raise ToolError(f"run-webkit-tests did not print JSON: {error}")
+    return {
+        "version": SNAPSHOT_VERSION,
+        "revision": git(root, "rev-parse", "HEAD"),
+        "subject": git(root, "log", "-1", "--format=%s"),
+        "date": git(root, "log", "-1", "--format=%aI"),
+        "command": [os.path.relpath(command[0], root)] + command[1:],
+        "drivers": drivers,
+    }
+
+
+def write_snapshot(path, snapshot):
+    try:
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump(snapshot, handle, indent=1, sort_keys=True)
+            handle.write("\n")
+    except OSError as error:
+        raise ToolError(f"cannot write {path}: {error}")
+
+
+def read_snapshot(path):
+    try:
+        with open(path, encoding="utf-8") as handle:
+            snapshot = json.load(handle)
+    except (OSError, ValueError) as error:
+        raise ToolError(f"cannot read {path}: {error}")
+    if not isinstance(snapshot, dict) or snapshot.get("version") != SNAPSHOT_VERSION:
+        raise ToolError(f"{path} is not a version {SNAPSHOT_VERSION} snapshot")
+    return snapshot
+
+
+def flatten(snapshot):
+    """{(driver, test): entry} where entry says which section the test is in, and what it expects and matches.
+
+    Line numbers are left out: they move whenever a TestExpectations file is edited above the line."""
+    flat = {}
+    for driver, sections in snapshot["drivers"].items():
+        for where, tests in [("skip", sections["skip"])] + list(sections["run"].items()):
+            for test, entry in tests.items():
+                if (driver, test) in flat:
+                    raise ToolError(f"{test} is listed twice for {driver}")
+                flat[(driver, test)] = {
+                    "where": where,
+                    "expected": entry["expected"],
+                    "lines": [{key: value for key, value in line.items() if key != "line_number"} for line in entry["lines"]],
+                }
+    return flat
+
+
+def differences(base, current):
+    for key in sorted(base.keys() | current.keys()):
+        previous, new = base.get(key), current.get(key)
+        if previous != new:
+            yield {"driver": key[0], "test": key[1], "previous": previous, "new": new}
+
+
+def compare(base, current):
+    rows = list(differences(flatten(base), flatten(current)))
+    for row in rows:
+        print(json.dumps(row, sort_keys=True))
+    return 1 if rows else 0
+
+
+def run_check(args):
+    if not (args.save or args.diff_to):
+        raise ToolError("check needs --save, --diff-to or both")
+    base = read_snapshot(args.diff_to) if args.diff_to else None
+    snapshot = discover(args)
+    if args.save:
+        write_snapshot(args.save, snapshot)
+    if base is None:
+        print(f"{(snapshot['revision'] or 'unknown')[:12]}: {len(snapshot['drivers'])} driver(s) saved")
+        return 0
+    return compare(base, snapshot)
+
+
+def run_diff(args):
+    return compare(read_snapshot(args.baseline), read_snapshot(args.current))
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="Check that a revision discovers the tests a known-good one did.", epilog=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    commands = parser.add_subparsers(dest="command", required=True)
+
+    check = commands.add_parser("check", help="run discovery now; save it and/or compare it")
+    check.add_argument("--save", metavar="FILE", help="write the snapshot to FILE")
+    check.add_argument("--diff-to", metavar="FILE", help="compare with this snapshot")
+    check.add_argument("--root", metavar="DIR", default=os.environ.get("WEBKIT_TEST_ROOT"), help="build root for run-webkit-tests (default: $WEBKIT_TEST_ROOT)")
+    check.add_argument("--rwt-arg", action="append", default=[], metavar="ARG", help="extra option for run-webkit-tests (repeatable)")
+    check.set_defaults(run=run_check)
+
+    diff = commands.add_parser("diff", help="compare two saved snapshots")
+    diff.add_argument("baseline", metavar="A.json", help="the known-good snapshot")
+    diff.add_argument("current", metavar="B.json", help="the snapshot to check")
+    diff.set_defaults(run=run_diff)
+    return parser
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    try:
+        return args.run(args)
+    except ToolError as error:
+        print(f"check-test-discovery: error: {error}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())
