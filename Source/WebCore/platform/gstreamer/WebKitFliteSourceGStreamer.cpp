@@ -35,7 +35,6 @@ struct FliteLibrary {
     decltype(&flite_init) init;
     decltype(&flite_add_lang) addLang;
     decltype(&flite_text_to_wave) textToWave;
-    decltype(&cst_wave_resample) waveResample;
     decltype(&delete_voice) deleteVoice;
     decltype(&delete_wave) deleteWave;
     void (*usenglishInit)(cst_voice*);
@@ -65,14 +64,13 @@ static const FliteLibrary* fliteLibrary()
             reinterpret_cast<decltype(&flite_init)>(fliteSymbol("libflite.so.1", "flite_init")),
             reinterpret_cast<decltype(&flite_add_lang)>(fliteSymbol("libflite.so.1", "flite_add_lang")),
             reinterpret_cast<decltype(&flite_text_to_wave)>(fliteSymbol("libflite.so.1", "flite_text_to_wave")),
-            reinterpret_cast<decltype(&cst_wave_resample)>(fliteSymbol("libflite.so.1", "cst_wave_resample")),
             reinterpret_cast<decltype(&delete_voice)>(fliteSymbol("libflite.so.1", "delete_voice")),
             reinterpret_cast<decltype(&delete_wave)>(fliteSymbol("libflite.so.1", "delete_wave")),
             reinterpret_cast<void (*)(cst_voice*)>(fliteSymbol("libflite_usenglish.so.1", "usenglish_init")),
             reinterpret_cast<cst_lexicon* (*)()>(fliteSymbol("libflite_cmulex.so.1", "cmulex_init")),
             { }
         };
-        if (!loaded.init || !loaded.addLang || !loaded.textToWave || !loaded.waveResample || !loaded.deleteVoice || !loaded.deleteWave || !loaded.usenglishInit || !loaded.cmulexInit)
+        if (!loaded.init || !loaded.addLang || !loaded.textToWave || !loaded.deleteVoice || !loaded.deleteWave || !loaded.usenglishInit || !loaded.cmulexInit)
             return;
 
         static constexpr std::array<std::pair<const char*, const char*>, 4> voices { {
@@ -148,7 +146,7 @@ static GstStaticPadTemplate fliteSrcTemplate = GST_STATIC_PAD_TEMPLATE("src",
     GST_STATIC_CAPS("audio/x-raw, "
         "format = (string) " GST_AUDIO_NE(S16) ", "
         "layout = (string) interleaved, "
-        "rate = (int) 48000, " "channels = (int) [1, 8]")
+        "rate = " GST_AUDIO_RATE_RANGE ", " "channels = (int) [1, 8]")
 );
 
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitFliteSrc, webkit_flite_src, GST_TYPE_BASE_SRC,
@@ -218,7 +216,16 @@ static GstFlowReturn webkitFliteSrcCreate(GstBaseSrc* baseSource, guint64 offset
         members->didLoadUtterance = true;
 
         GUniquePtr<cst_wave> wave(fliteLibrary()->textToWave(priv->text.utf8().legacyCStringPointer(), priv->currentVoice));
-        fliteLibrary()->waveResample(wave.get(), priv->info.rate);
+        if (wave->sample_rate != priv->info.rate) {
+            GstAudioInfo info;
+            gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_S16, wave->sample_rate, priv->info.channels, nullptr);
+            GRefPtr<GstCaps> caps = adoptGRef(gst_audio_info_to_caps(&info));
+            if (!gst_base_src_set_caps(baseSource, caps.get())) {
+                GST_ERROR_OBJECT(src, "Failed to negotiate %d Hz", wave->sample_rate);
+                return GST_FLOW_NOT_NEGOTIATED;
+            }
+            ASSERT(priv->info.rate == wave->sample_rate);
+        }
 
         gsize bufferSize = priv->info.channels * sizeof(gint16) * wave->num_samples;
         GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_allocate(nullptr, bufferSize, nullptr));
