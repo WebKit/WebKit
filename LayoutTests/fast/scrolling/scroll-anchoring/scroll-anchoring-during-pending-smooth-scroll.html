@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+.spacer {
+    height: 4000px;
+    background: repeating-linear-gradient(white, silver 200px);
+}
+
+.changing {
+    height: 300px;
+    background-color: orange;
+}
+
+body.changed .changing {
+    height: 400px;
+}
+
+.anchor {
+    height: 300px;
+    background-color: limegreen;
+}
+
+.content {
+    height: 4000px;
+    background: repeating-linear-gradient(white, silver 200px);
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("Test that a scroll anchoring adjustment made before the next rendering update does not drop a pending smooth scroll");
+
+async function runTest()
+{
+    window.scrollTo(0, 4400);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // This grows content above the anchor, so the next rendering update makes a scroll anchoring adjustment.
+    document.body.classList.add("changed");
+
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
+    shouldBe("window.scrollY", "0");
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+<div class="spacer"></div>
+<div class="changing"></div>
+<div class="anchor"></div>
+<div class="content"></div>
+<div id="console"></div>
+</body>
+</html>
