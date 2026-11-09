@@ -435,11 +435,16 @@ bool HTMLImageElement::hasAutoSizes() const
 void HTMLImageElement::scheduleAutoSizesResolution()
 {
     ASSERT(hasAutoSizes());
+    // One pending task per image: layout can change the width every frame, faster than the tasks run.
+    if (m_hasPendingAutoSizesResolution)
+        return;
+    m_hasPendingAutoSizesResolution = true;
     // Defer source selection to avoid mutating the render tree during layout.
     protect(protect(document())->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+        protectedThis->m_hasPendingAutoSizesResolution = false;
         protectedThis->selectImageSource(RelevantMutation::No);
     });
 }
