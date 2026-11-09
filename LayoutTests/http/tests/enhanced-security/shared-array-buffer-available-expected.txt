@@ -1,0 +1,13 @@
+Tests that SharedArrayBuffer is available to a cross-origin isolated page in Enhanced Security.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS self.crossOriginIsolated is true
+PASS typeof SharedArrayBuffer is 'function'
+PASS new SharedArrayBuffer(8).byteLength is 8
+PASS new Int32Array(new SharedArrayBuffer(16)).length is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
