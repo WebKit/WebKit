@@ -67,7 +67,7 @@ inline bool IsoCellSet::remove(HeapCell* cell)
 inline bool IsoCellSet::contains(HeapCell* cell) const
 {
     if (cell->isPreciseAllocation())
-        return !m_lowerTierPreciseBits.get(cell->preciseAllocation().lowerTierPreciseIndex());
+        return m_lowerTierPreciseBits.get(cell->preciseAllocation().lowerTierPreciseIndex());
     AtomIndices atomIndices(cell);
     auto* bits = m_bits[atomIndices.blockIndex].get();
     if (bits)
