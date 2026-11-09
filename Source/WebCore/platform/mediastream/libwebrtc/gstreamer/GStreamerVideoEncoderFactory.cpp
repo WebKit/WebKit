@@ -56,22 +56,22 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerVideoEncoderFactory);
 
 class GStreamerEncodedImageBuffer : public webrtc::EncodedImageBufferInterface {
 public:
-    static webrtc::scoped_refptr<GStreamerEncodedImageBuffer> create(std::span<const uint8_t> data)
+    static webrtc::scoped_refptr<GStreamerEncodedImageBuffer> create(Vector<uint8_t>&& data)
     {
-        return webrtc::make_ref_counted<GStreamerEncodedImageBuffer>(data);
+        return webrtc::make_ref_counted<GStreamerEncodedImageBuffer>(WTF::move(data));
     }
 
-    const uint8_t* data() const override { return m_data.data(); }
-    size_t size() const override { return m_data.size_bytes(); }
+    const uint8_t* data() const override { return m_data.span().data(); }
+    size_t size() const override { return m_data.size(); }
 
 protected:
-    GStreamerEncodedImageBuffer(std::span<const uint8_t> data)
-        : m_data(data)
+    GStreamerEncodedImageBuffer(Vector<uint8_t>&& data)
+        : m_data(WTF::move(data))
     {
     }
 
 private:
-    std::span<const uint8_t> m_data;
+    Vector<uint8_t> m_data;
 };
 
 class LibWebRTCGStreamerVideoEncoder final : public webrtc::VideoEncoder {
@@ -121,7 +121,7 @@ public:
             return;
 
         webrtc::EncodedImage encodedImage;
-        encodedImage.SetEncodedData(GStreamerEncodedImageBuffer::create(frame.data.span()));
+        encodedImage.SetEncodedData(GStreamerEncodedImageBuffer::create(WTF::move(frame.data)));
 
         encodedImage._encodedWidth = m_size.width();
         encodedImage._encodedHeight = m_size.height();
