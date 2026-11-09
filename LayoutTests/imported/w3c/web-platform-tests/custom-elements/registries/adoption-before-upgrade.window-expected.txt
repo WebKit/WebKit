@@ -1,0 +1,7 @@
+
+PASS Upgrade after adoption with global registry
+FAIL Upgrade after adoption with global registry (customElements of target not accessed before) assert_equals: reported exceptions expected 1 but got 0
+PASS Upgrade after adoption with global registry (null registry target)
+PASS Upgrade after adoption with global registry (template contents target)
+PASS Upgrade after adoption with global registry (scoped registry target)
+

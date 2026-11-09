@@ -234,7 +234,6 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
     RefPtr registry = CustomElementRegistry::registryForElement(element);
-    ASSERT(registry);
     Ref document = downcast<Document>(*context);
     auto constructData = JSC::getConstructData(m_constructor.get());
     if (constructData.type == CallData::Type::None) {
@@ -261,7 +260,10 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     auto* constructor = m_constructor.get();
     RefPtr previousRegistry = document->activeCustomElementConstructorRegistry(constructor);
-    document->addToActiveCustomElementConstructorMap(constructor, *registry);
+    if (registry)
+        document->addToActiveCustomElementConstructorMap(constructor, *registry);
+    else
+        document->removeFromActiveCustomElementConstructorMap(constructor);
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
