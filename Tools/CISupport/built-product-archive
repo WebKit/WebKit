@@ -293,7 +293,7 @@ CMAKE_EXCLUDED_PATTERNS = (
     '.ninja_deps', '.ninja_log',
     'compile_commands.json', 'build-webkit-options.txt',
     # Any stray intermediate data not captured by the above.
-    '*.cmake' '*.o', '*.tmp'
+    '*.cmake', '*.o', '*.tmp'
 )
 
 
