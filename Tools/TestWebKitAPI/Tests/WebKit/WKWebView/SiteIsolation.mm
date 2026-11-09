@@ -12617,6 +12617,77 @@ TEST(SiteIsolation, ProvisionalSubframeProcessCrashCompletesParentLoad)
     EXPECT_EQ(terminationCount, 0u);
 }
 
+enum class CloseViewsTiming : uint8_t { OpenedViewCallback, OpenerViewCallback };
+static void runCloseViewsInsideTerminationCallbackTest(CloseViewsTiming closeViewsTiming)
+{
+    HTTPServer server({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>window.open('https://webkit.org/opened')</script>"_s } },
+        { "/opened"_s, { "<!DOCTYPE html>opened"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server);
+    __block RetainPtr<TestWKWebView> openerView = webView;
+    RetainPtr openerNavigationDelegate = navigationDelegate;
+    openerView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    __block RetainPtr<TestWKWebView> openedView;
+    __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedNavigationDelegate allowAnyTLSCertificate];
+        openedView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+        openedView.get().navigationDelegate = openedNavigationDelegate.get();
+        return openedView.get();
+    };
+    [openerView setUIDelegate:openerUIDelegate.get()];
+
+    [openerView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    while (!openedView)
+        Util::spinRunLoop();
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    // The shared process hosts both the opened window's main frame (notified first) and the opener's iframe.
+    pid_t sharedProcess = [openerView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_EQ(sharedProcess, [openedView mainFrame].info._processIdentifier);
+
+    __block unsigned openerTerminationCount = 0;
+    __block unsigned openedTerminationCount = 0;
+    auto closeViews = ^{
+        [openerView _close];
+        [openedView _close];
+    };
+    openerNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++openerTerminationCount;
+        if (closeViewsTiming == CloseViewsTiming::OpenerViewCallback)
+            closeViews();
+    };
+    openedNavigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++openedTerminationCount;
+        if (closeViewsTiming == CloseViewsTiming::OpenedViewCallback)
+            closeViews();
+    };
+
+    kill(sharedProcess, SIGKILL);
+    EXPECT_TRUE(Util::waitFor(^{
+        return openedTerminationCount > 0;
+    }));
+    Util::runFor(0.1_s);
+
+    EXPECT_EQ(openedTerminationCount, 1u);
+    EXPECT_EQ(openerTerminationCount, closeViewsTiming == CloseViewsTiming::OpenerViewCallback ? 1u : 0u);
+}
+
+TEST(SiteIsolation, CloseViewsInsideMainFrameTerminationCallback)
+{
+    runCloseViewsInsideTerminationCallbackTest(CloseViewsTiming::OpenedViewCallback);
+}
+
+TEST(SiteIsolation, CloseViewsInsideRemotePageTerminationCallback)
+{
+    runCloseViewsInsideTerminationCallbackTest(CloseViewsTiming::OpenerViewCallback);
+}
+
 TEST(SiteIsolation, SharedProcessShutsDownWhenLastRemoteFrameIsRemoved)
 {
     HTTPServer server({

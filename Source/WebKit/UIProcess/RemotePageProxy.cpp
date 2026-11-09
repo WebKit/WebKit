@@ -179,9 +179,7 @@ void RemotePageProxy::disconnect(ShouldSendCloseMessage shouldSendCloseMessage)
         m_isReceivingXRMessages = false;
     }
 #endif
-#if ASSERT_ENABLED
     m_disconnected = true;
-#endif
 }
 
 void RemotePageProxy::injectPageIntoNewProcess()

@@ -131,6 +131,7 @@ public:
 #endif
 
     void disconnect(ShouldSendCloseMessage = ShouldSendCloseMessage::Yes);
+    bool isDisconnected() const { return m_disconnected; }
 
 #if ENABLE(DEVICE_ORIENTATION)
     void clearDeviceOrientationAndMotionPermissions();
@@ -192,9 +193,7 @@ private:
 #if ENABLE(MODEL_PROCESS)
     bool m_hasModelElement { false };
 #endif
-#if ASSERT_ENABLED
     bool m_disconnected { false };
-#endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID m_contextIDForVisibilityPropagationInWebProcess { 0 };
 #endif
