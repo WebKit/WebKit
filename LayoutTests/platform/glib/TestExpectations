@@ -632,8 +632,6 @@ webkit.org/b/272225 media/media-source/media-managedmse-resume-after-stall.html 
 webkit.org/b/314179 media/media-source/media-managedmse-waiting-at-gap.html [ Failure ]
 
 webkit.org/b/307141 media/media-source/media-source-seek-and-play.html [ Failure Pass ]
-webkit.org/b/329007 media/media-source/media-source-loop-natural-playback.html [ Skip ]
-webkit.org/b/329007 media/media-source/media-source-loop-toggle-during-playback.html [ Skip ]
 
 webkit.org/b/315030 media/media-source/media-source-webm-seek-singlekeyframe.html [ Timeout Pass ]
 
@@ -5315,7 +5313,6 @@ webkit.org/b/329969 [ Debug ] ipc/back-forward-list-item-for-id-cross-page.html 
 webkit.org/b/329971 http/wpt/service-workers/service-worker-fetch-task-cancel-on-redirect.https.html [ Failure Pass ]
 
 webkit.org/b/328193 fast/forms/select/base/select-translated-option-content-repaint.html [ ImageOnlyFailure Pass ]
-webkit.org/b/330316 media/media-source/media-source-loop-multiple-times.html [ Crash Pass ]
 webkit.org/b/330318 webaudio/audioworklet-stops-on-document-stop.html [ Failure Pass ]
 
 webkit.org/b/330502 [ Debug ] media/video-source-error.html [ Failure Pass ]
