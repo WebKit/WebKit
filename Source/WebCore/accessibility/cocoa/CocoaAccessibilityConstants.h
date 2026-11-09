@@ -180,6 +180,13 @@
 
 #define NSAccessibilityPossibleFormValidationErrorNotification @"AXPossibleFormValidationError"
 
+// A client asks for AXSyncNotification with AXPostSyncNotification (or accessibilityPostSyncNotification: on iOS), passing a
+// handle of its choosing. The notification carries that handle back, and is posted only after every notification for work done
+// before the request, such as an edit the client just made.
+#define NSAccessibilityPostSyncNotificationParameterizedAttribute @"AXPostSyncNotification"
+#define NSAccessibilitySyncNotification @"AXSyncNotification"
+#define NSAccessibilitySyncNotificationHandleKey @"AXSyncNotificationHandle"
+
 // AXPossibleFormValidationError notification userInfo attributes.
 #define NSAccessibilityFormValidationUnannouncedTextKey @"AXFormValidationUnannouncedText"
 #define NSAccessibilityFormValidationErrorFieldCountKey @"AXFormValidationErrorFieldCount"

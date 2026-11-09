@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="field" type="text" aria-label="Field" value="....................">
+
+<script>
+var output = "Tests that a client can use AXSyncNotification to find the AXValueChanged for its own edit while other edits are in flight. Each edit replaces one character the way VoiceOver does when typing in braille, then asks for a sync notification. When that arrives, the edit's AXValueChanged must already have been received, and the field's value must include the edit.\n\n";
+
+const letters = "ABCDEFGHIJKLMNOPQRST";
+// Notifications for the field, in the order they were received.
+var receivedNotifications = [];
+var syncNotificationResolvers = new Map();
+var results = [];
+
+function textChangeValues(userInfo) {
+    return (userInfo?.AXTextChangeValues || []).map((change) => change.AXTextChangeValue);
+}
+
+function notificationCallback(element, notificationName, userInfo) {
+    if (notificationName === "AXValueChanged") {
+        if (element.domIdentifier === "field")
+            receivedNotifications.push({ name: notificationName, values: textChangeValues(userInfo) });
+    } else if (notificationName === "AXSyncNotification") {
+        const handle = userInfo?.AXSyncNotificationHandle;
+        receivedNotifications.push({ name: notificationName, handle });
+        syncNotificationResolvers.get(handle)?.();
+    }
+}
+
+async function edit(index) {
+    const letter = letters[index];
+    const handle = `edit-${index}`;
+    const syncNotificationReceived = new Promise((resolve) => syncNotificationResolvers.set(handle, resolve));
+
+    // Don't check what this returns. It only waits so long for the main thread, so under load it can report failure
+    // for an edit that still happens. Checking the value once the sync notification arrives is what's reliable.
+    axField.replaceTextInRange(letter, index, 1);
+    const requested = axField.postSyncNotification(handle);
+    await syncNotificationReceived;
+
+    const syncIndex = receivedNotifications.findIndex((notification) => notification.handle === handle);
+    const valueChangedIndex = receivedNotifications.findIndex((notification) => notification.name === "AXValueChanged" && notification.values.includes(letter));
+    results[index] = {
+        requested,
+        valueChangedBeforeSync: valueChangedIndex >= 0 && valueChangedIndex < syncIndex,
+        valueIncludesEdit: axField.stringValue[index] === letter,
+    };
+}
+
+function findField(element) {
+    if (!element)
+        return null;
+    if (element.domIdentifier === "field")
+        return element;
+    for (let index = 0; index < element.childrenCount; index++) {
+        const found = findField(element.childAtIndex(index));
+        if (found)
+            return found;
+    }
+    return null;
+}
+
+var axField;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForElements([(element) => element.domIdentifier === "field"]);
+        axField = findField(accessibilityController.rootElement);
+        output += expect("accessibilityController.addNotificationListener(notificationCallback)", "true");
+
+        document.getElementById("field").focus();
+
+        // Start the edits from separate timers, out of order, so their notifications interleave.
+        const edits = [];
+        await new Promise((resolve) => {
+            for (let index = 0; index < letters.length; index++) {
+                setTimeout(() => {
+                    edits.push(edit(index));
+                    if (edits.length === letters.length)
+                        resolve();
+                }, (index * 7) % 5);
+            }
+        });
+        await Promise.all(edits);
+
+        for (let index = 0; index < letters.length; index++) {
+            output += expect(`results[${index}].requested`, "true");
+            output += expect(`results[${index}].valueChangedBeforeSync`, "true");
+            output += expect(`results[${index}].valueIncludesEdit`, "true");
+        }
+        output += expect("axField.stringValue", `'${letters}'`);
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

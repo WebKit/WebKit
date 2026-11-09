@@ -3109,6 +3109,18 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     return false;
 }
 
+bool AccessibilityObject::postSyncNotification(const String& handle)
+{
+    if (!Accessibility::isValidSyncNotificationHandle(handle))
+        return false;
+
+    if (!axObjectCache())
+        return false;
+
+    AXObjectCache::requestSyncNotification(treeID(), objectID(), String { handle });
+    return true;
+}
+
 bool AccessibilityObject::insertText(const String& text)
 {
     AXTRACE(makeString("AccessibilityObject::insertText text = "_s, text));

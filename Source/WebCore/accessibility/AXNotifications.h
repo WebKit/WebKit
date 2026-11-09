@@ -99,6 +99,7 @@ namespace WebCore {
     macro(SelectedTextChanged) \
     macro(SetSizeChanged) \
     macro(StyleChanged) \
+    macro(SyncNotification) \
     macro(TextColorChanged) \
     macro(TextCompositionBegan) \
     macro(TextCompositionEnded) \

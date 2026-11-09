@@ -615,6 +615,9 @@ String AXNotificationWithData::debugDescription() const
         [&] (const std::monostate&) { },
         [&] (const AriaNotifyData& ariaData) {
             stream << ", data: " << ariaData.debugDescription();
+        },
+        [&](const SyncNotificationData& syncData) {
+            stream << ", data: " << syncData.debugDescription();
         }
 #if PLATFORM(COCOA)
         , [&] (const LiveRegionAnnouncementData& liveRegionData) {
@@ -2321,16 +2324,23 @@ void AXObjectCache::notificationPostTimerFired()
     // In tests, posting notifications has a tendency to immediately queue up other notifications, which can lead to unexpected behavior
     // when the notification list is cleared at the end. Instead copy this list at the start.
     auto notifications = std::exchange(m_notificationsToPost, { });
-    // The pending-LayoutComplete coalescing set tracks entries in m_notificationsToPost, so clear it in
-    // lockstep with draining that vector. Any LayoutComplete posted during this flush belongs to the next batch.
+    // The pending-LayoutComplete coalescing set tracks LayoutComplete entries in m_notificationsToPost, so clear it
+    // when draining that vector. Any LayoutComplete posted during this flush belongs to the next batch. (A sync
+    // notification also clears it; see enqueueSyncNotification().)
     m_pendingLayoutCompleteObjectIDs.clear();
 
     // Filter out the notifications that are not going to be posted to platform clients.
     Vector<std::pair<Ref<AccessibilityObject>, AXNotificationWithData>> notificationsToPost(ReserveCapacityTag { }, notifications.size());
     for (auto& note : notifications) {
         Ref noteObject = note.first;
-        if (noteObject->isDetached() || !noteObject->axObjectCache())
+        if (noteObject->isDetached() || !noteObject->axObjectCache()) {
+            // A client waits for its sync notification, so post it on the web area if its object went away.
+            if (note.second.notification == AXNotification::SyncNotification) {
+                if (RefPtr webArea = rootWebArea())
+                    notificationsToPost.append({ webArea.releaseNonNull(), WTF::move(note.second) });
+            }
             continue;
+        }
 
 #if ASSERT_ENABLED
         // Make sure none of the render views are in the process of being layed out.
@@ -2362,6 +2372,9 @@ void AXObjectCache::notificationPostTimerFired()
         WTF::switchOn(note.second.data,
             [&](const AriaNotifyData& data) {
                 postPlatformARIANotifyNotification(note.first, data);
+            },
+            [&](const SyncNotificationData& data) {
+                postPlatformSyncNotification(note.first, data);
             },
 #if PLATFORM(COCOA)
             [&](const LiveRegionAnnouncementData& data) {
@@ -2770,6 +2783,50 @@ void AXObjectCache::postPossibleFormValidationErrorNotification(AccessibilityObj
     enqueueNotificationToPost(Ref { object }, AXNotificationWithData(AXNotification::PossibleFormValidationError, PossibleFormValidationErrorData { WTF::move(unannouncedText), errorFieldCount, targetIsSubmitter, container }));
 }
 #endif
+
+void AXObjectCache::requestSyncNotification(std::optional<AXTreeID> treeID, AXID objectID, String&& handle)
+{
+    // Always go through the main thread's queue, even when already on the main thread, so this runs after any request
+    // queued ahead of it. AXPress, for instance, is performed asynchronously so a modal dialog can't block the client.
+    callOnMainThread([treeID, objectID, handle = WTF::move(handle).isolatedCopy()] {
+        CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID);
+        if (!cache)
+            return;
+        // The client waits for its sync notification, so post it on the web area if the object went away.
+        RefPtr object = cache->objectForID(objectID);
+        if (!object)
+            object = cache->rootWebArea();
+        if (object)
+            cache->postSyncNotification(*object, handle);
+    });
+}
+
+void AXObjectCache::postSyncNotification(AccessibilityObject& object, const String& handle)
+{
+    AXTRACE(makeString("AXObjectCache::postSyncNotification 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+
+    // Process deferred updates now, so the notifications they queue are posted ahead of this one.
+    performDeferredCacheUpdate(ForceLayout::Yes);
+
+    SyncNotificationData data { handle };
+#if PLATFORM(COCOA)
+    if (!m_passwordNotifications.isEmpty()) {
+        m_syncNotificationsAwaitingPasswordNotifications.append({ object, WTF::move(data), m_passwordNotifications.size() });
+        return;
+    }
+#endif
+    enqueueSyncNotification(object, WTF::move(data));
+}
+
+void AXObjectCache::enqueueSyncNotification(AccessibilityObject& object, SyncNotificationData&& data)
+{
+    // m_pendingLayoutCompleteObjectIDs only exists to avoid queuing a second LayoutComplete for an object that already has one
+    // queued. Clearing it can only lead to more LayoutComplete notifications, never fewer. That's what we want here: a
+    // LayoutComplete for a change made after this request must be posted after this sync notification, rather than being
+    // folded into one queued ahead of it.
+    m_pendingLayoutCompleteObjectIDs.clear();
+    enqueueNotificationToPost(Ref { object }, AXNotificationWithData(AXNotification::SyncNotification, WTF::move(data)));
+}
 
 void AXObjectCache::checkedStateChanged(Element& element)
 {
@@ -4231,6 +4288,13 @@ void AXObjectCache::passwordNotificationTimerFired()
         postPlatformNotification(notification.first, AXNotification::ValueChanged);
         break;
     };
+
+    for (auto& sync : m_syncNotificationsAwaitingPasswordNotifications)
+        --sync.passwordNotificationsAhead;
+    while (!m_syncNotificationsAwaitingPasswordNotifications.isEmpty() && !m_syncNotificationsAwaitingPasswordNotifications.first().passwordNotificationsAhead) {
+        auto sync = m_syncNotificationsAwaitingPasswordNotifications.takeFirst();
+        enqueueSyncNotification(sync.object, WTF::move(sync.data));
+    }
 }
 
 #endif // PLATFORM(COCOA)

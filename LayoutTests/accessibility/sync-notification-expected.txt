@@ -1,0 +1,18 @@
+Tests that AXSyncNotification is posted with the requested handle, after the notifications for changes made before it was requested.
+
+PASS: accessibilityController.addNotificationListener(notificationCallback) === true
+PASS: axField.postSyncNotification('') === false
+PASS: axField.postSyncNotification('x'.repeat(257)) === false
+PASS: received === true
+PASS: valueChangesBeforeSync('field', 'after-script-change') > 0 === true
+PASS: received === true
+PASS: document.getElementById('password').value === 'abc'
+PASS: valueChangesBeforeSync('password', 'after-password-edits') > 0 === true
+PASS: received === true
+PASS: valueChangesAfterSync('password', 'after-password-edits') === 0
+PASS: passwordValueAtSync === axPassword.stringValue
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

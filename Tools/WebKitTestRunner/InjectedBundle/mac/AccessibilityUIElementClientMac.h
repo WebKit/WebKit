@@ -72,6 +72,8 @@ public:
 
     // Actions.
     void showMenu() override;
+    bool replaceTextInRange(JSStringRef, int position, int length) override;
+    bool postSyncNotification(JSStringRef handle) override;
 
     // Helpers.
     RefPtr<OpaqueJSString> getStringAttribute(const char* attributeName) const;

@@ -6013,6 +6013,12 @@ std::optional<WKRetainPtr<WKTypeRef>> TestController::handleAXRequest(WKStringRe
         return WKRetainPtr<WKTypeRef> { };
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "AXReplaceRangeWithText"))
+        return handleAXReplaceRangeWithText(dictionaryValue(messageBody));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXPostSyncNotification"))
+        return handleAXPostSyncNotification(dictionaryValue(messageBody));
+
     if (WKStringIsEqualToUTF8CString(messageName, "AXAddNotificationListener"))
         return handleAXAddNotificationListener();
 
@@ -6370,6 +6376,40 @@ void TestController::handleAXPerformAction(WKDictionaryRef messageBody)
     AXUIElementPerformAction(element, actionNameCF.get());
 }
 
+// Replaces text the way VoiceOver does, e.g. when typing in braille.
+WKRetainPtr<WKTypeRef> TestController::handleAXReplaceRangeWithText(WKDictionaryRef messageBody)
+{
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(uint64Value(messageBody, "elementToken")));
+    if (!element)
+        return adoptWK(WKBooleanCreate(false));
+
+    CFRange range = CFRangeMake(static_cast<CFIndex>(uint64Value(messageBody, "location")), static_cast<CFIndex>(uint64Value(messageBody, "length")));
+    RetainPtr rangeValue = adoptCF(AXValueCreate(static_cast<AXValueType>(kAXValueCFRangeType), &range));
+    RetainPtr text = toWTFString(stringValue(messageBody, "text")).createCFString();
+    const void* keys[] = { CFSTR("AXReplacementRange"), CFSTR("AXReplacementText") };
+    const void* values[] = { rangeValue.get(), text.get() };
+    RetainPtr parameter = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    CFTypeRef result = nullptr;
+    AXError error = AXUIElementCopyParameterizedAttributeValue(element, CFSTR("AXReplaceRangeWithText"), parameter.get(), &result);
+    RetainPtr adoptedResult = adoptCF(result);
+    return adoptWK(WKBooleanCreate(error == kAXErrorSuccess));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXPostSyncNotification(WKDictionaryRef messageBody)
+{
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(uint64Value(messageBody, "elementToken")));
+    if (!element)
+        return adoptWK(WKBooleanCreate(false));
+
+    RetainPtr handle = toWTFString(stringValue(messageBody, "handle")).createCFString();
+    CFTypeRef result = nullptr;
+    AXError error = AXUIElementCopyParameterizedAttributeValue(element, CFSTR("AXPostSyncNotification"), handle.get(), &result);
+    RetainPtr adoptedResult = adoptCF(result);
+    bool accepted = error == kAXErrorSuccess && result && CFGetTypeID(result) == CFBooleanGetTypeID() && CFBooleanGetValue(static_cast<CFBooleanRef>(result));
+    return adoptWK(WKBooleanCreate(accepted));
+}
+
 // Observing the application element delivers these notifications for every element in that
 // process, which is how VoiceOver observes an app.
 static std::span<const CFStringRef> observedAXNotifications()
@@ -6380,6 +6420,7 @@ static std::span<const CFStringRef> observedAXNotifications()
         kAXSelectedTextChangedNotification,
         kAXSelectedChildrenChangedNotification,
         CFSTR("AXLoadComplete"),
+        CFSTR("AXSyncNotification"),
     };
     return notifications;
 }

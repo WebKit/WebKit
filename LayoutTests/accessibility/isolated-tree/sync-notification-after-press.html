@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="field" type="text" value="">
+<button id="button" onclick="document.getElementById('field').value = 'pressed'">Press</button>
+
+<script src="../resources/sync-notification-after-press.js"></script>
+</body>
+</html>

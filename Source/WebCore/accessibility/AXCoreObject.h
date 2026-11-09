@@ -1120,6 +1120,9 @@ public:
     virtual void setValueIgnoringResult(const String&) = 0;
     virtual bool replaceTextInRange(const String&, const CharacterRange&) = 0;
     virtual bool insertText(const String&) = 0;
+    // Asks for AXSyncNotification to be posted with the given handle once every notification for work done
+    // before this call has been posted. Returns false if the handle is not valid.
+    virtual bool postSyncNotification(const String& handle) = 0;
 
     virtual bool setValue(float) = 0;
     virtual void setValueIgnoringResult(float) = 0;
@@ -1944,6 +1947,14 @@ struct TimeoutSafeSemaphore : ThreadSafeRefCounted<TimeoutSafeSemaphore<T>> {
 };
 
 constexpr Seconds HitTestCacheExpiration = 500_ms;
+
+// Clients pass a handle to identify their sync notification. Keep it short, since it is sent back with the notification.
+constexpr unsigned maxSyncNotificationHandleLength = 256;
+inline bool isValidSyncNotificationHandle(const String& handle)
+{
+    return !handle.isEmpty() && handle.length() <= maxSyncNotificationHandleLength;
+}
+
 // Timeout constants for retrieveValueFromMainThreadWithTimeoutAndDefault.
 // These are grouped by operation type to make it easier to tune timeouts.
 constexpr Seconds HitTestTimeout = 15_ms;

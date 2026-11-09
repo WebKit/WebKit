@@ -1146,6 +1146,11 @@ bool AccessibilityUIElement::replaceTextInRange(OpaqueJSString*, int, int)
     return false;
 }
 
+bool AccessibilityUIElement::postSyncNotification(JSStringRef)
+{
+    return false;
+}
+
 void AccessibilityUIElement::resetSelectedTextMarkerRange()
 {
 }
