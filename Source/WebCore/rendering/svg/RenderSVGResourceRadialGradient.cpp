@@ -52,7 +52,7 @@ void RenderSVGResourceRadialGradient::collectGradientAttributesIfNeeded()
         m_attributes = WTF::move(attributes);
 }
 
-RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const Style::ComputedStyle& style)
+RefPtr<const Gradient> RenderSVGResourceRadialGradient::createGradient(const Style::ComputedStyle& style)
 {
     if (!m_attributes)
         return nullptr;

@@ -172,12 +172,12 @@ using WebCore::DashArray = FixedVector<float>
 
 [CustomHeader] class WebCore::DisplayList::FillRectWithGradient {
     WebCore::FloatRect m_rect;
-    Ref<WebCore::Gradient> m_gradient;
+    Ref<const WebCore::Gradient> m_gradient;
 }
 
 [CustomHeader] class WebCore::DisplayList::FillRectWithGradientAndSpaceTransform {
     WebCore::FloatRect m_rect;
-    Ref<WebCore::Gradient> m_gradient;
+    Ref<const WebCore::Gradient> m_gradient;
     WebCore::AffineTransform m_gradientSpaceTransform;
     WebCore::RequiresClipToRect m_requiresClipToRect;
 }
@@ -281,7 +281,7 @@ using WebCore::DashArray = FixedVector<float>
 
 header: <WebCore/SourceBrushLogicalGradient.h>
 [CustomHeader] struct WebCore::SourceBrushLogicalGradient {
-    Ref<WebCore::Gradient> gradient;
+    Ref<const WebCore::Gradient> gradient;
     WebCore::AffineTransform spaceTransform;
 }
 

@@ -1488,7 +1488,7 @@ Color RenderThemeIOS::checkboxRadioBackgroundColor(const Style::ComputedStyle& s
     return enabledBackgroundColor;
 }
 
-RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect& rect, OptionSet<ControlStyle::State> states)
+RefPtr<const Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect& rect, OptionSet<ControlStyle::State> states)
 {
     bool isPressed = states.contains(ControlStyle::State::Pressed);
     if (isPressed)

@@ -29,6 +29,10 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     std::unique_ptr<int> uniqueMember
 }
 
+[RefCounted=Const] class Namespace::ReturnConstRefClass {
+    double member
+}
+
 [UniqueRef] class Namespace::ReturnUniqueRefClass {
     int member
 }

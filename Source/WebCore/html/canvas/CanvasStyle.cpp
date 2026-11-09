@@ -49,6 +49,8 @@
 
 namespace WebCore {
 
+std::atomic<uint64_t> CanvasStyle::s_gradientPatternVersion { 0 };
+
 class CanvasStyleColorResolutionDelegate final : public CSS::PlatformColorResolutionDelegate {
 public:
     explicit CanvasStyleColorResolutionDelegate(Ref<HTMLCanvasElement> canvasElement)

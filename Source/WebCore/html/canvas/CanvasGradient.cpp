@@ -33,37 +33,34 @@
 
 namespace WebCore {
 
-CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1)
-    : m_gradient(Gradient::create(Gradient::LinearData { p0, p1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
-{
-}
-
-CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
-    : m_gradient(Gradient::create(Gradient::RadialData { p0, p1, r0, r1, 1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
-{
-}
-
-CanvasGradient::CanvasGradient(const FloatPoint& centerPoint, float angleInRadians)
-    : m_gradient(Gradient::create(Gradient::ConicData { centerPoint, angleInRadians }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
+CanvasGradient::CanvasGradient(Gradient::Data&& data)
+    : m_data(WTF::move(data))
 {
 }
 
 Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, const FloatPoint& p1)
 {
-    return adoptRef(*new CanvasGradient(p0, p1));
+    return adoptRef(*new CanvasGradient(Gradient::LinearData { p0, p1 }));
 }
 
 Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
 {
-    return adoptRef(*new CanvasGradient(p0, r0, p1, r1));
+    return adoptRef(*new CanvasGradient(Gradient::RadialData { p0, p1, r0, r1, 1 }));
 }
 
 Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& centerPoint, float angleInRadians)
 {
-    return adoptRef(*new CanvasGradient(centerPoint, angleInRadians));
+    return adoptRef(*new CanvasGradient(Gradient::ConicData { centerPoint, angleInRadians }));
 }
 
 CanvasGradient::~CanvasGradient() = default;
+
+Ref<const Gradient> CanvasGradient::createGradient() const
+{
+    Ref gradient = Gradient::create(WTF::move(m_data), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTF::move(m_stops));
+    m_gradient = gradient.ptr();
+    return gradient;
+}
 
 ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExecutionContext, double value, const String& colorString)
 {
@@ -74,7 +71,14 @@ ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExe
     if (!color.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    m_gradient->addColorStop({ static_cast<float>(value), WTF::move(color) });
+    // The snapshot may be in use, so copy the data and the stops back from it. Without a snapshot, no context
+    // holds a brush of this gradient that it could consider current.
+    if (RefPtr gradient = std::exchange(m_gradient, nullptr)) {
+        m_data = gradient->data();
+        m_stops = gradient->stops();
+        CanvasStyle::gradientOrPatternDidChange();
+    }
+    m_stops.addColorStop({ static_cast<float>(value), WTF::move(color) });
     return { };
 }
 

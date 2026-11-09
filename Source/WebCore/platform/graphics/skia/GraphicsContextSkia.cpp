@@ -667,7 +667,7 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fil
     drawSkiaRect(boundaries, paint);
 }
 
-void GraphicsContextSkia::fillRect(const FloatRect& boundaries, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect)
+void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect)
 {
     if (!makeGLContextCurrentIfNeeded())
         return;

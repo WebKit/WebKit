@@ -61,6 +61,7 @@
 #if ENABLE(OUTER_CONDITION)
 #include <Namespace/OuterClass.h>
 #endif
+#include <Namespace/ReturnConstRefClass.h>
 #include <Namespace/ReturnRefClass.h>
 #include <Namespace/ReturnUniqueRefClass.h>
 #if USE(APPKIT)
@@ -306,6 +307,32 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
             WTF::move(*functionCallmember1),
             WTF::move(*functionCallmember2),
             WTF::move(*uniqueMember)
+        )
+    };
+}
+
+void ArgumentCoder<Namespace::ReturnConstRefClass>::encode(Encoder& encoder, const Namespace::ReturnConstRefClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.member)>, double>);
+    struct ShouldBeSameSizeAsReturnConstRefClass : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::ReturnConstRefClass>, true> {
+        double member;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsReturnConstRefClass) == sizeof(Namespace::ReturnConstRefClass));
+    static_assert(IsIncreasing < 0
+        , offsetof(Namespace::ReturnConstRefClass, member)
+    >);
+
+    encoder << instance.member;
+}
+
+std::optional<Ref<const Namespace::ReturnConstRefClass>> ArgumentCoder<Namespace::ReturnConstRefClass>::decode(Decoder& decoder)
+{
+    auto member = decoder.decode<double>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        Namespace::ReturnConstRefClass::create(
+            WTF::move(*member)
         )
     };
 }

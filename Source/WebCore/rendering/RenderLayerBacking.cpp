@@ -4724,7 +4724,7 @@ struct PatternDescription {
     SRGBA<uint8_t> fillColor;
 };
 
-static RefPtr<Pattern> patternForDescription(PatternDescription description, FloatSize contentOffset, GraphicsContext& destContext)
+static RefPtr<const Pattern> patternForDescription(PatternDescription description, FloatSize contentOffset, GraphicsContext& destContext)
 {
     const FloatSize tileSize { 32, 18 };
 
@@ -4760,7 +4760,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
 #endif
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
-static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize contentOffset, GraphicsContext& destContext)
+static RefPtr<const Pattern> patternForTouchAction(TouchAction touchAction, FloatSize contentOffset, GraphicsContext& destContext)
 {
     auto toIndex = [](TouchAction touchAction) -> unsigned {
         switch (touchAction) {
@@ -4800,7 +4800,7 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(TOUCH_EVENT_REGIONS)
-static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
+static RefPtr<const Pattern> patternForEventListenerRegionType(EventListenerRegionType type, FloatSize contentOffset, GraphicsContext& destContext)
 {
     auto patternAndPhase = [&]() -> PatternDescription {
         switch (type) {

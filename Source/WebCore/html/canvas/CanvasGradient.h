@@ -27,10 +27,10 @@
 #pragma once
 
 #include "FloatPoint.h"
+#include "Gradient.h"
 
 namespace WebCore {
 
-class Gradient;
 class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
@@ -41,17 +41,25 @@ public:
     static Ref<CanvasGradient> create(const FloatPoint& centerPoint, float angleInRadians);
     ~CanvasGradient();
 
-    Gradient& gradient() { return m_gradient; }
-    const Gradient& gradient() const { return m_gradient; }
+    // An immutable snapshot of the gradient. The same snapshot is returned until addColorStop() is called.
+    Ref<const Gradient> gradient() const
+    {
+        if (m_gradient) [[likely]]
+            return *m_gradient;
+        return createGradient();
+    }
 
     ExceptionOr<void> addColorStop(ScriptExecutionContext&, double value, const String& color);
 
 private:
-    CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
-    CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
-    CanvasGradient(const FloatPoint& centerPoint, float angleInRadians);
+    explicit CanvasGradient(Gradient::Data&&);
 
-    const Ref<Gradient> m_gradient;
+    Ref<const Gradient> createGradient() const;
+
+    // While the snapshot exists, it holds the data and the stops, and these are moved from.
+    mutable Gradient::Data m_data;
+    mutable GradientColorStops m_stops;
+    mutable RefPtr<const Gradient> m_gradient;
 };
 
 } // namespace WebCore

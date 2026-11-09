@@ -2119,7 +2119,7 @@ class WebCore::TransformOperations {
     float angleRadians;
 };
 
-[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
+[RefCounted=Const, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
     Variant<WebCore::Gradient::LinearData, WebCore::Gradient::RadialData, WebCore::Gradient::ConicData> data();
     WebCore::ColorInterpolationMethod colorInterpolationMethod();
     WebCore::GradientSpreadMethod spreadMethod();

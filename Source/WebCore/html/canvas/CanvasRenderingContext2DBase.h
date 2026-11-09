@@ -328,6 +328,9 @@ public:
         String unparsedFillColor;
         CanvasStyle strokeStyle;
         CanvasStyle fillStyle;
+        // CanvasStyle::gradientPatternVersion() when the drawing context brushes were last set to match the fill and
+        // stroke styles, or InvalidStyleVersion after a style was set. The initial brushes match the initial styles.
+        uint64_t drawingContextStyleVersion { 0 };
         double lineWidth;
         double miterLimit;
         FloatSize shadowOffset;
@@ -395,7 +398,11 @@ protected:
     AtomString effectiveLanguage() const;
 
     GraphicsContext* drawingContext() const;
-    GraphicsContext* effectiveDrawingContext() const;
+    // The drawing context, or the context of the target switcher, with the fill and stroke brushes set to match the
+    // fill and stroke styles.
+    GraphicsContext* effectiveDrawingContext();
+    // The same context without setting the brushes, for uses that don't depend on them.
+    GraphicsContext* effectiveDrawingContextNoSync() const;
     AffineTransform baseTransform() const;
 
     enum class WillUpdateContentsOption {
@@ -467,6 +474,7 @@ private:
     void applyLineDash() const;
     void invalidateCachedContents(OptionSet<WillUpdateContentsOption>);
     void notifyCanvasEntireContentsWillChange(ShouldApplyPostProcessingToDirtyRect);
+    GraphicsContext* effectiveDrawingContextSync();
     // For CanvasFilterContextSwitcher, which sets a target switcher for one draw and then sets back the previous
     // one. The draw does not save() or restore(), so the target switcher is set without realizeSaves(), in the
     // state that unrealized saves share with the level below.
@@ -596,6 +604,15 @@ private:
     bool m_isHDR { false };
 #endif
 };
+
+// While the version matches, the brushes of the effective drawing context match the styles: a target switcher context
+// copies the brushes of the context it draws into, or draws into it.
+inline GraphicsContext* CanvasRenderingContext2DBase::effectiveDrawingContext()
+{
+    if (state().drawingContextStyleVersion == CanvasStyle::gradientPatternVersion()) [[likely]]
+        return effectiveDrawingContextNoSync();
+    return effectiveDrawingContextSync();
+}
 
 } // namespace WebCore
 

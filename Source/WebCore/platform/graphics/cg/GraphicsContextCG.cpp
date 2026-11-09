@@ -246,7 +246,7 @@ static FloatRect strokedPathBoundingBox(CGContextRef context, NOESCAPE const Inv
 
 #if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
 // Older transparency layers are bounded by the clip, so content outside of it would lose its shadow.
-void GraphicsContextCG::paintGradientInCGLayer(Gradient& gradient, const AffineTransform& gradientSpaceTransform, const FloatRect& contentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip)
+void GraphicsContextCG::paintGradientInCGLayer(const Gradient& gradient, const AffineTransform& gradientSpaceTransform, const FloatRect& contentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip)
 {
     FloatRect layerBounds = enclosingIntRect(contentBounds);
     if (layerBounds.isEmpty())
@@ -266,7 +266,7 @@ void GraphicsContextCG::paintGradientInCGLayer(Gradient& gradient, const AffineT
 }
 #endif
 
-void GraphicsContextCG::paintGradientInClip(Gradient& gradient, const AffineTransform& gradientSpaceTransform, NOESCAPE const Invocable<FloatRect()> auto& computeContentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip)
+void GraphicsContextCG::paintGradientInClip(const Gradient& gradient, const AffineTransform& gradientSpaceTransform, NOESCAPE const Invocable<FloatRect()> auto& computeContentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip)
 {
     bool hasDropShadow = this->hasDropShadow();
 #if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
@@ -986,7 +986,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, RequiresClipToRect requi
     CGContextFillRect(context, rect);
 }
 
-void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
+void GraphicsContextCG::fillRect(const FloatRect& rect, const Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     paintGradientInClip(gradient, gradientSpaceTransform, [&] {
         return rect;
