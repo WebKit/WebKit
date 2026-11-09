@@ -1,4 +1,4 @@
 
-FAIL serialization test X25519 promise_test: Unhandled rejection with value: object "TypeError: Unable to deserialize data."
-FAIL serialization test {name: X25519} promise_test: Unhandled rejection with value: object "TypeError: Unable to deserialize data."
+PASS serialization test X25519
+PASS serialization test {name: X25519}
 
