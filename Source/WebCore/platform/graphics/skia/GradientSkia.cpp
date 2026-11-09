@@ -40,10 +40,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-void Gradient::stopsChanged()
-{
-}
-
 inline SkScalar webCoreDoubleToSkScalar(double d)
 {
     return SkDoubleToScalar(std::isfinite(d) ? d : 0);
