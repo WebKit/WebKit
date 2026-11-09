@@ -6816,6 +6816,133 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
         return self.run_step()
 
 
+class TestCheckOutPullRequestBase(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = TestCheckOutPullRequest.ENV
+    BASE = 'aaebef7312238f3ad1d25e8894916a1aaea45ba1'
+
+    def setUp(self):
+        self.longMessage = True
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configure_step(self, labels=None):
+        self.setup_step(CheckOutPullRequestBase())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github_labels', [GitHub.NO_REBASE_LABEL] if labels is None else labels)
+        self.setProperty('got_revision', '59dab0396721db221c264aad3c0cea37ef0d297b')
+
+    def expect_fetch_commands(self):
+        return [
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git remote add Contributor https://github.com/Contributor/WebKit.git || true'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'remote', 'set-url', 'Contributor', 'https://github.com/Contributor/WebKit.git'],
+            ).exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'fetch', 'Contributor', 'eng/pull-request-branch'],
+            ).exit(0),
+        ]
+
+    def test_success(self):
+        self.configure_step()
+        self.expectRemoteCommands(
+            *self.expect_fetch_commands(),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'merge-base', 'HEAD', 'remotes/Contributor/eng/pull-request-branch'],
+            ).stdout(f'{self.BASE}\n').exit(0),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'checkout', '--progress', self.BASE],
+            ).exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Checked out aaebef731223, the base of PR 1234')
+        self.expect_property('got_revision', self.BASE)
+        return self.run_step()
+
+    def test_merge_base_failure(self):
+        self.configure_step()
+        self.expectRemoteCommands(
+            *self.expect_fetch_commands(),
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'merge-base', 'HEAD', 'remotes/Contributor/eng/pull-request-branch'],
+            ).exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to checkout base of PR 1234')
+        self.expect_property('got_revision', '59dab0396721db221c264aad3c0cea37ef0d297b')
+        return self.run_step()
+
+    def test_fetch_failure(self):
+        self.configure_step()
+        self.expectRemoteCommands(
+            *self.expect_fetch_commands()[:3],
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                log_environ=False,
+                env=self.ENV,
+                command=['git', 'fetch', 'Contributor', 'eng/pull-request-branch'],
+            ).exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to checkout base of PR 1234')
+        return self.run_step()
+
+    def test_skipped_without_label(self):
+        self.configure_step(labels=[GitHub.NO_FAILURE_LIMITS_LABEL])
+        self.expect_hidden(True)
+        self.expect_outcome(result=SKIPPED, state_string='Skipped checking out base of pull request')
+        return self.run_step()
+
+    def test_skipped_on_triggered_build(self):
+        self.configure_step()
+        self.setProperty('ews_revision', self.BASE)
+        self.expect_hidden(True)
+        self.expect_outcome(result=SKIPPED, state_string='Skipped checking out base of pull request')
+        return self.run_step()
+
+    def test_skipped_without_pull_request(self):
+        self.setup_step(CheckOutPullRequestBase())
+        self.setProperty('github_labels', [GitHub.NO_REBASE_LABEL])
+        self.expect_hidden(True)
+        self.expect_outcome(result=SKIPPED, state_string='Skipped checking out base of pull request')
+        return self.run_step()
+
+
 class TestRevertAppliedChanges(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -9722,6 +9849,40 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.run_step()
         return rc
 
+    def test_merge_queue_no_rebase_label(self):
+        self.setup_step(ValidateChange(verifyMergeQueue=True))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request, labels=['merge-queue', 'ews-no-rebase'])
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.expect_outcome(result=FAILURE, state_string="PR 1234 has 'ews-no-rebase' label")
+        self.expect_property(
+            'comment_text',
+            'This PR has the `ews-no-rebase` label, so EWS did not rebase it onto the tip of `main`. '
+            'Please remove the label and make sure EWS re-runs before landing.'
+            '\n\nRejecting 7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c from merge queue.',
+        )
+        return self.run_step()
+
+    def test_unsafe_merge_queue_no_rebase_label(self):
+        self.setup_step(ValidateChange(verifyMergeQueue=True))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request, labels=['unsafe-merge-queue', 'ews-no-rebase'])
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.expect_outcome(result=FAILURE, state_string="PR 1234 has 'ews-no-rebase' label")
+        return self.run_step()
+
+    def test_no_rebase_label_outside_merge_queue(self):
+        self.setup_step(ValidateChange())
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request, labels=['ews-no-rebase'])
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.expect_outcome(result=SUCCESS, state_string='Validated change')
+        self.expect_property('github_labels', ['ews-no-rebase'])
+        return self.run_step()
+
     def test_merge_queue_blocked(self):
         self.setup_step(ValidateChange(verifyMergeQueue=True))
         ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request, labels=['merge-queue', 'merging-blocked'])
@@ -10089,6 +10250,31 @@ class TestCheckStatusOfPR(BuildStepMixinAdditions, unittest.TestCase):
         )
 
         self.expect_outcome(result=SUCCESS, state_string='PR 12345 marked safe for merge-queue')
+        return self.run_step()
+
+    def test_no_rebase_label(self):
+        self.setup_step(CheckStatusOfPR())
+        self.setProperty('github.number', 12345)
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('project', 'WebKit/WebKit')
+        self.setProperty('list_of_prs', [])
+        self.setProperty('passed_status_check', [])
+        self.setProperty('unsafe_passed_status_check', [])
+        self.setProperty('failed_status_check', [])
+        self.setProperty('pending_prs', [])
+
+        CheckStatusOfPR.query_graph_ql = lambda self, query: {
+            'data': {'repository': {'pullRequest': {
+                'labels': {'nodes': [{'name': 'safe-merge-queue'}, {'name': 'ews-no-rebase'}]},
+                'commits': {'edges': [{'node': {'commit': {'oid': '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c'}}}]},
+            }}}
+        }
+        self.addCleanup(setattr, TwistedAdditions, 'request', TwistedAdditions.request)
+        TwistedAdditions.request = lambda *args, **kwargs: self.fail('EWS status should not be checked')
+
+        self.expect_outcome(result=FAILURE, state_string='PR 12345 unsafe for merge-queue')
+        self.expect_property('failed_status_check', [12345])
+        self.expect_property('passed_status_check', [])
         return self.run_step()
 
 

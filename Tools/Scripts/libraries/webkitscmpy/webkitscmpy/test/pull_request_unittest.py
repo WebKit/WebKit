@@ -569,6 +569,121 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_update_removes_no_rebase_label(self):
+        with mocks.remote.GitHub(labels={
+            'ews-no-rebase': dict(color='c005E5', description='Applied to have EWS test a change without rebasing it'),
+        }) as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            github_tracker = github.Tracker('https://{}'.format(remote.remote))
+            github_tracker.issue(1).set_labels(['ews-no-rebase'])
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                ))
+
+            self.assertEqual(github_tracker.issue(1).labels, [])
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertIn("Removing 'ews-no-rebase' from PR #1...", captured.root.log.getvalue().splitlines())
+
+    def test_github_draft_disable_rebase_inside_ews(self):
+        with mocks.remote.GitHub(labels={
+            'ews-no-rebase': dict(color='c005E5', description='Applied to have EWS test a change without rebasing it'),
+        }) as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch', '-v', '--no-history', '--draft', '--disable-rebase-inside-ews'),
+                    path=self.path,
+                ))
+
+            github_tracker = github.Tracker('https://{}'.format(remote.remote))
+            self.assertEqual(github_tracker.issue(1).labels, ['ews-no-rebase'])
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertIn("Adding 'ews-no-rebase' to PR #1...", captured.root.log.getvalue().splitlines())
+
+    def test_github_update_draft_disable_rebase_inside_ews(self):
+        with mocks.remote.GitHub(labels={
+            'ews-no-rebase': dict(color='c005E5', description='Applied to have EWS test a change without rebasing it'),
+        }) as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch', '--draft'),
+                    path=self.path,
+                ))
+
+            github_tracker = github.Tracker('https://{}'.format(remote.remote))
+            self.assertEqual(github_tracker.issue(1).labels, [])
+
+            with OutputCapture(level=logging.INFO) as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-v', '--no-history', '--disable-rebase-inside-ews'),
+                    path=self.path,
+                ))
+
+            self.assertEqual(github_tracker.issue(1).labels, ['ews-no-rebase'])
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertIn("Adding 'ews-no-rebase' to PR #1...", captured.root.log.getvalue().splitlines())
+
+    def test_github_update_disable_rebase_inside_ews_not_draft(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            with OutputCapture() as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(1, program.main(
+                    args=('pull-request', '--no-history', '--disable-rebase-inside-ews'),
+                    path=self.path,
+                ))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            "'--disable-rebase-inside-ews' can only be used with draft pull requests, pass '--draft' when creating one\n",
+        )
+
+    def test_disable_rebase_inside_ews_without_ews(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), OutputCapture() as captured:
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch', '--draft', '--disable-rebase-inside-ews', '--no-ews'),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stderr.getvalue(), "'--disable-rebase-inside-ews' cannot be used with '--no-ews'\n")
+
     def test_github_update_no_update_title(self):
         """Test that --no-update-title preserves the original PR title"""
         with mocks.remote.GitHub() as remote, mocks.local.Git(

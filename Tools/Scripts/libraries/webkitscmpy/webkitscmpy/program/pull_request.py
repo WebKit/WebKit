@@ -43,6 +43,7 @@ class PullRequest(Command):
     help = 'Push the current checkout state as a pull-request'
     BLOCKED_LABEL = 'merging-blocked'
     SKIP_EWS_LABEL = 'skip-ews'
+    NO_REBASE_LABEL = 'ews-no-rebase'
     MERGE_LABELS = ['merge-queue']
     UNSAFE_MERGE_LABELS = ['unsafe-merge-queue']
 
@@ -132,6 +133,11 @@ class PullRequest(Command):
             dest='ews', default=True,
             help='Enable or disable EWS on the PR',
             action=arguments.NoAction,
+        )
+        parser.add_argument(
+            '--disable-rebase-inside-ews',
+            dest='disable_rebase_inside_ews', action='store_true', default=False,
+            help='Have EWS test a draft pull request on the commit it branched from, instead of rebasing it onto the tip of its base branch',
         )
         parser.add_argument(
             '--update-title', '--no-update-title',
@@ -242,6 +248,9 @@ class PullRequest(Command):
             ).get(repository.config()['webkitscmpy.history'])
         if args.history and repository.config()['webkitscmpy.history'] == 'never':
             sys.stderr.write('History retention was requested, but repository configuration forbids it\n')
+            return False
+        if args.disable_rebase_inside_ews and not args.ews:
+            sys.stderr.write("'--disable-rebase-inside-ews' cannot be used with '--no-ews'\n")
             return False
         return True
 
@@ -684,6 +693,10 @@ class PullRequest(Command):
                         sys.stderr.write("Failed to add '{}' remote\n".format(target))
                         return 1
 
+        if args.disable_rebase_inside_ews and not (args.draft or (existing_pr and existing_pr.draft)):
+            sys.stderr.write("'--disable-rebase-inside-ews' can only be used with draft pull requests, pass '--draft' when creating one\n")
+            return 1
+
         # Remove any active labels
         if existing_pr and existing_pr._metadata and existing_pr._metadata.get('issue'):
             log.info("Checking PR labels for active labels...")
@@ -692,6 +705,10 @@ class PullRequest(Command):
             did_change = False
             labels_to_add = []
             labels_to_remove = cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS
+            if args.disable_rebase_inside_ews:
+                labels_to_add.append(cls.NO_REBASE_LABEL)
+            else:
+                labels_to_remove.append(cls.NO_REBASE_LABEL)
             if unblock:
                 labels_to_remove.append(cls.BLOCKED_LABEL)
             if args.ews:
@@ -815,6 +832,10 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to create pull-request for '{}'\n".format(repository.branch))
                 return 1
             print("Created '{}'!".format(pr))
+            if args.disable_rebase_inside_ews and pr._metadata and pr._metadata.get('issue'):
+                log.info(f"Adding '{cls.NO_REBASE_LABEL}' to PR #{pr.number}...")
+                pr_issue = pr._metadata['issue']
+                pr_issue.set_labels(pr_issue.labels + [cls.NO_REBASE_LABEL])
             if cls.is_revert_commit(commits[0]) and update_issue:
                 cls.add_comment_to_reverted_commit_bug_tracker(repository, args, pr, commits[0])
 

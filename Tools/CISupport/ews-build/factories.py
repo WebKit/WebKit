@@ -55,6 +55,7 @@ class Factory(factory.BuildFactory):
         # CheckOutSource step pulls the latest revision, since we use alwaysUseLatest=True.
         # Therefore we add CheckOutSpecificRevision step to checkout required revision.
         self.addStep(CheckOutSpecificRevision())
+        self.addStep(CheckOutPullRequestBase())
         if self.findModifiedLayoutTests:
             self.addStep(GetTestExpectationsBaseline())
         self.addStep(ShowIdentifier())
@@ -79,6 +80,7 @@ class StyleFactory(factory.BuildFactory):
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(UpdateWorkingDirectory())
+        self.addStep(CheckOutPullRequestBase())
         self.addStep(ShowIdentifier())
         self.addStep(ShowWebKitVersion())
         self.addStep(CheckOutPullRequest())
@@ -101,6 +103,7 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(SetCredentialHelper())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
+        self.addStep(CheckOutPullRequestBase())
         self.addStep(ShowIdentifier())
         self.addStep(ShowWebKitVersion())
         self.addStep(CheckOutPullRequest())
