@@ -76,8 +76,8 @@ private:
     void willCommitLayerAndScrollingTrees() override WTF_ACQUIRES_LOCK(m_eventDispatcher->m_animationLock);
     void didCommitLayerAndScrollingTrees() override WTF_RELEASES_LOCK(m_eventDispatcher->m_animationLock);
 
-    void animationsWereAddedToNode(RemoteLayerTreeNode&) override;
-    void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+    void animationsWereAddedToNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&) override;
+    void animationsWereRemovedFromNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&) override;
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime) override;
     void removeTimelines(WebCore::ProcessIdentifier) override;
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const override;

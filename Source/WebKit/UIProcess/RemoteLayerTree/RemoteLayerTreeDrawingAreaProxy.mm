@@ -743,8 +743,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
 void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 {
-    lazyInitialize(m_debugIndicatorLayerTreeHost, makeUnique<RemoteLayerTreeHost>(*this));
-    m_debugIndicatorLayerTreeHost->setIsDebugLayerTreeHost(true);
+    lazyInitialize(m_debugIndicatorLayerTreeHost, makeUnique<RemoteLayerTreeHost>(*this, RemoteLayerTreeHost::Role::DebugIndicator));
 
     lazyInitialize(m_tileMapHostLayer, adoptNS([[CALayer alloc] init]));
     [m_tileMapHostLayer setName:@"Tile map host"];
@@ -1023,19 +1022,19 @@ void RemoteLayerTreeDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange(
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
-void RemoteLayerTreeDrawingAreaProxy::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+void RemoteLayerTreeDrawingAreaProxy::animationsWereAddedToNode(const RemoteLayerTreeHost& host, RemoteLayerTreeNode& node)
 {
     if (RefPtr page = this->page()) {
         if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-            scrollingCoordinatorProxy->animationsWereAddedToNode(node);
+            scrollingCoordinatorProxy->animationsWereAddedToNode(host, node);
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+void RemoteLayerTreeDrawingAreaProxy::animationsWereRemovedFromNode(const RemoteLayerTreeHost& host, RemoteLayerTreeNode& node)
 {
     if (RefPtr page = this->page()) {
         if (RefPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
-            scrollingCoordinatorProxy->animationsWereRemovedFromNode(node);
+            scrollingCoordinatorProxy->animationsWereRemovedFromNode(host, node);
     }
 }
 

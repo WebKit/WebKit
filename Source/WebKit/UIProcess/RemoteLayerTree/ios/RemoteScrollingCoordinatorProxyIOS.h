@@ -45,6 +45,7 @@ namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxyIOS;
 class RemoteLayerTreeNode;
+class RemoteLayerTreeHost;
 
 class RemoteScrollingCoordinatorProxyIOS final : public RemoteScrollingCoordinatorProxy {
     WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyIOS);
@@ -76,8 +77,8 @@ public:
 #endif
 
 #if ENABLE(THREADED_ANIMATIONS)
-    void animationsWereAddedToNode(RemoteLayerTreeNode&) override WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
-    void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+    void animationsWereAddedToNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&) override WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
+    void animationsWereRemovedFromNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&) override;
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime) override;
     void removeTimelines(WebCore::ProcessIdentifier) override;
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const override;

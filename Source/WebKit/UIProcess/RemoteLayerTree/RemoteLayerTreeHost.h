@@ -64,8 +64,14 @@ class RemoteAnimationTimeline;
 class RemoteLayerTreeHost {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeHost);
 public:
-    explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
+    // Secondary hosts build another tree from the same transactions, without page-wide side effects.
+    enum class Role : uint8_t { Primary, DebugIndicator };
+
+    explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&, Role = Role::Primary);
     ~RemoteLayerTreeHost();
+
+    Role role() const { return m_role; }
+    bool isPrimary() const { return m_role == Role::Primary; }
 
     RemoteLayerTreeNode* nodeForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RefPtr<RemoteLayerTreeNode> rootNode() const { return m_rootNode.get(); }
@@ -87,9 +93,6 @@ public:
     bool completeDisplayOnlyImage(RemoteSnapshotIdentifier, ImageBufferBackendHandle&&);
     void releaseDisplayOnlyImage(RemoteSnapshotIdentifier);
     void removeDisplayOnlyImagesForProcess(WebCore::ProcessIdentifier);
-
-    void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
-    bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
     typedef HashMap<WebCore::PlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
     LayerAnimationDelegateMap& animationDelegates() LIFETIME_BOUND { return m_animationDelegates; }
@@ -158,7 +161,7 @@ private:
     Vector<RetainPtr<UIScrollView>> m_scrollViewsHidingInteractionRegions;
     bool m_mainScrollViewHidesInteractionRegions { false };
 #endif
-    bool m_isDebugLayerTreeHost { false };
+    const Role m_role;
 };
 
 } // namespace WebKit

@@ -100,7 +100,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
 
     case PlatformCALayer::LayerType::LayerTypeCustom:
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer: {
-        if (m_isDebugLayerTreeHost)
+        if (m_role == Role::DebugIndicator)
             return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
 #if HAVE(AVKIT)
@@ -142,7 +142,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
         return makeWithView(adoptNS([[WKShapeView alloc] init]));
 
     case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
-        if (!m_isDebugLayerTreeHost)
+        if (m_role != Role::DebugIndicator)
             return makeWithView(adoptNS([[WKChildScrollView alloc] init]));
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
         return makeWithView(adoptNS([[UIView alloc] init]));

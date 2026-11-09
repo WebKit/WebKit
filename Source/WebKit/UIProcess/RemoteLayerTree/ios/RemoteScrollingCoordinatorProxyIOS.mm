@@ -802,8 +802,12 @@ RemoteLayerTreeDrawingAreaProxyIOS& RemoteScrollingCoordinatorProxyIOS::drawingA
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
-void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(const RemoteLayerTreeHost& host, RemoteLayerTreeNode& node)
 {
+    // FIXME: Animate the nodes of secondary trees too. updateAnimationStacks() only looks them up in the primary tree.
+    if (!host.isPrimary())
+        return;
+
     m_animatedNodeLayerIDs.add(node.layerID());
     if (m_monotonicTimelineRegistry && !m_monotonicTimelineRegistry->isEmpty())
         protect(drawingAreaIOS())->scheduleDisplayRefreshCallbacksForMonotonicAnimations();
@@ -814,8 +818,11 @@ void RemoteScrollingCoordinatorProxyIOS::progressBasedTimelinesWereUpdatedForNod
     updateAnimationStacksDependentOnScrollingNode(node);
 }
 
-void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(const RemoteLayerTreeHost& host, RemoteLayerTreeNode& node)
 {
+    if (!host.isPrimary())
+        return;
+
     m_animatedNodeLayerIDs.remove(node.layerID());
     if (m_animatedNodeLayerIDs.isEmpty() || !m_monotonicTimelineRegistry || m_monotonicTimelineRegistry->isEmpty())
         protect(drawingAreaIOS())->pauseDisplayRefreshCallbacksForMonotonicAnimations();

@@ -78,8 +78,9 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeHost);
 
-RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawingArea)
+RemoteLayerTreeHost::RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy& drawingArea, Role role)
     : m_drawingArea(drawingArea)
+    , m_role(role)
 {
 }
 
@@ -128,7 +129,7 @@ void RemoteLayerTreeHost::updateScrollViewsHidingInteractionRegions()
     m_scrollViewsHidingInteractionRegions.clear();
 
     RefPtr page = drawingArea().page();
-    if (m_isDebugLayerTreeHost || !page)
+    if (!isPrimary() || !page)
         return;
 
     RetainPtr mainScrollView = [page->cocoaView() scrollView];
@@ -267,7 +268,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
 #if ENABLE(THREADED_ANIMATIONS)
     // FIXME: with site isolation, a single process can send multiple transactions.
     // https://bugs.webkit.org/show_bug.cgi?id=301261
-    if (threadedAnimationsEnabled() && !transaction.timelinesUpdate().isEmpty())
+    if (isPrimary() && threadedAnimationsEnabled() && !transaction.timelinesUpdate().isEmpty())
         protect(*m_drawingArea)->updateTimelinesRegistration(processIdentifier, transaction.timelinesUpdate(), MonotonicTime::now());
 #endif
 
@@ -296,7 +297,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
         if (properties.changedProperties.contains(LayerChange::DisplayOnlyImageChanged))
             applyDisplayOnlyImage(*node, processIdentifier, properties.displayOnlyImage);
 
-        if (m_isDebugLayerTreeHost) {
+        if (m_role == Role::DebugIndicator) {
             RetainPtr layer = node->layer();
             if (properties.changedProperties.contains(LayerChange::BorderWidthChanged))
                 layer.get().borderWidth = properties.borderWidth / indicatorScaleFactor;
@@ -329,7 +330,8 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
 #endif
 
 #if PLATFORM(MAC)
-    if (updateBannerLayers(mainFrameData))
+    // Banner layers belong to the page, a secondary tree would take them out of the primary one.
+    if (isPrimary() && updateBannerLayers(mainFrameData))
         rootLayerChanged = true;
 #endif
 
@@ -460,7 +462,8 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
 
 void RemoteLayerTreeHost::animationDidStart(std::optional<WebCore::PlatformLayerIdentifier> layerID, CAAnimation *animation, MonotonicTime startTime)
 {
-    if (!m_drawingArea)
+    // Only the primary tree reports animation events to the web process.
+    if (!m_drawingArea || !isPrimary())
         return;
 
     RetainPtr layer = layerForID(layerID);
@@ -482,7 +485,8 @@ void RemoteLayerTreeHost::animationDidStart(std::optional<WebCore::PlatformLayer
 
 void RemoteLayerTreeHost::animationDidEnd(std::optional<WebCore::PlatformLayerIdentifier> layerID, CAAnimation *animation)
 {
-    if (!m_drawingArea)
+    // Only the primary tree reports animation events to the web process.
+    if (!m_drawingArea || !isPrimary())
         return;
 
     RetainPtr layer = layerForID(layerID);
@@ -616,7 +620,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
 
     case PlatformCALayer::LayerType::LayerTypeCustom:
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
-        if (m_isDebugLayerTreeHost)
+        if (m_role == Role::DebugIndicator)
             return RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);
 
 #if HAVE(AVKIT)
@@ -649,12 +653,12 @@ void RemoteLayerTreeHost::detachRootLayer()
 #if ENABLE(THREADED_ANIMATIONS)
 void RemoteLayerTreeHost::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
-    protect(drawingArea())->animationsWereAddedToNode(node);
+    protect(drawingArea())->animationsWereAddedToNode(*this, node);
 }
 
 void RemoteLayerTreeHost::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
 {
-    protect(drawingArea())->animationsWereRemovedFromNode(node);
+    protect(drawingArea())->animationsWereRemovedFromNode(*this, node);
 }
 
 RefPtr<const RemoteAnimationTimeline> RemoteLayerTreeHost::timeline(const TimelineID& timelineID) const

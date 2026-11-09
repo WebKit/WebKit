@@ -160,8 +160,8 @@ public:
     void viewWillEndLiveResize() final;
 
 #if ENABLE(THREADED_ANIMATIONS)
-    void animationsWereAddedToNode(RemoteLayerTreeNode&);
-    void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
+    void animationsWereAddedToNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&);
+    void animationsWereRemovedFromNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&);
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime);
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const;
     RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
