@@ -7147,6 +7147,7 @@ class TestCheckChangeRelevanceForWebDriver(unittest.TestCase):
     def test_relevant_files(self):
         for file_name in [
             'Source/WebDriver/Session.cpp',
+            'Tools/minidriver/minidriver.xcodeproj/project.pbxproj',
             'Source/WebKit/UIProcess/Automation/WebAutomationSession.cpp',
             'Source/WebKit/WebProcess/Automation/WebAutomationSessionProxy.cpp',
             'Source/WebKit/Shared/Automation/AutomationProtocolObjects.h',

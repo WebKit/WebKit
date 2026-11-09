@@ -15,7 +15,7 @@ ifneq (,$(SDKROOT))
 		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 	endif
 	ifneq (,$(findstring macosx,$(call TO_LOWER,$(notdir $(SDKROOT)))))
-		MODULES += lldb/lldbWebKitTester ../Source/WebDriver
+		MODULES += lldb/lldbWebKitTester minidriver
 	endif
 	ifneq (,$(findstring iphone,$(call TO_LOWER,$(notdir $(SDKROOT)))))
 		MODULES += MobileMiniBrowser

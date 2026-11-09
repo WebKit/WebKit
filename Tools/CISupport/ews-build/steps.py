@@ -1552,6 +1552,7 @@ class CheckChangeRelevance(AnalyzeChange):
 
     webdriver_path_regexes = [
         re.compile(rb'Source/WebDriver/', re.IGNORECASE),
+        re.compile(rb'Tools/minidriver/', re.IGNORECASE),
         re.compile(rb'Source/WebKit/UIProcess/Automation/', re.IGNORECASE),
         re.compile(rb'Source/WebKit/WebProcess/Automation/', re.IGNORECASE),
         re.compile(rb'Source/WebKit/Shared/Automation/', re.IGNORECASE),

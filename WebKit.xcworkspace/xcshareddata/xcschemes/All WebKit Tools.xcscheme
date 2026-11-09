@@ -129,7 +129,7 @@
                BlueprintIdentifier = "0974C6E6408C3673A30DC17A"
                BuildableName = "minidriver (Platform filters)"
                BlueprintName = "minidriver (Platform filters)"
-               ReferencedContainer = "container:Source/WebDriver/minidriver.xcodeproj">
+               ReferencedContainer = "container:Tools/minidriver/minidriver.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

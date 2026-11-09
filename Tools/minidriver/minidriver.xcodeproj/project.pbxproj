@@ -153,6 +153,7 @@
 				6717BE3E88B0F7FF499BF998 /* WebSocketServer.h */,
 			);
 			name = minidriver;
+			path = ../../Source/WebDriver;
 			sourceTree = "<group>";
 		};
 		4E5EB69F7269B6BEFFDC170F /* cocoa */ = {
@@ -166,7 +167,8 @@
 				8763DA44B820A80AFC56B5B9 /* WebDriverServiceCocoa.cpp */,
 				05CDA71C3BCC02C2114381B1 /* WebSocketServerCocoa.cpp */,
 			);
-			path = cocoa;
+			name = cocoa;
+			path = ../../Source/WebDriver/cocoa;
 			sourceTree = "<group>";
 		};
 		82A19FEB034A270C456BB345 /* Derived Sources */ = {
@@ -248,17 +250,17 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/../WebKit/Scripts/generate-automation-atom.py",
-				"$(SRCROOT)/../JavaScriptCore/Scripts/make-js-file-arrays.py",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/utils.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementAttribute.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementDisplayed.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementEnabled.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/ElementText.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/EnterFullscreen.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/FindNodes.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/FormElementClear.js",
-				"$(SRCROOT)/../WebKit/UIProcess/Automation/atoms/FormSubmit.js",
+				"$(SRCROOT)/../../Source/WebKit/Scripts/generate-automation-atom.py",
+				"$(SRCROOT)/../../Source/JavaScriptCore/Scripts/make-js-file-arrays.py",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/utils.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/ElementAttribute.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/ElementDisplayed.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/ElementEnabled.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/ElementText.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/EnterFullscreen.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/FindNodes.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/FormElementClear.js",
+				"$(SRCROOT)/../../Source/WebKit/UIProcess/Automation/atoms/FormSubmit.js",
 			);
 			name = "Generate Derived Sources";
 			outputPaths = (
@@ -275,7 +277,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nmkdir -p \"${DERIVED_FILE_DIR}\"\nATOMS_DIR=\"${SRCROOT}/../WebKit/UIProcess/Automation/atoms\"\nATOMS=\"ElementAttribute ElementDisplayed ElementEnabled ElementText EnterFullscreen FindNodes FormElementClear FormSubmit\"\nfor ATOM in ${ATOMS}; do\n    python3 \"${SRCROOT}/../WebKit/Scripts/generate-automation-atom.py\" \"${ATOMS_DIR}/${ATOM}.js\" \"${DERIVED_FILE_DIR}/${ATOM}.js\"\ndone\npython3 \"${SRCROOT}/../JavaScriptCore/Scripts/make-js-file-arrays.py\" --fail-if-non-ascii -n WebDriver \"${DERIVED_FILE_DIR}/WebDriverAtoms.h\" \"${DERIVED_FILE_DIR}/WebDriverAtoms.cpp\" \"${DERIVED_FILE_DIR}/ElementAttribute.js\" \"${DERIVED_FILE_DIR}/ElementDisplayed.js\" \"${DERIVED_FILE_DIR}/ElementEnabled.js\" \"${DERIVED_FILE_DIR}/ElementText.js\" \"${DERIVED_FILE_DIR}/EnterFullscreen.js\" \"${DERIVED_FILE_DIR}/FindNodes.js\" \"${DERIVED_FILE_DIR}/FormElementClear.js\" \"${DERIVED_FILE_DIR}/FormSubmit.js\"\n";
+			shellScript = "set -e\nmkdir -p \"${DERIVED_FILE_DIR}\"\nATOMS_DIR=\"${SRCROOT}/../../Source/WebKit/UIProcess/Automation/atoms\"\nATOMS=\"ElementAttribute ElementDisplayed ElementEnabled ElementText EnterFullscreen FindNodes FormElementClear FormSubmit\"\nfor ATOM in ${ATOMS}; do\n    python3 \"${SRCROOT}/../../Source/WebKit/Scripts/generate-automation-atom.py\" \"${ATOMS_DIR}/${ATOM}.js\" \"${DERIVED_FILE_DIR}/${ATOM}.js\"\ndone\npython3 \"${SRCROOT}/../../Source/JavaScriptCore/Scripts/make-js-file-arrays.py\" --fail-if-non-ascii -n WebDriver \"${DERIVED_FILE_DIR}/WebDriverAtoms.h\" \"${DERIVED_FILE_DIR}/WebDriverAtoms.cpp\" \"${DERIVED_FILE_DIR}/ElementAttribute.js\" \"${DERIVED_FILE_DIR}/ElementDisplayed.js\" \"${DERIVED_FILE_DIR}/ElementEnabled.js\" \"${DERIVED_FILE_DIR}/ElementText.js\" \"${DERIVED_FILE_DIR}/EnterFullscreen.js\" \"${DERIVED_FILE_DIR}/FindNodes.js\" \"${DERIVED_FILE_DIR}/FormElementClear.js\" \"${DERIVED_FILE_DIR}/FormSubmit.js\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
