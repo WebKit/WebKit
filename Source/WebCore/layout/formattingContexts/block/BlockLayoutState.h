@@ -68,8 +68,11 @@ struct ContainingBlockState {
     BoxGeometry geometry;
     // The content box in the inline direction, from the inline start of the block container's border box (in its own direction).
     LayoutRange inlineRange;
-    // The inline start of the block container's border box from the inline start of the root's border box, which the floats are placed from.
+    // Where the block container's border box starts in the root's logical coordinates, which the floats are placed in: from the inline start of
+    // the root's border box to the side of the block container's border box in the root's inline start direction, which is the end side when
+    // the block container's inline direction is the opposite of the root's.
     LayoutUnit borderBoxLogicalLeftInRoot;
+    bool hasInlineDirectionOppositeToRoot { false };
     // Block offsets are relative to the border box of the root (every box in the block formatting context has the same block flow
     // direction). The top is unknown while the block-start margin can still collapse with the margins that follow it (CSS 2.2 §8.3.1).
     std::optional<LayoutUnit> borderBoxLogicalTop;
