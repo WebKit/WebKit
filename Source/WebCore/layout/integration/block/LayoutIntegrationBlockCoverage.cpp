@@ -316,6 +316,40 @@ static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
     }
 }
 
+// Whether the percentage block sizes of a box resolve against the content box block sizes of the containing blocks on the way to an ancestor
+// that come from their styles, which BlockFormattingContext::computeIntrinsicInlineSizes gets from that ancestor down. Not the ones that come
+// from the layout: of a box with a preferred aspect ratio and an auto block size, from its inline size, and a stretch block size or a
+// percentage block-axis padding. Nor those of an out-of-flow ancestor, from its insets, or of a flex or grid item or a table cell, which its
+// container gives it while it measures it (GridTrackSizingAlgorithm, RenderTableSection::relayoutCellIfFlexed).
+static bool resolvesPercentageBlockSizesFromStyles(const RenderBox& box, const RenderBlockFlow& ancestor)
+{
+    for (CheckedPtr containingBlock = box.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+        CheckedRef style = containingBlock->style();
+        auto writingMode = containingBlock->writingMode();
+        if ((style->aspectRatio().hasRatio() && style->logicalHeight(writingMode).isAuto()) || hasStretchBlockSize(*containingBlock)
+            || style->paddingBefore(writingMode).isPercentOrCalculated() || style->paddingAfter(writingMode).isPercentOrCalculated())
+            return false;
+        if (containingBlock == &ancestor)
+            return !ancestor.isOutOfFlowPositioned() && !ancestor.isFlexItemIncludingDeprecated() && !ancestor.isGridItem() && !ancestor.isRenderTableCell();
+        // A containing block whose block size does not depend on its own containing block's.
+        if (!containingBlock->isAnonymous() && !Layout::BlockFormattingUtils::hasPercentageBlockSize(*containingBlock, writingMode) && (!style->logicalHeight(writingMode).isAuto() || !containingBlock->document().inQuirksMode()))
+            return true;
+    }
+    return false;
+}
+
+static bool hasAvailableInlineSpaceFromStyle(const RenderBox& orthogonalBox)
+{
+    CheckedPtr containingBlock = orthogonalBox.containingBlock();
+    if (!containingBlock || containingBlock->isRenderMultiColumnFlow())
+        return false;
+    CheckedRef style = containingBlock->style();
+    if (style->logicalHeight().isFixed())
+        return true;
+    return style->logicalHeight().isAuto() && (style->logicalMaxHeight().isNone() || style->logicalMaxHeight().isMaxContent()) && !style->aspectRatio().hasRatio()
+        && !orthogonalBox.document().inQuirksMode();
+}
+
 static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
 {
     for (CheckedPtr<const RenderObject> descendant = &box; descendant;) {
@@ -333,28 +367,33 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
             return descendant->isFloating() && parentBlockContainer && !parentBlockContainer->childrenInline();
         };
         // The own formatting context of a box laid out through the render tree, or of a float among block-level boxes, measures it
-        // (RenderBox::minContentLogicalWidthContribution), and so does the inline formatting context for an atomic inline-level box
-        // (BoxGeometryUpdater::updateLayoutBoxDimensions). A percentage block size, which an aspect ratio turns into an inline size, resolves
-        // against the block size of the containing block from its style there too (RenderBox::computePercentageLogicalHeight).
-        // FIXME: An orthogonal box, which the render tree lays out to measure it (RenderBox::computeIntrinsicLogicalHeight), and percentage
-        // padding, which resolves against its inline size, which the block formatting context writes once all of it is laid out.
+        // (RenderBox::minContentLogicalWidthContribution), an orthogonal one by laying it out (RenderBox::computeIntrinsicLogicalHeight), and
+        // so does the inline formatting context for an atomic inline-level box (BoxGeometryUpdater::updateLayoutBoxDimensions). A percentage
+        // block size, which an aspect ratio turns into an inline size, resolves against the block size of the containing block from its style
+        // there too (RenderBox::computePercentageLogicalHeight), and so does the available inline space of an orthogonal box when it is fixed,
+        // or indefinite in standards mode, which leaves the size of the initial containing block (RenderBox::perpendicularContainingBlockLogicalHeight).
+        // FIXME: Percentage padding, which resolves against its inline size, which the block formatting context writes once all of it is laid
+        // out, and the other block sizes of the containing block of an orthogonal box, which come from the last layout of the render tree.
         if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant) || isBlockLevelFloat())) {
             CheckedRef leaf = downcast<RenderBox>(*descendant);
             CheckedRef style = leaf->style();
             auto writingMode = leaf->writingMode();
-            if (writingMode.isOrthogonal(leaf->parent()->writingMode()) || style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
+            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
+                return false;
+            if (writingMode.isOrthogonal(leaf->parent()->writingMode()) && !hasAvailableInlineSpaceFromStyle(leaf))
                 return false;
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
         }
-        if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && !blockContainer->isInline()) {
+        // Those of the box itself are its formatting context's.
+        if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && blockContainer != &box && !blockContainer->isInline()) {
             CheckedRef style = blockContainer->style();
             auto writingMode = blockContainer->writingMode();
             if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated())
                 return false;
             // A preferred aspect ratio gives an inline size from the block size and transfers the min and max block sizes, which can be
             // percentages of the block size of the containing block.
-            if (style->aspectRatio().hasRatio() && Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, writingMode))
+            if (style->aspectRatio().hasRatio() && Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, writingMode) && !resolvesPercentageBlockSizesFromStyles(*blockContainer, box))
                 return false;
         }
         descendant = descendant->nextInPreOrder(&box);
@@ -712,8 +751,12 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     // A preferred aspect ratio gives an auto block size from the inline size (BlockFormattingUtils::aspectRatioBorderBoxBlockSize), and an
     // auto inline size from a definite block size (BlockFormattingUtils::aspectRatioBorderBoxInlineSize), whose automatic minimum is the
     // min-content size.
-    if (style->aspectRatio().hasRatio() && !style->logicalHeight().isAuto() && style->logicalWidth().isAuto() && style->logicalMinWidth().isAuto() && !canComputeContentInlineSizes(*blockContainer))
-        return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
+    // Its own percentages resolve against the containing block, and when the render tree measures the root it does it from what the root's
+    // last layout of the box left behind.
+    if (style->aspectRatio().hasRatio() && !style->logicalHeight().isAuto() && style->logicalWidth().isAuto() && style->logicalMinWidth().isAuto()) {
+        if (!canComputeContentInlineSizes(*blockContainer) || (Layout::BlockFormattingUtils::hasPercentageBlockSize(*blockContainer, blockContainer->writingMode()) && !resolvesPercentageBlockSizesFromStyles(*blockContainer, rootContainer)))
+            return BlockAvoidanceReason::ContentHasUnmeasurableIntrinsicInlineSize;
+    }
     // In quirks mode a percentage block size looks past the containing blocks with an auto block size (BlockFormattingUtils::definiteContentBoxBlockSize).
     // FIXME: The stretch block sizes in quirks mode.
     if (blockContainer->document().inQuirksMode() && (style->logicalHeight().isStretch() || style->logicalMinHeight().isStretch() || style->logicalMaxHeight().isStretch()))

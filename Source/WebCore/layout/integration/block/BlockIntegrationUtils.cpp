@@ -306,6 +306,12 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingCo
 
 Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(const RenderBox& box)
 {
+    // An orthogonal box contributes the block size its formatting context lays it out at (RenderBlock::computeBlockIntrinsicLogicalWidths).
+    if (CheckedPtr containingBlock = box.containingBlock(); containingBlock && containingBlock->writingMode().isOrthogonal(box.writingMode())) {
+        SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBox = const_cast<RenderBox&>(box);
+        auto blockSize = mutableBox->computeIntrinsicLogicalHeight();
+        return { blockSize, blockSize };
+    }
     // Like RenderBlock::computeChildIntrinsicLogicalWidths: a min-content or max-content inline size of a block makes both contributions
     // that size (css-sizing-3 §5.2.1).
     auto contributions = Layout::IntrinsicWidthConstraints { box.minContentLogicalWidthContribution(), box.maxContentLogicalWidthContribution() };

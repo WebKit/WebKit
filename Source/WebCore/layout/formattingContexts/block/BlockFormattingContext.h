@@ -128,14 +128,15 @@ public:
     // coordinates of the block container's border box, are the ones the box and the lines after it avoid.
     BlockLevelBoxInInlineContent layoutBlockLevelBoxInInlineContent(const RenderBox&, LayoutUnit lineLogicalTop, size_t lineCount, size_t lineCountForLineClamp, PlacedFloats& inlineContentFloats, BlockLayoutResult&);
     // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1), but no min-content size for a
-    // marquee that scrolls its content horizontally (RenderBlockFlow::computeIntrinsicLogicalWidths).
-    IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
+    // marquee that scrolls its content horizontally (RenderBlockFlow::computeIntrinsicLogicalWidths). The percentage block sizes in it resolve
+    // against its definite content box block size.
+    IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer, std::optional<LayoutUnit> contentBoxBlockSize) const;
     // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4), and against its default anchor
     // (css-anchor-position-1 §3). The box establishes an independent formatting context for its content.
     BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&, const std::optional<OutOfFlowGeometry::DefaultAnchor>&);
 
 private:
-    IntrinsicWidthConstraints computeContentIntrinsicInlineSizes(const RenderBlockFlow&) const;
+    IntrinsicWidthConstraints computeContentIntrinsicInlineSizes(const RenderBlockFlow&, std::optional<LayoutUnit> contentBoxBlockSize) const;
     void layoutBlockItems(const Vector<BlockItem>&, BlockLayoutResult&);
     bool isAfterClampPoint() const;
     TextBoxTrimState textBoxTrimStateFor(const RenderBlockFlow&, const TextBoxTrimState& ancestorState) const;
