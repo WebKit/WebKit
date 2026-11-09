@@ -24,6 +24,5 @@ import QuickLookUI
 // Modules from the WebKit stack, used by WebKit
 import JavaScriptCore
 import JavaScriptCore_Private
-import WebCore_Private
 import bmalloc
 import wtf

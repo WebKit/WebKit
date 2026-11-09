@@ -27,3 +27,6 @@
 
 #include "IPCTesterReceiverMessages.h"
 #include "SecurityFlags.h"
+#include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/TextGranularity.h>

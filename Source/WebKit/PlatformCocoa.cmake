@@ -2182,6 +2182,22 @@ foreach (_dir IN LISTS WebKit_SWIFT_INCLUDE_DIRECTORIES)
     target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:-I${_dir}>")
 endforeach ()
 
+# Hide WebCore_Private from Swift so it only depends on used WebCore headers.
+set(_webkit_swift_vfs_dir "${CMAKE_BINARY_DIR}/WebKit/SwiftModules/HideWebCorePrivate")
+set(_empty_modulemap "${_webkit_swift_vfs_dir}/module.private.modulemap")
+file(CONFIGURE OUTPUT "${_empty_modulemap}" CONTENT "framework module WebCore_Private [system] {\n}\n" @ONLY)
+set(_webcore_framework "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework")
+set(_webkit_swift_vfs_roots "")
+foreach (_modules_dir IN ITEMS Modules Versions/A/Modules Versions/Current/Modules)
+    set(_real_modulemap "${_webcore_framework}/${_modules_dir}/module.private.modulemap")
+    list(APPEND _webkit_swift_vfs_roots
+        "{\"type\": \"file\", \"name\": \"${_real_modulemap}\", \"external-contents\": \"${_empty_modulemap}\"}")
+endforeach ()
+string(JOIN ",\n    " _webkit_swift_vfs_roots ${_webkit_swift_vfs_roots})
+file(CONFIGURE OUTPUT "${_webkit_swift_vfs_dir}/overlay.json"
+    CONTENT "{\"version\": 0, \"case-sensitive\": \"false\", \"roots\": [\n    ${_webkit_swift_vfs_roots}\n]}\n" @ONLY)
+webkit_target_add_swift_options(WebKit "-Xcc -ivfsoverlay -Xcc ${_webkit_swift_vfs_dir}/overlay.json")
+
 webkit_target_add_swift_options(WebKit
     "-library-level api"
     "-enable-experimental-feature RequiresObjC=Foundation"

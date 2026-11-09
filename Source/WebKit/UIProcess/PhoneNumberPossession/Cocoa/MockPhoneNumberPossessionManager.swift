@@ -25,7 +25,6 @@
 
 import Foundation
 import JavaScriptCore_Private.Cxx.ArrayBuffer
-import WebCore_Private
 import WebKit_Internal
 import wtf
 

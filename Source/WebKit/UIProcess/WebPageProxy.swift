@@ -25,7 +25,6 @@
 
 import Foundation
 import WebKit_Internal
-import WebCore_Private
 
 // This is safe because all conformances to the protocol are safe as long as they don't
 // implement any of the requirements themselves.
