@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Synthetic bold and its simple shadow are drawn as the glyphs painted twice, offset by the synthetic bold offset.</title>
+<style>
+@font-face {
+    font-family: "RegularOnlyAhem";
+    src: url("../../../resources/Ahem.ttf") format("truetype");
+    font-weight: normal;
+}
+div {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font: bold 72px/1 "RegularOnlyAhem";
+    color: rgba(0, 0, 255, 0.5);
+    text-shadow: 0 100px 0 rgba(0, 128, 0, 0.5);
+}
+</style>
+</head>
+<body>
+<!-- The synthetic bold offset is font-size / 36, i.e. 2px, divided by the device scale factor when it is larger than 1. -->
+<div>X&nbsp;XX</div>
+</body>
+</html>

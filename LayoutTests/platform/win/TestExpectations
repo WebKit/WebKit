@@ -2615,6 +2615,10 @@ fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 fast/text/multiple-feature-properties.html [ ImageOnlyFailure ]
 fast/text/svg-font-face-with-kerning.html [ Failure ]
 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
+
+# Synthetic bold is drawn as the glyphs painted twice, offset by the synthetic bold offset, only with
+# Core Text. Skia emboldens the glyph outline instead.
+webkit.org/b/330430 fast/text/synthetic-bold [ Skip ]
 fast/text/system-font-fallback-emoji.html [ Failure ]
 fast/text/system-font-weight.html [ Failure ]
 fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]

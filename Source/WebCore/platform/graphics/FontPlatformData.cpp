@@ -71,6 +71,15 @@ FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& 
 }
 #endif
 
+#if USE(CORE_TEXT)
+FontPlatformData FontPlatformData::cloneWithSyntheticBold(const FontPlatformData& source, bool syntheticBold)
+{
+    FontPlatformData copy(source);
+    copy.m_metadata.isSyntheticBold = syntheticBold;
+    return copy;
+}
+#endif
+
 #if !USE(FREETYPE) && !PLATFORM(COCOA)
 // FIXME: Don't other platforms also need to reinstantiate their copy.m_font for scaled size?
 FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)

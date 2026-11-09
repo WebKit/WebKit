@@ -343,6 +343,9 @@ public:
     static FontPlatformData cloneWithOrientation(const FontPlatformData&, FontOrientation);
 
     static FontPlatformData cloneWithSize(const FontPlatformData&, float);
+#if USE(CORE_TEXT)
+    static FontPlatformData cloneWithSyntheticBold(const FontPlatformData&, bool);
+#endif
     void updateSizeWithFontSizeAdjust(const FontSizeAdjust&, float);
 
 #if PLATFORM(WIN)
