@@ -754,6 +754,17 @@ static void setContentBoxBlockSize(BoxGeometry& geometry, LayoutUnit borderBoxBl
 
 static bool decidesItsOwnInlineSize(const RenderBox&, WritingMode);
 
+// The inline size a box whose own formatting context decides it gets from the space beside the floats, which the block formatting context
+// computes for it: an auto one, which stretches into the space or fits the content into it (RenderBox::shrinkToAvoidFloats), and stretch
+// (RenderBox::computeSizingKeywordLogicalWidthUsing). Not the one of a table, which shrinks into the space itself, or of a replaced element.
+static bool hasInlineSizeFromSpaceBesideFloats(const RenderBox& box, WritingMode writingMode)
+{
+    if (is<RenderTable>(box) || box.isRenderReplaced())
+        return false;
+    CheckedRef style = box.style();
+    return style->logicalWidth(writingMode).isAuto() || style->logicalWidth(writingMode).isStretch() || style->logicalMinWidth(writingMode).isStretch() || style->logicalMaxWidth(writingMode).isStretch();
+}
+
 // A box that establishes a formatting context of its own, a table or a block-level replaced element goes beside the floats before it without
 // overlapping their margin boxes, or below them (CSS 2.2 §9.5): like RenderBlockFlow::getClearDelta, from where the margins put it, its
 // hypothetical position, and then at the bottom of one float after the other, until it fits the space the floats leave beside its border box.
@@ -796,6 +807,7 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     // A table with an auto inline size is no wider than the space, which it floors to its min-content size itself (RenderTable::updateLogicalWidth
     // with shrinkLogicalWidthToAvoidFloats), so it keeps the inline size it has in the containing block when that fits.
     auto shrinksIntoSpace = is<RenderTable>(box) && box.shrinkToAvoidFloats();
+    auto hasInlineSizeFromSpace = hasOwnInlineSize && hasInlineSizeFromSpaceBesideFloats(box, writingMode);
     struct Placement {
         BoxGeometry geometry;
         LayoutUnit spaceStart;
@@ -816,6 +828,12 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
         auto borderBoxInlineSize = std::optional<LayoutUnit> { };
         if (shrinksIntoSpace && containingBlockBorderBoxInlineSize && stretchFitInlineSize < *containingBlockBorderBoxInlineSize)
             borderBoxInlineSize = stretchFitInlineSize;
+        else if (hasInlineSizeFromSpace) {
+            // Its own formatting context would take the space beside the floats from the containing block, where the block formatting
+            // context keeps them.
+            computeInlineSizeAndMargins(box, containingBlockState, geometry, stretchFitInlineSize + marginStart + marginEnd);
+            borderBoxInlineSize = geometry.borderBoxWidth();
+        }
         return Placement { WTF::move(geometry), spaceStart, spaceEnd, borderBoxInlineSize };
     };
     // The box laid out for a placement, and its border box block size.
@@ -1391,7 +1409,7 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     // The inline size and margins come once its own formatting context has decided the inline size (layoutIndependentFormattingContextThroughRenderTree).
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
     auto isLaidOutThroughRenderTree = !blockContainer || (BlockFormattingUtils::establishesIndependentFormattingContext(*blockContainer) && LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*blockContainer));
-    if (isLaidOutThroughRenderTree && decidesItsOwnInlineSize(box, writingMode))
+    if (isLaidOutThroughRenderTree && decidesItsOwnInlineSize(box, writingMode) && !(availableInlineSize && hasInlineSizeFromSpaceBesideFloats(box, writingMode)))
         return;
 
     CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
@@ -1403,12 +1421,17 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
         auto fitsContent = style->logicalWidth(writingMode).isAuto() && BlockFormattingUtils::autoInlineSizeFitsContent(box, containingBlockStyle);
         if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode) && !fitsContent && !BlockFormattingUtils::hasAspectRatioAutomaticMinimumInlineSize(box, aspectRatioBorderBoxInlineSize, writingMode))
             return { };
-        // The scrollbars that come or go in its content change these (RenderBlock::layout).
-        integrationUtils().trackScrollbarChangesForContentSizes();
-        auto sizes = computeIntrinsicInlineSizes(*blockContainer);
-        // With its scrollbars (RenderBlockFlow::computeIntrinsicLogicalWidths).
-        auto scrollbarInlineSize = LayoutUnit { box.intrinsicScrollbarLogicalWidthIncludingGutter() };
-        sizes = { sizes.minimum + scrollbarInlineSize, sizes.maximum + scrollbarInlineSize };
+        auto sizes = [&] {
+            // Its own formatting context measures a box it lays out, with its scrollbars.
+            if (isLaidOutThroughRenderTree)
+                return LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes(box, horizontalBorderAndPadding);
+            // The scrollbars that come or go in its content change these (RenderBlock::layout).
+            integrationUtils().trackScrollbarChangesForContentSizes();
+            auto sizes = computeIntrinsicInlineSizes(*blockContainer);
+            // With its scrollbars (RenderBlockFlow::computeIntrinsicLogicalWidths).
+            auto scrollbarInlineSize = LayoutUnit { box.intrinsicScrollbarLogicalWidthIncludingGutter() };
+            return IntrinsicWidthConstraints { sizes.minimum + scrollbarInlineSize, sizes.maximum + scrollbarInlineSize };
+        }();
         if (!aspectRatioBorderBoxInlineSize)
             return sizes;
         return aspectRatioContentInlineSizes(box, std::max(0_lu, *aspectRatioBorderBoxInlineSize - horizontalBorderAndPadding), sizes, horizontalBorderAndPadding, writingMode);
