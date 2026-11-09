@@ -116,6 +116,10 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (NSString *)_caLayerTreeAsTextWithOptions:(_WKCALayerTreeAsTextOptions)options;
 - (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer options:(_WKCALayerTreeAsTextOptions)options;
 
+// Tab capture mirror of the layer tree. The completion handler gets the layer containing the mirror root, or nil on failure.
+- (void)_enableCaptureMirrorLayerTreeForTesting:(void (^)(CALayer * _Nullable mirrorContainerLayer))completionHandler;
+- (void)_disableCaptureMirrorLayerTreeForTesting;
+
 - (NSDictionary<NSString *, id> *)_propertiesOfLayerWithID:(unsigned long long)layerID;
 
 // The transient zoom override on the scrolled-contents layer, empty when there is none. macOS only.

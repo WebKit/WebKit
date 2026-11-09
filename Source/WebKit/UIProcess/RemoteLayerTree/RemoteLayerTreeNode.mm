@@ -163,6 +163,7 @@ void RemoteLayerTreeNode::applyBackingStore(RemoteLayerTreeHost* host, RemoteLay
 
     bool applied = properties.applyBackingStoreToNode(*this, host->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView.get());
     setAsyncContentsIdentifier(applied ? properties.contentsFrameIdentifier() : std::nullopt);
+    m_backingStoreIsOpaque = applied && properties.isOpaque();
 }
 
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)

@@ -153,6 +153,9 @@ public:
         m_asyncContentsIdentifier = identifier;
     }
 
+    // Whether the last backing store applied to the layer was opaque.
+    bool backingStoreIsOpaque() const { return m_backingStoreIsOpaque; }
+
 #if ENABLE(THREADED_ANIMATIONS)
     void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, const WebCore::AcceleratedEffectValues&, RemoteLayerTreeHost&);
     const RemoteAnimationStack* animationStack() const { return m_animationStack.get(); }
@@ -220,6 +223,7 @@ private:
 
     Vector<CachedContentsBuffer> m_cachedContentsBuffers;
     std::optional<WebCore::PlaceholderFrameIdentifier> m_asyncContentsIdentifier;
+    bool m_backingStoreIsOpaque { false };
 
 #if ENABLE(THREADED_ANIMATIONS)
     RefPtr<RemoteAnimationStack> m_animationStack;
