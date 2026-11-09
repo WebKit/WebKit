@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -217,7 +217,7 @@ class SliderBase extends LayoutNode
 
         if (this._allowsRelativeScrubbing) {
             this._startValue = parseFloat(this._input.element.value);
-            this._startPosition = this._playbackProgress(event.pageX);
+            this._startPosition = this._playbackProgress(event.clientX);
         }
 
         if (this.uiDelegate && typeof this.uiDelegate.controlValueWillStartChanging === "function")
@@ -250,7 +250,7 @@ class SliderBase extends LayoutNode
         if (!this._allowsRelativeScrubbing || isNaN(this._startValue) || isNaN(this._startPosition))
             return;
 
-        let value = this._startValue + this._playbackProgress(event.pageX) - this._startPosition;
+        let value = this._startValue + this._playbackProgress(event.clientX) - this._startPosition;
         this._input.element.value = Math.min(Math.max(0, value), 1);
         this._valueDidChange();
     }
@@ -273,9 +273,11 @@ class SliderBase extends LayoutNode
         this.needsLayout = true;
     }
 
-    _playbackProgress(pageX)
+    _playbackProgress(clientX)
     {
-        let x = window.webkitConvertPointFromPageToNode(this.element, new WebKitPoint(pageX, 0)).x;
+        const rect = this.element.getBoundingClientRect();
+        let x = clientX - rect.left;
+        
         if (this._layoutDelegate?.scaleFactor)
             x *= this._layoutDelegate.scaleFactor;
 
