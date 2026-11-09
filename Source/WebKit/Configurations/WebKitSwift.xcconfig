@@ -30,6 +30,11 @@ INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_
 
 DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Frameworks;
 
+// Build into WebKit.framework/Versions/A/Frameworks in at-desk builds. Only
+// this exact path relative to WebKit.framework is allowed in the sandbox.
+TARGET_BUILD_SUBPATH = $(TARGET_BUILD_SUBPATH_DEPLOYMENT_$(DEPLOYMENT_LOCATION));
+TARGET_BUILD_SUBPATH_DEPLOYMENT_NO = /WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Frameworks;
+
 WKS_EXCLUDED_SWIFT_FILE_NAMES = $(WKS_EXCLUDED_SWIFT_FILE_NAMES_$(USE_INTERNAL_SDK));
 WKS_EXCLUDED_SWIFT_FILE_NAMES_ = DigitalCredentialsExtras.swift WKSExperienceController+Transitions.swift;
 
