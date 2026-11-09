@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+AttachmentAssociatedElement::AttachmentAssociatedElement() = default;
+
 void AttachmentAssociatedElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachment)
 {
     if (RefPtr existingAttachment = attachmentElement())

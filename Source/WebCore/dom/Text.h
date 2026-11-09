@@ -61,11 +61,7 @@ public:
     String debugDescription() const final;
 
 protected:
-    Text(Document& document, String&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
-        : CharacterData(document, WTF::move(data), type, typeFlags | TypeFlag::IsText)
-    {
-        ASSERT(!isContainerNode());
-    }
+    Text(Document&, String&& data, NodeType, OptionSet<TypeFlag>);
 
 private:
     String nodeName() const override;

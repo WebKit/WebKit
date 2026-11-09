@@ -31,7 +31,13 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-    
+
+DefaultFilterOperation::DefaultFilterOperation(Type representedType)
+    : FilterOperation(Type::Default)
+    , m_representedType(representedType)
+{
+}
+
 bool DefaultFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -81,6 +87,12 @@ double FilterOperation::blendAmounts(double from, double to, const BlendingConte
     }
 }
 
+BasicColorMatrixFilterOperation::BasicColorMatrixFilterOperation(double amount, Type type)
+    : FilterOperation(type)
+    , m_amount(amount)
+{
+}
+
 RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
@@ -116,6 +128,12 @@ double BasicColorMatrixFilterOperation::passthroughAmount() const
         ASSERT_NOT_REACHED();
         return 0;
     }
+}
+
+BasicComponentTransferFilterOperation::BasicComponentTransferFilterOperation(double amount, Type type)
+    : FilterOperation(type)
+    , m_amount(amount)
+{
 }
 
 RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
@@ -162,6 +180,12 @@ bool BasicComponentTransferFilterOperation::affectsOpacity() const
     return m_type == Type::Opacity;
 }
 
+BlurFilterOperation::BlurFilterOperation(float stdDeviation)
+    : FilterOperation(Type::Blur)
+    , m_stdDeviation(stdDeviation)
+{
+}
+
 bool BlurFilterOperation::operator==(const FilterOperation& operation) const
 {
     if (!isSameType(operation))
@@ -181,6 +205,14 @@ RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, 
     const BlurFilterOperation* fromOperation = downcast<BlurFilterOperation>(from);
     auto fromStdDeviation = fromOperation ? fromOperation->m_stdDeviation : 0.0f;
     return BlurFilterOperation::create(std::max(0.0f, WebCore::blend(fromStdDeviation, m_stdDeviation, context)));
+}
+
+DropShadowFilterOperation::DropShadowFilterOperation(const Color& color, const IntPoint& location, int stdDeviation)
+    : FilterOperation(Type::DropShadow)
+    , m_color(color)
+    , m_location(location)
+    , m_stdDeviation(stdDeviation)
+{
 }
 
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const

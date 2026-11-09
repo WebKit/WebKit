@@ -83,6 +83,7 @@ public:
 class WebAssemblyArrayMutI16TypeExpectation : public WebAssemblyBuiltinTypeExpectation {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebAssemblyArrayMutI16TypeExpectation);
 public:
+    WebAssemblyArrayMutI16TypeExpectation();
     bool isValid(const Wasm::Type&) const;
 };
 

@@ -123,11 +123,7 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    DefaultFilterOperation(Type representedType)
-        : FilterOperation(Type::Default)
-        , m_representedType(representedType)
-    {
-    }
+    DefaultFilterOperation(Type representedType);
 
     Type m_representedType;
 };
@@ -179,11 +175,7 @@ private:
 
     NODELETE double passthroughAmount() const;
 
-    BasicColorMatrixFilterOperation(double amount, Type type)
-        : FilterOperation(type)
-        , m_amount(amount)
-    {
-    }
+    NODELETE BasicColorMatrixFilterOperation(double amount, Type);
 
     double m_amount;
 };
@@ -212,11 +204,7 @@ private:
 
     NODELETE double passthroughAmount() const;
 
-    BasicComponentTransferFilterOperation(double amount, Type type)
-        : FilterOperation(type)
-        , m_amount(amount)
-    {
-    }
+    NODELETE BasicComponentTransferFilterOperation(double amount, Type);
 
     double m_amount;
 };
@@ -242,11 +230,7 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    BlurFilterOperation(float stdDeviation)
-        : FilterOperation(Type::Blur)
-        , m_stdDeviation(stdDeviation)
-    {
-    }
+    NODELETE BlurFilterOperation(float stdDeviation);
 
     float m_stdDeviation;
 };
@@ -276,13 +260,7 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    DropShadowFilterOperation(const Color& color, const IntPoint& location, int stdDeviation)
-        : FilterOperation(Type::DropShadow)
-        , m_color(color)
-        , m_location(location)
-        , m_stdDeviation(stdDeviation)
-    {
-    }
+    DropShadowFilterOperation(const Color&, const IntPoint& location, int stdDeviation);
 
     Color m_color;
     IntPoint m_location; // FIXME: Should m_location be a FloatPoint?

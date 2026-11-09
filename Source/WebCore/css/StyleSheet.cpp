@@ -24,6 +24,7 @@
 
 namespace WebCore {
 
+StyleSheet::StyleSheet() = default;
 StyleSheet::~StyleSheet() = default;
 
 TextStream& operator<<(TextStream& ts, const StyleSheet& styleSheet)

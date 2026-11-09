@@ -49,6 +49,7 @@ public:
     void ref() const { refAttachmentAssociatedElement(); }
     void deref() const { derefAttachmentAssociatedElement(); }
 
+    AttachmentAssociatedElement();
     virtual ~AttachmentAssociatedElement() = default;
 
     virtual HTMLElement& asHTMLElement() = 0;

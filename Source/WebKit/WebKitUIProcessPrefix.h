@@ -223,6 +223,22 @@
 #include "WebEventModifier.h"
 #include "WebEventType.h"
 
+#if PLATFORM(MAC)
+#if !defined(__OBJC__)
+#include "AuthenticatorManager.h"
+#include "APIUIClient.h"
+#endif
+#if defined(__OBJC__)
+#import <pal/spi/cocoa/AVKitSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#include <WebCore/AcceleratedEffectStackUpdater.h>
+#if USE(APPLE_INTERNAL_SDK)
+#import <Vision/CCRect.h>
+#import <Vision/VNRecognizeTextRequestPrivate.h>
+#endif
+#endif
+#endif
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"())
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"())
 #endif
