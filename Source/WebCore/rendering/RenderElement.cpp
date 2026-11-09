@@ -2263,9 +2263,12 @@ bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) cons
                 if (!linesBox.maxX() && !linesBox.maxY())
                     continue;
                 point.moveBy(linesBox.maxXMaxYCorner());
-            } else
-                point.moveBy(downcast<RenderBox>(*o).borderBoxRectInContainer().maxXMaxYCorner());
-            point = o->container()->localToAbsolute(point, MapCoordinatesMode::UseTransforms, &insideFixed);
+                point = o->container()->localToAbsolute(point, MapCoordinatesMode::UseTransforms, &insideFixed);
+                return true;
+            }
+            // Like the leading corner, map from the box itself, whose location may not be in the coordinate space of its container (e.g. an
+            // out-of-flow box positioned relative to an inline box).
+            point = o->localToAbsolute(LayoutPoint(downcast<RenderBox>(*o).borderBoxSize()), MapCoordinatesMode::UseTransforms, &insideFixed);
             return true;
         }
     }

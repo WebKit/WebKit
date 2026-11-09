@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+.scroller { overflow: scroll; width: 200px; height: 100px; position: relative; line-height: 20px; }
+.spacer { display: inline-block; width: 30px; height: 10px; }
+.image { position: absolute; width: 20px; height: 20px; }
+.insets { left: 5px; top: 3px; }
+</style>
+<div class="scroller"><div style="height: 300px; width: 1000px"></div><div style="padding-left: 400px; width: 1000px"><a><span class="spacer"></span><br><span class="spacer"></span> <span style="position: relative"><span class="spacer"></span><img class="image"></span></a></div><div style="height: 300px"></div></div>
+<div class="scroller"><div style="height: 300px; width: 1000px"></div><div style="padding-left: 400px; width: 1000px"><a><span class="spacer"></span><br><span class="spacer"></span> <span style="position: relative"><span class="spacer"></span><img class="image insets"></span></a></div><div style="height: 300px"></div></div>
+<script>
+for (const scroller of document.querySelectorAll(".scroller")) {
+    test(() => {
+        // The anchor rect of the link ends at the bottom right corner of its last content, the image. The image may be at a
+        // fractional position (it is positioned relative to the inline box), while the scroll position is in whole pixels.
+        scroller.querySelector("a").scrollIntoView({ block: "end", inline: "end" });
+        const scrollerRect = scroller.getBoundingClientRect();
+        const imageRect = scroller.querySelector("img").getBoundingClientRect();
+        assert_approx_equals(imageRect.right - scrollerRect.left - scroller.clientLeft, scroller.clientWidth, 1, "right");
+        assert_approx_equals(imageRect.bottom - scrollerRect.top - scroller.clientTop, scroller.clientHeight, 1, "bottom");
+    }, `Scrolling a link into view brings the end of its absolutely positioned image ${scroller.querySelector(".insets") ? "with" : "without"} insets in an inline box containing block to the end of the scroller`);
+}
+</script>

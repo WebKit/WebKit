@@ -33,6 +33,7 @@
 #include "LocalFrameViewInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderGrid.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
@@ -708,6 +709,12 @@ static LayoutPoint positionInContainer(const RenderBox& container, const RenderB
     auto childInFlowOffset = childWritingMode.isHorizontal() ? child.offsetForInFlowPosition() : child.offsetForInFlowPosition().transposedSize();
     auto childLogicalLeft = childInFlowOffset.width() + child.logicalLeft();
     auto childLogicalTop = childInFlowOffset.height() + child.logicalTop();
+    if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(child.container()); inlineBox && inlineBox->isInlineBox() && child.isAbsolutelyPositioned() && inlineBox->canContainAbsolutelyPositionedObjects()) {
+        // The child is positioned relative to its inline box containing block, which is in the coordinate space of the container.
+        auto inlineBoxOffset = PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(*inlineBox, child.style());
+        childLogicalLeft += childWritingMode.isHorizontal() ? inlineBoxOffset.width() : inlineBoxOffset.height();
+        childLogicalTop += childWritingMode.isHorizontal() ? inlineBoxOffset.height() : inlineBoxOffset.width();
+    }
 
     if (containerWritingMode.isOrthogonal(childWritingMode)) {
         auto topLeft = LayoutPoint { childLogicalLeft + positionInChild.x(), childLogicalTop + positionInChild.y() };
