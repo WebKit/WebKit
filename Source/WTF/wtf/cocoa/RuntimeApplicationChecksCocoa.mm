@@ -259,6 +259,37 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
     if (linkedBefore(dyld_2025_SU_G_os_versions, DYLD_IOS_VERSION_26_6, DYLD_MACOSX_VERSION_26_6))
         disableBehavior(SDKAlignedBehavior::NetworkProcessInheritsNetworkAccessFromUIProcess);
 
+    if (linkedBefore(dyld_fall_2025_os_versions, DYLD_IOS_VERSION_19_0, DYLD_MACOSX_VERSION_16_0)) {
+        disableBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToNull);
+        disableBehavior(SDKAlignedBehavior::MutationEventsDisabledByDefault);
+        disableBehavior(SDKAlignedBehavior::EnableTrustedTypesByDefault);
+        disableBehavior(SDKAlignedBehavior::BrowsingContextControllerMethodStubRemoved);
+        disableBehavior(SDKAlignedBehavior::AutoLayoutInWKWebView);
+        disableBehavior(SDKAlignedBehavior::DidFailProvisionalNavigationWithErrorForFileURLNavigation);
+    }
+
+    if (linkedBefore(dyld_2025_SU_C_os_versions, DYLD_IOS_VERSION_26_2, DYLD_MACOSX_VERSION_26_2)) {
+        disableBehavior(SDKAlignedBehavior::ExecutionTimingChangeOfModuleScripts);
+        disableBehavior(SDKAlignedBehavior::JavaScriptEvaluationResultWithoutSerializedScriptValue);
+    }
+
+    if (linkedBefore(dyld_2025_SU_E_os_versions, DYLD_IOS_VERSION_26_4, DYLD_MACOSX_VERSION_26_4)) {
+        disableBehavior(SDKAlignedBehavior::GetBoundingClientRectZoomed);
+        disableBehavior(SDKAlignedBehavior::NoFontFaceSetConstructor);
+    }
+
+    if (linkedBefore(dyld_fall_2026_os_versions, DYLD_IOS_VERSION_27_0, DYLD_MACOSX_VERSION_27_0)) {
+        disableBehavior(SDKAlignedBehavior::AdjustColorExtensionsForHorizontalBannerViewOverlays);
+        disableBehavior(SDKAlignedBehavior::CrashWhenPreconnectingFromBackgroundThread);
+        disableBehavior(SDKAlignedBehavior::CrashWhenMutatingProcessAssertionsFromBackgroundThread);
+        disableBehavior(SDKAlignedBehavior::NoHTMLEnhancedSelectParsingQuirk);
+        disableBehavior(SDKAlignedBehavior::SuppressKeypressForModifierShortcuts);
+        disableBehavior(SDKAlignedBehavior::ScrollColorExtensionGrowsDuringRubberBanding);
+        disableBehavior(SDKAlignedBehavior::ManagedRefreshControlAppearance);
+        disableBehavior(SDKAlignedBehavior::ExposePartitionFromWKHTTPCookieStoreAPI);
+        disableBehavior(SDKAlignedBehavior::NoMediaLayerTeardownOnPageVisibilityChangeQuirk);
+    }
+
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;

@@ -117,8 +117,20 @@ DECLARE_SYSTEM_HEADER
 #define DYLD_IOS_VERSION_18_5 0x00120500
 #endif
 
+#ifndef DYLD_IOS_VERSION_19_0
+#define DYLD_IOS_VERSION_19_0 0x00130000
+#endif
+
 #ifndef DYLD_IOS_VERSION_26_1
 #define DYLD_IOS_VERSION_26_1 0x001a0100
+#endif
+
+#ifndef DYLD_IOS_VERSION_26_2
+#define DYLD_IOS_VERSION_26_2 0x001a0200
+#endif
+
+#ifndef DYLD_IOS_VERSION_26_4
+#define DYLD_IOS_VERSION_26_4 0x001a0400
 #endif
 
 #ifndef DYLD_IOS_VERSION_26_6
@@ -201,8 +213,20 @@ DECLARE_SYSTEM_HEADER
 #define DYLD_MACOSX_VERSION_15_5 0x000f0500
 #endif
 
+#ifndef DYLD_MACOSX_VERSION_16_0
+#define DYLD_MACOSX_VERSION_16_0 0x00100000
+#endif
+
 #ifndef DYLD_MACOSX_VERSION_26_1
 #define DYLD_MACOSX_VERSION_26_1 0x001a0100
+#endif
+
+#ifndef DYLD_MACOSX_VERSION_26_2
+#define DYLD_MACOSX_VERSION_26_2 0x001a0200
+#endif
+
+#ifndef DYLD_MACOSX_VERSION_26_4
+#define DYLD_MACOSX_VERSION_26_4 0x001a0400
 #endif
 
 #ifndef DYLD_MACOSX_VERSION_26_6
@@ -250,7 +274,10 @@ typedef struct {
 #define DYLD_IOS_VERSION_18_2 0x00120200
 #define DYLD_IOS_VERSION_18_4 0x00120400
 #define DYLD_IOS_VERSION_18_5 0x00120500
+#define DYLD_IOS_VERSION_19_0 0x00130000
 #define DYLD_IOS_VERSION_26_1 0x001a0100
+#define DYLD_IOS_VERSION_26_2 0x001a0200
+#define DYLD_IOS_VERSION_26_4 0x001a0400
 #define DYLD_IOS_VERSION_26_6 0x001a0600
 #define DYLD_IOS_VERSION_27_0 0x001b0000
 
@@ -277,7 +304,10 @@ typedef struct {
 #define DYLD_MACOSX_VERSION_15_2 0x000f0200
 #define DYLD_MACOSX_VERSION_15_4 0x000f0400
 #define DYLD_MACOSX_VERSION_15_5 0x000f0500
+#define DYLD_MACOSX_VERSION_16_0 0x00100000
 #define DYLD_MACOSX_VERSION_26_1 0x001a0100
+#define DYLD_MACOSX_VERSION_26_2 0x001a0200
+#define DYLD_MACOSX_VERSION_26_4 0x001a0400
 #define DYLD_MACOSX_VERSION_26_6 0x001a0600
 #define DYLD_MACOSX_VERSION_27_0 0x001b0000
 
@@ -385,8 +415,20 @@ WTF_EXTERN_C_BEGIN
 #define dyld_2024_SU_F_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
+#ifndef dyld_fall_2025_os_versions
+#define dyld_fall_2025_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
 #ifndef dyld_2025_SU_B_os_versions
 #define dyld_2025_SU_B_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_2025_SU_C_os_versions
+#define dyld_2025_SU_C_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_2025_SU_E_os_versions
+#define dyld_2025_SU_E_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
 #ifndef dyld_2025_SU_G_os_versions
