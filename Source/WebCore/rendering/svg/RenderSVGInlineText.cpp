@@ -103,7 +103,8 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
 
 void RenderSVGInlineText::setRenderedText(const String& text)
 {
-    RenderText::setRenderedText(text);
+    bool preservesWhiteSpace = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
+    RenderText::setRenderedText(preservesWhiteSpace ? applySVGWhitespaceRules(text, true) : text);
     m_canUseSimplifiedTextMeasuringWithScaledFont = { };
 }
 
