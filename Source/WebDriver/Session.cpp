@@ -1375,6 +1375,8 @@ void Session::getActiveElement(Function<void(CommandResult&&)>&& completionHandl
         }
         auto parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
+        if (m_currentBrowsingContext)
+            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         parameters->setString("function"_s, "function() { return document.activeElement; }"_s);
         parameters->setArray("arguments"_s, JSON::Array::create());
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) {

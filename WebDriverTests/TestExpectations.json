@@ -7180,17 +7180,6 @@
         }
     },
 
-    "imported/w3c/webdriver/tests/classic/get_active_element/iframe.py": {
-        "subtests": {
-            "test_get_active_element_in_frame[cross_origin]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/330258", "note": "Get Active Element uses the top-level document in a frame"}}
-            },
-            "test_get_active_element_in_frame[same_origin]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/330258", "note": "Get Active Element uses the top-level document in a frame"}}
-            }
-        }
-    },
-
     "imported/w3c/webdriver/tests/classic/get_all_cookies/get.py": {
         "subtests": {
             "test_get_cookies_only_from_active_document": {
