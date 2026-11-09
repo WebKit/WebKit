@@ -947,6 +947,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"NSWindowDisplayWithRunLoopObserver": @YES, // Temporary workaround, see <rdar://problem/20351297>.
         @"AppleEnableSwipeNavigateWithScrolls": @YES,
         @"com.apple.swipescrolldirection": @1,
+        @"ReduceMotionAutoplayAnimatedImagesEnabled": @YES,
     };
 
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];

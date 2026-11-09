@@ -46,6 +46,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"NSScrollAnimationEnabled" : @NO,
         @"AppleShowScrollBars": @"Always",
         @"ForceDefaultAccessibilitySettings": @YES,
+        @"ReduceMotionAutoplayAnimatedImagesEnabled": @YES,
     };
 
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
