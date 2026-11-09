@@ -585,3 +585,4 @@ webkit.org/b/326416 [ mac ] TestWebKitAPI.TextExtractionTests/targetNodeWithSame
 webkit.org/b/326696 [ ios ] TestWebKitAPI.TextExtractionTests/targetNodeWithSameOriginSubframe() [ Skip ]
 webkit.org/b/326416 [ mac ] TestWebKitAPI.TextExtractionTests/visibleTextOnly() [ Skip ]
 webkit.org/b/326696 [ ios ] TestWebKitAPI.TextExtractionTests/visibleTextOnly() [ Skip ]
+webkit.org/b/330584 TestWebKitAPI.PrivateClickMeasurement.SourceClickFraudPrevention [ Pass Timeout ]
