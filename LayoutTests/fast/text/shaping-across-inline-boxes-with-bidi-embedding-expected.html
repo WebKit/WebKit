@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Shaping across inline boxes should not extend across a bidi embedding</title>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Gulf-regular.ttf") format("truetype");
+}
+div {
+    font: 32px WebFont;
+}
+</style>
+</head>
+<body>
+<p>An inline box with unicode-bidi other than normal starts a new bidi run, so Arabic text on either side
+of its boundary should not be shaped together. This test passes if each line renders the same as the
+reference, which uses the equivalent bidi control characters in a single text node.</p>
+<div dir="rtl" lang="ar">سلام&#x202A;سلام XYZ&#x202C;</div>
+<div dir="rtl" lang="ar">سلام&#x202B;سلام&#x202C;</div>
+<div dir="rtl" lang="ar">سلام&#x202E;سلام&#x202C;</div>
+</body>
+</html>
