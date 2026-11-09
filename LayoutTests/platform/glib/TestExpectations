@@ -383,8 +383,6 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-a
 imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-with-filter.svg [ Pass ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-018.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-overflow/single-axis-overflow-clip-rtl.html [ Pass ]
-[ x86_64 ] imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-018.html [ Pass ]
-[ x86_64 ] imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-019.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/multicol/vlr-rtl-rtl-in-multicols.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/multicol/vrl-rtl-rtl-in-multicols.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-overflow-002.html [ Pass ]
@@ -5078,7 +5076,6 @@ webkit.org/b/319310 [ Debug ] fast/repaint/iframe-avoid-redundant-repaint.html [
 webkit.org/b/319311 [ Debug ] fast/repaint/missing-out-of-flow-repaint-on-destroy.html [ Pass ImageOnlyFailure ]
 webkit.org/b/319312 [ Debug ] workers/bomb.html [ Skip ]
 
-[ x86_64 ] imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-028.html [ ImageOnlyFailure ]
 
 

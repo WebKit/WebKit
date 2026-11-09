@@ -711,7 +711,8 @@ std::optional<BlockOverflowEllipsis> InlineFormattingUtils::blockEllipsisForLine
             return TextUtil::ellipsisText();
         },
         [&](const Style::String& string) -> AtomString {
-            return AtomString { string.value };
+            // https://drafts.csswg.org/css-overflow-4/#valdef-block-ellipsis-string
+            return TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(string.value);
         }
     );
     if (ellipsisText.isEmpty())
