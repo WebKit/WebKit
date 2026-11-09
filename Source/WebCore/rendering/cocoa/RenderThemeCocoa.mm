@@ -3206,18 +3206,16 @@ static void adjustInputElementButtonStyleForVectorBasedControls(Style::ComputedS
     }
 }
 
-#endif
-
 static void adjustSelectListButtonStyleForVectorBasedControls(Style::ComputedStyle& style)
 {
     // FIXME: This is a copy of adjustSelectListButtonStyle(...) from RenderThemeIOS. Refactor to remove duplicate code.
-#if PLATFORM(IOS_FAMILY)
     applyCommonButtonPaddingToStyleForVectorBasedControls(style);
-#endif
 
     style.setLineHeight(Style::ComputedStyle::initialLineHeight());
     style.setTextAutosizingAdjustedLineHeight(Style::ComputedStyle::initialLineHeight());
 }
+
+#endif
 
 bool RenderThemeCocoa::adjustMenuListStyleForVectorBasedControls(Style::ComputedStyle& style, const Element* element) const
 {
@@ -3393,10 +3391,6 @@ bool RenderThemeCocoa::adjustMenuListButtonStyleForVectorBasedControls(Style::Co
 #endif
     }
 
-    const auto isNonMultipleSelectElement = is<HTMLSelectElement>(*element) && !element->hasAttributeWithoutSynchronization(HTMLNames::multipleAttr);
-    if (isNonMultipleSelectElement)
-        adjustSelectListButtonStyleForVectorBasedControls(style);
-
 #if PLATFORM(IOS_FAMILY)
     const int menuListMinHeight = 15;
     const float menuListBaseHeight = 20;
@@ -3409,8 +3403,10 @@ bool RenderThemeCocoa::adjustMenuListButtonStyleForVectorBasedControls(Style::Co
     else
         style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(menuListMinHeight) });
 
-    if (isNonMultipleSelectElement)
+    if (is<HTMLSelectElement>(*element)) {
+        adjustSelectListButtonStyleForVectorBasedControls(style);
         return true;
+    }
 
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element))
         adjustInputElementButtonStyleForVectorBasedControls(style, *input);
