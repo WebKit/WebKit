@@ -33,7 +33,6 @@
 #include "LocalFrameViewInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderElementStyleInlines.h"
 #include "RenderGrid.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
@@ -148,23 +147,6 @@ bool PositionedLayoutConstraints::usesStaticPosition(const Style::ComputedStyle&
     if (axis == LogicalBoxAxis::Inline)
         return style.hasStaticInlinePosition(isHorizontalWritingMode) && !style.justifySelf().isAnchorCenter();
     return style.hasStaticBlockPosition(isHorizontalWritingMode) && !style.alignSelf().isAnchorCenter();
-}
-
-LayoutSize PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(const RenderBoxModelObject& container, const Style::ComputedStyle& outOfFlowBoxStyle)
-{
-    auto isHorizontal = container.writingMode().isHorizontal();
-    auto firstFragmentBorderBoxRect = container.firstFragmentBorderBoxRect();
-    if (container.writingMode().isBlockFlipped()) {
-        // firstFragmentBorderBoxRect() is physical while this offset is added to block-start relative locations.
-        if (CheckedPtr containingBlock = container.containingBlock())
-            containingBlock->physicalToBlockStartRelative(firstFragmentBorderBoxRect);
-    }
-    auto offset = toLayoutSize(firstFragmentBorderBoxRect.location());
-    if (usesStaticPosition(outOfFlowBoxStyle, LogicalBoxAxis::Inline, isHorizontal))
-        isHorizontal ? offset.setWidth(0_lu) : offset.setHeight(0_lu);
-    if (usesStaticPosition(outOfFlowBoxStyle, LogicalBoxAxis::Block, isHorizontal))
-        isHorizontal ? offset.setHeight(0_lu) : offset.setWidth(0_lu);
-    return offset;
 }
 
 void PositionedLayoutConstraints::captureInsets()
@@ -709,9 +691,9 @@ static LayoutPoint positionInContainer(const RenderBox& container, const RenderB
     auto childInFlowOffset = childWritingMode.isHorizontal() ? child.offsetForInFlowPosition() : child.offsetForInFlowPosition().transposedSize();
     auto childLogicalLeft = childInFlowOffset.width() + child.logicalLeft();
     auto childLogicalTop = childInFlowOffset.height() + child.logicalTop();
-    if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(child.container()); inlineBox && inlineBox->isInlineBox() && child.isAbsolutelyPositioned() && inlineBox->canContainAbsolutelyPositionedObjects()) {
+    if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(child.container()); inlineBox && inlineBox->isInlineBox() && child.isOutOfFlowPositioned()) {
         // The child is positioned relative to its inline box containing block, which is in the coordinate space of the container.
-        auto inlineBoxOffset = PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(*inlineBox, child.style());
+        auto inlineBoxOffset = toLayoutSize(inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location());
         childLogicalLeft += childWritingMode.isHorizontal() ? inlineBoxOffset.width() : inlineBoxOffset.height();
         childLogicalTop += childWritingMode.isHorizontal() ? inlineBoxOffset.height() : inlineBoxOffset.width();
     }
@@ -742,9 +724,9 @@ static LayoutPoint staticDistance(const RenderBoxModelObject& container, const R
     auto initialStaticPosition = [&] {
         // Static position is already in the coordinate system of the container (minus the flip in inline direction).
         auto staticPosition = LayoutPoint { outOfFlowBox.layer()->staticInlinePosition(), outOfFlowBox.layer()->staticBlockPosition() };
-        // We are relative to a RenderBox ancestor unless the containing block itself is an inline box.
+        // We are relative to a RenderBox ancestor (for inline-level content, the block that establishes the inline formatting context).
         auto* staticPositionContainingBlock = outOfFlowBox.parent();
-        for (; staticPositionContainingBlock && !is<RenderBox>(staticPositionContainingBlock) && staticPositionContainingBlock != &container; staticPositionContainingBlock = staticPositionContainingBlock->container()) { }
+        for (; staticPositionContainingBlock && !is<RenderBox>(staticPositionContainingBlock); staticPositionContainingBlock = staticPositionContainingBlock->container()) { }
         if (auto* renderBox = dynamicDowncast<RenderBox>(staticPositionContainingBlock); renderBox && renderBox->writingMode().isInlineFlipped())
             staticPosition.setX(renderBox->logicalWidth() - staticPosition.x());
         return staticPosition;
@@ -752,7 +734,6 @@ static LayoutPoint staticDistance(const RenderBoxModelObject& container, const R
 
     auto staticPosition = LayoutPoint { };
     auto* child = &outOfFlowBox;
-    auto hasSeenNonInlineBoxContainer = false;
     for (auto* ancestorContainer = child->parent(); ancestorContainer && ancestorContainer != &container; ancestorContainer = ancestorContainer->container()) {
         CheckedPtr containerBox = dynamicDowncast<RenderBox>(*ancestorContainer);
         if (!containerBox)
@@ -760,28 +741,21 @@ static LayoutPoint staticDistance(const RenderBoxModelObject& container, const R
 
         staticPosition = child == &outOfFlowBox ? initialStaticPosition() : positionInContainer(*containerBox, *child, staticPosition);
         child = containerBox.get();
-        hasSeenNonInlineBoxContainer = true;
     }
 
-    if (!hasSeenNonInlineBoxContainer && container.isInlineBox()) {
-        // This is a simple case of when the containing block is formed by a positioned inline box with no block boxes in-between (e.g <span style="position: relative">)
-        return initialStaticPosition();
-    }
+    auto staticPositionInContainingBlock = [&] {
+        if (auto* containingBlock = dynamicDowncast<RenderBox>(container))
+            return child == &outOfFlowBox ? initialStaticPosition() : positionInContainer(*containingBlock, *child, staticPosition);
+        ASSERT(container.isInlineBox());
+        // The inline box is in the coordinate space of its own containing block, so make the position relative to the border box of the inline box.
+        auto staticPositionInInlineBoxContainingBlock = child == &outOfFlowBox ? initialStaticPosition() : positionInContainer(*container.containingBlock(), *child, staticPosition);
+        auto offset = toLayoutSize(container.blockStartRelativeFirstFragmentBorderBoxRect().location());
+        return staticPositionInInlineBoxContainingBlock - (container.writingMode().isHorizontal() ? offset : offset.transposedSize());
+    };
 
-    auto* containingBlock = dynamicDowncast<RenderBox>(container);
     // m_insetBefore is expected to be relative to the padding box (while staticPosition is relative to the border box).
-    auto containingBlockBorderSize = LayoutSize { };
-    if (containingBlock)
-        containingBlockBorderSize = containingBlock->writingMode().isInlineFlipped() ? LayoutSize(containingBlock->borderEnd(), containingBlock->borderBefore()) : LayoutSize(containingBlock->borderStart(), containingBlock->borderBefore());
-    else {
-        containingBlock = child->containingBlock();
-        ASSERT(containingBlock);
-        // Note that we don't take the border here as we passed the real containing block.
-    }
-
-    staticPosition = child == &outOfFlowBox ? initialStaticPosition() : positionInContainer(*containingBlock, *child, staticPosition);
-    staticPosition -= containingBlockBorderSize;
-    return staticPosition;
+    auto borderSize = container.writingMode().isInlineFlipped() ? LayoutSize(container.borderEnd(), container.borderBefore()) : LayoutSize(container.borderStart(), container.borderBefore());
+    return staticPositionInContainingBlock() - borderSize;
 }
 
 LayoutUnit PositionedLayoutConstraints::computedInlineStaticDistance() const

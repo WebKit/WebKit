@@ -506,7 +506,7 @@ public:
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     LayoutRect firstFragmentBorderBoxRect() const override;
 
-    NODELETE LayoutPoint blockStartRelativeToPhysicalForChild(const RenderBox& child, const LayoutPoint&) const;
+    NODELETE LayoutPoint blockStartRelativeToPhysicalForChild(const RenderBox& child, const LayoutPoint&) const final;
 
     // The block axis coordinate (x for vertical, y for horizontal writing modes) of geometry inside this box is measured from its
     // block-start border edge, while painting, hit testing and layers use physical coordinates. The two differ only in vertical-rl

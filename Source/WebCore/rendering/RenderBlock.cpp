@@ -605,9 +605,9 @@ void RenderBlock::clearLayoutOverflow()
 static LayoutSize offsetFromBlock(const RenderBlock& block, const RenderBox& outOfFlowBox)
 {
     CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(outOfFlowBox.container());
-    if (!inlineBox || !inlineBox->isInlineBox() || !outOfFlowBox.isAbsolutelyPositioned() || !inlineBox->canContainAbsolutelyPositionedObjects())
+    if (!inlineBox || !inlineBox->isInlineBox() || !outOfFlowBox.isOutOfFlowPositioned())
         return outOfFlowBox.locationOffset();
-    auto offset = outOfFlowBox.locationOffset() + PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(*inlineBox, outOfFlowBox.style());
+    auto offset = outOfFlowBox.locationOffset() + toLayoutSize(inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location());
     for (CheckedPtr containingBlock = inlineBox->containingBlock(); containingBlock && containingBlock != &block; containingBlock = containingBlock->containingBlock())
         offset += containingBlock->locationOffset();
     return offset;

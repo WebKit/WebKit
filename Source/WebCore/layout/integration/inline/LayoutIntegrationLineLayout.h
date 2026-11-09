@@ -124,6 +124,7 @@ public:
     std::optional<LayoutUnit> firstLineBaseline() const;
     std::optional<LayoutUnit> lastLineBaseline() const;
     LayoutRect firstInlineBoxRect(const RenderBoxModelObject&) const;
+    LayoutRect blockStartRelativeFirstInlineBoxRect(const RenderBoxModelObject&) const;
     LayoutRect enclosingBorderBoxRectFor(const RenderBoxModelObject&) const;
 
     InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;

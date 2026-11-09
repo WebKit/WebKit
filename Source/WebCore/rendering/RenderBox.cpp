@@ -2655,11 +2655,20 @@ LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const 
 {
     auto offset = RenderBoxModelObject::offsetFromContainer(container, point, offsetDependsOnPoint);
 
+    if (isOutOfFlowPositioned() && container.isInlineBox()) {
+        // An out-of-flow box is only mapped to an inline box when the inline box is its containing block. The box is positioned relative
+        // to the border box of the inline box's first fragment, which is in the coordinate space of the inline box's own containing block.
+        auto& inlineBox = downcast<RenderBoxModelObject>(container);
+        auto borderBoxRect = LayoutRect { location() + toLayoutSize(inlineBox.blockStartRelativeFirstFragmentBorderBoxRect().location()), borderBoxSize() };
+        if (inlineBox.writingMode().isBlockFlipped()) {
+            if (CheckedPtr containingBlock = inlineBox.containingBlock())
+                containingBlock->blockStartRelativeToPhysical(borderBoxRect);
+        }
+        return offset + toLayoutSize(borderBoxRect.location());
+    }
+
     if (!isInline() || isBlockLevelReplacedOrAtomicInline())
         offset += topLeftLocationOffset();
-
-    if (isAbsolutelyPositioned() && container.isInlineBox() && container.canContainAbsolutelyPositionedObjects())
-        offset += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(container), style());
 
     return offset;
 }
@@ -5296,6 +5305,12 @@ LayoutPoint RenderBox::topLeftLocationFromBlockStartRelative() const
 {
     ASSERT(view().frameView().hasFlippedBlockRenderers());
 
+    if (isOutOfFlowPositioned()) {
+        // A box positioned relative to an inline box is converted within the inline box.
+        if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(container()); inlineBox && inlineBox->isInlineBox())
+            return inlineBox->blockStartRelativeToPhysicalForChild(*this, location());
+    }
+
     auto* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
         return location();
@@ -5583,9 +5598,9 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
 
     CheckedPtr containingBlock = this->containingBlock();
     auto logicalTopInContainingBlock = logicalTop();
-    if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(container()); inlineBox && inlineBox->isInlineBox() && isAbsolutelyPositioned() && inlineBox->canContainAbsolutelyPositionedObjects()) {
+    if (CheckedPtr inlineBox = dynamicDowncast<RenderBoxModelObject>(container()); inlineBox && inlineBox->isInlineBox() && isOutOfFlowPositioned()) {
         // The box is positioned relative to the inline box, which is positioned in its own containing block.
-        auto inlineBoxOffset = PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(*inlineBox, style());
+        auto inlineBoxOffset = toLayoutSize(inlineBox->blockStartRelativeFirstFragmentBorderBoxRect().location());
         logicalTopInContainingBlock += inlineBox->isHorizontalWritingMode() ? inlineBoxOffset.height() : inlineBoxOffset.width();
         containingBlock = inlineBox->containingBlock();
     }
