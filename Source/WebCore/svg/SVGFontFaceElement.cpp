@@ -329,10 +329,12 @@ void SVGFontFaceElement::removingSteps(RemovalType removalType, ContainerNode& o
         m_fontElement = nullptr;
         Ref<Document> document = this->document();
         protect(document->svgExtensions())->unregisterSVGFontFaceElement(protect(*this));
-        Ref fontFaceSet = document->fontSelector().cssFontFaceSet();
         Ref fontFaceRule = m_fontFaceRule;
-        if (RefPtr fontFace = fontFaceSet->lookUpByCSSConnection(fontFaceRule))
-            fontFaceSet->remove(*fontFace);
+        if (RefPtr fontSelector = document->fontSelectorIfExists()) {
+            Ref fontFaceSet = fontSelector->cssFontFaceSet();
+            if (RefPtr fontFace = fontFaceSet->lookUpByCSSConnection(fontFaceRule))
+                fontFaceSet->remove(*fontFace);
+        }
         protect(fontFaceRule->mutableProperties())->clear();
 
         document->styleScope().didChangeStyleSheetEnvironment();
