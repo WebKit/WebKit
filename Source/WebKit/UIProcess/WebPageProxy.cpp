@@ -9681,8 +9681,8 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
             automationSession->navigationOccurredForFrame(frame);
     }
 
-    if (RefPtr failedNavigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr)
-        restoreBackForwardListCurrentItemAfterCanceledTraversal(*failedNavigation);
+    RefPtr failedNavigation = navigationID ? m_navigationState->navigation(*navigationID) : nullptr;
+    bool wasLoadingAlternateHTMLForFailingProvisionalLoadBeforeNotifyingClientOfFailure = m_isLoadingAlternateHTMLStringForFailingProvisionalLoad;
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
@@ -9796,6 +9796,10 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 
     m_failingProvisionalLoadURL = { };
     m_allowsLoadingAlternateHTMLForFailingProvisionalLoadURL = true;
+
+    bool willLoadAlternateHTMLForFailingProvisionalLoad = !wasLoadingAlternateHTMLForFailingProvisionalLoadBeforeNotifyingClientOfFailure && m_isLoadingAlternateHTMLStringForFailingProvisionalLoad;
+    if (failedNavigation && !willLoadAlternateHTMLForFailingProvisionalLoad)
+        restoreBackForwardListCurrentItemAfterCanceledTraversal(*failedNavigation);
 
     if (willContinueLoading == WillContinueLoading::Yes)
         return;
