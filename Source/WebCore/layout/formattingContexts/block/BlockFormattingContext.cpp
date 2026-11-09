@@ -385,6 +385,55 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     placeInContainingBlock(blockContainer, WTF::move(blockContainerState), result);
 }
 
+// The start in the root's logical coordinates of an inline range of a block container's, from the inline start of its border box in its own
+// direction, and the other way around: mirrored in its border box when its inline direction is the opposite of the root's.
+static LayoutUnit inlineStartInRoot(const ContainingBlockState& blockContainerState, LayoutUnit start, LayoutUnit size)
+{
+    if (!blockContainerState.hasInlineDirectionOppositeToRoot)
+        return blockContainerState.borderBoxLogicalLeftInRoot + start;
+    return blockContainerState.borderBoxLogicalLeftInRoot + blockContainerState.geometry.borderBoxWidth() - start - size;
+}
+
+static LayoutUnit inlineStartInBlockContainer(const ContainingBlockState& blockContainerState, LayoutUnit startInRoot, LayoutUnit size)
+{
+    if (!blockContainerState.hasInlineDirectionOppositeToRoot)
+        return startInRoot - blockContainerState.borderBoxLogicalLeftInRoot;
+    return blockContainerState.borderBoxLogicalLeftInRoot + blockContainerState.geometry.borderBoxWidth() - startInRoot - size;
+}
+
+// The part of the content box of a block container that the floats leave between two block positions in the root, in its own coordinates.
+static std::pair<LayoutUnit, LayoutUnit> spaceBesideFloats(const FloatingContext& floatingContext, const ContainingBlockState& blockContainerState, LayoutUnit top, LayoutUnit bottom)
+{
+    auto constraints = floatingContext.constraints(top, bottom, FloatingContext::MayBeAboveLastFloat::Yes);
+    auto start = blockContainerState.inlineRange.min();
+    auto end = blockContainerState.inlineRange.max();
+    // The floats at the start of the root are at the end of a block container whose inline direction is the opposite.
+    auto startEdge = constraints.start ? std::optional { inlineStartInBlockContainer(blockContainerState, constraints.start->x, 0_lu) } : std::nullopt;
+    auto endEdge = constraints.end ? std::optional { inlineStartInBlockContainer(blockContainerState, constraints.end->x, 0_lu) } : std::nullopt;
+    if (blockContainerState.hasInlineDirectionOppositeToRoot)
+        std::swap(startEdge, endEdge);
+    if (startEdge)
+        start = std::max(start, *startEdge);
+    if (endEdge)
+        end = std::min(end, *endEdge);
+    return { start, end };
+}
+
+// A float in the coordinates of a border box of this inline size whose inline direction is the opposite: its start and end, and its margins,
+// swap sides.
+static PlacedFloats::Item mirroredFloat(const PlacedFloats::Item& floatItem, LayoutUnit borderBoxInlineSize)
+{
+    auto localGeometry = floatItem.boxGeometry();
+    auto absoluteGeometry = BoxGeometry { localGeometry };
+    absoluteGeometry.setHorizontalMargin({ localGeometry.marginEnd(), localGeometry.marginStart() });
+    auto borderBox = floatItem.absoluteBorderBoxRect();
+    absoluteGeometry.setTopLeft({ borderBoxInlineSize - borderBox.left() - borderBox.width(), borderBox.top() });
+    auto position = floatItem.isStartPositioned() ? PlacedFloats::Item::Position::End : PlacedFloats::Item::Position::Start;
+    if (CheckedPtr layoutBox = floatItem.layoutBox())
+        return { *layoutBox, position, absoluteGeometry, BoxGeometry::borderBoxTopLeft(localGeometry), floatItem.placedByLine() };
+    return { position, absoluteGeometry, BoxGeometry::borderBoxTopLeft(localGeometry), RefPtr { floatItem.shape() } };
+}
+
 // A float in the coordinates of a border box offset by this from the one it is in; without its box, as a float from outside the inline
 // formatting context it goes to (PlacedFloats::Item::isInFormattingContextOf).
 static PlacedFloats::Item movedFloat(const PlacedFloats::Item& floatItem, LayoutSize offset, const Box* layoutBox)
@@ -401,7 +450,7 @@ static PlacedFloats::Item movedFloat(const PlacedFloats::Item& floatItem, Layout
 // A float from outside the inline content it intrudes into, in the coordinates of the border box of the content's block container, which is
 // offset by this from the root's. The render tree path gives the inline formatting context such floats from its float lists with their edges
 // along the physical vertical axis floored (LineLayout::preparePlacedFloats), and lines go beside them the same way here.
-static PlacedFloats::Item intrudingFloat(const PlacedFloats::Item& floatItem, LayoutSize offset, WritingMode writingMode)
+static PlacedFloats::Item intrudingFloat(const PlacedFloats::Item& floatItem, const ContainingBlockState& blockContainerState, LayoutSize offset, WritingMode writingMode)
 {
     auto geometry = floatItem.boxGeometry();
     auto localTopLeft = BoxGeometry::borderBoxTopLeft(geometry);
@@ -419,7 +468,11 @@ static PlacedFloats::Item intrudingFloat(const PlacedFloats::Item& floatItem, La
     }
     geometry.setTopLeft(borderBoxTopLeft);
     auto position = floatItem.isStartPositioned() ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End;
-    return { position, geometry, localTopLeft, RefPtr { floatItem.shape() } };
+    auto floatInBlockContainer = PlacedFloats::Item { position, geometry, localTopLeft, RefPtr { floatItem.shape() } };
+    // The inline content of a block container is in its own inline direction.
+    if (blockContainerState.hasInlineDirectionOppositeToRoot)
+        return mirroredFloat(floatInBlockContainer, blockContainerState.geometry.borderBoxWidth());
+    return floatInBlockContainer;
 }
 
 // The border box of a block container being laid out in the root, from its top when it is known, and otherwise from where the margins collapsed
@@ -475,6 +528,8 @@ void BlockFormattingContext::addInlineContentFloats(const PlacedFloats::List& fl
     auto& blockContainerState = m_blockLayoutState.containingBlockStates().last();
     auto offsetInRoot = borderBoxOffsetInRoot(blockContainerState);
     addFloats(WTF::map(floats, [&](auto& floatItem) {
+        if (blockContainerState.hasInlineDirectionOppositeToRoot)
+            return movedFloat(mirroredFloat(floatItem, blockContainerState.geometry.borderBoxWidth()), offsetInRoot, floatItem.layoutBox());
         return movedFloat(floatItem, offsetInRoot, floatItem.layoutBox());
     }), blockContainerState);
 }
@@ -517,7 +572,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
         offsetInRoot = borderBoxOffsetInRoot(blockContainerState);
         if (placedFloats) {
             for (auto& floatItem : placedFloats->list())
-                intrudingFloats.append(intrudingFloat(floatItem, -offsetInRoot, root().writingMode()));
+                intrudingFloats.append(intrudingFloat(floatItem, blockContainerState, -offsetInRoot, root().writingMode()));
         }
     }
     auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(inlineContentRoot, constraintsForInlineContent(blockContainer, blockContainerState), geometry, blockContainerState.contentBoxBlockSize, blockContainerState.replacedElementAvailableBlockSize, orthogonalFlowAvailableInlineSpace(blockContainerState), blockContainerState.relayoutChildren || m_isLayingOutWithResolvedBorderBoxLogicalTops, m_blockLayoutState, intrudingFloats, *this, result);
@@ -611,7 +666,7 @@ BlockLevelBoxInInlineContent BlockFormattingContext::layoutBlockLevelBoxInInline
         auto inlineContentFloat = inlineContentFloats.list().findIf([&](auto& inlineContentFloat) {
             return inlineContentFloat.layoutBox() && inlineContentFloat.layoutBox() == floatItem.layoutBox();
         });
-        floats.append(inlineContentFloat != notFound ? inlineContentFloats.list()[inlineContentFloat] : intrudingFloat(floatItem, -offsetInRoot, root().writingMode()));
+        floats.append(inlineContentFloat != notFound ? inlineContentFloats.list()[inlineContentFloat] : intrudingFloat(floatItem, blockContainerStateAfterLayout, -offsetInRoot, root().writingMode()));
     }
     inlineContentFloats.clear();
     for (auto& floatItem : floats)
@@ -791,12 +846,11 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
     auto& rootState = m_blockLayoutState.containingBlockStates().first();
     auto floatingContext = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() };
 
-    // The space the floats leave in the content box of the containing block, in the coordinates of the root.
-    auto contentBoxStart = containingBlockState.borderBoxLogicalLeftInRoot + containingBlockState.inlineRange.min();
-    auto contentBoxEnd = contentBoxStart + containingBlockState.inlineRange.size();
+    // The space the floats leave in the content box of the containing block, in its coordinates.
+    auto contentBoxStart = containingBlockState.inlineRange.min();
+    auto contentBoxEnd = containingBlockState.inlineRange.max();
     auto spaceBetween = [&](LayoutUnit top, LayoutUnit bottom) {
-        auto constraints = floatingContext.constraints(top, bottom, FloatingContext::MayBeAboveLastFloat::Yes);
-        return std::pair { constraints.start ? std::max(contentBoxStart, constraints.start->x) : contentBoxStart, constraints.end ? std::min(contentBoxEnd, constraints.end->x) : contentBoxEnd };
+        return spaceBesideFloats(floatingContext, containingBlockState, top, bottom);
     };
 
     // Its inline size and margins in a space, and where its border box starts in it, like RenderBlockFlow::determineLogicalLeftPositionForChild:
@@ -937,7 +991,7 @@ std::optional<LayoutUnit> BlockFormattingContext::placeBesideFloats(const Render
         geometry.setHorizontalMargin({ geometry.marginStart(), containingBlockState.inlineRange.size() - geometry.borderBoxWidth() - geometry.marginStart() });
     // An auto start margin is in the space, and a float may sit in another one (RenderBlockFlow::determineLogicalLeftPositionForChild).
     auto borderBoxStart = marginStartLength.isAuto() ? placement.spaceStart + geometry.marginStart() : std::max(contentBoxStart + geometry.marginStart(), placement.spaceStart);
-    geometry.setLeft(borderBoxStart - containingBlockState.borderBoxLogicalLeftInRoot);
+    geometry.setLeft(borderBoxStart);
     // Below the hypothetical position the floats put it, as clearance would (resolveBorderBoxLogicalTops).
     if (borderBoxLogicalTop > hypotheticalBorderBoxLogicalTop) {
         if (pendingFloats.isEmpty())
@@ -1108,9 +1162,18 @@ void BlockFormattingContext::handleFloat(const RenderBox& box, BlockLayoutResult
     auto& placedFloats = m_blockLayoutState.ensurePlacedFloats(root().layoutBox());
     auto& rootState = m_blockLayoutState.containingBlockStates().first();
     auto floatingContext = FloatingContext { root().layoutBox(), placedFloats, { }, rootState.geometry.borderBoxWidth() };
-    auto containingBlock = FloatingContext::ContainingBlock { toLayoutPoint(containingBlockOffsetInRoot), { containingBlockState.inlineRange.min(), containingBlockState.inlineRange.size() } };
-    geometry.setTopLeft(floatingContext.positionForFloat(box.layoutBox(), geometry, containingBlock));
-    addFloats({ floatingContext.makeFloatItem(box.layoutBox(), geometry, containingBlock) }, containingBlockState);
+    // In the root's logical coordinates, which mirror those of a containing block whose inline direction is the opposite.
+    auto isOpposite = containingBlockState.hasInlineDirectionOppositeToRoot;
+    auto containingBlockInlineSize = containingBlockState.geometry.borderBoxWidth();
+    auto contentBoxStart = isOpposite ? containingBlockInlineSize - containingBlockState.inlineRange.max() : containingBlockState.inlineRange.min();
+    auto containingBlock = FloatingContext::ContainingBlock { toLayoutPoint(containingBlockOffsetInRoot), { contentBoxStart, containingBlockState.inlineRange.size() } };
+    auto geometryInRoot = geometry;
+    if (isOpposite)
+        geometryInRoot.setHorizontalMargin({ geometry.marginEnd(), geometry.marginStart() });
+    geometryInRoot.setTopLeft(floatingContext.positionForFloat(box.layoutBox(), geometryInRoot, containingBlock));
+    addFloats({ floatingContext.makeFloatItem(box.layoutBox(), geometryInRoot, containingBlock) }, containingBlockState);
+    auto borderBoxLeft = BoxGeometry::borderBoxLeft(geometryInRoot);
+    geometry.setTopLeft({ isOpposite ? containingBlockInlineSize - borderBoxLeft - geometry.borderBoxWidth() : borderBoxLeft, BoxGeometry::borderBoxTop(geometryInRoot) });
     result.boxes.append({ box, WTF::move(geometry), { }, { }, { }, false, false, true });
 }
 
@@ -1140,12 +1203,9 @@ void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayou
         auto& rootState = m_blockLayoutState.containingBlockStates().first();
         auto floats = floatsAtHypotheticalPosition();
         auto staticBlockPositionInRoot = hypotheticalPosition().borderBoxLogicalTop;
-        auto constraints = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() }.constraints(staticBlockPositionInRoot, staticBlockPositionInRoot, FloatingContext::MayBeAboveLastFloat::Yes);
-        auto contentBoxStart = parentState.borderBoxLogicalLeftInRoot + inlineRange.min();
-        auto contentBoxEnd = contentBoxStart + inlineRange.size();
-        auto lineStart = constraints.start ? std::max(contentBoxStart, constraints.start->x) : contentBoxStart;
-        auto lineEnd = constraints.end ? std::min(contentBoxEnd, constraints.end->x) : contentBoxEnd;
-        return LayoutRange { lineStart - parentState.borderBoxLogicalLeftInRoot, lineEnd - lineStart };
+        auto floatingContext = FloatingContext { root().layoutBox(), floats, { }, rootState.geometry.borderBoxWidth() };
+        auto [lineStart, lineEnd] = spaceBesideFloats(floatingContext, parentState, staticBlockPositionInRoot, staticBlockPositionInRoot);
+        return LayoutRange { lineStart, lineEnd - lineStart };
     };
     auto staticInlinePosition = [&] {
         if (!box.style().originalDisplay().isInlineType())
@@ -1303,6 +1363,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
         .geometry = rootGeometry,
         .inlineRange = { horizontalConstraints.logicalLeft, horizontalConstraints.logicalWidth },
         .borderBoxLogicalLeftInRoot = { },
+        .hasInlineDirectionOppositeToRoot = false,
         .borderBoxLogicalTop = 0_lu,
         .borderAndPaddingBefore = constraints.logicalTop(),
         .contentBoxBlockSize = constraints.contentBoxBlockSize(),
@@ -1323,7 +1384,8 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
         .blockContainer = blockContainer,
         .geometry = geometry,
         .inlineRange = { geometry.borderAndPaddingStart() + scrollbarInlineStartSpace(blockContainer, geometry), geometry.contentBoxWidth() },
-        .borderBoxLogicalLeftInRoot = parentState.borderBoxLogicalLeftInRoot + BoxGeometry::borderBoxLeft(geometry),
+        .borderBoxLogicalLeftInRoot = inlineStartInRoot(parentState, BoxGeometry::borderBoxLeft(geometry), geometry.borderBoxWidth()),
+        .hasInlineDirectionOppositeToRoot = blockContainer.writingMode().isLogicalLeftInlineStart() != root().writingMode().isLogicalLeftInlineStart(),
         .borderBoxLogicalTop = { },
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
         .contentBoxBlockSize = contentBoxBlockSize,
