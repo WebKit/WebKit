@@ -23,6 +23,7 @@
 import calendar
 import io
 import json
+import sys
 import time
 import zipfile
 
@@ -185,9 +186,13 @@ class UploadContext(object):
                     timestamp=data['timestamp'],
                     test_results=data['test_results'],
                 )
+            else:
+                sys.stderr.write(f'Discarding queued upload {key}, no data is associated with it\n')
             job_complete = True
         finally:
             if job_complete or attempts >= self.MAX_ATTEMPTS:
+                if not job_complete:
+                    sys.stderr.write(f'Discarding queued upload {key} after {attempts} attempts to process it\n')
                 self.redis.delete(key)
                 self.redis.delete(f'data_for_{key}')
             else:
