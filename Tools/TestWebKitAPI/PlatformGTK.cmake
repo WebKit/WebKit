@@ -47,8 +47,10 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/glib/BitmapTexturePool.cpp
     Tests/WebCore/glib/CoordinatedTileBuffer.cpp
     Tests/WebCore/glib/Damage.cpp
+    Tests/WebCore/glib/DropTargetState.cpp
     Tests/WebCore/glib/GraphicsContextGLCoordinated.cpp
     Tests/WebCore/glib/RunLoopObserver.cpp
+    Tests/WebCore/glib/SelectionData.cpp
     Tests/WebCore/glib/SkiaCompositingLayerDamage.cpp
     Tests/WebCore/glib/UserAgentQuirks.cpp
 
@@ -57,6 +59,10 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/gstreamer/GstMappedBuffer.cpp
 
     generic/main.cpp
+)
+
+list(APPEND TestWebCore_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_SOURCE_DIR}/Source/WebKit"
 )
 
 list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES

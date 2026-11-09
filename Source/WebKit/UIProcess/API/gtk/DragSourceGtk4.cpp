@@ -79,13 +79,17 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
 
+    // Web content must not export file:// URIs, as a uri-list or a GdkFileList.
     if (m_selectionData->hasURIList()) {
-        auto uriList = m_selectionData->uriList().utf8();
-        GRefPtr bytes = gBytesNew(uriList.span());
-        providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
+        auto sanitizedURIList = SelectionData::uriListWithoutFilenames(m_selectionData->uriList());
+        if (!sanitizedURIList.isEmpty()) {
+            auto uriList = sanitizedURIList.utf8();
+            GRefPtr bytes = gBytesNew(uriList.span());
+            providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
+        }
     }
 
-    if (m_selectionData->hasURL()) {
+    if (m_selectionData->hasURL() && !m_selectionData->url().protocolIsFile()) {
         const auto& urlString = m_selectionData->url().string();
         auto url = makeString(urlString, '\n', m_selectionData->hasText() ? m_selectionData->text() : urlString).utf8();
         GRefPtr bytes = gBytesNew(url.span());

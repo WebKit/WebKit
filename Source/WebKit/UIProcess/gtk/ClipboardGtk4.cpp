@@ -257,9 +257,12 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     Vector<GdkContentProvider*> providers;
 
     if (selectionData.hasURIList()) {
-        auto uriList = selectionData.uriList().utf8();
-        GRefPtr bytes = gBytesNew(uriList.span());
-        providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
+        auto sanitizedURIList = WebCore::SelectionData::uriListWithoutFilenames(selectionData.uriList());
+        if (!sanitizedURIList.isEmpty()) {
+            auto uriList = sanitizedURIList.utf8();
+            GRefPtr bytes = gBytesNew(uriList.span());
+            providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
+        }
     }
 
     if (selectionData.hasMarkup()) {

@@ -478,10 +478,17 @@ String Pasteboard::readStringInCustomData(const String& type)
 Pasteboard::FileContentState Pasteboard::fileContentState()
 {
     if (m_selectionData) {
-        if (!m_selectionData->filenames().isEmpty())
+        if (m_selectionData->hasFilenames())
             return FileContentState::MayContainFilePaths;
+
+        // Not a grant. MayContainFilePaths only narrows DataTransfer::types(), so the
+        // web-writable uri-list may answer it. Matches PasteboardCocoa.
+        if (SelectionData::uriListContainsFileURI(m_selectionData->uriList()))
+            return FileContentState::MayContainFilePaths;
+
         if (m_selectionData->hasImage())
             return FileContentState::InMemoryImage;
+
         return FileContentState::NoFileOrImageData;
     }
 

@@ -31,6 +31,9 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/SelectionData.h>
 #include <wtf/Forward.h>
+#if USE(GTK4)
+#include "DropTargetState.h"
+#endif
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -69,6 +72,7 @@ private:
     void loadData(const char* mimeType, CompletionHandler<void(GRefPtr<GBytes>&&)>&&);
     void loadData(CompletionHandler<void(Vector<String>&&)>&&);
     void didLoadData();
+    void finishUnfinishedDrop();
 #else
     void dataReceived(WebCore::IntPoint&&, GtkSelectionData*, unsigned, unsigned);
     void leaveTimerFired();
@@ -87,6 +91,9 @@ private:
 #if USE(GTK4)
     GRefPtr<GCancellable> m_cancellable;
     StringBuilder m_uriListBuilder;
+    Vector<String> m_portalFilenames;
+    bool m_transferredFilesFromPortal { false };
+    DropTargetState m_state;
 #else
     RunLoop::Timer m_leaveTimer;
 #endif

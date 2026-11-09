@@ -33,19 +33,27 @@ bool DragData::containsColor() const
     return false;
 }
 
+static bool allowsFilenameAccess(const DragData& drag)
+{
+    // A drag that started in this application is web content.
+    return !drag.flags().contains(DragApplicationFlags::IsSource);
+}
+
 bool DragData::containsFiles() const
 {
-    return !m_disallowFileAccess && m_platformDragData->hasFilenames();
+    return !m_disallowFileAccess && allowsFilenameAccess(*this) && m_platformDragData->hasFilenames();
 }
 
 unsigned DragData::numberOfFiles() const
 {
-    return !m_disallowFileAccess ? m_platformDragData->filenames().size() : 0;
+    if (m_disallowFileAccess || !allowsFilenameAccess(*this))
+        return 0;
+    return m_platformDragData->filenames().size();
 }
 
 Vector<String> DragData::asFilenames() const
 {
-    if (m_disallowFileAccess)
+    if (m_disallowFileAccess || !allowsFilenameAccess(*this))
         return { };
     return m_platformDragData->filenames();
 }
