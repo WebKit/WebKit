@@ -116,6 +116,8 @@ private:
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime) final;
     void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key) final;
 
+    void buildCaptureMirrorLayerTreeSeed(CompletionHandler<void(std::optional<RemoteLayerTreeMirrorSeed>&&)>&&) final;
+
     WebCore::FloatRect exposedContentRect() const final;
     void setExposedContentRect(const WebCore::FloatRect&) final;
 

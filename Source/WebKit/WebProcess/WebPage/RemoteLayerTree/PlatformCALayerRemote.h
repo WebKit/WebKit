@@ -79,6 +79,11 @@ public:
     void recursiveBuildTransaction(RemoteLayerTreeContext&, RemoteLayerTreeTransaction&);
     void recursiveMarkWillBeDisplayedWithRenderingSuppresion();
 
+    // Encoding only sends the changed properties, so seeding a capture mirror temporarily marks every
+    // property that was ever set as changed. Returns the changes pending for the next commit.
+    OptionSet<LayerChange> beginMirrorSeedEncoding(OptionSet<LayerChange> propertiesNotSeeded);
+    void endMirrorSeedEncoding(OptionSet<LayerChange> pendingChanges) { m_properties.changedProperties = pendingChanges; }
+
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;
     bool needsDisplay() const override;

@@ -68,6 +68,7 @@ OBJC_CLASS CABasicAnimation;
 namespace WebKit {
 
 class LayerTreeHost;
+struct RemoteLayerTreeMirrorSeed;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
@@ -108,6 +109,9 @@ public:
     virtual void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& /*key*/, MonotonicTime /*startTime*/) { }
     virtual void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& /*key*/) { }
     virtual void addFence(const WTF::MachSendRight&) { }
+
+    // Snapshot of every live layer, used to seed a capture mirror of the layer tree in the UI process.
+    virtual void buildCaptureMirrorLayerTreeSeed(CompletionHandler<void(std::optional<RemoteLayerTreeMirrorSeed>&&)>&&);
 
     virtual WebCore::FloatRect exposedContentRect() const = 0;
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;

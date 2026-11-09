@@ -310,3 +310,9 @@ struct WebKit::RemoteLayerTreeCommitBundle {
     MonotonicTime startTime;
     Vector<std::pair<WebCore::FrameIdentifier, WebCore::FixedContainerEdges>> fixedContainerEdges;
 };
+
+[CustomHeader] struct WebKit::RemoteLayerTreeMirrorSeed {
+    Vector<WebKit::RemoteLayerTreeTransaction> transactions;
+    WebKit::TransactionID lastBuiltTransactionID;
+    bool hasMainFrame;
+};

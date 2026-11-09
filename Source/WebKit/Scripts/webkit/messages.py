@@ -1893,6 +1893,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::WebRTCNetwork::SocketAddress': ['"RTCNetwork.h"'],
         'WebKit::ReloadFromOrigin': ['"WebExtensionTab.h"'],
         'WebKit::RemoteLayerBackingStoreProperties': ['"RemoteLayerBackingStore.h"'],
+        'WebKit::RemoteLayerTreeMirrorSeed': ['"RemoteLayerTreeCommitBundle.h"'],
         'WebKit::RemoteVideoFrameReadReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteVideoFrameWriteReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteNativeImageReference': ['"RemoteNativeImageIdentifier.h"'],

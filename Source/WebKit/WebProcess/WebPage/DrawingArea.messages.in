@@ -47,6 +47,8 @@ messages -> DrawingArea {
 
     AcceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, String key, MonotonicTime startTime)
     AcceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, String key)
+
+    BuildCaptureMirrorLayerTreeSeed() -> (struct std::optional<WebKit::RemoteLayerTreeMirrorSeed> seed)
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
