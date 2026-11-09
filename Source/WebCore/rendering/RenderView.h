@@ -130,6 +130,8 @@ public:
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) const override;
 
     NODELETE void setPageLogicalSize(LayoutSize);
+    // The page area while printing, which css-page-3 makes the initial containing block.
+    std::optional<LayoutSize> printedPageAreaLogicalSize() const;
     LayoutUnit pageOrViewLogicalHeight() const;
 
     // This method is used to assign a page number only when pagination modes have

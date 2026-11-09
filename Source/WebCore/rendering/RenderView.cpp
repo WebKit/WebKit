@@ -165,6 +165,8 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
     if (document().isPluginDocument() && frameView->useFixedLayout())
         return frameView->fixedLayoutSize().height();
 #endif
+    if (auto pageAreaLogicalSize = printedPageAreaLogicalSize())
+        return pageAreaLogicalSize->height();
     return isHorizontalWritingMode() ? frameView->layoutSize().height() : frameView->layoutSize().width();
 }
 
@@ -832,6 +834,13 @@ void RenderView::setPageLogicalSize(LayoutSize size)
         m_pageLogicalHeightChanged = true;
 
     m_pageLogicalSize = size;
+}
+
+std::optional<LayoutSize> RenderView::printedPageAreaLogicalSize() const
+{
+    if (!shouldUsePrintingLayout() || !m_pageLogicalSize || m_pageLogicalSize->isEmpty())
+        return std::nullopt;
+    return m_pageLogicalSize;
 }
 
 float RenderView::pageZoomFactor() const
