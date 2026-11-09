@@ -218,6 +218,7 @@ JSValueRef fromArray(JSContextRef, Vector<String>&&);
 JSValueRef fromJSON(JSContextRef, RefPtr<JSON::Value>);
 JSValueRef fromMessageJSON(JSContextRef, JSStringRef messageJSON);
 JSValueRef fromObject(JSContextRef, HashMap<String, Protected<JSValueRef>>&&);
+JSValueRef makeEnumObject(JSContextRef, std::initializer_list<std::pair<ASCIILiteral, ASCIILiteral>> entries);
 
 JSValueRef toJSValueRef(JSContextRef, const String&, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
 JSValueRef toJSValueRef(JSContextRef, URL, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);

@@ -55,6 +55,8 @@
 
     [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIExtension extension;
 
+    [Dynamic] readonly attribute WebExtensionAPIExtensionTypes extensionTypes;
+
     [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPILocalization i18n;
 
     [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIRuntime runtime;

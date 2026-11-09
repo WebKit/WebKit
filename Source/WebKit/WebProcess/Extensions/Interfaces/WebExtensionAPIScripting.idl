@@ -70,5 +70,5 @@ dictionary WebExtensionCSSInjection {
     [RaisesException] void unregisterContentScripts([Optional, NSDictionary] any filter, [Optional, CallbackHandler] function callback);
     [RaisesException] void updateContentScripts([NSArray=NSDictionary] array scripts, [Optional, CallbackHandler] function callback);
 
-    [ImplementedAs=executionWorld] readonly attribute any ExecutionWorld;
+    [NeedsScriptContext, ImplementedAs=executionWorld] readonly attribute any ExecutionWorld;
 };

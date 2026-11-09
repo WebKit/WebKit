@@ -193,6 +193,7 @@ set(WebKit_BINDINGS_IN_FILES
 set(WebKit_CPP_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms
     WebProcess/Extensions/Interfaces/WebExtensionAPIEvent
+    WebProcess/Extensions/Interfaces/WebExtensionAPIExtensionTypes
     WebProcess/Extensions/Interfaces/WebExtensionAPINamespace
     WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime
     WebProcess/Extensions/Interfaces/WebExtensionAPIStorage
