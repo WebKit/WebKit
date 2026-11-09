@@ -2637,10 +2637,10 @@ bool RenderGrid::hitTestChildren(const HitTestRequest& request, HitTestResult& r
         auto hitTestGridItem = [&](RenderBox& gridItem) {
             if (gridItem.hasSelfPaintingLayer())
                 return false;
-            auto location = flipForWritingModeForChild(gridItem, scrolledOffset);
+            auto location = blockStartRelativeToPhysicalForChild(gridItem, scrolledOffset);
             if (!gridItem.hitTest(request, result, locationInContainer, location))
                 return false;
-            updateHitTestResult(result, flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
+            updateHitTestResult(result, physicalToBlockStartRelative(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
             return true;
         };
 

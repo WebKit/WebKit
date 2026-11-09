@@ -1701,7 +1701,7 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
     }
 
     auto visualRect = textBox().visualRectIgnoringBlockDirection();
-    textBox().formattingContextRoot().flipForWritingMode(visualRect);
+    textBox().formattingContextRoot().blockStartRelativeToPhysical(visualRect);
 
     auto boxOrigin = visualRect.location();
 

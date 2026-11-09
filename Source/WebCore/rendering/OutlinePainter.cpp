@@ -179,7 +179,7 @@ void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const La
         if (!isHorizontalWritingMode)
             baseRect = baseRect.transposedRect();
         if (isFlipped)
-            formattingContextRoot->flipForWritingMode(baseRect);
+            formattingContextRoot->blockStartRelativeToPhysical(baseRect);
         rects.append(LayoutRect { baseRect });
 
         // Collect a rect for each leaf box inside this inline box fragment,
@@ -196,7 +196,7 @@ void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const La
                 enclosingVisualRect = enclosingVisualRect.transposedRect();
 
             if (isFlipped)
-                formattingContextRoot->flipForWritingMode(enclosingVisualRect);
+                formattingContextRoot->blockStartRelativeToPhysical(enclosingVisualRect);
 
             rects.append(LayoutRect { enclosingVisualRect });
         }

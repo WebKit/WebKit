@@ -702,7 +702,7 @@ LayoutRect RenderView::viewRect() const
 IntRect RenderView::unscaledDocumentRect() const
 {
     LayoutRect overflowRect(layoutOverflowRect());
-    flipForWritingMode(overflowRect);
+    blockStartRelativeToPhysical(overflowRect);
     return snappedIntRect(overflowRect);
 }
 

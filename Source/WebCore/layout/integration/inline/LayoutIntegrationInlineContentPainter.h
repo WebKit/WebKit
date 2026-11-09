@@ -60,7 +60,7 @@ public:
 private:
     void paintDisplayBox(const InlineDisplay::Box&);
     void paintEllipsis(size_t lineIndex);
-    NODELETE LayoutPoint flippedContentOffsetIfNeeded(const RenderBox&) const;
+    NODELETE LayoutPoint paintOffsetForChild(const RenderBox&) const;
     NODELETE const RenderBlock& root() const;
 
     PaintInfo& m_paintInfo;

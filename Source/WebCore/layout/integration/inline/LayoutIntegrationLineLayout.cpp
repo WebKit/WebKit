@@ -430,7 +430,7 @@ std::optional<LayoutRect> LineLayout::updateOverflow()
         return { };
 
     auto damageRect = LayoutRect { *damage };
-    flow().flipForWritingMode(damageRect);
+    flow().blockStartRelativeToPhysical(damageRect);
     return damageRect;
 }
 
@@ -1468,18 +1468,18 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderBoxModelObject& 
     return result;
 }
 
-NODELETE static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
+NODELETE static LayoutPoint contentOffsetForChild(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
 {
     if (root.writingMode().isBlockFlipped())
-        return root.flipForWritingModeForChild(childRenderer, contentOffset);
+        return root.blockStartRelativeToPhysicalForChild(childRenderer, contentOffset);
     return contentOffset;
 }
 
-static LayoutRect flippedRectForWritingMode(const RenderBlockFlow& root, const FloatRect& rect)
+static LayoutRect toPhysicalRect(const RenderBlockFlow& root, const FloatRect& rect)
 {
-    auto flippedRect = LayoutRect { rect };
-    root.flipForWritingMode(flippedRect);
-    return flippedRect;
+    auto physicalRect = LayoutRect { rect };
+    root.blockStartRelativeToPhysical(physicalRect);
+    return physicalRect;
 }
 
 bool LineLayout::isContentConsideredStale() const
@@ -1622,20 +1622,20 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (box.isBlockLevelBox()) {
             CheckedRef renderBox = downcast<RenderBox>(renderer.get());
             auto childHitTest = hitTestAction == HitTestAction::ChildBlockBackgrounds ? HitTestAction::ChildBlockBackground : hitTestAction;
-            LayoutPoint childPoint = flippedContentOffsetIfNeeded(flow(), renderBox, accumulatedOffset);
+            LayoutPoint childPoint = contentOffsetForChild(flow(), renderBox, accumulatedOffset);
             if (!renderBox->hasSelfPaintingLayer() && renderBox->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest))
                 return true;
             continue;
         }
 
         if (box.isAtomicInlineBox()) {
-            if (renderer->hitTest(request, result, locationInContainer, flippedContentOffsetIfNeeded(flow(), downcast<RenderBox>(renderer.get()), accumulatedOffset)))
+            if (renderer->hitTest(request, result, locationInContainer, contentOffsetForChild(flow(), downcast<RenderBox>(renderer), accumulatedOffset)))
                 return true;
             continue;
         }
 
         auto lineRect = visibleLineRectIncludingEllipsis(m_inlineContent->displayContent(), box.lineIndex());
-        auto boxRect = flippedRectForWritingMode(protect(flow()), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, lineRect));
+        auto boxRect = toPhysicalRect(protect(flow()), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, lineRect));
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))
@@ -1646,7 +1646,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!elementRenderer->visibleToHitTesting(request))
             continue;
 
-        renderer->updateHitTestResult(result, flow().flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset)));
+        renderer->updateHitTestResult(result, flow().physicalToBlockStartRelative(locationInContainer.point() - toLayoutSize(accumulatedOffset)));
         if (result.addNodeToListBasedTestResult(protect(renderer->nodeForHitTest()).get(), request, locationInContainer, boxRect) == HitTestProgress::Stop)
             return true;
     }

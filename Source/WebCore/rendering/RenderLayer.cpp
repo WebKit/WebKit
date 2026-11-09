@@ -3287,7 +3287,7 @@ int RenderLayer::scrollWidth() const
     RenderBox* box = renderBox();
     ASSERT(box);
     LayoutRect overflowRect(box->layoutOverflowRect());
-    box->flipForWritingMode(overflowRect);
+    box->blockStartRelativeToPhysical(overflowRect);
     return roundToInt(overflowRect.maxX() - overflowRect.x());
 }
 
@@ -3299,7 +3299,7 @@ int RenderLayer::scrollHeight() const
     RenderBox* box = renderBox();
     ASSERT(box);
     LayoutRect overflowRect(box->layoutOverflowRect());
-    box->flipForWritingMode(overflowRect);
+    box->blockStartRelativeToPhysical(overflowRect);
     return roundToInt(overflowRect.maxY() - overflowRect.y());
 }
 
@@ -4660,7 +4660,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
         LayoutPoint hitPoint = hitTestLocation.point();
         bool moveRequestIsOverDocument = request.move() && hitTestArea.contains(hitPoint);
         if (!request.isChildFrameHitTest() && (request.active() || request.release() || moveRequestIsOverDocument) && isRenderViewLayer()) {
-            renderer().updateHitTestResult(result, downcast<RenderView>(renderer()).flipForWritingMode(hitTestLocation.point()));
+            renderer().updateHitTestResult(result, downcast<RenderView>(renderer()).physicalToBlockStartRelative(hitTestLocation.point()));
             insideLayer = { this };
         }
     }
@@ -5564,7 +5564,7 @@ ClipRect RenderLayer::calculateBackgroundRect(const ClipRectsContext& clipRectsC
         // individual region boxes as overflow.
         auto layerBoundsWithVisualOverflow = rendererVisualOverflowRect();
         if (renderer().isRenderBox())
-            renderBox()->flipForWritingMode(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be flipped.
+            renderBox()->blockStartRelativeToPhysical(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be converted.
 
         layerBoundsWithVisualOverflow.move(offsetFromRoot);
         backgroundRect.intersect(layerBoundsWithVisualOverflow);
@@ -5676,9 +5676,9 @@ void RenderLayer::repaintBlockSelectionGaps()
         rect.intersect(downcast<RenderBox>(renderer()).overflowClipRect({ }));
     if (renderer().hasClip())
         rect.intersect(downcast<RenderBox>(renderer()).clipRect({ }));
-    // m_blockSelectionGapsBounds is in physical coordinates, but repaintRectangle() expects flipped block coordinates.
+    // m_blockSelectionGapsBounds is in physical coordinates, but repaintRectangle() expects block-start relative coordinates.
     if (auto* box = dynamicDowncast<RenderBox>(renderer()))
-        box->flipForWritingMode(rect);
+        box->physicalToBlockStartRelative(rect);
     if (!rect.isEmpty())
         renderer().repaintRectangle(rect);
 }
@@ -5743,7 +5743,7 @@ LayoutRect RenderLayer::localBoundingBox(OptionSet<CalculateLayerBoundsFlag> fla
         // and leaves out the SVG content that spills outside it, so it would cut that content off.
         if (!(flags & DontConstrainForMask) && box->hasMask() && !box->isSVGLayerAwareRenderer()) {
             result = box->maskClipRect(LayoutPoint());
-            box->flipForWritingMode(result); // The mask clip rect is in physical coordinates, so we have to flip, since localBoundingBox is not.
+            box->physicalToBlockStartRelative(result); // The mask clip rect is in physical coordinates, so we have to convert it, since localBoundingBox is not.
         } else if (flags.contains(ExcludeFilterOutsetsFromSelfBounds) && !box->hasLayoutOverflow()) {
             ASSERT(box->hasFilter());
             result = box->applyVisualEffectOverflow(box->borderBoxRect(), { RenderBox::VisualEffectOverflowOption::ExcludeFilterOutsets });
@@ -5767,9 +5767,9 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
     LayoutRect result = localBoundingBox(flags);
     if (renderer().view().frameView().hasFlippedBlockRenderers()) {
         if (renderer().isRenderBox())
-            renderBox()->flipForWritingMode(result);
+            renderBox()->blockStartRelativeToPhysical(result);
         else
-            renderer().containingBlock()->flipForWritingMode(result);
+            renderer().containingBlock()->blockStartRelativeToPhysical(result);
     }
 
     PaginationInclusionMode inclusionMode = ExcludeCompositedPaginatedLayers;
@@ -5870,9 +5870,9 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     LayoutRect boundingBoxRect = localBoundingBox(localBoundingBoxFlags);
     if (renderer().view().frameView().hasFlippedBlockRenderers()) {
         if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer()))
-            box->flipForWritingMode(boundingBoxRect);
+            box->blockStartRelativeToPhysical(boundingBoxRect);
         else
-            renderer().containingBlock()->flipForWritingMode(boundingBoxRect);
+            renderer().containingBlock()->blockStartRelativeToPhysical(boundingBoxRect);
     }
 
     LayoutRect unionBounds = boundingBoxRect;

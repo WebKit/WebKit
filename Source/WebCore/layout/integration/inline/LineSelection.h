@@ -48,7 +48,7 @@ public:
         auto physicalRect = logicalRect(lineBox);
         if (!lineBox.isHorizontal())
             physicalRect = physicalRect.transposedRect();
-        protect(lineBox.formattingContextRoot())->flipForWritingMode(physicalRect);
+        protect(lineBox.formattingContextRoot())->blockStartRelativeToPhysical(physicalRect);
         return physicalRect;
     }
 

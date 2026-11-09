@@ -2818,7 +2818,7 @@ void RenderBlockFlow::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& 
 
     // Iterate over our children and paint the column rules as needed.
     for (auto& columnSet : childrenOfType<RenderMultiColumnSet>(*this)) {
-        LayoutPoint childPoint = columnSet.location() + flipForWritingModeForChild(columnSet, point);
+        LayoutPoint childPoint = columnSet.location() + blockStartRelativeToPhysicalForChild(columnSet, point);
         columnSet.paintColumnRules(paintInfo, childPoint);
     }
 }
@@ -2834,7 +2834,7 @@ void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paint
         if (!floatingObject->shouldPaint())
             continue;
 
-        auto floatBoxLocation = flipFloatForWritingModeForChild(*floatingObject, paintOffset + floatingObject->translationOffsetToAncestor());
+        auto floatBoxLocation = blockStartRelativeToPhysicalForFloat(*floatingObject, paintOffset + floatingObject->translationOffsetToAncestor());
         auto& renderer = *floatingObject->renderer();
         GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
 
@@ -2884,7 +2884,7 @@ void RenderBlockFlow::clipOutFloatingBoxes(RenderBlock& rootBlock, const PaintIn
             continue;
         LayoutRect floatBox(offsetFromRootBlock.width(), offsetFromRootBlock.height(), floatingObject->renderer()->borderBoxWidth(), floatingObject->renderer()->borderBoxHeight());
         floatBox.move(floatingObject->locationOffsetOfBorderBox());
-        rootBlock.flipForWritingMode(floatBox);
+        rootBlock.blockStartRelativeToPhysical(floatBox);
         floatBox.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
         paintInfo->context().clipOut(snappedIntRect(floatBox));
     }
@@ -3464,7 +3464,7 @@ void RenderBlockFlow::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     }
 }
 
-LayoutPoint RenderBlockFlow::flipFloatForWritingModeForChild(const FloatingObject& child, const LayoutPoint& point) const
+LayoutPoint RenderBlockFlow::blockStartRelativeToPhysicalForFloat(const FloatingObject& child, const LayoutPoint& point) const
 {
     if (!child.renderer())
         return point;
@@ -3472,9 +3472,9 @@ LayoutPoint RenderBlockFlow::flipFloatForWritingModeForChild(const FloatingObjec
     if (!writingMode().isBlockFlipped())
         return point;
     
-    // This is similar to RenderBox::flipForWritingModeForChild. We have to subtract out our left/top offsets twice, since
-    // it's going to get added back in. We hide this complication here so that the calling code looks normal for the unflipped
-    // case.
+    // This is similar to RenderBox::blockStartRelativeToPhysicalForChild. We have to subtract out our left/top offsets twice, since
+    // it's going to get added back in. We hide this complication here so that the calling code looks the same as when no
+    // conversion is needed.
     if (isHorizontalWritingMode())
         return LayoutPoint(point.x(), point.y() + borderBoxHeight() - child.renderer()->borderBoxHeight() - 2 * child.locationOffsetOfBorderBox().height());
     return LayoutPoint(point.x() + borderBoxWidth() - child.renderer()->borderBoxWidth() - 2 * child.locationOffsetOfBorderBox().width(), point.y());
@@ -3589,7 +3589,7 @@ bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult
         if (!renderer)
             continue;
         if (floatingObject->shouldPaint()) {
-            LayoutPoint childPoint = flipFloatForWritingModeForChild(*floatingObject, adjustedLocation + floatingObject->translationOffsetToAncestor());
+            LayoutPoint childPoint = blockStartRelativeToPhysicalForFloat(*floatingObject, adjustedLocation + floatingObject->translationOffsetToAncestor());
             if (renderer->hitTest(request, result, locationInContainer, childPoint)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(childPoint));
                 return true;
@@ -4049,7 +4049,8 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
         return createPositionWithAffinity(0, Affinity::Downstream);
 
     bool linesAreFlipped = writingMode().isLineInverted();
-    bool blocksAreFlipped = writingMode().isBlockFlipped();
+    // Hit testing includes a box's physical top and left edges, which are its block-end edges in vertical-rl and horizontal-bt.
+    bool boxesIncludeBlockEndEdge = writingMode().isBlockFlipped();
 
     // look for the closest line box in the root box which is at the passed-in y coordinate
     InlineIterator::LeafBoxIterator closestBox;
@@ -4062,21 +4063,21 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
             firstLineBoxWithChildren = lineBox;
 
         if (!linesAreFlipped && lineBox->isFirstAfterPageBreak()
-            && (pointInLogicalContents.y() < lineBox->logicalTop() || (blocksAreFlipped && pointInLogicalContents.y() == lineBox->logicalTop())))
+            && (pointInLogicalContents.y() < lineBox->logicalTop() || (boxesIncludeBlockEndEdge && pointInLogicalContents.y() == lineBox->logicalTop())))
             break;
 
         lastLineBoxWithChildren = lineBox;
 
         // check if this root line box is located at this y coordinate
         auto lineBottom = lineBox->contentLogicalBottomAdjustedForFollowingLineBox();
-        if (pointInLogicalContents.y() < lineBottom || (blocksAreFlipped && pointInLogicalContents.y() == lineBottom)) {
+        if (pointInLogicalContents.y() < lineBottom || (boxesIncludeBlockEndEdge && pointInLogicalContents.y() == lineBottom)) {
             if (linesAreFlipped) {
                 auto nextLineBoxWithChildren = lineBox->next();
                 while (nextLineBoxWithChildren && !nextLineBoxWithChildren->lineLeftmostLeafBox())
                     nextLineBoxWithChildren.traverseNext();
 
                 if (nextLineBoxWithChildren && nextLineBoxWithChildren->isFirstAfterPageBreak()
-                    && (pointInLogicalContents.y() > nextLineBoxWithChildren->logicalTop() || (!blocksAreFlipped && pointInLogicalContents.y() == nextLineBoxWithChildren->logicalTop())))
+                    && (pointInLogicalContents.y() > nextLineBoxWithChildren->logicalTop() || (!boxesIncludeBlockEndEdge && pointInLogicalContents.y() == nextLineBoxWithChildren->logicalTop())))
                     continue;
             }
             closestBox = closestBoxForHorizontalPosition(*lineBox, pointInLogicalContents.x());
@@ -4096,7 +4097,7 @@ PositionWithAffinity RenderBlockFlow::positionForPointWithInlineChildren(const L
         if (moveCaretToBoundary) {
             auto firstLineWithChildrenTop = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(*firstLineBoxWithChildren), firstLineBoxWithChildren->contentLogicalTop()) };
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
-                || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
+                || (boxesIncludeBlockEndEdge && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
                 auto box = firstLineBoxWithChildren->lineLeftmostLeafBox();
                 if (box->isLineBreak()) {
                     if (auto next = box->nextLineRightwardOnLineIgnoringLineBreak())

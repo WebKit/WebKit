@@ -144,9 +144,9 @@ LayoutPoint RenderFragmentContainer::fragmentedFlowPortionLocation() const
     LayoutRect portionRect = fragmentedFlowPortionRect();
 
     if (fragmentedFlow()->writingMode().isBlockFlipped()) {
-        LayoutRect flippedFragmentedFlowPortionRect(portionRect);
-        fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
-        portionLocation = flippedFragmentedFlowPortionRect.location();
+        LayoutRect physicalFragmentedFlowPortionRect(portionRect);
+        fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionRect);
+        portionLocation = physicalFragmentedFlowPortionRect.location();
     } else
         portionLocation = portionRect.location();
 
@@ -228,22 +228,22 @@ void RenderFragmentContainer::repaintFragmentedFlowContentRectangle(const Layout
     LayoutRect clippedRect(repaintRect);
 
     if (fragmentedFlowPortionClipRect) {
-        LayoutRect flippedFragmentedFlowPortionClipRect(*fragmentedFlowPortionClipRect);
-        fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionClipRect);
-        clippedRect.intersect(flippedFragmentedFlowPortionClipRect);
+        LayoutRect physicalFragmentedFlowPortionClipRect(*fragmentedFlowPortionClipRect);
+        fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionClipRect);
+        clippedRect.intersect(physicalFragmentedFlowPortionClipRect);
     }
 
     if (clippedRect.isEmpty())
         return;
 
-    LayoutRect flippedFragmentedFlowPortionRect(fragmentedFlowPortionRect);
-    fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect); // Put the fragment rects into physical coordinates.
+    LayoutRect physicalFragmentedFlowPortionRect(fragmentedFlowPortionRect);
+    fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionRect); // Put the fragment rects into physical coordinates.
 
     // Put the fragment rect into the fragment's physical coordinate space.
-    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - flippedFragmentedFlowPortionRect.location()));
+    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - physicalFragmentedFlowPortionRect.location()));
 
     // Now switch to the fragment's writing mode coordinate space and let it repaint itself.
-    flipForWritingMode(clippedRect);
+    physicalToBlockStartRelative(clippedRect);
     
     // Issue the repaint.
     repaintRectangle(clippedRect);
@@ -254,19 +254,19 @@ LayoutRect RenderFragmentContainer::fragmentedFlowContentRectangle(const LayoutR
     auto clippedRect = rect;
 
     if (fragmentedFlowPortionClipRect) {
-        LayoutRect flippedFragmentedFlowPortionClipRect(*fragmentedFlowPortionClipRect);
-        fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionClipRect);
-        clippedRect.edgeInclusiveIntersect(flippedFragmentedFlowPortionClipRect); // edgeInclusiveIntersect to avoid rects with zero height or width becoming zero-sized.
+        LayoutRect physicalFragmentedFlowPortionClipRect(*fragmentedFlowPortionClipRect);
+        fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionClipRect);
+        clippedRect.edgeInclusiveIntersect(physicalFragmentedFlowPortionClipRect); // edgeInclusiveIntersect to avoid rects with zero height or width becoming zero-sized.
     }
 
-    LayoutRect flippedFragmentedFlowPortionRect(fragmentedFlowPortionRect);
-    fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
+    LayoutRect physicalFragmentedFlowPortionRect(fragmentedFlowPortionRect);
+    fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionRect);
 
     // Put the fragment rect into the fragment's physical coordinate space.
-    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - flippedFragmentedFlowPortionRect.location()));
+    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - physicalFragmentedFlowPortionRect.location()));
 
     // Now switch to the fragment's writing mode coordinate space and let it repaint itself.
-    flipForWritingMode(clippedRect);
+    physicalToBlockStartRelative(clippedRect);
     
     return clippedRect;
 }
@@ -278,11 +278,11 @@ Vector<LayoutRect> RenderFragmentContainer::fragmentRectsForFlowContentRect(cons
     
     auto fragmentRect = contentRect;
     
-    auto flippedFragmentedFlowPortionRect = portionRect;
-    fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
-    fragmentRect.setLocation(fragmentLocation + (fragmentRect.location() - flippedFragmentedFlowPortionRect.location()));
+    auto physicalFragmentedFlowPortionRect = portionRect;
+    fragmentedFlow()->blockStartRelativeToPhysical(physicalFragmentedFlowPortionRect);
+    fragmentRect.setLocation(fragmentLocation + (fragmentRect.location() - physicalFragmentedFlowPortionRect.location()));
 
-    flipForWritingMode(fragmentRect);
+    physicalToBlockStartRelative(fragmentRect);
 
     return { fragmentRect };
 }

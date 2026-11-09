@@ -673,7 +673,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // ancestor above, but localToContainerQuad takes care of a lot of complex situations
     // involving inlines, tables, and transformations.
     if (auto* parentBox = dynamicDowncast<RenderBox>(*parent()))
-        parentBox->flipForWritingMode(stickyBoxRect);
+        parentBox->blockStartRelativeToPhysical(stickyBoxRect);
     // FIXME: Remove suppression once rdar://189998444 is fixed.
     SUPPRESS_MEMORY_UNSAFE_CAST auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), enclosingClippingBox.ptr(), { } /* ignore transforms */).boundingBox();
 
@@ -1429,7 +1429,7 @@ void RenderBoxModelObject::mapLocalToContainer(const RenderLayerModelObject* anc
         if (CheckedPtr boxContainer = dynamicDowncast<RenderBox>(*container)) {
             if (container->writingMode().isBlockFlipped()) {
                 LayoutPoint centerPoint(transformState.mappedPoint());
-                transformState.move(boxContainer->flipForWritingMode(centerPoint) - centerPoint);
+                transformState.move(boxContainer->blockStartRelativeToPhysical(centerPoint) - centerPoint);
             }
             mode.remove(MapCoordinatesMode::ApplyContainerFlip);
         }
@@ -1551,9 +1551,9 @@ void RenderBoxModelObject::boundingRects(Vector<LayoutRect>& rects, const Layout
 auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
-    // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
+    // Only when we cross a writing mode boundary will we have to possibly call blockStartRelativeToPhysical (to convert into a more appropriate
     // offset corner for the enclosing container). This allows for a fully RL or BT document to repaint
-    // properly even during layout, since the rect remains flipped all the way until the end.
+    // properly even during layout, since the rect remains block-start relative all the way until the end.
     //
     // RenderView::computeVisibleRectInContainer then converts the rect to physical coordinates. We also convert to
     // physical when we hit a repaint container boundary. Therefore the final rect returned is always in the
@@ -1572,7 +1572,7 @@ auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& re
     if (container == this) {
         if (box) {
             if (container->writingMode().isBlockFlipped())
-                box->flipForWritingMode(adjustedRects);
+                box->blockStartRelativeToPhysical(adjustedRects);
             if (state.descendantNeedsEnclosingIntRect)
                 adjustedRects.encloseToIntRects();
         }
@@ -1588,7 +1588,7 @@ auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& re
     if (box) {
         if (isWritingModeRoot()) {
             if (!isOutOfFlowPositioned() || !state.dirtyRectIsFlipped) {
-                box->flipForWritingMode(adjustedRects);
+                box->blockStartRelativeToPhysical(adjustedRects);
                 state.dirtyRectIsFlipped = true;
             }
         }
@@ -1608,9 +1608,9 @@ auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& re
             // will be set and we'll stop at the flow thread. This case is mainly hit by the check for whether
             // or not images should animate.
             // FIXME: Just as with offsetFromContainer, we aren't really handling objects that span multiple columns properly.
-            LayoutPoint physicalPoint(box->flipForWritingMode(adjustedRects.clippedOverflowRect.location()));
+            LayoutPoint physicalPoint(box->blockStartRelativeToPhysical(adjustedRects.clippedOverflowRect.location()));
             if (auto* fragment = columnFlow->physicalTranslationFromFlowToFragment((physicalPoint))) {
-                adjustedRects.clippedOverflowRect.setLocation(fragment->flipForWritingMode(physicalPoint));
+                adjustedRects.clippedOverflowRect.setLocation(fragment->physicalToBlockStartRelative(physicalPoint));
                 return fragment->computeVisibleRectsInContainer(adjustedRects, container, context, state);
             }
         }

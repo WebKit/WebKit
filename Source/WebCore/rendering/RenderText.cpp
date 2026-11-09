@@ -1031,7 +1031,8 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
     auto logicalPoint = firstRun->isHorizontal()
         ? LayoutPoint { point.x(), point.y() }
         : LayoutPoint { point.y(), point.x() };
-    bool blocksAreFlipped = writingMode().isBlockFlipped();
+    // Hit testing includes a box's physical top and left edges, which are its block-end edges in vertical-rl and horizontal-bt.
+    bool boxesIncludeBlockEndEdge = writingMode().isBlockFlipped();
 
     InlineIterator::TextBoxIterator lastRun;
     for (auto run = firstRun; run; run.traverseNextTextBox()) {
@@ -1040,12 +1041,12 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
 
         auto lineBox = run->lineBox();
         auto top = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(lineBox), lineBox.contentLogicalTop()) };
-        if (logicalPoint.y() > top || (!blocksAreFlipped && logicalPoint.y() == top)) {
+        if (logicalPoint.y() > top || (!boxesIncludeBlockEndEdge && logicalPoint.y() == top)) {
             auto bottom = LayoutUnit { lineBox.contentLogicalBottomAdjustedForFollowingLineBox() };
             if (auto nextLineBox = lineBox.next())
                 bottom = std::min(bottom, LayoutUnit { nextLineBox->contentLogicalTop() });
 
-            if (logicalPoint.y() < bottom || (blocksAreFlipped && logicalPoint.y() == bottom)) {
+            if (logicalPoint.y() < bottom || (boxesIncludeBlockEndEdge && logicalPoint.y() == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;
 #if PLATFORM(IOS_FAMILY)
                 if (logicalPoint.x() != run->logicalLeft() && logicalPoint.x() < run->logicalLeft() + run->logicalWidth()) {

@@ -2181,7 +2181,7 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
 
     auto caret = localCaretRectWithoutUpdate();
     if (CheckedPtr renderer = rendererForCaretPainting(&node))
-        renderer->flipForWritingMode(caret);
+        renderer->blockStartRelativeToPhysical(caret);
     caret.moveBy(paintOffset);
     if (caret.isEmpty())
         return;

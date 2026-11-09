@@ -530,10 +530,10 @@ static LayoutRect boundingRectForFragmentedAnchor(const RenderBoxModelObject& an
     LayoutPoint offsetRelativeToFragmentedFlow = fragmentedFlow.mapFromLocalToFragmentedFlow(anchorRenderBox.get(), { }).location();
     auto unfragmentedBorderBox = anchorBox.borderBoundingBox();
     unfragmentedBorderBox.moveBy(offsetRelativeToFragmentedFlow);
-    fragmentedFlow.flipForWritingMode(unfragmentedBorderBox); // Convert to RenderLayer coords.
+    fragmentedFlow.blockStartRelativeToPhysical(unfragmentedBorderBox); // Convert to RenderLayer coords.
 
     auto fragmentsBoundingBox = fragmentedFlow.fragmentsBoundingBox(unfragmentedBorderBox);
-    fragmentedFlow.flipForWritingMode(fragmentsBoundingBox); // Convert to RenderBox coords.
+    fragmentedFlow.physicalToBlockStartRelative(fragmentsBoundingBox); // Convert to RenderBox coords.
 
     // Now convert to physical coordinates (top/left origin) and walk up.
     // RenderFragmentedFlow doesn't have a usable frame rect, so use its container's content rect.

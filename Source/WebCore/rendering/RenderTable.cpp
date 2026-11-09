@@ -846,7 +846,7 @@ void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     if (!isDocumentElementRenderer()) {
         LayoutRect overflowBox = visualOverflowRect();
-        flipForWritingMode(overflowBox);
+        blockStartRelativeToPhysical(overflowBox);
         overflowBox.moveBy(adjustedPaintOffset);
         if (!overflowBox.intersects(paintInfo.rect))
             return;
@@ -894,7 +894,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     for (auto& box : childrenOfType<RenderBox>(*this)) {
         if (!box.hasSelfPaintingLayer() && (box.isRenderTableSection() || box.isRenderTableCaption())) {
-            LayoutPoint childPoint = flipForWritingModeForChild(box, paintOffset);
+            LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(box, paintOffset);
             box.paint(info, childPoint);
         }
     }
@@ -902,7 +902,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if (collapseBorders() && paintPhase == PaintPhase::ChildBlockBackground && usedStyle().visibility() == UsedVisibility::Visible) {
         paintCollapsedBorderPasses(info, [&](PaintInfo& borderPaintInfo) {
             for (RenderTableSection* section = bottomSection(); section; section = sectionAbove(section)) {
-                LayoutPoint childPoint = flipForWritingModeForChild(*section, paintOffset);
+                LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*section, paintOffset);
                 section->paint(borderPaintInfo, childPoint);
             }
         });
@@ -934,7 +934,7 @@ void RenderTable::paintCollapsedBordersForRow(PaintInfo& paintInfo, RenderTableR
     paintCollapsedBorderPasses(paintInfo, [&](PaintInfo& borderPaintInfo) {
         for (CheckedPtr cell = row.firstCell(); cell; cell = cell->nextCell()) {
             if (!cell->hasSelfPaintingLayer()) {
-                auto cellPoint = row.flipForWritingModeForChild(*cell, paintOffset);
+                auto cellPoint = row.blockStartRelativeToPhysicalForChild(*cell, paintOffset);
                 cell->paintCollapsedBorders(borderPaintInfo, cellPoint);
             }
         }
@@ -1800,7 +1800,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             CheckedPtr box = dynamicDowncast<RenderBox>(*child);
             if (box && !box->hasSelfPaintingLayer() && (box->isRenderTableSection() || box->isRenderTableCaption())) {
-                LayoutPoint childPoint = flipForWritingModeForChild(*box, adjustedLocation);
+                LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*box, adjustedLocation);
                 if (box->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));
                     return true;
@@ -1812,7 +1812,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Check our bounds next.
     LayoutRect boundsRect(adjustedLocation, borderBoxSize());
     if (visibleToHitTesting(request) && (action == HitTestAction::BlockBackground || action == HitTestAction::ChildBlockBackground) && locationInContainer.intersects(boundsRect)) {
-        updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(adjustedLocation)));
+        updateHitTestResult(result, physicalToBlockStartRelative(locationInContainer.point() - toLayoutSize(adjustedLocation)));
         if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
             return true;
     }

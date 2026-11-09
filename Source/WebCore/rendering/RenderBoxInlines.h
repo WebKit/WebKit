@@ -105,7 +105,7 @@ inline LayoutPoint RenderBox::topLeftLocation() const
     // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.
     if (!document().view() || !document().view()->hasFlippedBlockRenderers())
         return location();
-    return topLeftLocationWithFlipping();
+    return topLeftLocationFromBlockStartRelative();
 }
 
 inline LayoutRect RenderBox::firstFragmentBorderBoxRect() const
@@ -118,7 +118,7 @@ inline LayoutSize RenderBox::topLeftLocationOffset() const
     // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.
     if (!document().view() || !document().view()->hasFlippedBlockRenderers())
         return locationOffset();
-    return toLayoutSize(topLeftLocationWithFlipping());
+    return toLayoutSize(topLeftLocationFromBlockStartRelative());
 }
 
 inline LayoutRect RenderBox::paddingBoxRectIncludingScrollbar() const
@@ -199,9 +199,9 @@ inline const LayoutRect RenderBox::scrollablePaddingAreaOverflowRect() const
         return flippedPaddingBoxRect();
 
     auto overflowRect = m_overflow->contentArea();
-    flipForWritingMode(overflowRect);
+    blockStartRelativeToPhysical(overflowRect);
     overflowRect.expand(padding());
-    flipForWritingMode(overflowRect);
+    physicalToBlockStartRelative(overflowRect);
     return overflowRect;
 }
 

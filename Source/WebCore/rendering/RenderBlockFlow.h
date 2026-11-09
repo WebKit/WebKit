@@ -328,7 +328,7 @@ public:
     inline void setLogicalWidthForFloat(FloatingObject&, LayoutUnit logicalWidth); // Defined in RenderBlockFlowInlines.h
     inline void setLogicalMarginsForFloat(FloatingObject&, LayoutUnit logicalLeftMargin, LayoutUnit logicalBeforeMargin); // Defined in RenderBlockFlowInlines.h
 
-    NODELETE LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
+    NODELETE LayoutPoint blockStartRelativeToPhysicalForFloat(const FloatingObject&, const LayoutPoint&) const;
 
     void setChildrenInline(bool) final;
 

@@ -840,7 +840,7 @@ void RenderLayerScrollableArea::invalidateScrollbarRect(Scrollbar& scrollbar, co
         scrollRect.moveBy(rects.horizontalScrollbar.location());
 
     LayoutRect repaintRect = scrollRect;
-    box->flipForWritingMode(repaintRect);
+    box->physicalToBlockStartRelative(repaintRect);
     box->repaintRectangle(repaintRect);
 }
 
@@ -1157,7 +1157,7 @@ void RenderLayerScrollableArea::computeScrollOrigin()
     CheckedPtr box = m_layer.renderBox();
 
     auto overflowRect = box->layoutOverflowRect();
-    box->flipForWritingMode(overflowRect);
+    box->blockStartRelativeToPhysical(overflowRect);
 
     int scrollableLeftOverflow = roundToInt(overflowRect.x() - box->borderLeft());
     if (shouldPlaceVerticalScrollbarOnLeft())

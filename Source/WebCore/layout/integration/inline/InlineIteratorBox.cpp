@@ -98,7 +98,7 @@ LineBox Box::lineBox() const
 FloatRect Box::visualRect() const
 {
     auto rect = visualRectIgnoringBlockDirection();
-    formattingContextRoot().flipForWritingMode(rect);
+    formattingContextRoot().blockStartRelativeToPhysical(rect);
     return rect;
 }
 

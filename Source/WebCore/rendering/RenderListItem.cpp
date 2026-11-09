@@ -539,7 +539,7 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (CheckedPtr excludedMarker = this->excludedMarker(); excludedMarker && !excludedMarker->hasSelfPaintingLayer())
-        excludedMarker->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*excludedMarker, paintOffset));
+        excludedMarker->paintAsInlineBlock(paintInfo, blockStartRelativeToPhysicalForChild(*excludedMarker, paintOffset));
 
     RenderBlockFlow::paintObject(paintInfo, paintOffset);
 }
@@ -563,7 +563,7 @@ bool RenderListItem::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
 
     // The marker's own location is relative to us, so it needs our adjusted one, the way hitTestChildren gets it.
     auto adjustedLocation = accumulatedOffset + location();
-    return excludedMarker->nodeAtPoint(request, result, locationInContainer, flipForWritingModeForChild(*excludedMarker, adjustedLocation), hitTestAction);
+    return excludedMarker->nodeAtPoint(request, result, locationInContainer, blockStartRelativeToPhysicalForChild(*excludedMarker, adjustedLocation), hitTestAction);
 }
 
 RenderListOutsideMarker* RenderListItem::markerBox() const

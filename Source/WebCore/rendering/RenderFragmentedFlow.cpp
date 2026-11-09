@@ -388,7 +388,7 @@ RenderFragmentContainer* RenderFragmentedFlow::mapFromFlowToFragment(TransformSt
     RenderFragmentContainer* RenderFragmentContainer = currentFragment();
     if (!RenderFragmentContainer) {
         LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
-        flipForWritingMode(boxRect);
+        physicalToBlockStartRelative(boxRect);
 
         LayoutPoint center = boxRect.center();
         RenderFragmentContainer = fragmentAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true);
@@ -396,10 +396,10 @@ RenderFragmentContainer* RenderFragmentedFlow::mapFromFlowToFragment(TransformSt
             return nullptr;
     }
 
-    LayoutRect flippedFragmentRect(RenderFragmentContainer->fragmentedFlowPortionRect());
-    flipForWritingMode(flippedFragmentRect);
+    LayoutRect physicalFragmentRect(RenderFragmentContainer->fragmentedFlowPortionRect());
+    blockStartRelativeToPhysical(physicalFragmentRect);
 
-    transformState.move(RenderFragmentContainer->contentBoxRect().location() - flippedFragmentRect.location());
+    transformState.move(RenderFragmentContainer->contentBoxRect().location() - physicalFragmentRect.location());
 
     return RenderFragmentContainer;
 }
@@ -817,7 +817,7 @@ LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const Rende
                 else
                     blockRect.setX(currentBox->borderBoxWidth() - blockRect.maxX());
             }
-            currentBox->flipForWritingMode(blockRect);
+            currentBox->blockStartRelativeToPhysical(blockRect);
         }
         blockRect.moveBy(currentBoxLocation);
         currentBox = containerBox;
@@ -866,7 +866,7 @@ LayoutRect RenderFragmentedFlow::mapFromLocalToFragmentedFlow(const RenderBox* b
         LayoutPoint currentBoxLocation = box->location();
 
         if (containerBlock->writingMode().blockDirection() != box->writingMode().blockDirection())
-            box->flipForWritingMode(boxRect);
+            box->blockStartRelativeToPhysical(boxRect);
 
         boxRect.moveBy(currentBoxLocation);
         box = containerBlock;
@@ -892,7 +892,7 @@ LayoutRect RenderFragmentedFlow::mapFromFragmentedFlowToLocal(const RenderBox* b
     localRect.moveBy(-currentBoxLocation);
 
     if (containerBlock->writingMode().blockDirection() != box->writingMode().blockDirection())
-        box->flipForWritingMode(localRect);
+        box->physicalToBlockStartRelative(localRect);
 
     return localRect;
 }

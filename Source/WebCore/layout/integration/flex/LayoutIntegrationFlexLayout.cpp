@@ -210,10 +210,10 @@ bool FlexLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     auto hitTestChild = [&](RenderBox& child) {
         if (child.hasSelfPaintingLayer())
             return false;
-        auto location = flexBox().flipForWritingModeForChild(child, scrolledOffset);
+        auto location = flexBox().blockStartRelativeToPhysicalForChild(child, scrolledOffset);
         if (!child.hitTest(request, result, locationInContainer, location))
             return false;
-        flexBox().updateHitTestResult(result, flexBox().flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
+        flexBox().updateHitTestResult(result, flexBox().physicalToBlockStartRelative(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
         return true;
     };
 

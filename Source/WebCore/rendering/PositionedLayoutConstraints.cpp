@@ -154,9 +154,9 @@ LayoutSize PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(co
     auto isHorizontal = container.writingMode().isHorizontal();
     auto firstFragmentBorderBoxRect = container.firstFragmentBorderBoxRect();
     if (container.writingMode().isBlockFlipped()) {
-        // firstFragmentBorderBoxRect() is flipped for painting while this offset is added to unflipped locations.
+        // firstFragmentBorderBoxRect() is physical while this offset is added to block-start relative locations.
         if (CheckedPtr containingBlock = container.containingBlock())
-            containingBlock->flipForWritingMode(firstFragmentBorderBoxRect);
+            containingBlock->physicalToBlockStartRelative(firstFragmentBorderBoxRect);
     }
     auto offset = toLayoutSize(firstFragmentBorderBoxRect.location());
     if (usesStaticPosition(outOfFlowBoxStyle, LogicalBoxAxis::Inline, isHorizontal))

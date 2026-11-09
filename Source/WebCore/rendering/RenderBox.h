@@ -506,15 +506,25 @@ public:
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     LayoutRect firstFragmentBorderBoxRect() const override;
 
-    NODELETE LayoutPoint flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
-    NODELETE LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
-    NODELETE LayoutPoint flipForWritingMode(const LayoutPoint&) const;
-    NODELETE LayoutSize flipForWritingMode(const LayoutSize&) const;
-    NODELETE FloatPoint flipForWritingMode(const FloatPoint&) const;
+    NODELETE LayoutPoint blockStartRelativeToPhysicalForChild(const RenderBox& child, const LayoutPoint&) const;
 
-    NODELETE void flipForWritingMode(LayoutRect&) const;
-    NODELETE void flipForWritingMode(FloatRect&) const;
-    NODELETE void flipForWritingMode(RepaintRects&) const;
+    // The block axis coordinate (x for vertical, y for horizontal writing modes) of geometry inside this box is measured from its
+    // block-start border edge, while painting, hit testing and layers use physical coordinates. The two differ only in vertical-rl
+    // and horizontal-bt, where block-start is the right or bottom edge. Converting mirrors the coordinate across the border box,
+    // so each direction is the same operation.
+    NODELETE LayoutUnit blockStartRelativeToPhysical(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
+    NODELETE LayoutPoint blockStartRelativeToPhysical(const LayoutPoint&) const;
+    NODELETE LayoutSize blockStartRelativeToPhysical(const LayoutSize&) const;
+    NODELETE FloatPoint blockStartRelativeToPhysical(const FloatPoint&) const;
+
+    NODELETE void blockStartRelativeToPhysical(LayoutRect&) const;
+    NODELETE void blockStartRelativeToPhysical(FloatRect&) const;
+    NODELETE void blockStartRelativeToPhysical(RepaintRects&) const;
+
+    NODELETE LayoutPoint physicalToBlockStartRelative(const LayoutPoint& position) const { return blockStartRelativeToPhysical(position); }
+    NODELETE void physicalToBlockStartRelative(LayoutRect& rect) const { blockStartRelativeToPhysical(rect); }
+    NODELETE void physicalToBlockStartRelative(FloatRect& rect) const { blockStartRelativeToPhysical(rect); }
+    NODELETE void physicalToBlockStartRelative(RepaintRects& rects) const { blockStartRelativeToPhysical(rects); }
 
     // These represent your location relative to your container as a physical offset.
     // In layout related methods you almost always want the logical location (e.g. x() and y()).
@@ -719,13 +729,14 @@ private:
 
     RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const final;
     
-    LayoutPoint topLeftLocationWithFlipping() const;
+    LayoutPoint topLeftLocationFromBlockStartRelative() const;
 
     ShapeOutsideInfo& ensureShapeOutsideInfo();
     void removeShapeOutsideInfo();
 
 private:
-    // Relative to our container.
+    // Relative to our container, with the block axis coordinate measured from the container's block-start border edge.
+    // This differs from the physical position when the container is vertical-rl or horizontal-bt (see topLeftLocation()).
     LayoutRect m_borderBoxRectInContainer;
 
 protected:

@@ -694,10 +694,10 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
             positioningAreaSize = downcast<RenderBox>(renderer).borderBoxSize() - LayoutSize(left + right, top + bottom);
             positioningAreaSize = LayoutSize(snapSizeToDevicePixel(positioningAreaSize, LayoutPoint(), snappingScaleFactor));
             if (renderer.writingMode().isBlockFlipped()) {
-                LayoutRect flippedRootBorderBox = downcast<RenderBox>(renderer).borderBoxRectInContainer();
-                view.flipForWritingMode(flippedRootBorderBox);
-                left += flippedRootBorderBox.x() - borderBoxRect.x();
-                top += flippedRootBorderBox.y() - borderBoxRect.y();
+                LayoutRect physicalRootBorderBox = downcast<RenderBox>(renderer).borderBoxRectInContainer();
+                view.blockStartRelativeToPhysical(physicalRootBorderBox);
+                left += physicalRootBorderBox.x() - borderBoxRect.x();
+                top += physicalRootBorderBox.y() - borderBoxRect.y();
             }
             if (view.frameView().hasExtendedBackgroundRectForPainting()) {
                 LayoutRect extendedBackgroundRect = view.frameView().extendedBackgroundRectForPainting();

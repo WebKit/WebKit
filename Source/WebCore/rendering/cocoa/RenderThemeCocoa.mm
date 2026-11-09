@@ -1451,7 +1451,7 @@ void RenderThemeCocoa::adjustRepaintRect(const RenderBox& renderer, FloatRect& r
 {
     auto repaintRect = rect;
     inflateRectForControlRenderer(renderer, repaintRect);
-    renderer.flipForWritingMode(repaintRect);
+    renderer.physicalToBlockStartRelative(repaintRect);
     rect = repaintRect;
 }
 

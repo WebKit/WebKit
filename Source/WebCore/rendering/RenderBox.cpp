@@ -1498,7 +1498,7 @@ LayoutSize RenderBox::cachedSizeForOverflowClip() const
 
 bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context) const
 {
-    flipForWritingMode(rects);
+    blockStartRelativeToPhysical(rects);
 
     if (context.options.contains(VisibleRectContext::Option::ApplyCompositedContainerScrolls) || this != container || !usesCompositedScrolling())
         rects.moveBy(-scrollPosition()); // For overflow:auto/scroll/hidden.
@@ -1506,7 +1506,7 @@ bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const Rend
     // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
     if ((!context.options.contains(VisibleRectContext::Option::ApplyCompositedClips) && usesCompositedScrolling())
         || (!context.options.contains(VisibleRectContext::Option::ApplyContainerClip) && this == container)) {
-        flipForWritingMode(rects);
+        physicalToBlockStartRelative(rects);
         return true;
     }
 
@@ -1532,7 +1532,7 @@ bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const Rend
     else
         intersects = rects.intersect(clipRect);
 
-    flipForWritingMode(rects);
+    physicalToBlockStartRelative(rects);
     return intersects;
 }
 
@@ -1765,7 +1765,7 @@ bool RenderBox::hitTestVisualOverflow(const HitTestLocation& hitTestLocation, co
 
     LayoutPoint adjustedLocation = accumulatedOffset + location();
     LayoutRect overflowBox = visualOverflowRect();
-    flipForWritingMode(overflowBox);
+    blockStartRelativeToPhysical(overflowBox);
     overflowBox.moveBy(adjustedLocation);
     return hitTestLocation.intersects(overflowBox);
 }
@@ -5114,7 +5114,7 @@ LayoutRect RenderBox::applyPaintGeometryTransformToRect(LayoutRect rect) const
     if (!paintGeometryAffectsOverflow)
         return rect;
 
-    flipForWritingMode(rect);
+    blockStartRelativeToPhysical(rect);
 
     LayoutSize containerOffset;
     if (isInFlowPositioned())
@@ -5128,8 +5128,8 @@ LayoutRect RenderBox::applyPaintGeometryTransformToRect(LayoutRect rect) const
     } else
         rect.move(offsetForInFlowPosition());
 
-    // Now we need to flip back.
-    flipForWritingMode(rect);
+    // Now we need to convert back.
+    physicalToBlockStartRelative(rect);
 
     return rect;
 }
@@ -5211,7 +5211,7 @@ LayoutRect RenderBox::flippedPaddingBoxRect() const
     // horizontal-bt writing modes. Apart from that, this method does the same as paddingBoxRect().
     auto rect = paddingBoxRectIncludingScrollbar();
     // Flip block progression axis if writing mode is vertical-rl or horizontal-bt.
-    flipForWritingMode(rect);
+    physicalToBlockStartRelative(rect);
     if (hasNonVisibleOverflow()) {
         // Subtract space occupied by scrollbars. They are at their physical edge in this coordinate
         // system, so order is important here: first flip, then subtract scrollbars.
@@ -5222,7 +5222,7 @@ LayoutRect RenderBox::flippedPaddingBoxRect() const
     return rect;
 }
 
-LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox& child, const LayoutPoint& point) const
+LayoutPoint RenderBox::blockStartRelativeToPhysicalForChild(const RenderBox& child, const LayoutPoint& point) const
 {
     if (!writingMode().isBlockFlipped())
         return point;
@@ -5234,7 +5234,7 @@ LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox& child, const 
     return LayoutPoint(point.x() + borderBoxWidth() - child.borderBoxWidth() - (2 * child.x()), point.y());
 }
 
-void RenderBox::flipForWritingMode(LayoutRect& rect) const
+void RenderBox::blockStartRelativeToPhysical(LayoutRect& rect) const
 {
     if (!writingMode().isBlockFlipped())
         return;
@@ -5245,35 +5245,35 @@ void RenderBox::flipForWritingMode(LayoutRect& rect) const
         rect.setX(borderBoxWidth() - rect.maxX());
 }
 
-LayoutUnit RenderBox::flipForWritingMode(LayoutUnit position) const
+LayoutUnit RenderBox::blockStartRelativeToPhysical(LayoutUnit position) const
 {
     if (!writingMode().isBlockFlipped())
         return position;
     return logicalHeight() - position;
 }
 
-LayoutPoint RenderBox::flipForWritingMode(const LayoutPoint& position) const
+LayoutPoint RenderBox::blockStartRelativeToPhysical(const LayoutPoint& position) const
 {
     if (!writingMode().isBlockFlipped())
         return position;
     return isHorizontalWritingMode() ? LayoutPoint(position.x(), borderBoxHeight() - position.y()) : LayoutPoint(borderBoxWidth() - position.x(), position.y());
 }
 
-LayoutSize RenderBox::flipForWritingMode(const LayoutSize& offset) const
+LayoutSize RenderBox::blockStartRelativeToPhysical(const LayoutSize& offset) const
 {
     if (!writingMode().isBlockFlipped())
         return offset;
     return isHorizontalWritingMode() ? LayoutSize(offset.width(), borderBoxHeight() - offset.height()) : LayoutSize(borderBoxWidth() - offset.width(), offset.height());
 }
 
-FloatPoint RenderBox::flipForWritingMode(const FloatPoint& position) const
+FloatPoint RenderBox::blockStartRelativeToPhysical(const FloatPoint& position) const
 {
     if (!writingMode().isBlockFlipped())
         return position;
     return isHorizontalWritingMode() ? FloatPoint(position.x(), borderBoxHeight() - position.y()) : FloatPoint(borderBoxWidth() - position.x(), position.y());
 }
 
-void RenderBox::flipForWritingMode(FloatRect& rect) const
+void RenderBox::blockStartRelativeToPhysical(FloatRect& rect) const
 {
     if (!writingMode().isBlockFlipped())
         return;
@@ -5284,7 +5284,7 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
         rect.setX(borderBoxWidth() - rect.maxX());
 }
 
-void RenderBox::flipForWritingMode(RepaintRects& rects) const
+void RenderBox::blockStartRelativeToPhysical(RepaintRects& rects) const
 {
     if (!writingMode().isBlockFlipped())
         return;
@@ -5292,14 +5292,14 @@ void RenderBox::flipForWritingMode(RepaintRects& rects) const
     rects.flipForWritingMode(borderBoxSize(), isHorizontalWritingMode());
 }
 
-LayoutPoint RenderBox::topLeftLocationWithFlipping() const
+LayoutPoint RenderBox::topLeftLocationFromBlockStartRelative() const
 {
     ASSERT(view().frameView().hasFlippedBlockRenderers());
 
     auto* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
         return location();
-    return containerBlock->flipForWritingModeForChild(*this, location());
+    return containerBlock->blockStartRelativeToPhysicalForChild(*this, location());
 }
 
 bool RenderBox::shouldIgnoreAspectRatio() const

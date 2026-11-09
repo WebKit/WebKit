@@ -71,7 +71,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
 {
     auto hasDamage = [&](auto& box) {
         auto rect = enclosingLayoutRect(box.inkOverflow());
-        root().flipForWritingMode(rect);
+        root().blockStartRelativeToPhysical(rect);
         // FIXME: This should test for intersection but horizontal ink overflow is miscomputed in a few cases (like with negative letter-spacing).
         return m_damageRect.maxY() > rect.y() && m_damageRect.y() < rect.maxY();
     };
@@ -138,13 +138,13 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         if (m_paintInfo.shouldPaintWithinRoot(*renderer)) {
             // FIXME: Painting should not require a non-const renderer.
             CheckedRef paintRenderer = const_cast<RenderBox&>(*renderer);
-            auto flippedOffset = flippedContentOffsetIfNeeded(*renderer);
+            auto childPaintOffset = paintOffsetForChild(*renderer);
             if (box.isBlockLevelBox()) {
                 // Blocks-in-inline.
                 auto paintInfoForChild = m_root.paintInfoForBlockChildren(m_paintInfo);
-                paintRenderer->paint(paintInfoForChild, flippedOffset);
+                paintRenderer->paint(paintInfoForChild, childPaintOffset);
             } else
-                paintRenderer->paintAsInlineBlock(m_paintInfo, flippedOffset);
+                paintRenderer->paintAsInlineBlock(m_paintInfo, childPaintOffset);
         }
     }
 }
@@ -207,10 +207,10 @@ void InlineContentPainter::paint()
         outlinePainter.paintOutline(inlineBox, m_paintOffset);
 }
 
-LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const
+LayoutPoint InlineContentPainter::paintOffsetForChild(const RenderBox& childRenderer) const
 {
     if (root().writingMode().isBlockFlipped())
-        return root().flipForWritingModeForChild(childRenderer, m_paintOffset);
+        return root().blockStartRelativeToPhysicalForChild(childRenderer, m_paintOffset);
     return m_paintOffset;
 }
 

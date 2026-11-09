@@ -720,7 +720,7 @@ void FlexFormattingContext::computeFlexItemRects(const FlexLines& flexLines, Fle
     bool shouldFlipMainAxis = !m_constraints.isColumnFlow && !m_constraints.isLeftToRightFlow;
     // column-reverse is flipped about the container's block extent, which is only final now. Note this is a
     // flex-direction reversal only: the writing mode's own block reversal is applied by the renderer
-    // (RenderBox::flipForWritingMode), and isLeftToRightFlow already moved the flow-aware start edge for it, so
+    // (RenderBox::blockStartRelativeToPhysical), and isLeftToRightFlow already moved the flow-aware start edge for it, so
     // mixing the two here would reverse a vertical-rl column twice.
     bool shouldFlipColumnReverse = m_constraints.style->flexDirection() == FlexDirection::ColumnReverse;
     auto columnReverseFlipEdge = mainBorderBoxExtent - m_constraints.mainAxisScrollbarExtent

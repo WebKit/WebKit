@@ -172,7 +172,7 @@ void RenderListOutsideMarker::paint(PaintInfo& paintInfo, const LayoutPoint& pai
 
     // Paint the generated-content subtree as an atomic inline: paintAsInlineBlock fans out all
     // sub-phases for Foreground and forwards Selection/EventRegion/TextClip to the child's paint().
-    container->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*container, boxOrigin));
+    container->paintAsInlineBlock(paintInfo, blockStartRelativeToPhysicalForChild(*container, boxOrigin));
 }
 
 void RenderListOutsideMarker::layout()

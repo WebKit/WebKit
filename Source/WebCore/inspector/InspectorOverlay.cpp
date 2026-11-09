@@ -2374,7 +2374,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
         // Build bounds for each child and collect children on the same logical line.
         {
             auto childRect = renderChild->borderBoxRectInContainer();
-            renderFlex->flipForWritingMode(childRect);
+            renderFlex->blockStartRelativeToPhysical(childRect);
             childRect.expand(renderChild->marginBox());
 
             auto itemBounds = childQuadToRootQuad({ childRect });

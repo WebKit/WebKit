@@ -368,7 +368,7 @@ inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSel
 
     // FIXME: Add pixel snapping here.
     if (adjustedForSelection == AdjustedForSelection::No) {
-        formattingContextRoot().flipForWritingMode(visualRect);
+        formattingContextRoot().blockStartRelativeToPhysical(visualRect);
         return visualRect;
     }
     auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { selectionLogicalTop() });
@@ -376,7 +376,7 @@ inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSel
 
     visualRect.setY(selectionTop);
     visualRect.setHeight(selectionBottom - selectionTop);
-    formattingContextRoot().flipForWritingMode(visualRect);
+    formattingContextRoot().blockStartRelativeToPhysical(visualRect);
     return visualRect;
 }
 
