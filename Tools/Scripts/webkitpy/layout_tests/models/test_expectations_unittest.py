@@ -349,6 +349,33 @@ class SkippedTests(Base):
             'The following test foo/bar/baz.html from the Skipped list doesn\'t exist\n',
         )
 
+    def test_overlapping_skipped_entries_most_specific_wins_in_any_order(self):
+        # A list, not a set, so the order of the input is kept: each order must give the same winner.
+        for skips in (['failures/expected', 'failures/expected/text.html'],
+                      ['failures/expected/text.html', 'failures/expected']):
+            port = MockHost().port_factory.get('mac')
+            port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
+            expectations_dict = OrderedDict()
+            expectations_dict['expectations'] = ''
+            port.expectations_dict = lambda **kwargs: expectations_dict
+            port.skipped_layout_tests = lambda **kwargs: skips
+            exp = TestExpectations(port, ['failures/expected/text.html'])
+            exp.parse_all_expectations()
+            self.assertEqual(exp.model().get_expectation_line('failures/expected/text.html').name, 'failures/expected/text.html')
+
+    def test_test_list_line_supersedes_synthetic_pass(self):
+        port = MockHost().port_factory.get('mac')
+        port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = ''
+        port.expectations_dict = lambda **kwargs: expectations_dict
+        exp = TestExpectations(port, ['failures/expected/text.html'])
+        exp.parse_all_expectations(test_list_expectations=[('test-list.txt', 1, 'Bug(x) failures/expected/text.html [ Failure ]')])
+        lines = exp.model().get_expectation_lines('failures/expected/text.html')
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0].filename, 'test-list.txt')
+        self.assertEqual(exp.model().get_expectations('failures/expected/text.html'), set([FAIL]))
+
 
 class ExpectationSyntaxTests(Base):
     def test_unrecognized_expectation(self):
@@ -564,6 +591,40 @@ class PrintExpectationsTests(Base):
         for line, exp_str in zip(lines, exp_strs):
             self.assertEqual(str(line), exp_str)
         self.assertEqual(lines.count(main_line), 1)
+
+    def statuses(self, test):
+        return [status.name for status, _ in self._exp._model.get_classified_expectation_lines(test)]
+
+    def test_statuses_overrides_with_dir(self):
+        self.parse_exp('\n'.join(['Bug(exp) failures/expected [ Failure ]',
+                                  'Bug(override) failures/expected/text.html [ ImageOnlyFailure ]',
+                                  'Bug(override2) failures [ ImageOnlyFailure ]']))
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'EFFECTIVE', 'SHADOWED'])
+
+    def test_statuses_shadowed_line_before_a_later_file_winner(self):
+        # The shadowed line never took effect, even though it comes before the line that did.
+        self.parse_exp('Bug(exp) failures/expected [ Failure ]\nBug(shadowed) failures [ ImageOnlyFailure ]',
+                       overrides='Bug(override) failures/expected/text.html [ ImageOnlyFailure ]')
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'SHADOWED', 'EFFECTIVE'])
+
+    def test_statuses_skipped_line_is_effective(self):
+        self._port.skipped_layout_tests = lambda **kwargs: {'failures/expected/text.html'}
+        self.parse_exp('Bug(exp) failures/expected/text.html [ Failure ]')
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'EFFECTIVE'])
+
+    def test_statuses_disjoint_configurations_both_apply_in_lint_mode(self):
+        self.parse_exp('Bug(a) [ Release ] failures/expected/text.html [ Failure ]\n'
+                       'Bug(b) [ Debug ] failures/expected/text.html [ ImageOnlyFailure ]', is_lint_mode=True)
+        self.assertFalse(self._exp.has_warnings())
+        self.assertEqual(self.statuses('failures/expected/text.html'), ['SUPERSEDED', 'EFFECTIVE'])
+
+    def test_statuses_unknown_test_is_empty(self):
+        self.parse_exp('')
+        self.assertEqual(self.statuses('some_unknown_file.html'), [])
+
+    def test_statuses_test_without_an_expectation_is_its_synthetic_pass(self):
+        self.parse_exp('')
+        self.assertEqual(self.statuses('passes/text.html'), ['EFFECTIVE'])
 
 
 class RebaseliningTest(Base):

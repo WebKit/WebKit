@@ -1742,3 +1742,27 @@ class MainTest(unittest.TestCase):
         self.assertEqual(res, -1)
         self.assertNotIn('=> Results', stdout.getvalue())
         self.assertIn('Failed to upload test results to http://example.invalid/ (1 failed), exiting with status -1.', stdout.getvalue())
+
+    def test_print_expectations_json(self):
+        stdout = StringIO()
+        stderr = StringIO()
+        with OutputCapture() as captured:
+            res = run_webkit_tests.main(['--platform', 'test', '--print-expectations', '--json', 'passes/text.html'], stdout, stderr)
+
+        self.assertEqual(res, 0)
+        # stdout is exactly one JSON document; progress goes to stderr.
+        output = json.loads(captured.stdout.getvalue())
+        self.assertEqual(len(output), 1)
+        driver = output[list(output)[0]]
+        self.assertEqual(sorted(driver), ['run', 'skip'])
+        self.assertIn('passes/text.html', [test for device in driver['run'].values() for test in device])
+
+    def test_json_requires_print_expectations(self):
+        stdout = StringIO()
+        stderr = StringIO()
+        res = run_webkit_tests.main(['--platform', 'test', '--json'], stdout, stderr)
+
+        self.assertEqual(res, -1)
+        self.assertIn('--json requires --print-expectations', stderr.getvalue())
+        self.assertEqual(stdout.getvalue(), '')
+

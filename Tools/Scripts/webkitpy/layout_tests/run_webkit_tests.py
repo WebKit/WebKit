@@ -55,6 +55,10 @@ EXCEPTIONAL_EXIT_STATUS = 254
 def main(argv, stdout, stderr):
     options, args = parse_args(argv)
 
+    if options.json and not options.print_expectations:
+        print('--json requires --print-expectations', file=stderr)
+        return -1
+
     if options.platform and 'test' in options.platform:
         # It's a bit lame to import mocks into real code, but this allows the user
         # to run tests against the test platform interactively, which is useful for
@@ -89,6 +93,8 @@ def main(argv, stdout, stderr):
         manager = Manager(port, options, printer)
 
         if options.print_expectations:
+            if options.json:
+                return manager.print_expectations_json(args)
             return manager.print_expectations(args)
         else:
             return manager.print_summary(args)
@@ -390,6 +396,9 @@ def parse_args(args):
         optparse.make_option(
             "--print-summary", action="store_true", default=False,
             help=("Print a summary of how tests are expected to run, grouped by directory. Does not run any tests.")),
+        optparse.make_option(
+            "--json", action="store_true", default=False,
+            help=("With --print-expectations, print the expectations as JSON.")),
         optparse.make_option(
             "--webgl-test-suite", action="store_true", default=False,
             help=("Run exhaustive webgl list, including test ordinarily skipped for performance reasons. Equivalent to '--additional-expectations=LayoutTests/webgl/TestExpectations webgl'")),
