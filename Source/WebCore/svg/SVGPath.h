@@ -29,8 +29,6 @@ namespace WebCore {
 
 // Owner of the SVGPathByteStream that backs the "d" attribute, used for rendering and SMIL animation.
 class SVGPath final : public SVGProperty {
-    friend class SVGAnimatedPathAnimator;
-
 public:
     static Ref<SVGPath> create(SVGPropertyOwner* owner, SVGPropertyAccess access)
     {
@@ -44,20 +42,17 @@ public:
 
     SVGPath& operator=(const SVGPath& other)
     {
-        pathByteStreamWillChange();
         m_pathByteStream = other.pathByteStream();
         return *this;
     }
 
     void updateByteStreamData(DataRef<SVGPathByteStream::Data>&& byteStreamData)
     {
-        pathByteStreamWillChange();
         m_pathByteStream.setData(WTF::move(byteStreamData));
     }
 
     void clearByteStreamData()
     {
-        pathByteStreamWillChange();
         m_pathByteStream.clear();
     }
 
@@ -68,23 +63,18 @@ public:
 
     bool parse(StringView value)
     {
-        pathByteStreamWillChange();
         return buildSVGPathByteStreamFromString(value, m_pathByteStream, UnalteredParsing);
     }
 
     Path path() const
     {
-        if (!m_path)
-            m_path = buildPathFromByteStream(pathByteStream());
-        return *m_path;
+        return buildPathFromByteStream(pathByteStream());
     }
 
     size_t approximateMemoryCost() const
     {
         // This is an approximation for path memory cost since the path is parsed on demand.
-        size_t pathMemoryCost = (m_pathByteStream.size() / 10) * sizeof(FloatPoint);
-        // We need to account for the memory which is allocated by the m_path.
-        return m_path ? pathMemoryCost + sizeof(*m_path) : pathMemoryCost;
+        return (m_pathByteStream.size() / 10) * sizeof(FloatPoint);
     }
 
     String valueAsString() const override
@@ -106,11 +96,7 @@ private:
     {
     }
 
-    // Called by SVGAnimatedPathAnimator before writing a new animated byte stream.
-    void pathByteStreamWillChange() { m_path = std::nullopt; }
-
     SVGPathByteStream m_pathByteStream;
-    mutable std::optional<Path> m_path;
 };
 
 }
