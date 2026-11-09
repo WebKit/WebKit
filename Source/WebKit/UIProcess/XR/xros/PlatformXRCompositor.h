@@ -100,7 +100,7 @@ private:
     void cleanUpVisibilityPropagationViewsIfNeeded();
 #endif
 #if ENABLE(WEBXR_LAYERS)
-    void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, PlatformXRCoordinator::CreateCompositionLayerCallback&&) override { }
+    void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, PlatformXR::LayerUpdateMode, PlatformXRCoordinator::CreateCompositionLayerCallback&&) override { }
 #endif
 
     void getSupportedFeatures(WebPageProxy&);

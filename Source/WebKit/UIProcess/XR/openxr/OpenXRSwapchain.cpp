@@ -35,6 +35,50 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRSwapchain);
 
+// Swapchain that allocates only one image which must be acquired and released just once (rendered once composited many).
+class OpenXRSwapchainStaticImage final : public OpenXRSwapchain {
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRSwapchainStaticImage);
+public:
+    OpenXRSwapchainStaticImage(XrSwapchain swapchain, const XrSwapchainCreateInfo& info, Vector<uint64_t>&& imageHandles, HasAlpha hasAlpha)
+        : OpenXRSwapchain(swapchain, info, WTF::move(imageHandles), hasAlpha)
+    {
+    }
+
+private:
+    std::optional<uint64_t> acquireImage() final;
+    void releaseImage() final;
+    uint64_t acquiredTexture() const final { return m_releasedStaticTexture.value_or(m_acquiredTexture); }
+    SubmissionState submissionState(bool contentUpdated) const final;
+
+    // The texture handle is cleared when the image is released, but static layers need it to submit the image again.
+    std::optional<uint64_t> m_releasedStaticTexture;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRSwapchainStaticImage);
+
+std::optional<uint64_t> OpenXRSwapchainStaticImage::acquireImage()
+{
+    if (m_releasedStaticTexture)
+        return m_releasedStaticTexture;
+    if (m_acquiredTexture)
+        return m_acquiredTexture;
+    return OpenXRSwapchain::acquireImage();
+}
+
+void OpenXRSwapchainStaticImage::releaseImage()
+{
+    ASSERT(!m_releasedStaticTexture);
+    m_releasedStaticTexture = m_acquiredTexture;
+    OpenXRSwapchain::releaseImage();
+}
+
+OpenXRSwapchain::SubmissionState OpenXRSwapchainStaticImage::submissionState(bool contentUpdated) const
+{
+    if (m_releasedStaticTexture)
+        return SubmissionState::LastReleasedImage;
+    return contentUpdated ? SubmissionState::NewImage : SubmissionState::None;
+}
+
 std::unique_ptr<OpenXRSwapchain> OpenXRSwapchain::create(XrSession session, const XrSwapchainCreateInfo& info, HasAlpha hasAlpha, const OpenXRGraphicsBinding& graphicsBinding)
 {
     ASSERT(session != XR_NULL_HANDLE);
@@ -54,6 +98,8 @@ std::unique_ptr<OpenXRSwapchain> OpenXRSwapchain::create(XrSession session, cons
         return nullptr;
     }
 
+    if (info.createFlags & XR_SWAPCHAIN_CREATE_STATIC_IMAGE_BIT)
+        return std::unique_ptr<OpenXRSwapchain>(new OpenXRSwapchainStaticImage(swapchain, info, WTF::move(imageHandles), hasAlpha));
     return std::unique_ptr<OpenXRSwapchain>(new OpenXRSwapchain(swapchain, info, WTF::move(imageHandles), hasAlpha));
 }
 
