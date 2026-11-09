@@ -22,11 +22,16 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 PRODUCT_NAME = MiniBrowser
-// The internal entitlements add restricted entitlements, which Xcode refuses to sign without a provisioning profile.
+// The internal entitlements add a restricted entitlement. Xcode refuses to sign it without a provisioning profile
+// on the public SDK, and an ad-hoc signed build only launches with it where AMFI allows that. So they apply only
+// with the internal SDK and WK_MINIBROWSER_USE_RESTRICTED_ENTITLEMENTS = YES, for example in LocalOverrides.xcconfig.
 CODE_SIGN_ENTITLEMENTS = $(CODE_SIGN_ENTITLEMENTS_$(USE_INTERNAL_SDK));
 CODE_SIGN_ENTITLEMENTS_ = MiniBrowser.entitlements;
 CODE_SIGN_ENTITLEMENTS_NO = MiniBrowser.entitlements;
-CODE_SIGN_ENTITLEMENTS_YES = MiniBrowser-internal.entitlements;
+CODE_SIGN_ENTITLEMENTS_YES = $(CODE_SIGN_ENTITLEMENTS_INTERNAL_$(WK_MINIBROWSER_USE_RESTRICTED_ENTITLEMENTS));
+CODE_SIGN_ENTITLEMENTS_INTERNAL_ = MiniBrowser.entitlements;
+CODE_SIGN_ENTITLEMENTS_INTERNAL_NO = MiniBrowser.entitlements;
+CODE_SIGN_ENTITLEMENTS_INTERNAL_YES = MiniBrowser-internal.entitlements;
 PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier)
 GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch
 INFOPLIST_FILE = mac/Info.plist
