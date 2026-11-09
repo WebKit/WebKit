@@ -224,6 +224,7 @@ private:
     void didReceiveCaptureMirrorSeed(IPC::Connection&, WebCore::ProcessIdentifier, std::optional<RemoteLayerTreeMirrorSeed>&&);
     void completeCaptureMirrorAttachIfReady();
     void destroyCaptureMirrorLayerTree();
+    void updateCaptureMirrorGeometry();
 
     void initializeDebugIndicator();
 

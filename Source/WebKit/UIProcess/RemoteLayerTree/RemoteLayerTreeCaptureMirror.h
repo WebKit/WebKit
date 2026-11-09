@@ -72,6 +72,9 @@ public:
     // CA drops the animations of layers committed outside of a context, as the mirror is until its container is parented.
     void copyAnimationsFromPrimaryTree(const RemoteLayerTreeHost& primaryHost);
 
+    // The scrolling tree changes the geometry of primary layers outside of transactions.
+    void updateGeometryFromPrimaryTree(const RemoteLayerTreeHost& primaryHost);
+
     void processDidTerminate(WebCore::ProcessIdentifier);
 
 private:

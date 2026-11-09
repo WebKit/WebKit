@@ -227,6 +227,28 @@ void RemoteLayerTreeCaptureMirror::copyAnimationsFromPrimaryTree(const RemoteLay
         copyAnimationsFromPrimaryLayer(layerID, primaryHost);
 }
 
+void RemoteLayerTreeCaptureMirror::updateGeometryFromPrimaryTree(const RemoteLayerTreeHost& primaryHost)
+{
+    // This runs after every commit and display refresh, so only set what differs.
+    for (auto& [layerID, node] : m_host.nodes()) {
+        RetainPtr primaryLayer = primaryHost.layerForID(layerID);
+        if (!primaryLayer)
+            continue;
+
+        RetainPtr mirrorLayer = node->layer();
+        if (auto position = [primaryLayer position]; !CGPointEqualToPoint(position, [mirrorLayer position]))
+            [mirrorLayer setPosition:position];
+        if (auto bounds = [primaryLayer bounds]; !CGRectEqualToRect(bounds, [mirrorLayer bounds]))
+            [mirrorLayer setBounds:bounds];
+        if (auto transform = [primaryLayer transform]; !CATransform3DEqualToTransform(transform, [mirrorLayer transform]))
+            [mirrorLayer setTransform:transform];
+        if (auto sublayerTransform = [primaryLayer sublayerTransform]; !CATransform3DEqualToTransform(sublayerTransform, [mirrorLayer sublayerTransform]))
+            [mirrorLayer setSublayerTransform:sublayerTransform];
+    }
+
+    updateContainerLayer(primaryHost);
+}
+
 void RemoteLayerTreeCaptureMirror::updateContainerLayer(const RemoteLayerTreeHost& primaryHost)
 {
     if (RetainPtr rootLayer = m_host.rootLayer(); rootLayer && [rootLayer superlayer] != m_containerLayer.get())

@@ -615,6 +615,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         }
     }
 
+    // The scrolling tree moved primary layers in applyScrollingTreeLayerPositionsAfterCommit().
+    updateCaptureMirrorGeometry();
+
     page->layerTreeCommitComplete();
 }
 
@@ -856,6 +859,7 @@ void RemoteLayerTreeDrawingAreaProxy::didReceiveCaptureMirrorSeed(IPC::Connectio
     } else
         applySeed();
 
+    updateCaptureMirrorGeometry();
     completeCaptureMirrorAttachIfReady();
 }
 
@@ -906,6 +910,12 @@ void RemoteLayerTreeDrawingAreaProxy::destroyCaptureMirrorLayerTree()
 #endif
 
     RELEASE_LOG(RemoteLayerTree, "RemoteLayerTreeDrawingAreaProxy(%" PRIu64 ")::destroyCaptureMirrorLayerTree", identifier().toUInt64());
+}
+
+void RemoteLayerTreeDrawingAreaProxy::updateCaptureMirrorGeometry()
+{
+    if (m_captureMirror && m_remoteLayerTreeHost)
+        m_captureMirror->updateGeometryFromPrimaryTree(*m_remoteLayerTreeHost);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::captureMirrorDidEnterLayerTree()
@@ -979,6 +989,9 @@ bool RemoteLayerTreeDrawingAreaProxy::maybePauseDisplayRefreshCallbacks()
 void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
 {
     didRefreshDisplay(nullptr);
+
+    // The scrolling tree also moves primary layers between commits.
+    updateCaptureMirrorGeometry();
 }
 
 TextStream& operator<<(TextStream& ts, const PendingCommitMessage& state)
