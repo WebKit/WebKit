@@ -6587,6 +6587,17 @@ UnifyDamagedRegions:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+UnloadEventEnabled:
+  type: bool
+  status: embedder
+  category: dom
+  humanReadableName: "Unload event"
+  humanReadableDescription: "Dispatch the legacy unload event when a document is unloaded"
+  defaultValue:
+    default: WebKit::defaultUnloadEventEnabled()
+    WebKitLegacy: true
+    WebCore: true
+
 UpdateSceneGeometryEnabled:
   type: bool
   status: internal

@@ -1376,6 +1376,19 @@ TEST(ProcessSwap, CrossOriginButSameSiteWindowOpenNoOpener)
     EXPECT_EQ(pid1, pid2);
 }
 
+#if !TARGET_OS_IPHONE
+static void enableUnloadEventForPSONTest(WKWebViewConfiguration *configuration)
+{
+    auto preferences = [configuration preferences];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"UnloadEventEnabled"]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+#endif
+
 static void enableSiteIsolationForPSONTest(WKWebViewConfiguration *configuration)
 {
     auto preferences = [configuration preferences];
@@ -4377,6 +4390,7 @@ TEST(ProcessSwap, LoadUnload)
     [webViewConfiguration setProcessPool:processPool.get()];
     RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:loadUnloadBytes];
+    enableUnloadEventForPSONTest(webViewConfiguration.get());
     [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:loadUnloadBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
@@ -4470,6 +4484,7 @@ TEST(ProcessSwap, UnloadEventsOnCrossSiteClientRedirect)
     [webViewConfiguration setProcessPool:processPool.get()];
     RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:unloadOnClientRedirectBytes];
+    enableUnloadEventForPSONTest(webViewConfiguration.get());
     [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:"<body>apple</body>"_s];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 

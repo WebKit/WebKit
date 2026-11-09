@@ -4288,7 +4288,7 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
             // This takes care of firing the visibilitychange event and making sure the document is reported as hidden.
             document->setVisibilityHiddenDueToDismissal(true);
 
-            if (document->backForwardCacheState() == Document::NotInBackForwardCache) {
+            if (document->backForwardCacheState() == Document::NotInBackForwardCache && document->settings().unloadEventEnabled()) {
                 Ref unloadEvent = Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No);
                 // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed
                 // while dispatching the event, so protect it to prevent writing the end
