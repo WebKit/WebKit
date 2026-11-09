@@ -2636,7 +2636,7 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate ] imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Failure ]
 [ GoldenGate ] inspector/timeline/timeline-event-RenderingFrame.html [ Failure Timeout ]
 [ GoldenGate arm64 ] inspector/timeline/timeline-event-TimerRemove.html [ Failure Timeout ]
-[ GoldenGate ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html [ Failure ]
+webkit.org/b/330805 [ GoldenGate ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html [ Pass Failure ]
 [ GoldenGate ] webaudio/audioworklet-stops-on-document-stop.html [ Failure ]
 [ GoldenGate ] webgl/video-formats/upload-path-av1-420-bt709-videorange.html [ Failure ]
 [ GoldenGate ] fast/scrolling/mac/rubberband-overflow-in-wheel-region.html [ Timeout ]
