@@ -312,12 +312,14 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         return true;
                     },
                     [&](const CSS::Integer<>& integer) {
+                        // A literal below 0 is invalid, but a calc() below 0 is valid and clamps to 0.
+                        // https://www.w3.org/TR/css-values-4/#calc-range
                         auto resolved = WTF::switchOn(integer,
                             [](const CSS::Integer<>::Raw& raw) {
                                 return raw.value;
                             },
                             [](const CSS::Integer<>::Calc& calc) {
-                                return calc.evaluateDeprecated();
+                                return std::max(calc.evaluateDeprecated(), 0.0);
                             }
                         );
                         if (resolved < 0)
@@ -326,12 +328,14 @@ bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const Feature
                         return true;
                     },
                     [&](const CSS::Number<>& number) {
+                        // A literal below 0 is invalid, but a calc() below 0 is valid and clamps to 0.
+                        // https://www.w3.org/TR/css-values-4/#calc-range
                         double resolved = WTF::switchOn(number,
                             [](const CSS::Number<>::Raw& raw) {
                                 return raw.value;
                             },
                             [](const CSS::Number<>::Calc& calc) {
-                                return calc.evaluateDeprecated();
+                                return std::max(calc.evaluateDeprecated(), 0.0);
                             }
                         );
                         if (resolved < 0)
