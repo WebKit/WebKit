@@ -76,6 +76,9 @@ Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTr
 
 UsedMargins usedMarginsForAxis(const PlacedGridItem&, const ComputedSizes&);
 
+// The border box size of a specified width, height, minimum or maximum size, honoring box-sizing.
+BorderBoxSize borderBoxSizeForSpecifiedSize(BoxSizing, LayoutUnit specifiedSize, LayoutUnit borderAndPadding);
+
 LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&, const UsedMargins&);
 LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit gridAreaInlineSize, const UsedMargins&);
 
