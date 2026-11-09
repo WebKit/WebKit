@@ -565,10 +565,8 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 // in quirks mode, where a quirk container keeps the margins at its block-start side apart, and with margin-trim, which discard margins that
 // clearance separates, an orthogonal one, a fieldset or a box with a block step, whose margins collapse once laid out, negative inline
 // margins, which a float does not take (RenderBox::shrinkLogicalWidthToAvoidFloats), and calc() ones, which may be negative, justify-self,
-// the -webkit- values of text-align, an inline size its own formatting context decides from the space beside
-// the floats (RenderBox::shrinkToAvoidFloats with containingBlockAvailableLineWidth): of a box that fits its content, a sizing keyword, a
-// preferred aspect ratio or MathML, and of a table with a min or max inline size, which applies to the space, and a form control the block
-// formatting context lays out as a block container, like a checkbox with display: block.
+// the -webkit- values of text-align, and a form control the block formatting context lays out as a block container, like a checkbox with
+// display: block.
 static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isInInlineContent, bool hasFloatsWithShape, bool isLaidOutThroughRenderTree)
 {
     if (isInInlineContent || hasFloatsWithShape || box.document().inQuirksMode() || box.isFieldset() || !box.style().blockStepSize().isNone())
@@ -590,14 +588,6 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
         return BlockAvoidanceReason::ContentHasFloat;
     auto textAlign = containingBlockStyle->textAlign();
     if (textAlign == Style::TextAlign::WebKitCenter || textAlign == Style::TextAlign::WebKitLeft || textAlign == Style::TextAlign::WebKitRight)
-        return BlockAvoidanceReason::ContentHasFloat;
-    auto hasInlineSizeFromSpaceBesideFloats = box.sizesLogicalWidthToFitContent() || Layout::BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode) || style->aspectRatio().hasRatio();
-    if (is<RenderTable>(box) && box.shrinkToAvoidFloats())
-        hasInlineSizeFromSpaceBesideFloats |= !style->logicalMinWidth(writingMode).isAuto() || !style->logicalMaxWidth(writingMode).isNone();
-#if ENABLE(MATHML)
-    hasInlineSizeFromSpaceBesideFloats |= box.isRenderMathMLBlock();
-#endif
-    if (!box.isRenderReplaced() && hasInlineSizeFromSpaceBesideFloats)
         return BlockAvoidanceReason::ContentHasFloat;
     for (CheckedPtr<const RenderBlock> ancestor = box.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
         auto marginTrim = ancestor->style().marginTrim();
