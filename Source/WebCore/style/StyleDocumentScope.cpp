@@ -85,6 +85,7 @@ void DocumentScope::createDocumentResolver()
     ASSERT(!m_shadowRoot);
 
     SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     m_resolver = Resolver::create(m_document, Resolver::ScopeType::Document);
 
