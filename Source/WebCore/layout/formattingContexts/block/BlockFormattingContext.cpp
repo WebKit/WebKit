@@ -1210,6 +1210,10 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     auto blockLayoutState = BlockLayoutState { { } };
     blockLayoutState.setLastFormattedLineRoots(Vector { m_blockLayoutState.lastFormattedLineRoots() });
     auto contentFormattingContext = BlockFormattingContext { box, integrationUtils(), blockLayoutState };
+    // Its own text-box-trim only: its lines are not the first or last formatted line of the boxes it is in, which only look into their in-flow
+    // children (css-pseudo-4 §2.1.1). The render tree path gives it a start trim an ancestor has not used yet (TextBoxTrimmer).
+    if (box->style().textBoxTrim() != TextBoxTrim::None)
+        blockLayoutState.setTextBoxTrimState(contentFormattingContext.textBoxTrimStateFor(box, { }));
     auto contentInlineSizes = outOfFlowGeometry.needsContentInlineSizes() ? std::optional { contentFormattingContext.computeIntrinsicInlineSizes(box) } : std::nullopt;
     // Its scrollbars take part in the sizes of its content (RenderBlock::computeIntrinsicLogicalWidths).
     if (contentInlineSizes) {

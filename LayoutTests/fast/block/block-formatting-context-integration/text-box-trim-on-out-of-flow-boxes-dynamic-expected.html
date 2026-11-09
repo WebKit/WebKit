@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+body { font: 20px/40px monospace; }
+.root { display: inline-block; vertical-align: top; position: relative; width: 150px; height: 130px; margin: 2px; background: lightgray; }
+.box { position: absolute; top: 0; left: 5px; width: 140px; background: lightblue; }
+p { margin: 0; background: lightgreen; }
+</style>
+<div class="root"><div class="box" id="trim"><p>first</p><p>last</p></div></div>
+<div class="root"><div class="box" style="text-box-trim: trim-both"><p>first</p><p id="text">last</p></div></div>
+<div class="root"><div class="box" style="text-box-trim: trim-end"><p>first</p><p id="appended">last</p></div></div>
+<div class="root"><div class="box" style="text-box-trim: trim-start"><p id="padding">first</p><p>second</p></div></div>
+<div class="root"><div class="box" style="text-box-trim: trim-end" id="inline">inline</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("trim").style.textBoxTrim = "trim-both";
+document.getElementById("text").firstChild.data = "longer last line text";
+document.getElementById("appended").after(document.createElement("p"));
+document.getElementById("padding").style.paddingTop = "6px";
+document.getElementById("inline").style.textBoxTrim = "trim-start";
+</script>
