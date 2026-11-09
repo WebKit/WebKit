@@ -139,8 +139,8 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
-// GFC resolves numeric lines and numeric spans in either position. Named lines, including
-// named spans (e.g. span foo), require named grid line resolution which GFC does not implement.
+// GFC resolves numeric lines, numeric spans and lines given as an integer and a line name
+// (e.g. foo 2) in either position. A line name alone and named spans (e.g. span foo) are not supported.
 static bool hasValidEndForExplicitStart(const Style::GridPosition& end)
 {
     return WTF::switchOn(end,
@@ -148,8 +148,8 @@ static bool hasValidEndForExplicitStart(const Style::GridPosition& end)
             // An auto end with an explicit start resolves to a single-track span at the start line.
             return true;
         },
-        [&](const Style::GridPositionExplicit&) {
-            return end.namedGridLine().value.isEmpty();
+        [](const Style::GridPositionExplicit&) {
+            return true;
         },
         [&](const Style::GridPositionSpan&) {
             return end.namedGridLine().value.isEmpty();
@@ -166,9 +166,9 @@ static bool hasValidEndForAutoStart(const Style::GridPosition& end)
         [](const CSS::Keyword::Auto&) {
             return true;
         },
-        [&](const Style::GridPositionExplicit&) {
+        [](const Style::GridPositionExplicit&) {
             // "auto / <integer>" places a single-track item ending at the end line.
-            return end.namedGridLine().value.isEmpty();
+            return true;
         },
         [&](const Style::GridPositionSpan&) {
             return end.namedGridLine().value.isEmpty();
@@ -185,8 +185,8 @@ static bool hasValidEndForSpanStart(const Style::GridPosition& end)
         [](const CSS::Keyword::Auto&) {
             return true;
         },
-        [&](const Style::GridPositionExplicit&) {
-            return end.namedGridLine().value.isEmpty();
+        [](const Style::GridPositionExplicit&) {
+            return true;
         },
         [](const Style::GridPositionSpan&) {
             // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
@@ -487,8 +487,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 return { };
             },
             [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                if (!columnStart.namedGridLine().value.isEmpty())
-                    return GridAvoidanceReason::GridItemColumnStartHasLineName;
                 if (!hasValidEndForExplicitStart(gridItemStyle->gridItemColumnEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
                 return { };
@@ -518,8 +516,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 return { };
             },
             [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                if (!rowStart.namedGridLine().value.isEmpty())
-                    return GridAvoidanceReason::GridItemRowStartHasLineName;
                 if (!hasValidEndForExplicitStart(gridItemStyle->gridItemRowEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
                 return { };

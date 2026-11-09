@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: grid-column placement with an integer and a line name</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-slot">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<meta name="assert" content="An item whose grid-column-start or grid-column-end is an integer and a line name is placed at the Nth line with that name, counting from the end for negative integers and creating implicit tracks past the last such line.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; width: 400px; background: lightgray; margin-bottom: 10px; grid-auto-flow: row; grid-auto-rows: 10px; }
+.grid > div { background: green; }
+</style>
+<!-- foo 2 as start, 2 foo as start, foo 1 and 1 as end, names on several lines -->
+<div class="grid" style="grid-template-columns: [a] 50px [foo] 60px [b] 70px [foo] 80px; grid-template-rows: 20px;">
+  <div data-offset-x="180" data-offset-y="0" data-expected-width="80" data-expected-height="20" style="grid-column: foo 2"></div>
+  <div data-offset-x="110" data-offset-y="20" data-expected-width="70" data-expected-height="10" style="grid-column: 2 foo / 3"></div>
+  <div data-offset-x="0" data-offset-y="30" data-expected-width="50" data-expected-height="10" style="grid-column: 1 / foo 1"></div>
+  <div data-offset-x="0" data-offset-y="40" data-expected-width="180" data-expected-height="10" style="grid-column: 1 / 2 foo"></div>
+</div>
+<!-- -1 foo as end, negative counts, foo 2 / foo 3 -->
+<div class="grid" style="grid-template-columns: [foo] 50px [foo] 60px [foo] 70px; grid-template-rows: 20px;">
+  <div data-offset-x="110" data-offset-y="0" data-expected-width="70" data-expected-height="20" style="grid-column: -1 foo"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="110" data-expected-height="10" style="grid-column: foo 1 / -1 foo"></div>
+  <div data-offset-x="50" data-offset-y="30" data-expected-width="60" data-expected-height="10" style="grid-column: foo 2 / foo 3"></div>
+  <div data-offset-x="50" data-offset-y="40" data-expected-width="130" data-expected-height="10" style="grid-column: -2 foo / 4"></div>
+</div>
+<!-- N past the count: trailing implicit tracks -->
+<div class="grid" style="grid-template-columns: [foo] 50px 60px; grid-auto-columns: 30px 40px; grid-template-rows: 20px;">
+  <div data-offset-x="180" data-offset-y="0" data-expected-width="30" data-expected-height="20" style="grid-column: foo 3"></div>
+  <div data-offset-x="250" data-offset-y="0" data-expected-width="30" data-expected-height="20" style="grid-column: foo 5 / foo 6"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="160" data-expected-height="10" style="grid-column: 2 / foo 4"></div>
+</div>
+<!-- N past the count: leading implicit tracks -->
+<div class="grid" style="grid-template-columns: [foo] 50px 60px; grid-auto-columns: 30px 40px; grid-template-rows: 20px;">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="20" style="grid-column: -3 foo"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="30" data-expected-height="10" style="grid-column: -3 foo / -2 foo"></div>
+  <div data-offset-x="120" data-offset-y="20" data-expected-width="60" data-expected-height="10" style="grid-column: 2"></div>
+</div>
+<!-- unknown name -->
+<div class="grid" style="grid-template-columns: [foo] 50px [foo] 60px; grid-auto-columns: 30px 40px; grid-template-rows: 20px;">
+  <div data-offset-x="250" data-offset-y="0" data-expected-width="30" data-expected-height="20" style="grid-column: bar 2"></div>
+  <div data-offset-x="210" data-offset-y="20" data-expected-width="70" data-expected-height="10" style="grid-column: bar 1 / bar 3"></div>
+  <div data-offset-x="0" data-offset-y="30" data-expected-width="30" data-expected-height="10" style="grid-column: -2 bar"></div>
+</div>
+<!-- lines with two names -->
+<div class="grid" style="grid-template-columns: [a b] 50px [b c] 60px [a c] 70px [b] 80px; grid-template-rows: 20px;">
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="60" data-expected-height="20" style="grid-column: b 2"></div>
+  <div data-offset-x="110" data-offset-y="0" data-expected-width="70" data-expected-height="20" style="grid-column: a 2 / c 2"></div>
+  <div data-offset-x="110" data-offset-y="20" data-expected-width="70" data-expected-height="10" style="grid-column: c -1 / b -1"></div>
+  <div data-offset-x="0" data-offset-y="30" data-expected-width="50" data-expected-height="10" style="grid-column: -2 a"></div>
+</div>
+<!-- repeat(3, ...) -->
+<div class="grid" style="grid-template-columns: repeat(3, [foo] 30px [bar] 20px); grid-auto-columns: 15px; grid-template-rows: 20px;">
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="30" data-expected-height="20" style="grid-column: foo 2"></div>
+  <div data-offset-x="130" data-offset-y="0" data-expected-width="20" data-expected-height="20" style="grid-column: bar 3"></div>
+  <div data-offset-x="100" data-offset-y="20" data-expected-width="30" data-expected-height="10" style="grid-column: -1 foo"></div>
+  <div data-offset-x="165" data-offset-y="20" data-expected-width="15" data-expected-height="10" style="grid-column: foo 4"></div>
+</div>
+<!-- repeat(auto-fill, ...) -->
+<div class="grid" style="width: 300px; grid-template-columns: repeat(auto-fill, [foo] 40px 40px) [end]; grid-auto-columns: 15px; grid-template-rows: 20px;">
+  <div data-offset-x="80" data-offset-y="0" data-expected-width="40" data-expected-height="20" style="grid-column: foo 2"></div>
+  <div data-offset-x="160" data-offset-y="0" data-expected-width="40" data-expected-height="20" style="grid-column: foo 3"></div>
+  <div data-offset-x="160" data-offset-y="20" data-expected-width="40" data-expected-height="10" style="grid-column: -1 foo"></div>
+  <div data-offset-x="240" data-offset-y="20" data-expected-width="15" data-expected-height="10" style="grid-column: end 1"></div>
+  <div data-offset-x="495" data-offset-y="20" data-expected-width="15" data-expected-height="10" style="grid-column: foo 20"></div>
+</div>
+<!-- swapped and equal lines -->
+<div class="grid" style="grid-template-columns: [foo] 50px [foo] 60px 70px; grid-template-rows: 20px;">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20" style="grid-column: foo 2 / foo 1"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="60" data-expected-height="20" style="grid-column: foo 2 / 2 foo"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="10" style="grid-column: foo 1 / foo 1"></div>
+  <div data-offset-x="0" data-offset-y="30" data-expected-width="50" data-expected-height="10" style="grid-column: -1 foo / foo 1"></div>
+</div>
+<!-- auto start with a named end, named start with an auto end -->
+<div class="grid" style="grid-template-columns: [foo] 50px [foo] 60px; grid-template-rows: 20px;">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20" style="grid-column: auto / foo 2"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="10" style="grid-column: auto / -1 foo"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="60" data-expected-height="10" style="grid-column: foo 2 / auto"></div>
+  <div data-offset-x="50" data-offset-y="30" data-expected-width="350" data-expected-height="10" style="grid-column: foo 2 / span 2"></div>
+</div>

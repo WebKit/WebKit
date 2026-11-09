@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: grid-row placement with an integer and a line name, and auto-flow: column</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-slot">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<meta name="assert" content="An item whose grid-row or grid-column start or end is an integer and a line name is placed at the Nth line with that name in either axis, including with grid-auto-flow: column.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; width: 400px; background: lightgray; margin-bottom: 10px; grid-auto-flow: row; grid-auto-rows: 10px; }
+.grid > div { background: green; }
+</style>
+<!-- rows: foo 2, -1 foo, spans and mixes with numeric lines -->
+<div class="grid" style="grid-template-columns: 50px 60px; grid-template-rows: [r] 20px [s] 30px [r] 40px;">
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="40" style="grid-row: r 2"></div>
+  <div data-offset-x="50" data-offset-y="50" data-expected-width="60" data-expected-height="40" style="grid-row: -1 r"></div>
+  <div data-offset-x="110" data-offset-y="20" data-expected-width="145" data-expected-height="80" style="grid-row: s 1 / r 3"></div>
+  <div data-offset-x="0" data-offset-y="110" data-expected-width="50" data-expected-height="20" style="grid-row: r 4 / span 2"></div>
+  <div data-offset-x="255" data-offset-y="50" data-expected-width="145" data-expected-height="50" style="grid-row: span 2 / r 3"></div>
+  <div data-offset-x="0" data-offset-y="100" data-expected-width="50" data-expected-height="10" style="grid-row: s 2"></div>
+</div>
+<!-- rows: N past the count both ways, with columns too -->
+<div class="grid" style="grid-template-columns: [x] 50px [x] 60px; grid-template-rows: [y] 20px [y] 30px; grid-auto-rows: 10px;">
+  <div data-offset-x="50" data-offset-y="40" data-expected-width="60" data-expected-height="30" style="grid-column: x 2; grid-row: y 2"></div>
+  <div data-offset-x="50" data-offset-y="40" data-expected-width="60" data-expected-height="30" style="grid-column: -1 x; grid-row: -1 y"></div>
+  <div data-offset-x="255" data-offset-y="20" data-expected-width="145" data-expected-height="20" style="grid-column: x 3; grid-row: y 1"></div>
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="10" style="grid-row: -4 y"></div>
+  <div data-offset-x="0" data-offset-y="10" data-expected-width="50" data-expected-height="10" style="grid-column: x 1; grid-row-start: auto"></div>
+</div>
+<!-- grid-auto-flow: column -->
+<div class="grid" style="grid-auto-flow: column; grid-template-columns: [x] 50px [x] 60px; grid-template-rows: [y] 20px [y] 30px; grid-auto-columns: 15px; grid-auto-rows: 10px;">
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="60" data-expected-height="30" style="grid-column: x 2; grid-row: y 2"></div>
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20" style="grid-row: y 1"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="60" data-expected-height="20" style="grid-column: -1 x"></div>
+  <div data-offset-x="140" data-offset-y="20" data-expected-width="15" data-expected-height="30" style="grid-column: x 4; grid-row: -1 y"></div>
+  <div data-offset-x="0" data-offset-y="60" data-expected-width="50" data-expected-height="10" style="grid-row: y 3"></div>
+</div>
