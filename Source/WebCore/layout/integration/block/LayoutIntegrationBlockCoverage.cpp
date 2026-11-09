@@ -84,7 +84,6 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasAnchorPositioning,
     ContentHasOutOfFlowSelfAlignment,
     ContentHasLineClamp,
-    ContentHasTextBoxTrim,
     ContentHasLineGrid,
 };
 
@@ -737,13 +736,10 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         }
     }
 
-    // The layout state has no entry for the boxes inside the block formatting context, which is where line-clamp, text-box-trim and line
-    // grids reach the inline content below them.
+    // The layout state has no entry for the boxes inside the block formatting context, which is where line-clamp and line grids reach the
+    // inline content below them.
     if (!style->maxLines().isAuto())
         return BlockAvoidanceReason::ContentHasLineClamp;
-    // FIXME: An out-of-flow box with text-box-trim, which is laid out on its own, after its last formatted line would have to be known.
-    if (style->textBoxTrim() != TextBoxTrim::None && blockContainer->isOutOfFlowPositioned())
-        return BlockAvoidanceReason::ContentHasTextBoxTrim;
     if (!style->lineGrid().isNone())
         return BlockAvoidanceReason::ContentHasLineGrid;
     return { };
@@ -915,8 +911,6 @@ static ASCIILiteral description(BlockAvoidanceReason reason)
         return "out-of-flow self alignment"_s;
     case BlockAvoidanceReason::ContentHasLineClamp:
         return "line-clamp"_s;
-    case BlockAvoidanceReason::ContentHasTextBoxTrim:
-        return "text-box-trim"_s;
     case BlockAvoidanceReason::ContentHasLineGrid:
         return "line grid"_s;
     }
