@@ -194,6 +194,13 @@ void RenderLayerModelObject::styleWillChange(Style::Difference diff, const Style
     RenderElement::styleWillChange(diff, newStyle);
 }
 
+void RenderLayerModelObject::clearRenderingCaches()
+{
+    RenderElement::clearRenderingCaches();
+    if (CheckedPtr layer = this->layer())
+        layer->clearFilters();
+}
+
 void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     // Read before updateFromStyle() and RenderLayer::styleChanged() refresh the transform.

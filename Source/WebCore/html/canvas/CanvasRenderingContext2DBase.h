@@ -556,6 +556,7 @@ private:
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
+    void clearRenderingCaches() final { m_bufferNativeImage = nullptr; }
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
     void clearContentsFromLayer() final;

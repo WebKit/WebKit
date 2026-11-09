@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<title>A canvas drawn into another canvas after the GPU process crashes</title>
+<canvas id="source" width="100" height="100"></canvas>
+<canvas id="before" width="100" height="100"></canvas>
+<canvas id="after" width="100" height="100"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    const context = source.getContext("2d", { willReadFrequently: true });
+    context.fillStyle = "green";
+    context.fillRect(0, 0, 50, 50);
+    context.fillStyle = "blue";
+    context.fillRect(50, 50, 50, 50);
+    before.getContext("2d", { willReadFrequently: true }).drawImage(source, 0, 0);
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    after.getContext("2d", { willReadFrequently: true }).drawImage(source, 0, 0);
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

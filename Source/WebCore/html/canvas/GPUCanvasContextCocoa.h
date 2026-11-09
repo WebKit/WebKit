@@ -70,6 +70,7 @@ public:
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) override;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) override;
+    void clearRenderingCaches() override;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
 
     // GPUCanvasContext methods:

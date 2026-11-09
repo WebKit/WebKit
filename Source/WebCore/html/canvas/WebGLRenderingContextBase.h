@@ -482,6 +482,7 @@ public:
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
+    void clearRenderingCaches() final;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
 
     RefPtr<ByteArrayPixelBuffer> drawingBufferToPixelBuffer();
@@ -718,6 +719,7 @@ protected:
         // Returns pointer to a cleared image buffer that is owned by the cache. The pointer is valid until next call.
         // Using fillOperator == CompositeOperator::Copy can be used to omit the clear of the buffer.
         RefPtr<ImageBuffer> imageBuffer(const IntSize&, ColorSpace, CompositeOperator fillOperator = CompositeOperator::SourceOver);
+        void clear();
     private:
         void bubbleToFront(size_t idx);
         Vector<std::optional<std::pair<ColorSpace, Ref<ImageBuffer>>>> m_buffers;

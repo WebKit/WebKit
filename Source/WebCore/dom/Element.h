@@ -814,6 +814,8 @@ public:
     virtual void didAttachRenderers();
     virtual void willDetachRenderers();
     virtual void didDetachRenderers();
+    // Drops the rendered images and buffers that the element keeps between paints.
+    virtual void clearRenderingCaches() { }
     virtual std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle* shadowHostStyle);
 
     LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;

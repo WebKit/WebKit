@@ -76,6 +76,7 @@ private:
 
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
     void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
+    void clearRenderingCaches() final;
 
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;

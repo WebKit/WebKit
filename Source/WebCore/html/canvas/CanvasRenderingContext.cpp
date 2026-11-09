@@ -44,6 +44,7 @@
 #include "SVGImageElement.h"
 #include "ScriptWrappableInlines.h"
 #include "SecurityOrigin.h"
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -65,6 +66,23 @@ HashSet<CanvasRenderingContext*>& CanvasRenderingContext::instances()
 Lock& CanvasRenderingContext::instancesLock()
 {
     return s_instancesLock;
+}
+
+void CanvasRenderingContext::clearRenderingCachesForCurrentThread()
+{
+    Vector<Ref<CanvasRenderingContext>> contexts;
+    {
+        Locker locker { instancesLock() };
+        for (SUPPRESS_UNCOUNTED_ARG auto* context : instances()) {
+            if (context->isContextThread())
+                contexts.append(*context);
+        }
+    }
+    for (auto& context : borrow(contexts)) {
+        context->clearRenderingCaches();
+        if (RefPtr canvas = dynamicDowncast<HTMLCanvasElement>(context->canvasBase()))
+            canvas->clearCopiedImage();
+    }
 }
 
 CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas, Type type)

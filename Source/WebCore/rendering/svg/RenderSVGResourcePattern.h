@@ -51,6 +51,12 @@ public:
             repaintAllClients();
     }
 
+    void clearRenderingCaches() final
+    {
+        RenderSVGResourcePaintServer::clearRenderingCaches();
+        invalidatePattern();
+    }
+
 private:
     bool requiresLayer() const final { return true; }
 

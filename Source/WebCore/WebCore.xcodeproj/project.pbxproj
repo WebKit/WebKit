@@ -1914,7 +1914,7 @@
 		49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B51042D32F0009D447 /* WebGLObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C7B9D71042D32F0009D447 /* WebGLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B71042D32F0009D447 /* WebGLProgram.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C7B9DA1042D32F0009D447 /* WebGLRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BA1042D32F0009D447 /* WebGLRenderbuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */; };
+		49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49C7B9E01042D32F0009D447 /* WebGLRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C01042D32F0009D447 /* WebGLRenderingContext.h */; };
 		49C7B9E31042D32F0009D447 /* WebGLShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C31042D32F0009D447 /* WebGLShader.h */; };
 		49C7B9E61042D32F0009D447 /* WebGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C61042D32F0009D447 /* WebGLTexture.h */; settings = {ATTRIBUTES = (Private, ); }; };

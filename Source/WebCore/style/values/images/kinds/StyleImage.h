@@ -121,6 +121,8 @@ public:
     virtual void stopAnimation() { }
     virtual void clearAnimationOverride() { }
     virtual void resetAnimation() { }
+    // Drops the images and buffers that are kept between draws.
+    virtual void clearRenderingCaches() { }
 
     // Drawing
     virtual ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine = false) const = 0;

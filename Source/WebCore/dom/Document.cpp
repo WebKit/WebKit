@@ -51,6 +51,7 @@
 #include "CachedFontLoadRequest.h"
 #include "CachedFrame.h"
 #include "CachedResourceLoader.h"
+#include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "CaretPosition.h"
 #include "CaretPositionFromPointOptions.h"
@@ -3686,6 +3687,35 @@ void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
     ASSERT(m_frame == &cachedFrame.view()->frame());
     ASSERT(m_backForwardCacheState == Document::InBackForwardCache);
     detachFromFrame();
+}
+
+void Document::clearRenderingCachesForAllDocuments()
+{
+    auto allDocuments = Document::allDocuments();
+    auto protectedDocuments = WTF::map(allDocuments, [](auto& document) -> Ref<Document> {
+        return document.get();
+    });
+    for (Ref document : protectedDocuments)
+        document->clearRenderingCaches();
+    CanvasRenderingContext::clearRenderingCachesForCurrentThread();
+}
+
+void Document::clearRenderingCaches()
+{
+    auto clearElementRenderingCaches = [](ContainerNode& root) {
+        for (Ref element : descendantsOfType<Element>(root))
+            element->clearRenderingCaches();
+    };
+    clearElementRenderingCaches(*this);
+    for (Ref shadowRoot : inDocumentShadowRoots())
+        clearElementRenderingCaches(shadowRoot);
+
+    CheckedPtr renderView = this->renderView();
+    if (!renderView)
+        return;
+    renderView->clearRenderingCaches();
+    for (CheckedRef renderer : descendantsOfType<RenderElement>(*renderView))
+        renderer->clearRenderingCaches();
 }
 
 void Document::destroyRenderTree()

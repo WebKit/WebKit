@@ -195,6 +195,12 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
         protect(document())->didPaintImage(imageElement(), cachedImage, destRect);
 }
 
+void LegacyRenderSVGImage::clearRenderingCaches()
+{
+    LegacyRenderSVGModelObject::clearRenderingCaches();
+    invalidateBufferedForeground();
+}
+
 void LegacyRenderSVGImage::invalidateBufferedForeground()
 {
     m_bufferedForeground = nullptr;

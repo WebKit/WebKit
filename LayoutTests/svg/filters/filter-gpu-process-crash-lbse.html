@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true LayerBasedSVGEngineEnabled=true ] -->
+<title>SVG filters repaint their source graphic after the GPU process crashes</title>
+<svg width="300" height="150">
+    <filter id="swap-red-blue" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0 0 1 0 0  0 1 0 0 0  1 0 0 0 0  0 0 0 1 0"/>
+    </filter>
+    <filter id="offset" x="0" y="0" width="1.5" height="1.5">
+        <feOffset dx="20" dy="20"/>
+    </filter>
+    <rect x="10" y="10" width="130" height="130" fill="red" filter="url(#swap-red-blue)"/>
+    <rect x="160" y="10" width="90" height="90" fill="green" filter="url(#offset)"/>
+</svg>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function nextFrame()
+{
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+window.addEventListener("load", async () => {
+    // Let the first paint reach the GPU process, then crash it. The page repaints with the
+    // same content once the connection to the new GPU process is made.
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.terminateGPUProcess();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await nextFrame();
+    await nextFrame();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

@@ -53,6 +53,13 @@ public:
         m_masker.clear();
     }
 
+    void clearRenderingCaches() final
+    {
+        RenderSVGResourceContainer::clearRenderingCaches();
+        invalidateMask();
+        repaintAllClients();
+    }
+
     void removeReferencingCSSClient(const RenderElement&) final;
 
     bool drawContentIntoContext(GraphicsContext&, const FloatRect& objectBoundingBox);
