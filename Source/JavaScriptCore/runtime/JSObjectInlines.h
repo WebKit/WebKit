@@ -495,7 +495,7 @@ ALWAYS_INLINE bool JSObject::hasOwnProperty(JSGlobalObject* globalObject, unsign
 template<JSObject::PutMode mode>
 ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned newAttributes, PutPropertySlot& slot)
 {
-    ASSERT(value);
+    RELEASE_ASSERT(value);
     ASSERT(value.isGetterSetter() == !!(newAttributes & PropertyAttribute::Accessor));
     ASSERT(value.isCustomGetterSetter() == !!(newAttributes & PropertyAttribute::CustomAccessorOrValue));
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
