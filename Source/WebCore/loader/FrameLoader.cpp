@@ -60,6 +60,9 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
+#if ENABLE(DOCUMENT_PIP)
+#include "DocumentPictureInPicture.h"
+#endif
 #include "DocumentPrefetcher.h"
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
@@ -4174,6 +4177,14 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     loadInSameDocument(request.url(), nullptr, requesterOrigin, !isRedirect, historyHandling);
 }
 
+#if ENABLE(DOCUMENT_PIP)
+static bool isDocumentPictureInPictureMainFrame(const LocalFrame& frame)
+{
+    RefPtr page = frame.page();
+    return page && page->isDocumentPictureInPicture() && frame.isMainFrame();
+}
+#endif
+
 bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType loadType, const URL& url)
 {
     // We don't do this if we are submitting a form with method other than "GET", explicitly reloading,
@@ -4190,7 +4201,11 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
         && !protect(m_frame->document())->isFrameSet()
+#if ENABLE(DOCUMENT_PIP)
+        && (!stateMachine().isDisplayingInitialEmptyDocument() || isDocumentPictureInPictureMainFrame(protect(m_frame)));
+#else
         && !stateMachine().isDisplayingInitialEmptyDocument();
+#endif
 }
 
 NODELETE static bool itemAllowsScrollRestoration(HistoryItem* historyItem, FrameLoadType loadType)
@@ -4288,6 +4303,11 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
 {
     if (!m_frame->document())
         return;
+
+#if ENABLE(DOCUMENT_PIP)
+    // https://wicg.github.io/document-picture-in-picture/#close-on-destroy
+    DocumentPictureInPicture::closeAssociatedWindows(*protect(m_frame->document()));
+#endif
 
     if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
         return;
@@ -4575,6 +4595,19 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         executeJavaScriptURL(request.url(), action);
         return;
     }
+
+#if ENABLE(DOCUMENT_PIP)
+    // https://wicg.github.io/document-picture-in-picture/#close-on-navigate
+    // A document picture-in-picture window cannot be navigated to a new document; doing so closes the window instead.
+    if (RefPtr page = frame->page(); page && page->isDocumentPictureInPicture() && frame->isMainFrame()) {
+        setPolicyDocumentLoader(nullptr);
+        checkCompleted();
+        checkLoadComplete();
+        if (RefPtr document = frame->document())
+            DocumentPictureInPicture::closeAssociatedWindows(*document);
+        return;
+    }
+#endif
 
     if (auto pendingDispatchNavigateEvent = m_policyDocumentLoader ? m_policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent() : NavigationAction::DispatchNavigateEventFunction { }) {
         if (pendingDispatchNavigateEvent().isNotCompleted())

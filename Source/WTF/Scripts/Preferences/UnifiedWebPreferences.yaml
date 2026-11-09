@@ -2112,6 +2112,16 @@ DocumentIsolationPolicyEnabled:
   defaultValue: false
   sharedPreferenceForWebProcess: true
 
+DocumentPictureInPictureAPIEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Document Picture-in-Picture API"
+  humanReadableDescription: "Enable the Document Picture-in-Picture API"
+  condition: ENABLE(DOCUMENT_PIP)
+  defaultValue: false
+  sharedPreferenceForWebProcess: true
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 DownloadAttributeEnabled:
   type: bool

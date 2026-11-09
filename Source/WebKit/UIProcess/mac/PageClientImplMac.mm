@@ -50,6 +50,9 @@
 #import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
 #import "WKAppKitGestureController.h"
+#if ENABLE(DOCUMENT_PIP)
+#import "WKDocumentPictureInPictureWindowController.h"
+#endif
 #import "WKFullScreenWindowController.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
@@ -295,6 +298,33 @@ void PageClientImpl::pageClosed()
     protect(m_impl)->pageClosed();
     PageClientImplCocoa::pageClosed();
 }
+
+#if ENABLE(DOCUMENT_PIP)
+void PageClientImpl::createDocumentPictureInPicturePage(Ref<API::PageConfiguration>&& configuration, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
+{
+    protect(m_impl)->createDocumentPictureInPicturePage(WTF::move(configuration), WTF::move(completionHandler));
+}
+
+void PageClientImpl::showDocumentPictureInPictureWindow()
+{
+    [protect(protect(m_impl)->hostingDocumentPictureInPictureWindowController()) show];
+}
+
+void PageClientImpl::closeDocumentPictureInPictureWindow()
+{
+    [protect(protect(m_impl)->hostingDocumentPictureInPictureWindowController()) close];
+}
+
+void PageClientImpl::focusDocumentPictureInPictureWindow()
+{
+    [protect(protect(m_impl)->hostingDocumentPictureInPictureWindowController()) focus];
+}
+
+void PageClientImpl::setDocumentPictureInPictureWindowFrame(const WebCore::FloatRect& windowFrame)
+{
+    [protect(protect(m_impl)->hostingDocumentPictureInPictureWindowController()) setWindowFrame:windowFrame];
+}
+#endif
 
 void PageClientImpl::scrollingCoordinatorWasCreated()
 {

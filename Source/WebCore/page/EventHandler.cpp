@@ -989,6 +989,15 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         return false;
     }();
 
+#if ENABLE(DRAG_SUPPORT) && ENABLE(DOCUMENT_PIP)
+    m_mouseDownMayStartDocumentPictureInPictureWindowDrag = singleClick && canMouseDownStartDocumentPictureInPictureWindowDrag(event);
+    if (m_mouseDownMayStartDocumentPictureInPictureWindowDrag) {
+        // Dragging from here moves the window rather than starting a selection.
+        m_mouseDownMayStartSelect = false;
+        m_mouseDownMayStartAutoscroll = false;
+    }
+#endif
+
     return swallowEvent;
 }
 
@@ -1031,7 +1040,42 @@ bool EventHandler::shouldAllowMouseDownToStartDrag() const
 {
     return true;
 }
+#endif
 
+#if ENABLE(DRAG_SUPPORT) && ENABLE(DOCUMENT_PIP)
+// Like video picture-in-picture, dragging a document picture-in-picture window's content moves
+// the window, as long as the drag starts somewhere the page is not using the mouse for itself:
+// not over text, links, images, editable content, form controls, focusable or draggable elements,
+// or scrollbars.
+bool EventHandler::canMouseDownStartDocumentPictureInPictureWindowDrag(const MouseEventWithHitTestResults& event) const
+{
+    Ref frame = m_frame;
+    RefPtr page = frame->page();
+    if (!page || !page->isDocumentPictureInPicture() || !frame->isMainFrame())
+        return false;
+
+    if (event.event().button() != MouseButton::Left || event.scrollbar() || event.isOverLink() || event.isOverWidget() || event.hitTestResult().image())
+        return false;
+
+    if (RefPtr text = dynamicDowncast<Text>(event.hitTestResult().innerNode()); text && !text->containsOnlyASCIIWhitespace())
+        return false;
+
+    RefPtr targetNode = event.targetNode();
+    if (!targetNode)
+        return false;
+
+    RefPtr element = dynamicDowncast<Element>(*targetNode);
+    if (!element)
+        element = targetNode->parentElementInComposedTree();
+    for (; element; element = element->parentElementInComposedTree()) {
+        if (element->hasEditableStyle() || element->isLink() || element->isFormControlElement() || element->supportsFocus())
+            return false;
+        if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(*element); htmlElement && htmlElement->draggable())
+            return false;
+    }
+
+    return true;
+}
 #endif
 
 bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event, CheckDragHysteresis checkDragHysteresis)
@@ -1043,6 +1087,23 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         return false;
 
     Ref frame = m_frame.get();
+
+#if ENABLE(DRAG_SUPPORT) && ENABLE(DOCUMENT_PIP)
+    if (m_mouseDownMayStartDocumentPictureInPictureWindowDrag) {
+        // Wait until the mouse has moved far enough that this is a drag rather than a click, since
+        // the page will not receive the mouseup once the window starts moving.
+        if (!dragHysteresisExceeded(FloatPoint(event.event().position())))
+            return true;
+
+        m_mouseDownMayStartDocumentPictureInPictureWindowDrag = false;
+        m_mouseDownMayStartDrag = false;
+        m_mousePressed = false;
+        invalidateClick();
+        if (RefPtr page = frame->page())
+            page->chrome().client().startDocumentPictureInPictureWindowDrag();
+        return true;
+    }
+#endif
 
     if (handleDrag(event, checkDragHysteresis))
         return true;
@@ -1289,6 +1350,9 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
     m_capturesDragging = false;
 #if ENABLE(DRAG_SUPPORT)
     m_mouseDownMayStartDrag = false;
+#endif
+#if ENABLE(DRAG_SUPPORT) && ENABLE(DOCUMENT_PIP)
+    m_mouseDownMayStartDocumentPictureInPictureWindowDrag = false;
 #endif
     m_mouseDownMayStartSelect = false;
     m_mouseDownMayStartAutoscroll = false;

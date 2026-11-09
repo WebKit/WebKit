@@ -95,6 +95,15 @@ Element* DocumentFullscreen::fullscreenElement() const
     return nullptr;
 }
 
+#if ENABLE(DOCUMENT_PIP)
+// https://wicg.github.io/document-picture-in-picture/#fullscreening-the-pip-window
+static bool isInDocumentPictureInPictureWindow(const Document& document)
+{
+    RefPtr page = document.page();
+    return page && page->isDocumentPictureInPicture();
+}
+#endif
+
 // MARK: - fullscreenEnabled attribute.
 // https://fullscreen.spec.whatwg.org/#dom-document-fullscreenenabled
 
@@ -102,6 +111,10 @@ bool DocumentFullscreen::fullscreenEnabled(Document& document)
 {
     if (!document.isFullyActive())
         return false;
+#if ENABLE(DOCUMENT_PIP)
+    if (isInDocumentPictureInPictureWindow(document))
+        return false;
+#endif
     return protect(document.fullscreen())->enabledByPermissionsPolicy();
 }
 
@@ -124,6 +137,11 @@ static ASCIILiteral fullscreenElementReadyCheck(DocumentFullscreen::FullscreenCh
 
     if (element.isPopoverShowing())
         return "Cannot request fullscreen on an open popover."_s;
+
+#if ENABLE(DOCUMENT_PIP)
+    if (isInDocumentPictureInPictureWindow(protect(element.document())))
+        return "Cannot request fullscreen in a Document Picture-in-Picture window."_s;
+#endif
 
     if (checkType == DocumentFullscreen::FullscreenCheckType::EnforceIFrameAllowFullscreenRequirement && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Fullscreen, protect(element.document())))
         return "Fullscreen API is disabled by permissions policy."_s;

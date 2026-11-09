@@ -60,6 +60,12 @@ struct WindowFeatures {
 
     std::optional<bool> fullscreen;
     std::optional<bool> dialog;
+
+    // https://wicg.github.io/document-picture-in-picture/#is-document-picture-in-picture
+#if ENABLE(DOCUMENT_PIP)
+    bool isDocumentPictureInPicture { false };
+#endif
+
     std::optional<bool> noopener { std::nullopt };
     std::optional<bool> noreferrer { std::nullopt };
 

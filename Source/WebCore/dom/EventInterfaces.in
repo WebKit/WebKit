@@ -19,6 +19,7 @@ CookieChangeEvent
 CSSAnimationEvent
 CSSTransitionEvent
 CustomEvent
+DocumentPictureInPictureEvent conditional=DOCUMENT_PIP
 DragEvent
 ExtendableCookieChangeEvent
 ExtendableEvent

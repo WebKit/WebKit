@@ -1180,6 +1180,25 @@ bool WebFrameProxy::hasTransientActivation() const
     return now >= m_lastActivationTimestamp && now < (m_lastActivationTimestamp + WebCore::LocalDOMWindow::transientActivationDuration());
 }
 
+// https://html.spec.whatwg.org/multipage/interaction.html#consume-user-activation
+// Mirrors LocalDOMWindow::consumeTransientActivation, for APIs that consume transient activation
+// once the UIProcess has validated it.
+bool WebFrameProxy::consumeTransientActivation()
+{
+    if (!hasTransientActivation())
+        return false;
+
+    Ref top = *this;
+    while (RefPtr parent = top->m_parentFrame)
+        top = parent.releaseNonNull();
+
+    for (RefPtr frame = top.ptr(); frame; frame = frame->traverseNext(top.ptr())) {
+        if (!frame->m_lastActivationTimestamp.isInfinity())
+            frame->m_lastActivationTimestamp = -MonotonicTime::infinity();
+    }
+    return true;
+}
+
 bool WebFrameProxy::isMainFrame() const
 {
     return m_frameLoadState.isMainFrame() == IsMainFrame::Yes;

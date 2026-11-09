@@ -320,6 +320,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/device-posture/DevicePosture.idl \
     $(WebCore)/Modules/device-posture/DevicePostureType.idl \
     $(WebCore)/Modules/device-posture/Navigator+DevicePosture.idl \
+    $(WebCore)/Modules/documentpip/DOMWindow+DocumentPictureInPicture.idl \
+    $(WebCore)/Modules/documentpip/DocumentPictureInPicture.idl \
+    $(WebCore)/Modules/documentpip/DocumentPictureInPictureEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyEncryptionScheme.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEventInit.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEvent.idl \

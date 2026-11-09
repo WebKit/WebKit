@@ -70,6 +70,9 @@
 #import "WKAlternatePDFHUDView.h"
 #import "WKAppKitGestureController.h"
 #import "WKDefaultPDFHUDView.h"
+#if ENABLE(DOCUMENT_PIP)
+#import "WKDocumentPictureInPictureWindowController.h"
+#endif
 #import "WKEditCommand.h"
 #import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
@@ -1465,6 +1468,10 @@ WebViewImpl::~WebViewImpl()
     [m_windowVisibilityObserver stopObserving];
     m_targetWindowForMovePreparation = nil;
 
+#if ENABLE(DOCUMENT_PIP)
+    closeDocumentPictureInPictureWindowController();
+#endif
+
     m_page->close();
 
     WebProcessPool::statistics().wkViewCount--;
@@ -1526,6 +1533,11 @@ void WebViewImpl::processDidExit()
 void WebViewImpl::pageClosed()
 {
     updateRemoteAccessibilityRegistration(false);
+
+#if ENABLE(DOCUMENT_PIP)
+    // https://wicg.github.io/document-picture-in-picture/#close-on-destroy
+    closeDocumentPictureInPictureWindowController();
+#endif
 }
 
 void WebViewImpl::didRelaunchProcess()
@@ -2996,6 +3008,38 @@ void WebViewImpl::closeFullScreenWindowController()
 
     [m_fullScreenWindowController close];
     m_fullScreenWindowController = nullptr;
+}
+#endif
+
+#if ENABLE(DOCUMENT_PIP)
+void WebViewImpl::createDocumentPictureInPicturePage(Ref<API::PageConfiguration>&& configuration, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
+{
+    // https://wicg.github.io/document-picture-in-picture/#one-pip-window
+    closeDocumentPictureInPictureWindowController();
+
+    RetainPtr view = m_view.get();
+    if (!view)
+        return completionHandler(nullptr);
+
+    RetainPtr controller = adoptNS([[WKDocumentPictureInPictureWindowController alloc] initWithOpenerWebView:view.get() configuration:configuration.get()]);
+    RefPtr page = [controller page];
+    if (!page)
+        return completionHandler(nullptr);
+
+    m_documentPictureInPictureWindowController = WTF::move(controller);
+    completionHandler(WTF::move(page));
+}
+
+void WebViewImpl::closeDocumentPictureInPictureWindowController()
+{
+    if (RetainPtr controller = std::exchange(m_documentPictureInPictureWindowController, nil))
+        [controller close];
+}
+
+void WebViewImpl::documentPictureInPictureWindowControllerDidClose(WKDocumentPictureInPictureWindowController *controller)
+{
+    if (m_documentPictureInPictureWindowController == controller)
+        m_documentPictureInPictureWindowController = nil;
 }
 #endif
 

@@ -467,7 +467,7 @@ webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture/permissio
 # PiP API tests are only relevant on mac and iPad
 media/picture-in-picture [ Skip ]
 
-# Document Picture-in-Picture is unsupported.
+# Document Picture-in-Picture is only supported on macOS.
 imported/w3c/web-platform-tests/document-picture-in-picture [ Skip ]
 
 media/remove-video-element-in-pip-from-document.html [ Skip ]

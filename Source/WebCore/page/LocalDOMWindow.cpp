@@ -62,6 +62,9 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
+#if ENABLE(DOCUMENT_PIP)
+#include "DocumentPictureInPicture.h"
+#endif
 #include "DocumentQuirks.h"
 #include "DocumentSecurityOrigin.h"
 #include "DocumentView.h"
@@ -1954,10 +1957,38 @@ bool LocalDOMWindow::allowedToChangeWindowGeometry() const
     return true;
 }
 
+#if ENABLE(DOCUMENT_PIP)
+// https://wicg.github.io/document-picture-in-picture/#moving-the-pip-window
+static bool isDocumentPictureInPictureWindow(const LocalDOMWindow& window)
+{
+    RefPtr frame = window.frame();
+    RefPtr page = frame ? frame->page() : nullptr;
+    return page && page->isDocumentPictureInPicture();
+}
+
+// https://wicg.github.io/document-picture-in-picture/#resizing-the-pip-window
+static ExceptionOr<void> consumeActivationForDocumentPictureInPictureResize(LocalDOMWindow& window)
+{
+    if (!isDocumentPictureInPictureWindow(window))
+        return { };
+
+    if (!window.hasTransientActivation())
+        return Exception { ExceptionCode::NotAllowedError, "Resizing a Document Picture-in-Picture window requires a user gesture."_s };
+
+    window.consumeTransientActivation();
+    return { };
+}
+#endif
+
 void LocalDOMWindow::moveBy(int x, int y) const
 {
     if (!allowedToChangeWindowGeometry())
         return;
+
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPictureWindow(*this))
+        return;
+#endif
 
     RefPtr page = frame()->page();
     auto fr = page->chrome().windowRect();
@@ -1971,6 +2002,11 @@ void LocalDOMWindow::moveTo(int x, int y) const
     if (!allowedToChangeWindowGeometry())
         return;
 
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPictureWindow(*this))
+        return;
+#endif
+
     RefPtr page = frame()->page();
     auto update = page->chrome().windowRect();
     RefPtr localMainFrame = page->localMainFrame();
@@ -1981,28 +2017,40 @@ void LocalDOMWindow::moveTo(int x, int y) const
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
-void LocalDOMWindow::resizeBy(int x, int y) const
+ExceptionOr<void> LocalDOMWindow::resizeBy(int x, int y)
 {
     if (!allowedToChangeWindowGeometry())
-        return;
+        return { };
+
+#if ENABLE(DOCUMENT_PIP)
+    if (auto result = consumeActivationForDocumentPictureInPictureResize(*this); result.hasException())
+        return result.releaseException();
+#endif
 
     RefPtr page = frame()->page();
     auto fr = page->chrome().windowRect();
     auto dest = fr.size() + LayoutSize(x, y);
     LayoutRect update(fr.location(), dest);
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
+    return { };
 }
 
-void LocalDOMWindow::resizeTo(int width, int height) const
+ExceptionOr<void> LocalDOMWindow::resizeTo(int width, int height)
 {
     if (!allowedToChangeWindowGeometry())
-        return;
+        return { };
+
+#if ENABLE(DOCUMENT_PIP)
+    if (auto result = consumeActivationForDocumentPictureInPictureResize(*this); result.hasException())
+        return result.releaseException();
+#endif
 
     RefPtr page = frame()->page();
     auto fr = page->chrome().windowRect();
     auto dest = LayoutSize(width, height);
     LayoutRect update(fr.location(), dest);
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
+    return { };
 }
 
 ExceptionOr<int> LocalDOMWindow::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
@@ -3218,6 +3266,15 @@ CookieStore& LocalDOMWindow::cookieStore()
         lazyInitialize(m_cookieStore, CookieStore::create(protect(document()).get()));
     return *m_cookieStore;
 }
+
+#if ENABLE(DOCUMENT_PIP)
+DocumentPictureInPicture& LocalDOMWindow::documentPictureInPicture()
+{
+    if (!m_documentPictureInPicture)
+        lazyInitialize(m_documentPictureInPicture, DocumentPictureInPicture::create(*this));
+    return *m_documentPictureInPicture;
+}
+#endif
 
 CloseWatcherManager& LocalDOMWindow::closeWatcherManager()
 {

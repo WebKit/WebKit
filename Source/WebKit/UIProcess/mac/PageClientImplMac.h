@@ -95,6 +95,13 @@ private:
     void processDidExit() override;
     void processWillSwap() override;
     void pageClosed() override;
+#if ENABLE(DOCUMENT_PIP)
+    void createDocumentPictureInPicturePage(Ref<API::PageConfiguration>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&) override;
+    void showDocumentPictureInPictureWindow() override;
+    void closeDocumentPictureInPictureWindow() override;
+    void focusDocumentPictureInPictureWindow() override;
+    void setDocumentPictureInPictureWindowFrame(const WebCore::FloatRect&) override;
+#endif
     void didRelaunchProcess() override;
     void preferencesDidChange() override;
     void toolTipChanged(const String& oldToolTip, const String& newToolTip) override;

@@ -864,6 +864,14 @@ void WebPageProxy::startWindowDrag()
         pageClient->startWindowDrag();
 }
 
+#if ENABLE(DOCUMENT_PIP)
+void WebPageProxy::startDocumentPictureInPictureWindowDrag(IPC::Connection& connection)
+{
+    MESSAGE_CHECK_BASE(isDocumentPictureInPicture(), connection);
+    startWindowDrag();
+}
+#endif
+
 NSWindow *WebPageProxy::platformWindow()
 {
     RefPtr pageClient = m_pageClient.get();

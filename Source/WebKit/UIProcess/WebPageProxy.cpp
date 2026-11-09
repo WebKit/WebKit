@@ -13006,6 +13006,21 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     MESSAGE_CHECK_COMPLETION(process, originatingFrame, reply(std::nullopt, std::nullopt));
     MESSAGE_CHECK_COMPLETION(process, originatingFrame->page() == this, reply(std::nullopt, std::nullopt));
 
+    // A document picture-in-picture window floats above other windows, so don't trust the web content process
+    // to have enforced the preconditions of requestWindow(); re-check the ones the UI process can verify.
+    // A well-behaved web content process never sends a request that fails these checks.
+    // https://wicg.github.io/document-picture-in-picture/#dom-documentpictureinpicture-requestwindow
+#if ENABLE(DOCUMENT_PIP)
+    bool isDocumentPictureInPictureRequest = windowFeatures.isDocumentPictureInPicture;
+    if (isDocumentPictureInPictureRequest) {
+        MESSAGE_CHECK_COMPLETION(process, protect(preferences())->documentPictureInPictureAPIEnabled(), reply(std::nullopt, std::nullopt));
+        MESSAGE_CHECK_COMPLETION(process, navigationActionData.hasOpener, reply(std::nullopt, std::nullopt));
+        // Only a top-level traversable that is not itself a picture-in-picture window can request one.
+        MESSAGE_CHECK_COMPLETION(process, originatingFrame->isMainFrame(), reply(std::nullopt, std::nullopt));
+        MESSAGE_CHECK_COMPLETION(process, !isDocumentPictureInPicture(), reply(std::nullopt, std::nullopt));
+    }
+#endif
+
     if (RefPtr body = request.httpBody()) {
         for (auto& element : body->elements()) {
             if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data))
@@ -13112,6 +13127,20 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
 
     RefPtr userInitiatedActivity = process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
 
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPictureRequest) {
+        // requestWindow() requires and consumes transient user activation. Rather than trust the web content process's
+        // notion of it, use the activation the UI process tracks from the user input events it delivers. Unlike the checks
+        // above, a well-behaved web content process can fail this check, for instance if its activation did not come from
+        // user input, so deny the request rather than terminating the process.
+        if (!originatingFrame->consumeTransientActivation()) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "createNewPage: Denying a Document Picture-in-Picture window without transient activation");
+            return completionHandler(nullptr);
+        }
+        if (userInitiatedActivity)
+            userInitiatedActivity->setConsumed();
+    } else
+#endif
     if (userInitiatedActivity && protect(preferences())->verifyWindowOpenUserGestureFromUIProcess())
         process->consumeIfNotVerifiablyFromUIProcess(webPageIDInProcess(process), *userInitiatedActivity, navigationActionData.userGestureAuthorizationToken);
 
@@ -13154,14 +13183,43 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         openerInfoOfPageBeingOpened() = configuration->openerInfo();
 #endif
 
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPictureRequest) {
+        // Document Picture-in-Picture windows are created and owned by WebKit rather than the UI client.
+        ASSERT(configuration->openerInfo());
+        RefPtr pageClient = this->pageClient();
+        if (!pageClient)
+            return completionHandler(nullptr);
+        m_isCallingCreateNewPage = true;
+        pageClient->createDocumentPictureInPicturePage(WTF::move(configuration), WTF::move(completionHandler));
+        return;
+    }
+#endif
+
     trySOAuthorization(configuration.copyRef(), WTF::move(navigationAction), *this, WTF::move(completionHandler), [this, protectedThis = Ref { *this }, configuration] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
         m_isCallingCreateNewPage = true;
         m_uiClient->createNewPage(*this, WTF::move(configuration), WTF::move(navigationAction), WTF::move(completionHandler));
     });
 }
 
+#if ENABLE(DOCUMENT_PIP)
+bool WebPageProxy::isDocumentPictureInPicture() const
+{
+    auto& windowFeatures = m_configuration->windowFeatures();
+    return windowFeatures && windowFeatures->isDocumentPictureInPicture;
+}
+#endif
+
 void WebPageProxy::showPage()
 {
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPicture()) {
+        if (RefPtr pageClient = this->pageClient())
+            pageClient->showDocumentPictureInPictureWindow();
+        return;
+    }
+#endif
+
     m_uiClient->showPage(this);
 }
 
@@ -13306,6 +13364,15 @@ void WebPageProxy::closePage()
     WEBPAGEPROXY_RELEASE_LOG(Process, "closePage:");
     if (RefPtr pageClient = this->pageClient())
         pageClient->clearAllEditCommands();
+
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPicture()) {
+        if (RefPtr pageClient = this->pageClient())
+            pageClient->closeDocumentPictureInPictureWindow();
+        return;
+    }
+#endif
+
     m_uiClient->close(this);
 }
 
@@ -13480,6 +13547,11 @@ void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultD
 
 void WebPageProxy::setIsResizable(bool isResizable)
 {
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPicture())
+        return;
+#endif
+
     m_uiClient->setIsResizable(*this, isResizable);
 }
 
@@ -13496,8 +13568,18 @@ void WebPageProxy::setWindowFrameIPC(IPC::Connection& connection, const FloatRec
 
 void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 {
-    if (RefPtr pageClient = this->pageClient())
-        m_uiClient->setWindowFrame(*this, pageClient->convertToDeviceSpace(newWindowFrame));
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        return;
+
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPicture()) {
+        pageClient->setDocumentPictureInPictureWindowFrame(pageClient->convertToDeviceSpace(newWindowFrame));
+        return;
+    }
+#endif
+
+    m_uiClient->setWindowFrame(*this, pageClient->convertToDeviceSpace(newWindowFrame));
 }
 
 FloatRect WebPageProxy::windowFrameRespectingHostingWindow(const PageClient& pageClient, std::optional<FloatRect> frameFromUIClient)
@@ -13515,6 +13597,15 @@ FloatRect WebPageProxy::windowFrameRespectingHostingWindow(const PageClient& pag
 
 void WebPageProxy::getWindowFrame(CompletionHandler<void(const FloatRect&)>&& reply)
 {
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPicture()) {
+        RefPtr pageClient = this->pageClient();
+        if (!pageClient)
+            return reply(FloatRect { });
+        return reply(pageClient->convertToUserSpace(windowFrameRespectingHostingWindow(*pageClient, std::nullopt)));
+    }
+#endif
+
     m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, reply = WTF::move(reply)] (std::optional<FloatRect> frame) mutable {
         RefPtr pageClient = this->pageClient();
         if (!pageClient)
@@ -13525,6 +13616,15 @@ void WebPageProxy::getWindowFrame(CompletionHandler<void(const FloatRect&)>&& re
 
 void WebPageProxy::getWindowFrameWithCallback(Function<void(FloatRect)>&& completionHandler)
 {
+#if ENABLE(DOCUMENT_PIP)
+    if (isDocumentPictureInPicture()) {
+        RefPtr pageClient = this->pageClient();
+        if (!pageClient)
+            return completionHandler(FloatRect { });
+        return completionHandler(pageClient->convertToUserSpace(windowFrameRespectingHostingWindow(*pageClient, std::nullopt)));
+    }
+#endif
+
     m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (std::optional<FloatRect> frame) {
         RefPtr pageClient = this->pageClient();
         if (!pageClient)
@@ -15765,9 +15865,21 @@ void WebPageProxy::setFocus(bool focused, std::optional<WebCore::UserGestureToke
                 userInitiatedAction->setConsumed();
             }
         }
+#if ENABLE(DOCUMENT_PIP)
+        if (isDocumentPictureInPicture()) {
+            if (RefPtr pageClient = this->pageClient())
+                pageClient->focusDocumentPictureInPictureWindow();
+            return;
+        }
+#endif
         m_uiClient->focus(this);
-    } else
+    } else {
+#if ENABLE(DOCUMENT_PIP)
+        if (isDocumentPictureInPicture())
+            return;
+#endif
         m_uiClient->unfocus(this);
+    }
 }
 
 void WebPageProxy::takeFocus(WebCore::FocusDirection direction)

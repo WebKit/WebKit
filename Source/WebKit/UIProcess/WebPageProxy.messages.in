@@ -45,6 +45,9 @@ messages -> WebPageProxy {
     SetRenderTreeSize(uint64_t treeSize)
     SetIsResizable(bool isResizable)
     SetWindowFrameIPC(WebCore::FloatRect windowFrame)
+#if ENABLE(DOCUMENT_PIP)
+    [EnabledBy=DocumentPictureInPictureAPIEnabled] StartDocumentPictureInPictureWindowDrag()
+#endif
     GetWindowFrame() -> (WebCore::FloatRect windowFrame) Synchronous
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
     RootViewPointToScreen(WebCore::IntPoint rect) -> (WebCore::IntPoint viewPoint) Synchronous
