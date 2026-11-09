@@ -28,7 +28,6 @@
 #include <WebCore/Color.h>
 #include <optional>
 #include <wtf/Forward.h>
-#include <wtf/Hasher.h>
 
 namespace WebCore {
 
@@ -38,11 +37,6 @@ struct GradientColorStop {
 
     friend bool operator==(const GradientColorStop&, const GradientColorStop&) = default;
 };
-
-inline void add(Hasher& hasher, const GradientColorStop& stop)
-{
-    add(hasher, stop.offset, stop.color);
-}
 
 TextStream& operator<<(TextStream&, const GradientColorStop&);
 

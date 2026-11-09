@@ -29,8 +29,6 @@
 
 #include "FloatRect.h"
 #include "NativeImage.h"
-#include <wtf/HashFunctions.h>
-#include <wtf/Hasher.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -107,30 +105,7 @@ bool Gradient::isZeroSize() const
 void Gradient::addColorStop(GradientColorStop&& stop)
 {
     m_stops.addColorStop(WTF::move(stop));
-    m_cachedHash = 0;
     stopsChanged();
-}
-
-NODELETE static void add(Hasher& hasher, const Gradient::LinearData& data)
-{
-    add(hasher, data.point0, data.point1);
-}
-
-NODELETE static void add(Hasher& hasher, const Gradient::RadialData& data)
-{
-    add(hasher, data.point0, data.point1, data.startRadius, data.endRadius, data.aspectRatio);
-}
-
-NODELETE static void add(Hasher& hasher, const Gradient::ConicData& data)
-{
-    add(hasher, data.point0, data.angleRadians);
-}
-
-unsigned Gradient::hash() const
-{
-    if (!m_cachedHash)
-        m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops.sorted());
-    return m_cachedHash;
 }
 
 TextStream& operator<<(TextStream& ts, const Gradient& gradient)

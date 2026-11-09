@@ -109,8 +109,6 @@ public:
     void fill(GraphicsContext&, const FloatRect&);
     void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);
 
-    unsigned hash() const;
-
 #if USE(CAIRO)
     RefPtr<cairo_pattern_t> createPattern(float globalAlpha, const AffineTransform&);
 #endif
@@ -138,7 +136,6 @@ private:
     ColorInterpolationMethod m_colorInterpolationMethod;
     GradientSpreadMethod m_spreadMethod;
     GradientColorStops m_stops;
-    mutable unsigned m_cachedHash { 0 };
 
 #if USE(CG)
     std::optional<GradientRendererCG> m_platformRenderer;
