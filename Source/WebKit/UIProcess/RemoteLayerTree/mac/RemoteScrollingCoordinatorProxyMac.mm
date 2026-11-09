@@ -330,8 +330,13 @@ RefPtr<const RemoteAnimationTimeline> RemoteScrollingCoordinatorProxyMac::timeli
 String RemoteScrollingCoordinatorProxyMac::animationStackJSONForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
     String json = emptyString();
+    auto* host = layerTreeHost();
+    RefPtr node = host ? host->nodeForID(layerID) : nullptr;
+    if (!node)
+        return json;
+
     m_eventDispatcher->lockForAnimationChanges();
-    if (RefPtr animationStack = m_eventDispatcher->animationStackForNodeWithIDForTesting(layerID))
+    if (RefPtr animationStack = m_eventDispatcher->animationStackForNodeForTesting(*node))
         json = animationStack->toJSONForTesting()->toJSONString();
     m_eventDispatcher->unlockForAnimationChanges();
     return json;

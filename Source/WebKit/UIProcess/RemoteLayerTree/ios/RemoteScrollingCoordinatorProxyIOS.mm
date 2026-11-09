@@ -804,7 +804,7 @@ RemoteLayerTreeDrawingAreaProxyIOS& RemoteScrollingCoordinatorProxyIOS::drawingA
 #if ENABLE(THREADED_ANIMATIONS)
 void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
-    m_animatedNodeLayerIDs.add(node.layerID());
+    m_animatedNodes.add(node);
     if (m_monotonicTimelineRegistry && !m_monotonicTimelineRegistry->isEmpty())
         protect(drawingAreaIOS())->scheduleDisplayRefreshCallbacksForMonotonicAnimations();
 }
@@ -816,8 +816,8 @@ void RemoteScrollingCoordinatorProxyIOS::progressBasedTimelinesWereUpdatedForNod
 
 void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
 {
-    m_animatedNodeLayerIDs.remove(node.layerID());
-    if (m_animatedNodeLayerIDs.isEmpty() || !m_monotonicTimelineRegistry || m_monotonicTimelineRegistry->isEmpty())
+    m_animatedNodes.remove(node);
+    if (m_animatedNodes.isEmptyIgnoringNullReferences() || !m_monotonicTimelineRegistry || m_monotonicTimelineRegistry->isEmpty())
         protect(drawingAreaIOS())->pauseDisplayRefreshCallbacksForMonotonicAnimations();
     else if (node.hasHighImpactMonotonicAnimations())
         protect(drawingAreaIOS())->highImpactMonotonicAnimationsWereRemoved();
@@ -889,13 +889,10 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacksDependentOnScrolli
 
 void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacks(NOESCAPE const Function<bool(const RemoteAnimationStack&)>& predicate)
 {
-    TraceScope scope(RemoteLayerTreeAnimationsUpdateStart, RemoteLayerTreeAnimationsUpdateEnd, m_animatedNodeLayerIDs.size());
+    auto animatedNodes = m_animatedNodes.values();
+    TraceScope scope(RemoteLayerTreeAnimationsUpdateStart, RemoteLayerTreeAnimationsUpdateEnd, animatedNodes.size());
 
-    auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
-
-    auto animatedNodeLayerIDs = std::exchange(m_animatedNodeLayerIDs, { });
-    for (auto animatedNodeLayerID : animatedNodeLayerIDs) {
-        RefPtr animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
+    for (auto& animatedNode : animatedNodes) {
         RefPtr animationStack = animatedNode->animationStack();
         ASSERT(animationStack);
         if (predicate(*animationStack))
@@ -904,16 +901,14 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacks(NOESCAPE const Fu
         // We can clear the effect stack if it's empty, but the previous
         // call to applyEffects() is important so that the base values
         // were re-applied.
-        if (!animationStack->isEmpty())
-            m_animatedNodeLayerIDs.add(animatedNodeLayerID);
+        if (animationStack->isEmpty())
+            m_animatedNodes.remove(animatedNode.get());
     }
 }
 
 bool RemoteScrollingCoordinatorProxyIOS::hasHighImpactMonotonicAnimations() const
 {
-    auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
-    for (auto animatedNodeLayerID : m_animatedNodeLayerIDs) {
-        RefPtr animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
+    for (auto& animatedNode : m_animatedNodes.values()) {
         if (animatedNode->hasHighImpactMonotonicAnimations())
             return true;
     }
