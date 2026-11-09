@@ -72,6 +72,9 @@ std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(con
     if (entryType == "largest-contentful-paint"_s)
         return std::optional<Type>(Type::LargestContentfulPaint);
 
+    if (entryType == "visibility-state"_s)
+        return std::optional<Type>(Type::VisibilityState);
+
     return std::nullopt;
 }
 

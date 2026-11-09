@@ -28,7 +28,7 @@ async function doTest()
 
     const response = await fetch("/?test");
     await response.text();
-    const fetchTiming = performance.getEntries()[1];
+    const fetchTiming = performance.getEntriesByType("resource")[0];
 
     const fetchTimingResult = fetchTiming.fetchStart && fetchTiming.workerStart && fetchTiming.fetchStart >= fetchTiming.workerStart;
     document.body.innerHTML = fetchTimingResult ? "PASS" : "Failed fetchTimingResult " + fetchTiming.fetchStart + " " + fetchTiming.workerStart;
