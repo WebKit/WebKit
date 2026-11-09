@@ -391,6 +391,14 @@
             ]
         },
         {
+            "bugs": ["rdar://174765438"],
+            "comment": "Media volume is locked on iPhone, so the player's volume slider does nothing. Hide it, the mute button keeps working.",
+            "matches": ["*://*.espn.com/*"],
+            "environment": "SmallScreen",
+            "available": "iOS",
+            "behaviors": [{ "id": "NeedsStyleSheetInjectedQuirk", "styleSheet": ":root { --volume-bar-container-display: none !important; }" }]
+        },
+        {
             "bugs": ["rdar://59424306"],
             "matches": ["*://tool.european-calculator.eu/*"],
             "behaviors": [

@@ -134,6 +134,8 @@ https://www.ea.com/
         elementSelector: ea-network-nav
 https://www.espn.com/
     AllowLayeredFullscreenVideos
+    NeedsStyleSheetInjectedQuirk
+        styleSheet: :root { --volume-bar-container-display: none !important; }
     NeedsSuppressedPauseEventOnFullscreenExitQuirk
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.facebook.com/
