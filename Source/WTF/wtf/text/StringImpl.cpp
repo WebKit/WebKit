@@ -44,6 +44,7 @@
 #if STRING_STATS
 #include <unistd.h>
 #include <wtf/DataLog.h>
+#include <wtf/ProcessID.h>
 #endif
 
 namespace WTF {
