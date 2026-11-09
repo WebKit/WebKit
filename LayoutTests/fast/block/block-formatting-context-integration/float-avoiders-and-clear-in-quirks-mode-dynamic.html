@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.avoider { overflow: hidden; background: lightblue; }
+td { vertical-align: top; border: 1px solid; width: 240px; }
+</style>
+<div style="margin-top: 10px"><div class="left"></div><p class="avoider" id="width">gets wider than the space beside the float</p></div>
+<table><tr>
+<td><div class="left" id="float"></div><p class="avoider">beside a float that grows</p></td>
+<td><div class="left"></div><p id="clear">gets clear</p><p>next</p></td>
+</tr></table>
+<script>
+document.body.offsetHeight;
+document.getElementById("width").style.width = "760px";
+document.getElementById("float").style.width = "220px";
+document.getElementById("clear").style.clear = "left";
+</script>
