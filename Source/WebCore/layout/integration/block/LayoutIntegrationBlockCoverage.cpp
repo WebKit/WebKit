@@ -572,9 +572,16 @@ static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidance
 
 // A float, which the inline formatting context places in inline content and the block formatting context among block-level boxes (CSS 2.2
 // §9.5.1), and its own formatting context lays out through the render tree. The block formatting context keeps the floats in the logical
-// coordinates of its root, whose inline direction every block container on the way has.
+// coordinates of its root, which mirror those of a block container whose inline direction is the opposite (BlockFormattingContext::handleFloat),
+// but not the shape of a float, and resolves the inline-start and inline-end values of float against the root's direction
+// (FloatingContext::isStartPositioned).
 // FIXME: An initial letter, which the inline formatting context sinks into the lines after it, and floats in a line-clamp container, which
 // hides those after the clamp point.
+static bool hasInlineDirectionOppositeTo(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
+{
+    return renderer.writingMode().isLogicalLeftInlineStart() != rootContainer.writingMode().isLogicalLeftInlineStart();
+}
+
 static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox& floatBox, const RenderBlockFlow& rootContainer)
 {
     CheckedRef style = floatBox.style();
@@ -592,7 +599,10 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
             return BlockAvoidanceReason::ContentHasFloat;
         if (containingBlock == &rootContainer)
             break;
-        if (containingBlock->writingMode().isBidiLTR() != rootContainer.writingMode().isBidiLTR())
+    }
+    if (hasInlineDirectionOppositeTo(*floatBox.containingBlock(), rootContainer)) {
+        auto floating = style->floating();
+        if (floating == Float::InlineStart || floating == Float::InlineEnd || !style->shapeOutside().isNone())
             return BlockAvoidanceReason::ContentHasFloat;
     }
     return atomicInlineLevelBoxAvoidanceReason(floatBox, rootContainer);
@@ -639,7 +649,6 @@ static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const Ren
 }
 
 // What a float before a box in the block formatting context makes it need.
-// FIXME: Block containers with an inline direction of their own.
 static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer, bool isLaidOutThroughRenderTree, bool hasFloatsWithShape)
 {
     CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
@@ -667,7 +676,11 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
         if (auto reason = floatAvoiderAvoidanceReason(*box, rootContainer, isInInlineContent, hasFloatsWithShape, isLaidOutThroughRenderTree))
             return reason;
     }
-    if (box->writingMode().isBidiLTR() != rootContainer.writingMode().isBidiLTR())
+    // A box whose inline direction is the opposite of the root's gets the floats mirrored, but not their shapes, and the inline-start and
+    // inline-end values of clear resolve against the root's direction (FloatingContext::blockEndOfFloatsToClear).
+    if (hasFloatsWithShape && hasInlineDirectionOppositeTo(*box, rootContainer))
+        return BlockAvoidanceReason::ContentHasFloat;
+    if (auto clear = box->style().clear(); (clear == Clear::InlineStart || clear == Clear::InlineEnd) && hasInlineDirectionOppositeTo(*box->containingBlock(), rootContainer))
         return BlockAvoidanceReason::ContentHasFloat;
     return { };
 }
