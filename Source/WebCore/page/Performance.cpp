@@ -58,6 +58,8 @@
 #include "PerformanceUserTiming.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
+#include "VisibilityState.h"
+#include "VisibilityStateEntry.h"
 #include "dom/DOMHighResTimeStamp.h"
 #include <JavaScriptCore/ProfilerSupport.h>
 #include <ranges>
@@ -84,6 +86,14 @@ static bool isSignpostEnabled()
     return flag;
 }
 
+static String visibilityStateEntryName(ScriptExecutionContext& context)
+{
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (!document || document->visibilityState() == VisibilityState::Hidden)
+        return "hidden"_s;
+    return "visible"_s;
+}
+
 Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrigin)
     : ContextDestructionObserver(context)
     , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired) // FIXME: Migrate this to the event loop as well. https://bugs.webkit.org/show_bug.cgi?id=229044
@@ -92,6 +102,11 @@ Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrig
 {
     ASSERT(m_timeOrigin);
     initializeEntryBufferMap();
+
+    // The initial entry records the visibility state the document started with, so it is
+    // reported with a startTime of zero.
+    if (is<Document>(context))
+        addToEntryBuffer(VisibilityStateEntry::create(visibilityStateEntryName(*context), 0));
 }
 
 Performance::~Performance() = default;
@@ -385,6 +400,24 @@ void Performance::setResourceTimingBufferSize(unsigned size)
 {
     entryBufferTuple(PerformanceEntry::Type::Resource).maxBufferSize = size;
     m_resourceTimingBufferFullFlag = false;
+}
+
+void Performance::reportVisibilityStateChange()
+{
+    RefPtr context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    // Only actual transitions are reported, so a notification that does not change the
+    // state, such as one delivered while the document is being set up, adds no entry.
+    auto name = visibilityStateEntryName(*context);
+    auto& buffer = entryBufferTuple(PerformanceEntry::Type::VisibilityState).buffer;
+    if (!buffer.isEmpty() && buffer.last()->name() == name)
+        return;
+
+    auto entry = VisibilityStateEntry::create(name, std::max<DOMHighResTimeStamp>(0, now()));
+    addToEntryBuffer(entry);
+    queueEntry(entry);
 }
 
 void Performance::reportFirstContentfulPaint(DOMHighResTimeStamp timestamp)

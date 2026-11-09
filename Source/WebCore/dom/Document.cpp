@@ -2706,6 +2706,9 @@ void Document::visibilityStateChanged()
             document.scheduleRenderingUpdate(RenderingUpdateStep::Resize);
     });
 
+    if (RefPtr window = this->window())
+        window->performance().reportVisibilityStateChange();
+
     m_visibilityStateCallbackClients.forEach([](auto& client) {
         client.visibilityStateChanged();
     });

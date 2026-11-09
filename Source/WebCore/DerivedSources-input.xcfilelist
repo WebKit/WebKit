@@ -2049,6 +2049,7 @@ $(PROJECT_DIR)/page/UndoManager.idl
 $(PROJECT_DIR)/page/UserMessageHandler.idl
 $(PROJECT_DIR)/page/UserMessageHandlersNamespace.idl
 $(PROJECT_DIR)/page/Viewport.idl
+$(PROJECT_DIR)/page/VisibilityStateEntry.idl
 $(PROJECT_DIR)/page/VisualViewport.idl
 $(PROJECT_DIR)/page/WebKitBuffer.idl
 $(PROJECT_DIR)/page/WebKitBufferNamespace.idl

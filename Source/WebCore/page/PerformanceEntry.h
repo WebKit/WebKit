@@ -55,9 +55,10 @@ public:
         Event,
         FirstInput,
         LargestContentfulPaint,
+        VisibilityState,
     };
 
-    static constexpr unsigned performanceEntryTypeCount = 8;
+    static constexpr unsigned performanceEntryTypeCount = 9;
 
     virtual Type performanceEntryType() const = 0;
     virtual ASCIILiteral entryType() const = 0;

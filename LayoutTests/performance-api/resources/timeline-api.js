@@ -27,15 +27,16 @@ if (runningInWorker) {
     // Workers don't have PerformanceNavigationTiming.
     shouldBeTrue(`performance.getEntries().length === 0`);
 } else {
-    shouldBeTrue(`performance.getEntries().length === 1`);
+    // Navigation timing, plus the visibility state the document started with.
+    shouldBeTrue(`performance.getEntries().length === 2`);
 }
 shouldNotThrow(`performance.mark("test");`);
 if (runningInWorker) {
     markIndex = 0;
     shouldBeTrue(`performance.getEntries().length === 1`);
 } else {
-    markIndex = 1;
-    shouldBeTrue(`performance.getEntries().length === 2`);
+    markIndex = 2;
+    shouldBeTrue(`performance.getEntries().length === 3`);
 }
 shouldBeTrue(`performance.getEntries()[markIndex] instanceof PerformanceEntry`);
 shouldBeEqualToString(`performance.getEntries()[markIndex].name`, "test");
