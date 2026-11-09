@@ -275,9 +275,10 @@ RenderingMode GraphicsContext::renderingModeForCompatibleBuffer() const
     switch (renderingMode()) {
     case RenderingMode::Accelerated:
     case RenderingMode::Unaccelerated:
-    case RenderingMode::DisplayList:
         return renderingMode();
     case RenderingMode::PDFDocument:
+    case RenderingMode::DisplayList:
+        // Compatible buffers are drawn into and then read back, masked or filtered, which needs pixels.
         return RenderingMode::Unaccelerated;
     }
 
