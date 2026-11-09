@@ -242,16 +242,9 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         m_properties.notePropertiesChanged(LayerChange::BackingStoreChanged);
 
     if (m_properties.changedProperties) {
-        if (m_properties.changedProperties & LayerChange::ChildrenChanged) {
-            m_properties.children = WTF::map(m_children, [](auto& child) {
-                return child->layerID();
-            });
-        }
+        updateChildrenPropertyIfNeeded();
 
-        // FIXME: the below is only necessary when blockMediaLayerRehostingInWebContentProcess() is disabled.
-        // Once that setting is made unnecessary, remove this entire conditional as well.
-        if (type() == PlatformCALayer::Type::RemoteCustom
-            && !downcast<PlatformCALayerRemoteCustom>(*this).hasVideo()) {
+        if (!sendsPropertiesToUIProcess()) {
             RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties);
             didCommit();
             return;
@@ -268,6 +261,22 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
 
     if (RefPtr maskLayer = downcast<PlatformCALayerRemote>(m_maskLayer))
         maskLayer->recursiveBuildTransaction(context, transaction);
+}
+
+void PlatformCALayerRemote::updateChildrenPropertyIfNeeded()
+{
+    if (m_properties.changedProperties & LayerChange::ChildrenChanged) {
+        m_properties.children = WTF::map(m_children, [](auto& child) {
+            return child->layerID();
+        });
+    }
+}
+
+bool PlatformCALayerRemote::sendsPropertiesToUIProcess() const
+{
+    // FIXME: this is only necessary when blockMediaLayerRehostingInWebContentProcess() is disabled.
+    // Once that setting is made unnecessary, remove this check as well.
+    return type() != PlatformCALayer::Type::RemoteCustom || downcast<PlatformCALayerRemoteCustom>(*this).hasVideo();
 }
 
 void PlatformCALayerRemote::didCommit()

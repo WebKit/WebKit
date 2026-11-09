@@ -62,6 +62,17 @@ void RemoteLayerTreeTransaction::setRootLayerID(WebCore::PlatformLayerIdentifier
     m_rootLayerID = rootLayerID;
 }
 
+void RemoteLayerTreeTransaction::copyRootStateFrom(const RemoteLayerTreeTransaction& other)
+{
+    m_rootLayerID = other.m_rootLayerID;
+    m_remoteContextHostedIdentifier = other.m_remoteContextHostedIdentifier;
+    m_contentsSize = other.m_contentsSize;
+    m_scrollGeometryContentSize = other.m_scrollGeometryContentSize;
+    m_scrollOrigin = other.m_scrollOrigin;
+    m_scrollPosition = other.m_scrollPosition;
+    // m_timelinesUpdate is not copied: it only has the timelines added, updated or removed by this commit, not the ones that already exist.
+}
+
 void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote& remoteLayer)
 {
     ASSERT(isInWebProcess());

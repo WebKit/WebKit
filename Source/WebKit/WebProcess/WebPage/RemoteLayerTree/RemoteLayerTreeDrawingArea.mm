@@ -265,6 +265,32 @@ void RemoteLayerTreeDrawingArea::updateRenderingWithForcedRepaintAsync(WebPage& 
     completionHandler();
 }
 
+void RemoteLayerTreeDrawingArea::buildFullLayerTreeState()
+{
+    ASSERT(!m_hasPendingFullStateRequest);
+
+    m_hasPendingFullStateRequest = true;
+    triggerRenderingUpdate();
+}
+
+void RemoteLayerTreeDrawingArea::encodeFullState(IPC::Encoder& commitEncoder, const RemoteLayerTreeCommitBundle& bundle)
+{
+    if (bundle.transactions.isEmpty() || !std::exchange(m_hasPendingFullStateRequest, false)) {
+        commitEncoder << RemoteLayerTreeFullState { };
+        return;
+    }
+
+    RemoteLayerTreeContext::FullStateEncodingScope scope(m_remoteLayerTreeContext);
+    bool isFirstTransaction = true;
+    auto transactions = WTF::map(bundle.transactions, [&](auto& rootFrameData) {
+        auto transaction = std::exchange(isFirstTransaction, false) ? scope.buildLayersTransaction(m_remoteLayerTreeContext) : RemoteLayerTreeTransaction { };
+        transaction.copyRootStateFrom(CheckedRef { rootFrameData.first });
+        return transaction;
+    });
+
+    commitEncoder << transactions;
+}
+
 void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
     m_remoteLayerTreeContext->animationDidStart(layerID, key, startTime);
@@ -431,6 +457,9 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
     commitEncoder.get() << bundle;
+
+    // Must happen after encoding the bundle, which provides only the changes. Must happen before didFlushLayers(), which marks the layers as committed.
+    encodeFullState(commitEncoder.get(), bundle);
 
     Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> flushers;
     for (auto& transaction : borrow(bundle.transactions))
