@@ -103,6 +103,7 @@ Tests/WebKit/WKWebView/BundleCSSStyleDeclarationHandle.mm @nonARC
 Tests/WebKit/WKWebView/BundleEditingDelegate.mm @nonARC
 Tests/WebKit/WKWebView/BundleParameters.mm @nonARC
 Tests/WebKit/WKWebView/BundleRangeHandle.mm @nonARC
+Tests/WebKit/WKWebView/CALayerTreeAsTextOptions.mm @nonARC
 Tests/WebKit/WKWebView/CSSViewportUnits.mm @nonARC
 Tests/WebKit/WKWebView/CancelFontSubresource.mm @nonARC
 Tests/WebKit/WKWebView/LockdownModeFonts.mm @nonARC
