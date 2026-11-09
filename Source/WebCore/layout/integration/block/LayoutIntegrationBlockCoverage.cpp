@@ -611,14 +611,13 @@ static std::optional<BlockAvoidanceReason> floatAvoidanceReason(const RenderBox&
 // A box that avoids floats (RenderBox::avoidsFloats), which the block formatting context places beside the floats before it or below them
 // (BlockFormattingContext::placeBesideFloats).
 // FIXME: One in inline content, which the inline formatting context places, beside floats with a shape, which it avoids by their margin box,
-// in quirks mode, where a quirk container keeps the margins at its block-start side apart, and with margin-trim, which discard margins that
-// clearance separates, an orthogonal one, a fieldset or a box with a block step, whose margins collapse once laid out, negative inline
-// margins, which a float does not take (RenderBox::shrinkLogicalWidthToAvoidFloats), and calc() ones, which may be negative, justify-self,
-// the -webkit- values of text-align, and a form control the block formatting context lays out as a block container, like a checkbox with
-// display: block.
+// with margin-trim, which discard margins that clearance separates, an orthogonal one, a fieldset or a box with a block step, whose margins
+// collapse once laid out, negative inline margins, which a float does not take (RenderBox::shrinkLogicalWidthToAvoidFloats), and calc() ones,
+// which may be negative, justify-self, the -webkit- values of text-align, and a form control the block formatting context lays out as a block
+// container, like a checkbox with display: block.
 static std::optional<BlockAvoidanceReason> floatAvoiderAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer, bool isInInlineContent, bool hasFloatsWithShape, bool isLaidOutThroughRenderTree)
 {
-    if (isInInlineContent || hasFloatsWithShape || box.document().inQuirksMode() || box.isFieldset() || !box.style().blockStepSize().isNone())
+    if (isInInlineContent || hasFloatsWithShape || box.isFieldset() || !box.style().blockStepSize().isNone())
         return BlockAvoidanceReason::ContentHasFloat;
     if (!isLaidOutThroughRenderTree && !Layout::BlockFormattingUtils::establishesIndependentFormattingContext(box))
         return BlockAvoidanceReason::ContentHasFloat;
@@ -658,10 +657,10 @@ static std::optional<BlockAvoidanceReason> afterFloatAvoidanceReason(const Rende
     auto isInInlineContent = box->parent()->isInlineBox() || (parentBlockContainer && parentBlockContainer->childrenInline());
     if (box->isOutOfFlowPositioned())
         return { };
-    // FIXME: clear on a block-level box in inline content, which the inline formatting context places, in quirks mode, where a quirk container
-    // keeps the margins at its block-start side apart, and with margin-trim, which discards margins that clearance separates.
+    // FIXME: clear on a block-level box in inline content, which the inline formatting context places, and with margin-trim, which discards
+    // margins that clearance separates.
     if (box->style().clear() != Clear::None) {
-        if (isInInlineContent || box->document().inQuirksMode())
+        if (isInInlineContent)
             return BlockAvoidanceReason::ContentHasFloat;
         for (CheckedPtr<const RenderBlock> ancestor = dynamicDowncast<RenderBlock>(*box); ancestor; ancestor = ancestor->containingBlock()) {
             auto marginTrim = ancestor->style().marginTrim();

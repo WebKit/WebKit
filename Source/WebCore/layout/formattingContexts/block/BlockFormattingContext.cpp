@@ -257,7 +257,7 @@ std::optional<ContainingBlockState::Clearance> BlockFormattingContext::clearance
             });
         });
     };
-    auto clearance = ContainingBlockState::Clearance { .marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottom() };
+    auto clearance = ContainingBlockState::Clearance { .marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottomAtContent() };
     if (auto floatsLogicalBottom = blockEndOfFloatsToClear([&](auto& floatItem) { return !isPending(floatItem); }))
         clearance.floatsLogicalBottom = *floatsLogicalBottom;
     for (auto& pending : pendingFloats) {
@@ -1054,7 +1054,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     auto legendMarginBefore = LayoutUnit { };
     auto isLaidOut = false;
     if (!collapsesMarginsOnceLaidOut) {
-        auto marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
+        auto marginsBeforeLogicalBottom = m_blockLayoutState.marginCollapse().collapsedLogicalBottomAtContent();
         m_blockLayoutState.marginCollapse().startBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last(), rootState.geometry.marginBefore());
         if (auto* placedFloats = m_blockLayoutState.placedFloats(); placedFloats && !placedFloats->isEmpty()) {
             contentBlockSize = placeBesideFloats(box, rootState, marginsBeforeLogicalBottom, layoutContent);

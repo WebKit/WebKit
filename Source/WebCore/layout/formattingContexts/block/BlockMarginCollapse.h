@@ -82,6 +82,9 @@ public:
     LayoutUnit collapsedLogicalBottom() const { return m_logicalTop + m_adjoiningMargins.collapsedValue(); }
     // The same for a box whose margins collapse through it, which also counts the margins at the block-start side of the quirk container.
     LayoutUnit collapsedLogicalBottomForCollapsedThroughBox() const;
+    // The same once content ends the block-start side of the quirk container, which is where a box that separates the margins goes
+    // (BlockFormattingContext::resolveBorderBoxLogicalTops).
+    LayoutUnit collapsedLogicalBottomAtContent() const;
     // Whether the margin after the last box that did not collapse through is quirky (RenderBlockFlow::MarginInfo::hasMarginAfterQuirk).
     bool endsWithQuirk() const { return m_endsWithQuirk.value_or(false); }
 

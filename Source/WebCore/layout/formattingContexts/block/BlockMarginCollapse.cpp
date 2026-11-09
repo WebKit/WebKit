@@ -98,6 +98,18 @@ LayoutUnit BlockMarginCollapse::collapsedLogicalBottomForCollapsedThroughBox() c
     return m_logicalTop + margins.collapsedValue();
 }
 
+LayoutUnit BlockMarginCollapse::collapsedLogicalBottomAtContent() const
+{
+    // Like endQuirkContainerBlockStartSide(QuirkContainerBlockStartSideEnd::AtContent).
+    auto margins = m_adjoiningMargins;
+    if (auto blockStartSide = m_quirkContainerBlockStartSide) {
+        blockStartSide->endChild();
+        if (!blockStartSide->lastMarginsAreQuirky)
+            margins.add(blockStartSide->childrenMargins);
+    }
+    return m_logicalTop + margins.collapsedValue();
+}
+
 void BlockMarginCollapse::resetAdjoiningMargins(LayoutUnit logicalTop, const AdjoiningMargins& margins, bool marginsAreQuirky)
 {
     m_adjoiningMargins = margins;
