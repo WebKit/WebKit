@@ -27,7 +27,7 @@
 
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include "AggregatorResponseData.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/BasicCredential.h>
 #include <WebCore/IDLTypes.h>
 
@@ -51,10 +51,11 @@ public:
     static void isAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
     static void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 
-    Ref<ArrayBuffer> encryptedPNPIWithProof() const { return m_encryptedPNPIWithProof; }
-    RefPtr<AggregatorResponseData> aggregatorData() const { return m_aggregatorData; }
+    Ref<ArrayBuffer> encryptedResult() const { return m_encryptedResult; }
+    const String& carrierDomain() const { return m_carrierDomain; }
+    uint16_t carrierConfigurationID() const { return m_carrierConfigurationID; }
+    RefPtr<ArrayBuffer> encryptedDecryptionKey() const { return m_encryptedDecryptionKey; }
     RefPtr<ArrayBuffer> carrierPubKey() const { return m_carrierPubKey; }
-    RefPtr<ArrayBuffer> encryptedMSISDN() const { return m_encryptedMSISDN; }
     Ref<ArrayBuffer> clientDataJSON() const { return m_clientDataJSON; }
     RefPtr<ArrayBuffer> portingZKP() const { return m_portingZKP; }
 
@@ -63,10 +64,11 @@ private:
 
     Type credentialType() const final { return Type::PhoneNumberPossession; }
 
-    const Ref<ArrayBuffer> m_encryptedPNPIWithProof;
-    const RefPtr<AggregatorResponseData> m_aggregatorData;
+    const Ref<ArrayBuffer> m_encryptedResult;
+    const String m_carrierDomain;
+    const uint16_t m_carrierConfigurationID;
+    const RefPtr<ArrayBuffer> m_encryptedDecryptionKey;
     const RefPtr<ArrayBuffer> m_carrierPubKey;
-    const RefPtr<ArrayBuffer> m_encryptedMSISDN;
     const Ref<ArrayBuffer> m_clientDataJSON;
     const RefPtr<ArrayBuffer> m_portingZKP;
 };

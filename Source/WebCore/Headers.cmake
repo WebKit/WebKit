@@ -529,7 +529,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/permissions/PermissionState.h
     Modules/permissions/Permissions.h
 
-    Modules/phonenumberpossession/AggregatorResponseDataFields.h
     Modules/phonenumberpossession/PhoneNumberPossessionCoordinatorClient.h
     Modules/phonenumberpossession/PhoneNumberPossessionRequest.h
     Modules/phonenumberpossession/PhoneNumberPossessionResponse.h

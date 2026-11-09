@@ -28,15 +28,16 @@
 #if ENABLE(PHONE_NUMBER_POSSESSION)
 
 #include <JavaScriptCore/ArrayBuffer.h>
-#include <WebCore/AggregatorResponseDataFields.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct PhoneNumberPossessionResponse {
-    Ref<ArrayBuffer> encryptedPNPIWithProof;
-    std::optional<AggregatorResponseDataFields> aggregatorData;
+    Ref<ArrayBuffer> encryptedResult;
+    String carrierDomain;
+    uint16_t carrierConfigurationID;
+    RefPtr<ArrayBuffer> encryptedDecryptionKey;
     RefPtr<ArrayBuffer> carrierPubKey;
-    RefPtr<ArrayBuffer> encryptedMSISDN;
     Ref<ArrayBuffer> clientDataJSON;
     RefPtr<ArrayBuffer> portingZKP;
 };
