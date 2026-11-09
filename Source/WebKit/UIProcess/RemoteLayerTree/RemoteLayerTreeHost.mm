@@ -546,7 +546,11 @@ RetainPtr<CALayer> RemoteLayerTreeHost::rootLayer() const
 
 void RemoteLayerTreeHost::createLayer(const IPC::Connection& connection, const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
-    ASSERT(!m_nodes.contains(*properties.layerID));
+    // A capture mirror is sent the creation of layers that it already has from its seed.
+    if (m_nodes.contains(*properties.layerID)) {
+        ASSERT(m_role == Role::CaptureMirror);
+        return;
+    }
 
     auto node = makeNode(connection, properties);
     RetainPtr layer = node->layer();
@@ -624,7 +628,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
             return RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);
 
 #if HAVE(AVKIT)
-        if (properties.videoElementData) {
+        if (properties.videoElementData && isPrimary()) {
             RefPtr page = drawingArea().page();
             if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr) {
                 auto playerIdentifier = PlaybackSessionContextIdentifier { properties.videoElementData->playerIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };

@@ -65,7 +65,7 @@ class RemoteLayerTreeHost {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeHost);
 public:
     // Secondary hosts build another tree from the same transactions, without page-wide side effects.
-    enum class Role : uint8_t { Primary, DebugIndicator };
+    enum class Role : uint8_t { Primary, DebugIndicator, CaptureMirror };
 
     explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&, Role = Role::Primary);
     ~RemoteLayerTreeHost();
@@ -75,6 +75,7 @@ public:
 
     RemoteLayerTreeNode* nodeForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RefPtr<RemoteLayerTreeNode> rootNode() const { return m_rootNode.get(); }
+    const HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteLayerTreeNode>>& nodes() const LIFETIME_BOUND { return m_nodes; }
 
     RetainPtr<CALayer> layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RetainPtr<CALayer> rootLayer() const;
