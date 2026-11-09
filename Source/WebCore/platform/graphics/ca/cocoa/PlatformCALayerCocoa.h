@@ -166,6 +166,8 @@ public:
     Path shadowPath() const override;
     void setShadowPath(const Path&) override;
 
+    void setHidesFromScreenCapture(bool) override;
+
     void setAntialiasesEdges(bool) override;
 
     MediaPlayerVideoGravity videoGravity() const override;

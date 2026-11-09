@@ -564,6 +564,9 @@ public:
 
     virtual void setShadowPath(const Path&);
 
+    virtual void setHidesFromScreenCapture(bool hides) { m_hidesFromScreenCapture = hides; }
+    bool hidesFromScreenCapture() const { return m_hidesFromScreenCapture; }
+
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
 
@@ -673,6 +676,7 @@ protected:
     bool m_showFrameProcessBorders : 1;
     bool m_isMaskLayer : 1;
     bool m_isBackdropRoot : 1;
+    bool m_hidesFromScreenCapture : 1;
     bool m_isTrackingDisplayListReplay : 1;
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;

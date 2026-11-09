@@ -193,6 +193,7 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& layerClient)
     , m_showFrameProcessBorders(false)
     , m_isMaskLayer(false)
     , m_isBackdropRoot(false)
+    , m_hidesFromScreenCapture(false)
     , m_isTrackingDisplayListReplay(false)
     , m_userInteractionEnabled(true)
     , m_canDetachBackingStore(true)
@@ -990,6 +991,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
 
     if (m_isBackdropRoot)
         ts << indent << "(backdropRoot "_s << m_isBackdropRoot << ")\n"_s;
+
+    if (m_hidesFromScreenCapture)
+        ts << indent << "(hidesFromScreenCapture "_s << m_hidesFromScreenCapture << ")\n"_s;
 
     if (options & LayerTreeAsTextOptions::Debug)
         ts << indent << "(primary-layer-id "_s << primaryLayerID() << ")\n"_s;

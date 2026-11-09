@@ -203,6 +203,8 @@ public:
     WebCore::Path shadowPath() const override;
     void setShadowPath(const WebCore::Path&) override;
 
+    void setHidesFromScreenCapture(bool) override;
+
     void setAntialiasesEdges(bool) override;
 
     WebCore::MediaPlayerVideoGravity videoGravity() const override;
