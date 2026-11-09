@@ -48,6 +48,7 @@ WEBKIT_ADD_TARGET_C_FLAGS(SysProfCapture
     -Wno-implicit-function-declaration
     -Wno-sign-compare
     -Wno-unused-parameter
+    -Wno-error=vla
 )
 
 add_library(SysProfCapture::SysProfCapture ALIAS SysProfCapture)
