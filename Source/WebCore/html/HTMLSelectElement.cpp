@@ -2778,7 +2778,7 @@ void HTMLSelectElement::updateSelectedContent(HTMLSelectedContentElement& select
 
 bool HTMLSelectElement::updatesSelectedContent() const
 {
-    return !m_multiple || document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled();
+    return !m_multiple || document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled();
 }
 
 Vector<Ref<HTMLSelectedContentElement>> HTMLSelectElement::selectedContentElements() const
@@ -2804,7 +2804,7 @@ void HTMLSelectElement::cloneOptionsIntoSelectedContent()
 
 void HTMLSelectElement::cloneOptionsIntoSelectedContent(HTMLSelectedContentElement& selectedContent)
 {
-    ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
+    ASSERT(document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
 
     Vector<Ref<HTMLOptionElement>> options;
     for (auto& item : listItems()) {

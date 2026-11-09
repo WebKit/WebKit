@@ -2787,14 +2787,6 @@ HTMLEnhancedSelectMultipleDropdownBoxEnabled:
     default: true
     WebKitLegacy: false
 
-HTMLEnhancedSelectMultipleSelectedContentEnabled:
-  type: bool
-  status: preview
-  category: dom
-  humanReadableName: "Enhanced HTML select element selectedcontent for multiple"
-  humanReadableDescription: "Clone every option of a select element with the multiple attribute into its selectedcontent elements"
-  defaultValue: false
-
 HTMLEnhancedSelectParsingQuirkEnabled:
   type: bool
   status: internal

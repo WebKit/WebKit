@@ -109,7 +109,7 @@ void HTMLSelectedContentElement::updateFromOption(HTMLOptionElement* option)
 
 void HTMLSelectedContentElement::updateFromOptions(const Vector<Ref<HTMLOptionElement>>& options)
 {
-    ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
+    ASSERT(document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
 
     NodeVector clones;
     for (auto& option : options)
@@ -119,7 +119,7 @@ void HTMLSelectedContentElement::updateFromOptions(const Vector<Ref<HTMLOptionEl
 
 void HTMLSelectedContentElement::updateClonedOptionSelectedStates()
 {
-    ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
+    ASSERT(document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
 
     for (Ref clone : childrenOfType<HTMLOptionElement>(*this)) {
         if (RefPtr option = clone->selectedContentSource())

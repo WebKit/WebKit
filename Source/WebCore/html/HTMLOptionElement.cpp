@@ -713,7 +713,7 @@ void HTMLOptionElement::cloneIntoSelectedContent(HTMLSelectedContentElement& sel
 
 Ref<HTMLOptionElement> HTMLOptionElement::cloneForSelectedContent()
 {
-    ASSERT(document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled());
+    ASSERT(document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
 
     Ref clone = downcast<HTMLOptionElement>(cloneNode(CloneSubtree::Yes));
     pruneSelectedContentClone(clone);
