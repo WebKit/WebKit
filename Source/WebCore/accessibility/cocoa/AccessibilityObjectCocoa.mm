@@ -223,9 +223,8 @@ RetainPtr<CTFontRef> AccessibilityObject::font() const
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 FontOrientation AccessibilityObject::fontOrientation() const
 {
-    if (CheckedPtr style = this->style()) {
-        return const_cast<Style::ComputedStyle*>(style.get())->fontAndGlyphOrientation().first;
-    }
+    if (CheckedPtr style = this->style())
+        return style->fontAndGlyphOrientation().first;
     return FontOrientation::Horizontal;
 }
 #endif

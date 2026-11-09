@@ -246,7 +246,7 @@ const FontMetrics& ComputedStyleBase::metricsOfPrimaryFont() const
     return m_inheritedData->fontData->fontCascade.metricsOfPrimaryFont();
 }
 
-std::pair<FontOrientation, NonCJKGlyphOrientation> ComputedStyleBase::fontAndGlyphOrientation()
+std::pair<FontOrientation, NonCJKGlyphOrientation> ComputedStyleBase::fontAndGlyphOrientation() const
 {
     if (!writingMode().isVerticalTypographic())
         return { FontOrientation::Horizontal, NonCJKGlyphOrientation::Mixed };
