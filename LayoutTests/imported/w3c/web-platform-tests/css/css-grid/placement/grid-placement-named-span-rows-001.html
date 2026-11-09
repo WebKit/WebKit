@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: grid-row placement with a named span next to a line</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-span-int">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<meta name="assert" content="A span with a name counts only the lines with that name, starting at the line on the other edge, in the row axis as well, and counts implicit lines once the named lines run out.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; width: 400px; background: lightgray; margin-bottom: 10px; grid-auto-columns: 20px; grid-auto-rows: 10px; }
+.grid > div { background: green; }
+</style>
+<!-- a named span from a line with enough named lines: only foo lines count -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [foo] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="40" data-expected-width="50" data-expected-height="120" style="grid-row: 2 / span 2 foo"></div>
+</div>
+<!-- a named span with too few named lines: the remaining count is implicit lines -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [foo] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="80" data-expected-width="50" data-expected-height="180" style="grid-row: 3 / span 3 foo"></div>
+</div>
+<!-- a named span with no named lines: every counted line is implicit -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [bar] 40px 40px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: 1 / span 2 foo"></div>
+</div>
+<!-- a named span before the end line: only foo lines count -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [foo] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="80" data-expected-width="50" data-expected-height="120" style="grid-row: span 2 foo / 6"></div>
+</div>
+<!-- a named span before the end line with too few named lines: leading implicit tracks -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px 40px [foo] 40px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="130" style="grid-row: span 3 foo / 4"></div>
+</div>
+<!-- span 2 foo before a negative end line -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [foo] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="80" data-expected-width="50" data-expected-height="160" style="grid-row: span 2 foo / -1"></div>
+</div>
+<!-- a lone name next to a named span -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="120" style="grid-row: foo / span 2 bar"></div>
+</div>
+<!-- an integer and a name next to a named span -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [x] 40px [bar] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="80" data-expected-width="50" data-expected-height="120" style="grid-row: 2 foo / span 2 bar"></div>
+</div>
+<!-- a named span next to an integer and a name -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="90" style="grid-row: span 2 bar / 2 foo"></div>
+</div>
+<!-- a named span next to a negative integer and a name -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [foo] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="80" data-expected-width="50" data-expected-height="80" style="grid-row: span foo / -1 foo"></div>
+</div>
+<!-- a named span next to a lone name -->
+<div class="grid" style="grid-template-columns: 50px; grid-template-rows: [x] 40px [foo] 40px [bar] 40px [foo] 40px [foo] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="90" style="grid-row: span 2 foo / bar"></div>
+</div>
+<!-- grid-auto-flow: column with a named span in the row axis -->
+<div class="grid" style="grid-template-columns: 50px; grid-auto-flow: column; grid-template-rows: [foo] 40px [bar] 40px [foo] 40px [bar] 40px [foo] 40px [bar] 40px">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="160" style="grid-row: 1 / span 2 foo"></div>
+</div>

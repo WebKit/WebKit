@@ -139,27 +139,9 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
-// GFC resolves numeric lines, numeric spans, lines given as an integer and a line name (e.g. foo 2) and
-// lines given as a line name alone (e.g. foo) in either position. Named spans (e.g. span foo) are not supported.
-static bool hasValidEndForExplicitStart(const Style::GridPosition& end)
-{
-    return WTF::switchOn(end,
-        [](const CSS::Keyword::Auto&) {
-            // An auto end with an explicit start resolves to a single-track span at the start line.
-            return true;
-        },
-        [](const Style::GridPositionExplicit&) {
-            return true;
-        },
-        [&](const Style::GridPositionSpan&) {
-            return end.namedGridLine().value.isEmpty();
-        },
-        [](const Style::CustomIdent&) {
-            return true;
-        }
-    );
-}
-
+// GFC resolves numeric lines, numeric spans, lines given as an integer and a line name (e.g. foo 2), lines
+// given as a line name alone (e.g. foo) and named spans (e.g. span foo) next to a line. A named span is not
+// supported next to auto or another span.
 static bool hasValidEndForAutoStart(const Style::GridPosition& end)
 {
     return WTF::switchOn(end,
@@ -177,6 +159,11 @@ static bool hasValidEndForAutoStart(const Style::GridPosition& end)
             return true;
         }
     );
+}
+
+static bool isLine(const Style::GridPosition& position)
+{
+    return position.isExplicit() || position.isNamedGridArea();
 }
 
 static bool hasValidEndForSpanStart(const Style::GridPosition& end)
@@ -486,21 +473,18 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
                 return { };
             },
-            [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemColumnEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
+            [](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                if (!columnStart.namedGridLine().value.isEmpty())
+                // A named span needs a line on the other edge to count from.
+                if (!columnStart.namedGridLine().value.isEmpty() && !isLine(gridItemStyle->gridItemColumnEnd()))
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
                 if (!hasValidEndForSpanStart(gridItemStyle->gridItemColumnEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
                 return { };
             },
-            [&](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
-                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemColumnEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
+            [](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
                 return { };
             }
         );
@@ -517,21 +501,18 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
                 return { };
             },
-            [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemRowEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
+            [](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                if (!rowStart.namedGridLine().value.isEmpty())
+                // A named span needs a line on the other edge to count from.
+                if (!rowStart.namedGridLine().value.isEmpty() && !isLine(gridItemStyle->gridItemRowEnd()))
                     return GridAvoidanceReason::GridItemRowStartHasLineName;
                 if (!hasValidEndForSpanStart(gridItemStyle->gridItemRowEnd()))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
                 return { };
             },
-            [&](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
-                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemRowEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
+            [](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
                 return { };
             }
         );
