@@ -25,7 +25,9 @@
 
 import WebKit_Internal
 // FIXME: (rdar://191085916) Remove this import.
+#if canImport(JavaScriptCore_Private)
 import JavaScriptCore_Private.Cxx
+#endif
 
 extension WebKit.RunJavaScriptResult: @unsafe CxxConsumingExpected {
     // swift-format-ignore: AlwaysUseLowerCamelCase,NoLeadingUnderscores
