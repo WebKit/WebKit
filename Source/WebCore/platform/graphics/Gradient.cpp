@@ -108,7 +108,9 @@ void Gradient::addColorStop(GradientColorStop&& stop)
 {
     m_stops.addColorStop(WTF::move(stop));
     m_cachedHash = 0;
-    stopsChanged();
+#if USE(CG)
+    m_rendererIdentifier = generateRendererIdentifier();
+#endif
 }
 
 NODELETE static void add(Hasher& hasher, const Gradient::LinearData& data)
@@ -129,7 +131,7 @@ NODELETE static void add(Hasher& hasher, const Gradient::ConicData& data)
 unsigned Gradient::hash() const
 {
     if (!m_cachedHash)
-        m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops.sorted());
+        m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops);
     return m_cachedHash;
 }
 

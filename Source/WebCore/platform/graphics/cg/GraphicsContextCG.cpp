@@ -244,6 +244,16 @@ static FloatRect strokedPathBoundingBox(CGContextRef context, NOESCAPE const Inv
     return bounds;
 }
 
+const GradientRendererCG& GraphicsContextCG::gradientRenderer(const Gradient& gradient, const std::optional<ColorSpace>& colorSpace)
+{
+    // The last renderer is kept for repeated draws with the same gradient, e.g. with an unchanged fill gradient.
+    // The identifier is unique for the lifetime of the process, so no reference to the gradient is needed.
+    auto identifier = gradient.rendererIdentifier();
+    if (!m_lastGradientRenderer || m_lastGradientRenderer->gradientIdentifier != identifier || m_lastGradientRenderer->colorSpace != colorSpace)
+        m_lastGradientRenderer = LastGradientRenderer { identifier, colorSpace, gradient.renderer(colorSpace) };
+    return m_lastGradientRenderer->renderer;
+}
+
 #if !HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
 // Older transparency layers are bounded by the clip, so content outside of it would lose its shadow.
 void GraphicsContextCG::paintGradientInCGLayer(Gradient& gradient, const AffineTransform& gradientSpaceTransform, const FloatRect& contentBounds, NOESCAPE const Invocable<void(CGContextRef)> auto& clip)
@@ -261,7 +271,7 @@ void GraphicsContextCG::paintGradientInCGLayer(Gradient& gradient, const AffineT
     CGContextTranslateCTM(layerContext.get(), -layerBounds.x(), -layerBounds.y());
     clip(layerContext.get());
     CGContextConcatCTM(layerContext.get(), gradientSpaceTransform);
-    gradient.paint(layerContext.get());
+    gradient.paint(layerContext.get(), gradientRenderer(gradient, std::nullopt));
     CGContextDrawLayerInRect(context.get(), layerBounds, layer.get());
 }
 #endif
@@ -295,7 +305,7 @@ void GraphicsContextCG::paintGradientInClip(Gradient& gradient, const AffineTran
         CGContextStateSaver stateSaver(context.get());
         clip(context.get());
         CGContextConcatCTM(context.get(), gradientSpaceTransform);
-        gradient.paint(*this);
+        gradient.paint(context.get(), gradientRenderer(gradient, GradientRendererCG::colorSpaceForDestination(colorSpace())));
     }
     if (hasDropShadow) {
         CGContextEndTransparencyLayer(context.get());
@@ -984,6 +994,13 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, RequiresClipToRect requi
     }
 
     CGContextFillRect(context, rect);
+}
+
+void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient)
+{
+    clip(rect);
+    const RetainPtr<CGContextRef>& context = contextForDraw();
+    gradient.paint(context.get(), gradientRenderer(gradient, GradientRendererCG::colorSpaceForDestination(colorSpace())));
 }
 
 void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)

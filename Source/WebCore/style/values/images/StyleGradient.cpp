@@ -367,9 +367,8 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
         };
     });
 
-    std::ranges::stable_sort(result, { }, &WebCore::GradientColorStop::offset);
-
-    return GradientColorStops::Sorted { WTF::move(result) };
+    // The deprecated syntax allows stops in any order.
+    return GradientColorStops { WTF::move(result) };
 }
 
 template<typename GradientAdapter, typename StyleGradient> GradientColorStops computeStops(GradientAdapter& gradientAdapter, const StyleGradient& styleGradient, const Style::ComputedStyle& style)
@@ -639,7 +638,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
     if (stops.size() > 1 && (*stops.first().offset < 0 || *stops.last().offset > 1))
         gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops, styleGradient.parameters.colorInterpolationMethod.method.value);
 
-    return GradientColorStops::Sorted {
+    return GradientColorStops {
         stops.template map<GradientColorStops::StopVector>([](auto& stop) -> WebCore::GradientColorStop {
             return { *stop.offset, stop.color };
         })

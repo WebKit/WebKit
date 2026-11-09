@@ -116,8 +116,14 @@ public:
 #endif
 
 #if USE(CG)
-    void paint(GraphicsContext&);
-    void paint(CGContextRef, std::optional<ColorSpace> = { });
+    // Returns the renderer for the given renderer color space, see GradientRendererCG::colorSpaceForDestination().
+    // Renderers of non-transient gradients are cached process-wide. Renderers of transient gradients are created
+    // on each call; GraphicsContextCG keeps the last one it used.
+    GradientRendererCG renderer(const std::optional<ColorSpace>&) const;
+    void paint(CGContextRef, const GradientRendererCG&) const;
+
+    // Identifies the color stops of this gradient in renderer caches. Unique for the lifetime of the process.
+    uint64_t rendererIdentifier() const { return m_rendererIdentifier; }
 #endif
 
 #if USE(SKIA)
@@ -132,7 +138,9 @@ public:
 private:
     Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, bool isTransient);
 
-    void stopsChanged();
+#if USE(CG)
+    static uint64_t generateRendererIdentifier();
+#endif
 
     Data m_data;
     ColorInterpolationMethod m_colorInterpolationMethod;
@@ -141,7 +149,9 @@ private:
     mutable unsigned m_cachedHash { 0 };
 
 #if USE(CG)
-    std::optional<GradientRendererCG> m_platformRenderer;
+    // Replaced by addColorStop(), so that renderer cache entries for the old stops become unreachable.
+    // FIXME: Make this const once addColorStop() is removed.
+    uint64_t m_rendererIdentifier { generateRendererIdentifier() };
 #endif
 
     mutable WeakHashSet<RenderingResourceObserver> m_observers;
