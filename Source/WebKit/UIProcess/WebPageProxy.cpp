@@ -10061,9 +10061,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         ASSERT(m_preferences->siteIsolationEnabled());
         ASSERT(!frame.isMainFrame());
         ASSERT(provisionalFrame->process().coreProcessIdentifier() != frame.process().coreProcessIdentifier());
-        frame.takeProvisionalFrame();
-        frame.notifyParentOfLoadCompletion(process);
-        frame.broadcastFrameTreeSyncData(FrameTreeSyncData::create());
+        frame.cancelProvisionalFrame(process);
     }
 }
 

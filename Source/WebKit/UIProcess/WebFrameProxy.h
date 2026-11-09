@@ -273,6 +273,7 @@ public:
     void removeChildFrames();
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
+    void cancelProvisionalFrame(WebProcessProxy& provisionalProcess);
     NODELETE WebProcessProxy& provisionalLoadProcess();
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess() const;
     void notifyParentOfLoadCompletion(WebProcessProxy&);

@@ -235,6 +235,12 @@ RefPtr<ProvisionalFrameProxy> WebFrameProxy::takeProvisionalFrame()
     return std::exchange(m_provisionalFrame, nullptr);
 }
 
+void WebFrameProxy::cancelProvisionalFrame(WebProcessProxy& provisionalProcess)
+{
+    takeProvisionalFrame();
+    notifyParentOfLoadCompletion(provisionalProcess);
+}
+
 WebProcessProxy& WebFrameProxy::provisionalLoadProcess()
 {
     if (auto* provisionalFrame = m_provisionalFrame.get())
@@ -881,6 +887,9 @@ void WebFrameProxy::remoteProcessDidTerminate(WebProcessProxy& process, ClearFra
     RefPtr webPage = page();
     if (clearFrameTreeSyncData == ClearFrameTreeSyncData::Yes && webPage && protect(webPage->preferences())->siteIsolationEnabled())
         broadcastFrameTreeSyncData(FrameTreeSyncData::create());
+
+    if (RefPtr provisionalFrame = m_provisionalFrame; provisionalFrame && provisionalFrame->process().coreProcessIdentifier() == process.coreProcessIdentifier())
+        cancelProvisionalFrame(process);
 
     for (Ref child : m_childFrames)
         child->remoteProcessDidTerminate(process, ClearFrameTreeSyncData::No);

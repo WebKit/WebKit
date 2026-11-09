@@ -12567,6 +12567,56 @@ TEST(SiteIsolation, SharedProcessMainFrameNotReusedAfterCrash)
     EXPECT_TRUE(processStillRunning(reloadedProcess));
 }
 
+TEST(SiteIsolation, ProvisionalSubframeProcessCrashCompletesParentLoad)
+{
+    bool receivedDelayedRequest { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe src='https://webkit.org/webkit'></iframe><iframe src='https://webkit.org/delayed'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/webkit"_s) {
+                co_await connection.awaitableSend(HTTPResponse("webkit"_s).serialize());
+                continue;
+            }
+            if (path == "/delayed"_s) {
+                // Never answered, so the second iframe's navigation stays provisional.
+                receivedDelayedRequest = true;
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    __block unsigned terminationCount = 0;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        ++terminationCount;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    while (!receivedDelayedRequest)
+        Util::spinRunLoop();
+
+    // Both iframes load in the same process. The first one commits, and the second one stays provisional.
+    pid_t mainFrameProcess = [webView _webProcessIdentifier];
+    pid_t iframeProcess = 0;
+    while (!iframeProcess) {
+        for (_WKFrameTreeNode *child in [webView mainFrame].childFrames) {
+            if (child.info._processIdentifier != mainFrameProcess)
+                iframeProcess = child.info._processIdentifier;
+        }
+        Util::spinRunLoop();
+    }
+
+    kill(iframeProcess, SIGKILL);
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_EQ([webView _webProcessIdentifier], mainFrameProcess);
+    EXPECT_EQ(terminationCount, 0u);
+}
+
 TEST(SiteIsolation, SharedProcessShutsDownWhenLastRemoteFrameIsRemoved)
 {
     HTTPServer server({
