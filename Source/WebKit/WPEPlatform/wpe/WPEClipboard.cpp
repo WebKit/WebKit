@@ -32,6 +32,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -99,6 +100,7 @@ WEBKIT_DEFINE_TYPE(WPEClipboard, wpe_clipboard, G_TYPE_OBJECT)
 struct _WPEClipboardContent {
     std::optional<UTF8CString> text;
     std::optional<HashMap<const char*, GRefPtr<GBytes>>> buffers;
+    Vector<const char*> formats;
     int referenceCount { 1 };
 };
 G_DEFINE_BOXED_TYPE(WPEClipboardContent, wpe_clipboard_content, wpe_clipboard_content_ref, wpe_clipboard_content_unref)
@@ -273,14 +275,8 @@ void wpe_clipboard_set_content(WPEClipboard* clipboard, WPEClipboardContent* con
 #else
         formats = adoptGRef(g_ptr_array_new());
 #endif
-        if (content->text) {
-            g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(g_intern_static_string("text/plain"))));
-            g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(g_intern_static_string("text/plain;charset=utf-8"))));
-        }
-        if (content->buffers) {
-            for (const auto* format : content->buffers->keys())
-                g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(format)));
-        }
+        for (const auto* format : content->formats)
+            g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(format)));
 #if !GLIB_CHECK_VERSION(2, 74, 0)
         // Null-terminate pdata without counting the terminator in len.
         g_ptr_array_add(formats.get(), nullptr);
@@ -432,6 +428,10 @@ void wpe_clipboard_content_set_text(WPEClipboardContent* content, const char* te
 {
     g_return_if_fail(content);
 
+    if (!content->text) {
+        content->formats.append(g_intern_static_string("text/plain"));
+        content->formats.append(g_intern_static_string("text/plain;charset=utf-8"));
+    }
     content->text = UTF8CString::unsafeFromUTF8(text);
 }
 
@@ -465,7 +465,9 @@ void wpe_clipboard_content_set_bytes(WPEClipboardContent* content, const char* f
 
     if (!content->buffers)
         content->buffers = HashMap<const char*, GRefPtr<GBytes>>();
-    content->buffers->add(g_intern_string(format), bytes);
+    const auto* internalFormat = g_intern_string(format);
+    if (content->buffers->add(internalFormat, bytes).isNewEntry)
+        content->formats.append(internalFormat);
 }
 
 /**

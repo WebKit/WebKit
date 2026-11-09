@@ -363,8 +363,6 @@ js/dom/lockdown-mode [ Skip ]
 
 # editing/pasteboard tests that fail on WPE.
 editing/pasteboard/copy-crash.html [ Skip ]
-editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Failure ]
-editing/pasteboard/data-transfer-get-data-on-paste-skipped-content.html [ Failure ]
 editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-file.html [ Skip ]
 editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]

@@ -122,12 +122,12 @@ void WebPasteboardProxy::writeToClipboard(const String&, SelectionData&& selecti
 #if ENABLE(WPE_PLATFORM)
     if (WKWPE::isUsingWPEPlatformAPI()) {
         GRefPtr<WPEClipboardContent> content = adoptGRef(wpe_clipboard_content_new());
-        if (selectionData.hasText())
-            wpe_clipboard_content_set_text(content.get(), selectionData.text().utf8().legacyCStringPointer());
-        if (selectionData.hasMarkup())
-            setClipboardContentFromSpan(content.get(), "text/html", selectionData.markup().utf8().span());
         if (selectionData.hasURIList())
             setClipboardContentFromSpan(content.get(), "text/uri-list", selectionData.uriList().utf8().span());
+        if (selectionData.hasMarkup())
+            setClipboardContentFromSpan(content.get(), "text/html", selectionData.markup().utf8().span());
+        if (selectionData.hasText())
+            wpe_clipboard_content_set_text(content.get(), selectionData.text().utf8().legacyCStringPointer());
         if (selectionData.canSmartReplace()) {
             GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
             wpe_clipboard_content_set_bytes(content.get(), "application/vnd.wpewebkit.smartpaste", bytes.get());
