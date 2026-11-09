@@ -111,25 +111,25 @@ final class MockPhoneNumberPossessionManager: PhoneNumberPossessionManaging {
         }
 
         var response = WebCore.PhoneNumberPossessionResponse(
-            encryptedPNPIWithProof: JSC.ArrayBuffer.createFromSpan(pnpiWithProofJSON.span),
+            encryptedPNPIWithProof: JSC.RefArrayBuffer(arrayBuffer(pnpiWithProofJSON)),
             aggregatorData: .init(),
             carrierPubKey: .init(),
             encryptedMSISDN: .init(),
-            clientDataJSON: JSC.ArrayBuffer.createFromSpan(clientDataJSON.span),
+            clientDataJSON: JSC.RefArrayBuffer(arrayBuffer(clientDataJSON)),
             portingZKP: .init()
         )
 
         if configuration.includesOptionalFields {
             var aggregatorData = WebCore.AggregatorResponseDataFields()
-            aggregatorData.encryptedProviderErrorInfo = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x03, count: 16).span).get())
-            aggregatorData.encryptedZKPEncryptionKey = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x04, count: 32).span).get())
+            aggregatorData.encryptedProviderErrorInfo = .init(arrayBuffer(Data(repeating: 0x03, count: 16)))
+            aggregatorData.encryptedZKPEncryptionKey = .init(arrayBuffer(Data(repeating: 0x04, count: 32)))
             response.aggregatorData = .init(aggregatorData)
-            response.carrierPubKey = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x05, count: 65).span).get())
-            response.portingZKP = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x09, count: 32).span).get())
+            response.carrierPubKey = .init(arrayBuffer(Data(repeating: 0x05, count: 65)))
+            response.portingZKP = .init(arrayBuffer(Data(repeating: 0x09, count: 32)))
         }
 
         if request.pointee.desiredResponseType == .PossessionIdentifierAndPhoneNumber {
-            response.encryptedMSISDN = .init(JSC.ArrayBuffer.createFromSpan(Data(repeating: 0x07, count: 16).span).get())
+            response.encryptedMSISDN = .init(arrayBuffer(Data(repeating: 0x07, count: 16)))
         }
 
         return response
@@ -157,5 +157,13 @@ private func data(_ bytes: Span<UInt8>) -> Data {
     return data
 }
 #endif
+
+private func arrayBuffer(_ data: Data) -> JSC.ArrayBuffer {
+    #if compiler(>=6.4)
+    JSC.ArrayBuffer.createFromSpan(data.span)
+    #else
+    JSC.ArrayBuffer.createFromSpan(data.span).get()
+    #endif
+}
 
 #endif // ENABLE_PHONE_NUMBER_POSSESSION

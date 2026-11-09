@@ -32,6 +32,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(IOSURFACE)
@@ -163,7 +164,7 @@ private:
     WebCore::IntPoint m_viewScrollPosition; // Scroll position at snapshot time. Integral to make comparison reliable.
     WebCore::FloatBoxExtent m_computedObscuredInset;
     WebCore::SecurityOriginData m_origin;
-};
+} SWIFT_SHARED_REFERENCE(refViewSnapshot, derefViewSnapshot) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 using RefPtrViewSnapshot = RefPtr<ViewSnapshot>;
 
@@ -196,3 +197,13 @@ private:
 };
 
 } // namespace WebKit
+
+inline void refViewSnapshot(WebKit::ViewSnapshot* WTF_NONNULL obj)
+{
+    obj->ref();
+}
+
+inline void derefViewSnapshot(WebKit::ViewSnapshot* WTF_NONNULL obj)
+{
+    obj->deref();
+}
