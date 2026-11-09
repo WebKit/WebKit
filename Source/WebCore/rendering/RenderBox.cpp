@@ -5463,14 +5463,13 @@ void RenderBox::applyAutomaticContentBasedMinimumSize(LayoutUnit& minLogicalWidt
     // "The automatic minimum size in the ratio-dependent axis of a box with a preferred
     // aspect ratio that is neither a replaced element nor a scroll container is its
     // min-content size capped by its maximum size." https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
-    auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicKeywordLogicalWidths();
+    auto minContentLogicalWidth = computeIntrinsicKeywordLogicalWidths().first;
     if (auto& logicalMinWidth = style().logicalMinWidth(); logicalMinWidth.isCalcSize()) {
         auto calcSizeLogicalMinWidth = logicalMinWidth.calcSize();
         minContentLogicalWidth = resolveCalcSizeLogicalWidth(calcSizeLogicalMinWidth, minContentLogicalWidth, 0_lu);
-        maxContentLogicalWidth = resolveCalcSizeLogicalWidth(calcSizeLogicalMinWidth, maxContentLogicalWidth, 0_lu);
     }
     minLogicalWidth = std::max(minLogicalWidth, minContentLogicalWidth);
-    maxLogicalWidth = std::max(maxLogicalWidth, maxContentLogicalWidth);
+    maxLogicalWidth = std::max(maxLogicalWidth, minLogicalWidth);
 }
 
 std::optional<double> RenderBox::preferredAspectRatio() const
