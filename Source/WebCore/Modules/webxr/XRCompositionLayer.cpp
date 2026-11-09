@@ -123,11 +123,7 @@ const WebXRSpace& XRCompositionLayer::space() const
 
 void XRCompositionLayer::setSpace(WebXRSpace& space)
 {
-    if (m_space == &space)
-        return;
-
     m_space = space;
-    setNeedsRedraw(true);
 }
 
 const WebXRRigidTransform& XRCompositionLayer::transform() const
@@ -138,11 +134,7 @@ const WebXRRigidTransform& XRCompositionLayer::transform() const
 
 void XRCompositionLayer::setTransform(WebXRRigidTransform& transform)
 {
-    if (m_transform == &transform)
-        return;
-
     m_transform = transform;
-    setNeedsRedraw(true);
 }
 
 void XRCompositionLayer::startFrame(PlatformXR::FrameData& frameData)
