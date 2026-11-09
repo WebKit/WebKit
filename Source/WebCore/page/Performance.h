@@ -122,6 +122,7 @@ public:
     void addResourceTiming(ResourceTiming&&);
 
     void reportFirstContentfulPaint(DOMHighResTimeStamp);
+    void reportVisibilityStateChange();
     void enqueueLargestContentfulPaint(Ref<LargestContentfulPaint>&&);
 
     void removeAllObservers();
