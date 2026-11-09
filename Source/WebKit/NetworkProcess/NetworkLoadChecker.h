@@ -216,6 +216,9 @@ private:
 
     // https://fetch.spec.whatwg.org/#navigation-tao-check
     bool m_navigationTAOCheckPassed { false };
+
+    // https://fetch.spec.whatwg.org/#concept-request-tainted-origin
+    bool m_hasCrossOriginRedirectTaint { false };
 };
 
 }
