@@ -58,6 +58,7 @@ protocol CxxVector {
 
 /// Conform any WTF::Vector<WTF::Ref<T>> to this protocol to get useful extensions and iterators.
 protocol CxxRefVector: CxxVector where Element: CxxRef {
+    mutating func appendPointee(_ object: Element.Pointee)
 }
 
 // FIXME(rdar://164119356): conform to LosslessStringConvertible
@@ -100,7 +101,7 @@ extension CxxRefVector {
         var vec = Self()
         vec.reserveCapacity(array.count)
         for item in array {
-            vec.append(consuming: Element(item))
+            vec.appendPointee(item)
         }
         self = vec
     }

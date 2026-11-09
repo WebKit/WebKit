@@ -84,6 +84,23 @@ Ref<WebKit::WebBackForwardListItem> createItemFromState(const WebKit::BackForwar
 Vector<Ref<WebKit::WebBackForwardListItem>> createItemsFromState(const WebKit::BackForwardListState&, WebKit::WebPageProxyIdentifier pageIdentifier);
 WebKit::WebBackForwardListItem* itemAtIndexInBackForwardListItemVector(const Vector<Ref<WebKit::WebBackForwardListItem>>& items, size_t index);
 size_t frameStateChildCount(const WebKit::FrameState&);
+// Swift must not hold Ref temporaries: construct and move them on the C++ side.
+inline void appendFrameState(Vector<Ref<WebKit::FrameState>>& vector, WebKit::FrameState& frameState)
+{
+    vector.append(frameState);
+}
+inline void appendBackForwardListItem(Vector<Ref<WebKit::WebBackForwardListItem>>& vector, WebKit::WebBackForwardListItem& item)
+{
+    vector.append(item);
+}
+inline void replaceChildFrameState(WebKit::FrameState& frameState, WebKit::FrameState& child)
+{
+    frameState.replaceChildFrameState(child);
+}
+inline Ref<WebKit::WebBackForwardListItem> createBackForwardListItem(WebKit::FrameState& frameState, WebKit::WebPageProxyIdentifier pageIdentifier, std::optional<WebCore::FrameIdentifier> frameID, WebKit::BrowsingContextGroup* browsingContextGroup)
+{
+    return WebKit::WebBackForwardListItem::create(frameState, pageIdentifier, frameID, browsingContextGroup);
+}
 WebKit::FrameState* frameStateChildAtIndex(const WebKit::FrameState&, size_t index);
 
 // WebCore::Page is not visible to Swift.

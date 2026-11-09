@@ -44,10 +44,16 @@ extension WebKit.RefWebBackForwardListItem: CxxRef {
 
 extension WebKit.VectorRefFrameState: CxxRefVector {
     typealias Element = WebKit.RefFrameState
+    mutating func appendPointee(_ object: WebKit.FrameState) {
+        appendFrameState(&self, object)
+    }
 }
 
 extension WebKit.BackForwardListItemVector: CxxRefVector {
     typealias Element = WebKit.RefWebBackForwardListItem
+    mutating func appendPointee(_ object: WebKit.WebBackForwardListItem) {
+        appendBackForwardListItem(&self, object)
+    }
 }
 
 extension WebKit.VectorBackForwardListItemState: CxxVector {
@@ -1051,12 +1057,12 @@ final class WebBackForwardList {
         let frameStateRef = currentItem.copyMainFrameStateWithChildren()
         let frameState = frameStateRef.ptr()
         setBackForwardItemIdentifier(frameState: frameState, itemID: navigatedFrameState.itemID.pointee)
-        frameState.replaceChildFrameState(consuming: WebKit.RefFrameState(navigatedFrameState))
+        replaceChildFrameState(frameState, navigatedFrameState)
         return frameState
     }
 
     private func messageCheckItemURLs(
-        frameState: WebKit.RefFrameState,
+        frameState: WebKit.FrameState,
         process: WebKit.RefWebProcessProxy,
         depth: UInt32 = 0
     ) throws(InvalidMessage) {
@@ -1064,8 +1070,8 @@ final class WebBackForwardList {
 
         // 'nil' works around rdar://162310543
         // Safety: it's OK to pass a null pointer to these two functions; in fact it's the default
-        let itemURL = unsafe WTF.URL(frameState.ptr().urlString, nil)
-        let itemOriginalURL = unsafe WTF.URL(frameState.ptr().originalURLString, nil)
+        let itemURL = unsafe WTF.URL(frameState.urlString, nil)
+        let itemOriginalURL = unsafe WTF.URL(frameState.originalURLString, nil)
 
         #if WTF_PLATFORM_COCOA
         #if WTF_PLATFORM_MAC
@@ -1086,11 +1092,11 @@ final class WebBackForwardList {
         }
         #endif
 
-        let childCount = frameStateChildCount(frameState.ptr())
+        let childCount = frameStateChildCount(frameState)
         for i in 0..<childCount {
             // swift-format-ignore: NeverForceUnwrap
-            let child = frameStateChildAtIndex(frameState.ptr(), i)!
-            try messageCheckItemURLs(frameState: WebKit.RefFrameState(child), process: process, depth: depth + 1)
+            let child = frameStateChildAtIndex(frameState, i)!
+            try messageCheckItemURLs(frameState: child, process: process, depth: depth + 1)
         }
     }
 
@@ -1141,7 +1147,7 @@ final class WebBackForwardList {
                 )
         }
 
-        try messageCheckItemURLs(frameState: navigatedFrameState, process: process)
+        try messageCheckItemURLs(frameState: navigatedFrameState.ptr(), process: process)
 
         let navigatedFrameID = navigatedFrameState.ptr().frameID
         let targetFrame = WebKit.WebFrameProxy.webFrame(navigatedFrameID)
@@ -1174,14 +1180,13 @@ final class WebBackForwardList {
             return
         }
 
-        let item = WebKit.WebBackForwardListItem
-            .create(
-                consuming: WebKit.RefFrameState(completeFrameStateForNavigation(navigatedFrameState: navigatedFrameState.ptr())),
-                webPageProxy.identifier(),
-                navigatedFrameID,
-                browsingContextGroup
-            )
-            .ptr()
+        let item = createBackForwardListItem(
+            completeFrameStateForNavigation(navigatedFrameState: navigatedFrameState.ptr()),
+            webPageProxy.identifier(),
+            navigatedFrameID,
+            browsingContextGroup
+        )
+        .ptr()
         item.setResourceDirectoryURL(consuming: webPageProxy.currentResourceDirectoryURL())
         item.setEnhancedSecurity(process.ptr().enhancedSecurity())
         if loadedWebArchive == WebKit.LoadedWebArchive.Yes {
@@ -1219,7 +1224,7 @@ final class WebBackForwardList {
         frameState: WebKit.RefFrameState
     ) throws(InvalidMessage) {
         let process = WebKit.WebProcessProxy.fromConnection(connection)
-        try messageCheckItemURLs(frameState: frameState, process: process)
+        try messageCheckItemURLs(frameState: frameState.ptr(), process: process)
 
         guard let item = currentEntry() else {
             return
@@ -1249,7 +1254,7 @@ final class WebBackForwardList {
         // and therefore present an unexpected file: URL.
         // We can safely skip the message check in these cases.
         if !handlingProvisionalMessage {
-            try messageCheckItemURLs(frameState: frameState, process: process)
+            try messageCheckItemURLs(frameState: frameState.ptr(), process: process)
         }
 
         #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
