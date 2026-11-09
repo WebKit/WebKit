@@ -117,4 +117,6 @@ endif ()
 
 if (ENABLE_WPE_PLATFORM_WAYLAND)
     ADD_WPE_PLATFORM_TEST(TestDisplayWayland ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/wpe-platform/TestDisplayWayland.cpp)
+    target_include_directories(TestDisplayWayland SYSTEM PRIVATE ${WAYLAND_INCLUDE_DIRS})
+    target_link_libraries(TestDisplayWayland ${WAYLAND_LIBRARIES})
 endif ()

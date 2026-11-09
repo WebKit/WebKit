@@ -26,7 +26,12 @@
 #include "config.h"
 
 #include "WPEWaylandPlatformTest.h"
+#include <sys/eventfd.h>
+#include <unistd.h>
+#include <wayland-server.h>
 #include <wpe/wayland/wpe-wayland.h>
+#include <wtf/Lock.h>
+#include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
 
@@ -116,6 +121,160 @@ static void testDisplayWaylandAvailableInputDevices(WPEWaylandPlatformTest* test
     g_assert_false(devices & WPE_AVAILABLE_INPUT_DEVICE_TOUCHSCREEN);
 }
 
+class TestCompositor {
+public:
+    TestCompositor()
+        : m_display(wl_display_create())
+        , m_eventFD(eventfd(0, EFD_CLOEXEC))
+    {
+        m_socketName = wl_display_add_socket_auto(m_display);
+        wl_display_init_shm(m_display);
+        wl_global_create(m_display, &wl_compositor_interface, 4, const_cast<struct wl_interface*>(&wl_compositor_interface), bind);
+        wl_global_create(m_display, &wl_data_device_manager_interface, 3, const_cast<struct wl_interface*>(&wl_data_device_manager_interface), bind);
+        wl_event_loop_add_fd(wl_display_get_event_loop(m_display), m_eventFD, WL_EVENT_READABLE, [](int fd, uint32_t, void* data) -> int {
+            uint64_t value;
+            if (read(fd, &value, sizeof(value)) != sizeof(value))
+                return 0;
+
+            auto& compositor = *static_cast<TestCompositor*>(data);
+            Vector<Function<void()>> tasks;
+            {
+                Locker locker { compositor.m_tasksLock };
+                tasks = WTF::move(compositor.m_tasks);
+            }
+            for (auto& task : tasks)
+                task();
+            return 0;
+        }, this);
+        m_thread = Thread::create("TestCompositor"_s, [this] {
+            wl_display_run(m_display);
+        });
+    }
+
+    ~TestCompositor()
+    {
+        runInCompositorThread([this] {
+            wl_display_terminate(m_display);
+        });
+        m_thread->waitForCompletion();
+        wl_display_destroy_clients(m_display);
+        wl_display_destroy(m_display);
+        close(m_eventFD);
+    }
+
+    const char* socketName() const { return m_socketName; }
+
+    void addSeat(uint32_t capabilities)
+    {
+        runInCompositorThread([this, capabilities] {
+            m_seats.append(wl_global_create(m_display, &wl_seat_interface, 5, GUINT_TO_POINTER(capabilities), [](struct wl_client* client, void* data, uint32_t version, uint32_t id) {
+                wl_seat_send_capabilities(createResource(client, &wl_seat_interface, version, id), GPOINTER_TO_UINT(data));
+            }));
+        });
+    }
+
+    void removeFirstSeat()
+    {
+        runInCompositorThread([this] {
+            wl_global_destroy(m_seats[0]);
+            m_seats.removeAt(0);
+        });
+    }
+
+private:
+    void runInCompositorThread(Function<void()>&& task)
+    {
+        {
+            Locker locker { m_tasksLock };
+            m_tasks.append(WTF::move(task));
+        }
+        uint64_t value = 1;
+        if (write(m_eventFD, &value, sizeof(value)) != sizeof(value))
+            g_assert_not_reached();
+    }
+
+    static struct wl_resource* createResource(struct wl_client* client, const struct wl_interface* interface, uint32_t version, uint32_t id)
+    {
+        auto* resource = wl_resource_create(client, interface, version, id);
+        wl_resource_set_dispatcher(resource, dispatch, nullptr, nullptr, nullptr);
+        return resource;
+    }
+
+    static void bind(struct wl_client* client, void* data, uint32_t version, uint32_t id)
+    {
+        createResource(client, static_cast<const struct wl_interface*>(data), version, id);
+    }
+
+    static int dispatch(const void*, void* target, uint32_t, const struct wl_message* message, union wl_argument* arguments)
+    {
+        auto* resource = static_cast<struct wl_resource*>(target);
+        if (!g_strcmp0(message->name, "destroy") || !g_strcmp0(message->name, "release")) {
+            wl_resource_destroy(resource);
+            return 0;
+        }
+
+        unsigned argument = 0;
+        for (const char* signature = message->signature; *signature; ++signature) {
+            if (g_ascii_isdigit(*signature) || *signature == '?')
+                continue;
+            if (*signature == 'n')
+                createResource(wl_resource_get_client(resource), message->types[argument], wl_resource_get_version(resource), arguments[argument].n);
+            ++argument;
+        }
+        return 0;
+    }
+
+    struct wl_display* m_display { nullptr };
+    Vector<struct wl_global*> m_seats;
+    const char* m_socketName { nullptr };
+    int m_eventFD { -1 };
+    RefPtr<Thread> m_thread;
+    Lock m_tasksLock;
+    Vector<Function<void()>> m_tasks WTF_GUARDED_BY_LOCK(m_tasksLock);
+};
+
+static void waitForAvailableInputDevices(WPEDisplay* display, WPEAvailableInputDevices expected)
+{
+    bool timedOut = false;
+    auto timeoutID = g_timeout_add_seconds(5, [](gpointer data) -> gboolean {
+        *static_cast<bool*>(data) = true;
+        return G_SOURCE_REMOVE;
+    }, &timedOut);
+    while (wpe_display_get_available_input_devices(display) != expected && !timedOut)
+        g_main_context_iteration(nullptr, TRUE);
+    if (!timedOut)
+        g_source_remove(timeoutID);
+    g_assert_cmpuint(wpe_display_get_available_input_devices(display), ==, expected);
+}
+
+static void testDisplayWaylandSeatAddedAndRemoved(WPEWaylandPlatformTest* test, gconstpointer)
+{
+    TestCompositor compositor;
+    if (!compositor.socketName()) {
+        g_test_skip("Could not create a Wayland socket");
+        return;
+    }
+
+    GUniqueOutPtr<GError> error;
+    g_assert_true(wpe_display_wayland_connect(WPE_DISPLAY_WAYLAND(test->display()), compositor.socketName(), &error.outPtr()));
+    g_assert_no_error(error.get());
+    g_assert_cmpuint(wpe_display_get_available_input_devices(test->display()), ==, WPE_AVAILABLE_INPUT_DEVICE_NONE);
+    g_assert_true(WPE_IS_CLIPBOARD_WAYLAND(wpe_display_get_clipboard(test->display())));
+
+    compositor.addSeat(WL_SEAT_CAPABILITY_TOUCH);
+    waitForAvailableInputDevices(test->display(), WPE_AVAILABLE_INPUT_DEVICE_TOUCHSCREEN);
+
+    compositor.removeFirstSeat();
+    waitForAvailableInputDevices(test->display(), WPE_AVAILABLE_INPUT_DEVICE_NONE);
+
+    compositor.addSeat(WL_SEAT_CAPABILITY_TOUCH);
+    waitForAvailableInputDevices(test->display(), WPE_AVAILABLE_INPUT_DEVICE_TOUCHSCREEN);
+
+    compositor.addSeat(WL_SEAT_CAPABILITY_POINTER);
+    compositor.removeFirstSeat();
+    waitForAvailableInputDevices(test->display(), WPE_AVAILABLE_INPUT_DEVICE_MOUSE);
+}
+
 static void testDisplayWaylandCreateView(WPEWaylandPlatformTest* test, gconstpointer)
 {
     connectOrSkipIfNotUnderWayland();
@@ -147,6 +306,7 @@ void beforeAll()
     WPEWaylandPlatformTest::add("DisplayWayland", "screens", testDisplayWaylandScreens);
     WPEWaylandPlatformTest::add("DisplayWayland", "available-input-devices", testDisplayWaylandAvailableInputDevices);
     WPEWaylandPlatformTest::add("DisplayWayland", "create-view", testDisplayWaylandCreateView);
+    WPEWaylandPlatformTest::add("DisplayWayland", "seat-added-and-removed", testDisplayWaylandSeatAddedAndRemoved);
 }
 
 void afterAll()
