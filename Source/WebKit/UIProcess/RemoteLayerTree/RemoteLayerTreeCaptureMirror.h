@@ -33,7 +33,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 
-OBJC_CLASS CALayer;
+OBJC_CLASS WKCaptureMirrorContainerLayer;
 
 namespace IPC {
 class Connection;
@@ -47,7 +47,7 @@ struct MainFrameData;
 struct RemoteLayerTreeMirrorSeed;
 
 // A copy of the layer tree of a web view for tab capture, fed by the same transactions as the primary tree.
-// Backing stores can't be replayed, so they are copied from the primary tree instead.
+// Backing stores and CA animations can't be replayed, so they are copied from the primary tree instead.
 class RemoteLayerTreeCaptureMirror {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeCaptureMirror);
     WTF_MAKE_NONCOPYABLE(RemoteLayerTreeCaptureMirror);
@@ -69,15 +69,19 @@ public:
     void didCommitTransactionToPrimaryTree(const IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const TransactionID&, const RemoteLayerTreeHost& primaryHost);
     void didSetLayerContentsInPrimaryTree(WebCore::PlatformLayerIdentifier, const RemoteLayerTreeHost& primaryHost);
 
+    // CA drops the animations of layers committed outside of a context, as the mirror is until its container is parented.
+    void copyAnimationsFromPrimaryTree(const RemoteLayerTreeHost& primaryHost);
+
     void processDidTerminate(WebCore::ProcessIdentifier);
 
 private:
     bool shouldApplyTransaction(const TransactionID&) const;
     void copyContentsFromPrimaryLayer(WebCore::PlatformLayerIdentifier, const RemoteLayerTreeHost& primaryHost);
+    void copyAnimationsFromPrimaryLayer(WebCore::PlatformLayerIdentifier, const RemoteLayerTreeHost& primaryHost);
     void updateContainerLayer(const RemoteLayerTreeHost& primaryHost);
 
     RemoteLayerTreeHost m_host;
-    const RetainPtr<CALayer> m_containerLayer;
+    const RetainPtr<WKCaptureMirrorContainerLayer> m_containerLayer;
     HashSet<WebCore::ProcessIdentifier> m_processesAwaitingSeed;
     HashMap<WebCore::ProcessIdentifier, TransactionID> m_lastTransactionCoveredBySeed;
 };

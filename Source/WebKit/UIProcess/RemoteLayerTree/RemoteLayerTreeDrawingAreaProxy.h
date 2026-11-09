@@ -162,6 +162,7 @@ public:
     void disableCaptureMirrorLayerTree();
     bool hasCaptureMirrorLayerTree() const { return !!m_captureMirror; }
     RetainPtr<CALayer> captureMirrorLayer() const;
+    void captureMirrorDidEnterLayerTree();
 
     RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 

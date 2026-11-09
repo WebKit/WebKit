@@ -908,6 +908,12 @@ void RemoteLayerTreeDrawingAreaProxy::destroyCaptureMirrorLayerTree()
     RELEASE_LOG(RemoteLayerTree, "RemoteLayerTreeDrawingAreaProxy(%" PRIu64 ")::destroyCaptureMirrorLayerTree", identifier().toUInt64());
 }
 
+void RemoteLayerTreeDrawingAreaProxy::captureMirrorDidEnterLayerTree()
+{
+    if (m_captureMirror && m_remoteLayerTreeHost)
+        m_captureMirror->copyAnimationsFromPrimaryTree(*m_remoteLayerTreeHost);
+}
+
 RetainPtr<CALayer> RemoteLayerTreeDrawingAreaProxy::captureMirrorLayer() const
 {
     return m_captureMirror ? RetainPtr { m_captureMirror->containerLayer() } : nullptr;

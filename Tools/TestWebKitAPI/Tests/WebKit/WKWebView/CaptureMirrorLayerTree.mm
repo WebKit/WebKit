@@ -233,6 +233,57 @@ TEST(CaptureMirrorLayerTree, UpdatesAfterAttaching)
     mirror.expectMatchesPrimaryTree();
 }
 
+static NSString *const animationContent = @""
+    "<style>"
+    "@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }"
+    "@keyframes fade { from { opacity: 1; } to { opacity: 0.2; } }"
+    "div { position: absolute; width: 100px; height: 100px; background: blue; }"
+    "#spinning { left: 10px; top: 10px; animation: spin 2s linear infinite; }"
+    "#paused { left: 120px; top: 10px; animation: spin 2s linear infinite paused; animation-delay: -0.5s; }"
+    "#later { left: 230px; top: 10px; }"
+    ".fading { animation: fade 1s ease-in-out infinite alternate; }"
+    "</style>"
+    "<div id='spinning'></div><div id='paused'></div><div id='later'></div>";
+
+TEST(CaptureMirrorLayerTree, ThreadedAnimations)
+{
+    RetainPtr webView = createWebView(^(WKWebViewConfiguration *configuration) {
+        setFeatureEnabled(configuration, @"ThreadedTimeBasedAnimationsEnabled", true);
+    });
+    [webView synchronouslyLoadHTMLString:animationContent];
+    [webView waitForNextPresentationUpdate];
+
+    // These animations started before the mirror, so they come with its seed.
+    CaptureMirror mirror(webView.get());
+    ASSERT_NOT_NULL(mirror.containerLayer());
+    mirror.waitUntilMatchesPrimaryTree();
+
+    // This one goes through regular commits.
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('later').classList.add('fading'); 1"];
+    mirror.waitUntilMatchesPrimaryTree();
+}
+
+TEST(CaptureMirrorLayerTree, CoreAnimationAnimations)
+{
+    RetainPtr webView = createWebView(^(WKWebViewConfiguration *configuration) {
+        setFeatureEnabled(configuration, @"ThreadedTimeBasedAnimationsEnabled", false);
+    });
+    [webView synchronouslyLoadHTMLString:animationContent];
+    [webView waitForNextPresentationUpdate];
+
+    // CA animations can't be replayed from the seed, so they are copied from the primary tree.
+    CaptureMirror mirror(webView.get());
+    ASSERT_NOT_NULL(mirror.containerLayer());
+    mirror.expectMatchesPrimaryTree();
+    EXPECT_TRUE([mirror.mirrorTreeAsText() containsString:@"animation "]);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('later').classList.add('fading'); 1"];
+    mirror.expectMatchesPrimaryTree();
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('spinning').style.animation = 'none'; 1"];
+    mirror.expectMatchesPrimaryTree();
+}
+
 TEST(CaptureMirrorLayerTree, WebGL)
 {
     RetainPtr webView = createWebView();
