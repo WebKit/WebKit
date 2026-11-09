@@ -101,8 +101,7 @@
     XCUIElement *clearButton = urlField.buttons[@"Clear text"];
     if (clearButton.exists)
         [clearButton tap];
-    [urlField typeText:url];
-    [app.buttons[@"Go To URL"] tap];
+    [urlField typeText:[url stringByAppendingString:@"\n"]];
 }
 
 - (void)requireMinFPS:(NSTimeInterval)minFPS sampleDurationSeconds:(NSTimeInterval)sampleSeconds message:(NSString *)message {
