@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR)
 
 #include "DOMHighResTimeStamp.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "PlatformXR.h"
 #include "TransformationMatrix.h"
 #include <JavaScriptCore/Float32Array.h>
@@ -43,11 +44,16 @@ class WebXRJointPose;
 class WebXRJointSpace;
 class WebXRPose;
 class WebXRReferenceSpace;
+class WebXRRigidTransform;
 class WebXRSession;
 class WebXRSpace;
 class WebXRViewerPose;
 template<typename> class ExceptionOr;
 
+#if ENABLE(WEBXR_ANCHORS)
+class WebXRAnchor;
+class WebXRAnchorSet;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
 class WebXRHitTestResult;
 class WebXRHitTestSource;
@@ -77,6 +83,11 @@ public:
     ExceptionOr<bool> fillPoses(const Document&, const Vector<Ref<WebXRSpace>>&, const WebXRSpace&, Float32Array&);
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+    using CreateAnchorPromise = DOMPromiseDeferred<IDLInterface<WebXRAnchor>>;
+    ExceptionOr<void> createAnchor(Document&, const WebXRRigidTransform&, WebXRSpace&, CreateAnchorPromise&&);
+    WebXRAnchorSet& trackedAnchors();
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     ExceptionOr<Vector<Ref<WebXRHitTestResult>>> getHitTestResults(const WebXRHitTestSource&);
     ExceptionOr<Vector<Ref<WebXRTransientInputHitTestResult>>> getHitTestResultsForTransientInput(const WebXRTransientInputHitTestSource&);
@@ -114,6 +125,9 @@ private:
     const Ref<WebXRSession> m_session;
 #if ENABLE(WEBXR_PLANE_DETECTION)
     RefPtr<WebXRPlaneSet> m_detectedPlanes;
+#endif
+#if ENABLE(WEBXR_ANCHORS)
+    RefPtr<WebXRAnchorSet> m_trackedAnchors;
 #endif
 };
 

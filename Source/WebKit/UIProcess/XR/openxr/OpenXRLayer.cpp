@@ -30,6 +30,7 @@
 #include "OpenXRLayer.h"
 
 #include "OpenXRGraphicsBinding.h"
+#include "OpenXRUtils.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -307,9 +308,7 @@ XrCompositionLayerBaseHeader* OpenXRQuadLayer::fillLayer(size_t index, XrEyeVisi
     xrLayer.eyeVisibility = eyeVisibility;
 
     ASSERT(layer.quadLayerData);
-    auto pose = layer.quadLayerData->poseInLocalSpace;
-    xrLayer.pose.position = { pose.position.x(), pose.position.y(), pose.position.z() };
-    xrLayer.pose.orientation = { pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w };
+    xrLayer.pose = PoseToXrPosef(layer.quadLayerData->poseInLocalSpace);
     xrLayer.size = { layer.quadLayerData->worldSize.width(), layer.quadLayerData->worldSize.height() };
 
     return reinterpret_cast<XrCompositionLayerBaseHeader*>(&xrLayer);
@@ -334,8 +333,7 @@ XrCompositionLayerBaseHeader* OpenXREquirectLayer::fillLayer(size_t index, XrEye
 
     ASSERT(layer.equirectLayerData);
     auto& equirectData = *layer.equirectLayerData;
-    xrLayer.pose.position = { equirectData.poseInLocalSpace.position.x(), equirectData.poseInLocalSpace.position.y(), equirectData.poseInLocalSpace.position.z() };
-    xrLayer.pose.orientation = { equirectData.poseInLocalSpace.orientation.x, equirectData.poseInLocalSpace.orientation.y, equirectData.poseInLocalSpace.orientation.z, equirectData.poseInLocalSpace.orientation.w };
+    xrLayer.pose = PoseToXrPosef(equirectData.poseInLocalSpace);
     xrLayer.radius = equirectData.radius;
     xrLayer.centralHorizontalAngle = equirectData.centralHorizontalAngle;
     xrLayer.upperVerticalAngle = equirectData.upperVerticalAngle;
@@ -365,8 +363,7 @@ XrCompositionLayerBaseHeader* OpenXRCylinderLayer::fillLayer(size_t index, XrEye
 
     ASSERT(layer.cylinderLayerData);
     auto& cylinderData = *layer.cylinderLayerData;
-    xrLayer.pose.position = { cylinderData.poseInLocalSpace.position.x(), cylinderData.poseInLocalSpace.position.y(), cylinderData.poseInLocalSpace.position.z() };
-    xrLayer.pose.orientation = { cylinderData.poseInLocalSpace.orientation.x, cylinderData.poseInLocalSpace.orientation.y, cylinderData.poseInLocalSpace.orientation.z, cylinderData.poseInLocalSpace.orientation.w };
+    xrLayer.pose = PoseToXrPosef(cylinderData.poseInLocalSpace);
     xrLayer.radius = cylinderData.radius;
     xrLayer.centralAngle = cylinderData.centralAngle;
     xrLayer.aspectRatio = cylinderData.aspectRatio;

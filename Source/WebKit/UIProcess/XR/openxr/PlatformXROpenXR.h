@@ -45,6 +45,9 @@ class OpenXRHitTestManager;
 class OpenXRPlaneDetectionManager;
 #endif
 class OpenXRGraphicsBinding;
+#if ENABLE(WEBXR_ANCHORS)
+class OpenXRAnchorManager;
+#endif
 class OpenXRInput;
 class OpenXRLayer;
 class OpenXRSwapchain;
@@ -73,6 +76,10 @@ public:
     void scheduleAnimationFrame(WebPageProxy&, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback) override;
     void submitFrame(WebPageProxy&, Vector<PlatformXR::DeviceLayer>&&) override;
 
+#if ENABLE(WEBXR_ANCHORS)
+    void createAnchor(WebPageProxy&, const PlatformXR::FrameData::Pose&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&&) override;
+    void deleteAnchor(WebPageProxy&, PlatformXR::AnchorIdentifier) override;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     void requestHitTestSource(WebPageProxy&, const PlatformXR::HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&&) override;
     void deleteHitTestSource(WebPageProxy&, PlatformXR::HitTestSource) override;
@@ -147,6 +154,9 @@ private:
 #endif
 #if ENABLE(WEBXR_PLANE_DETECTION)
     std::unique_ptr<OpenXRPlaneDetectionManager> m_planeDetectionManager;
+#endif
+#if ENABLE(WEBXR_ANCHORS)
+    std::unique_ptr<OpenXRAnchorManager> m_anchorManager;
 #endif
 };
 

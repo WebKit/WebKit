@@ -2957,6 +2957,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/video-codecs/VideoCodecType.h
 
     platform/xr/PlatformXR.h
+    platform/xr/XRAnchorIdentifier.h
     platform/xr/XRHitTestSourceIdentifier.h
 
     plugins/PluginData.h

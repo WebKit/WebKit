@@ -38,6 +38,9 @@
 #include "PlatformXR.h"
 #include "Timer.h"
 #include "WebFakeXRInputController.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "WebFakeXRAnchorController.h"
+#endif
 #include "XRVisibilityState.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -46,6 +49,10 @@
 namespace WebCore {
 
 struct XRCanvasConfiguration;
+
+#if ENABLE(WEBXR_ANCHORS)
+class FakeXRAnchorCreationCallback;
+#endif
 
 class GraphicsContextGL;
 template<typename> class ExceptionOr;
@@ -100,6 +107,9 @@ public:
     void updateWorld(const FakeXRWorldInit&);
     void simulateIncompletePlaneDetectionData() { m_simulateIncompletePlaneData = true; }
 #endif
+#if ENABLE(WEBXR_ANCHORS)
+    void setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&&);
+#endif
 
 private:
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final;
@@ -115,6 +125,10 @@ private:
     std::optional<PlatformXR::LayerInfo> createCompositionLayer(PlatformXR::CompositionLayerType, IntSize, PlatformXR::LayerLayout, PlatformXR::LayerUpdateMode) final;
 #endif
     void deleteLayer(PlatformXR::LayerHandle) final;
+#if ENABLE(WEBXR_ANCHORS)
+    void createAnchor(const PlatformXR::FrameData::Pose&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&&) final;
+    void deleteAnchor(PlatformXR::AnchorIdentifier) final;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     void requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&&) final;
     void deleteHitTestSource(PlatformXR::HitTestSource) final;
@@ -139,6 +153,10 @@ private:
 #if ENABLE(WEBXR_HIT_TEST)
     HashMap<PlatformXR::HitTestSource, UniqueRef<PlatformXR::HitTestOptions>> m_hitTestSources;
     HashMap<PlatformXR::TransientInputHitTestSource, UniqueRef<PlatformXR::TransientInputHitTestOptions>> m_transientInputHitTestSources;
+#endif
+#if ENABLE(WEBXR_ANCHORS)
+    RefPtr<FakeXRAnchorCreationCallback> m_anchorCreationCallback;
+    HashMap<PlatformXR::AnchorIdentifier, Ref<WebFakeXRAnchorController>> m_anchors;
 #endif
 #if ENABLE(WEBXR_HIT_TEST) || ENABLE(WEBXR_PLANE_DETECTION)
     FakeXRWorldInit m_world;
@@ -175,6 +193,9 @@ public:
 #if ENABLE(WEBXR_PLANE_DETECTION)
     void updateWorld(const FakeXRWorldInit& world) { m_device->updateWorld(world); }
     void simulateIncompletePlaneDetectionData() { m_device->simulateIncompletePlaneDetectionData(); }
+#endif
+#if ENABLE(WEBXR_ANCHORS)
+    void setAnchorCreationCallback(RefPtr<FakeXRAnchorCreationCallback>&&);
 #endif
 
     static ExceptionOr<PlatformXR::FrameData::Pose> parseRigidTransform(const FakeXRRigidTransformInit&);

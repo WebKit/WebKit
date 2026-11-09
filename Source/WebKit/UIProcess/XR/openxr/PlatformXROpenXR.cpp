@@ -29,6 +29,9 @@
 #if ENABLE(WEBXR) && USE(OPENXR)
 
 #include "APIUIClient.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "OpenXRAnchorManager.h"
+#endif
 #include "OpenXRExtensions.h"
 #include "OpenXRGraphicsBinding.h"
 #if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
@@ -119,6 +122,11 @@ void OpenXRCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoCallb
         deviceInfo.vrFeatures.append(PlatformXR::SessionFeature::HandTracking);
         deviceInfo.arFeatures.append(PlatformXR::SessionFeature::HandTracking);
     }
+#endif
+
+#if ENABLE(WEBXR_ANCHORS)
+    if (OpenXRExtensions::singleton().areAnchorExtensionsSupported())
+        deviceInfo.arFeatures.append(PlatformXR::SessionFeature::Anchors);
 #endif
 
 #if ENABLE(WEBXR_HIT_TEST)
@@ -659,6 +667,59 @@ void OpenXRCoordinator::deleteTransientInputHitTestSource(WebPageProxy& page, Pl
 }
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+void OpenXRCoordinator::createAnchor(WebPageProxy& page, const PlatformXR::FrameData::Pose& pose, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    WTF::switchOn(m_state,
+        [&](Idle&) {
+            completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError, "XR session is not active"_s });
+        },
+        [&](Active& active) {
+            if (active.pageIdentifier != page.webPageIDInMainFrameProcess()) {
+                completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
+                return;
+            }
+            if (active.renderState->terminateRequested.load()) {
+                completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
+                return;
+            }
+            active.renderQueue->dispatch([this, pose, completionHandler = WTF::move(completionHandler)] mutable {
+                if (!m_anchorManager && OpenXRExtensions::singleton().areAnchorExtensionsSupported())
+                    m_anchorManager = OpenXRAnchorManager::create(m_instance, m_session, m_localSpace);
+                if (!m_anchorManager) {
+                    callOnMainRunLoop([completionHandler = WTF::move(completionHandler)] mutable {
+                        completionHandler(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError });
+                    });
+                    return;
+                }
+                m_anchorManager->createAnchor(pose, [completionHandler = WTF::move(completionHandler)](WebCore::ExceptionOr<PlatformXR::AnchorIdentifier> result) mutable {
+                    callOnMainRunLoop([completionHandler = WTF::move(completionHandler), result = WTF::move(result)] mutable {
+                        completionHandler(WTF::move(result));
+                    });
+                });
+            });
+        });
+}
+
+void OpenXRCoordinator::deleteAnchor(WebPageProxy& page, PlatformXR::AnchorIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+    WTF::switchOn(m_state,
+        [&](Idle&) { },
+        [&](Active& active) {
+            if (active.pageIdentifier != page.webPageIDInMainFrameProcess())
+                return;
+            if (active.renderState->terminateRequested.load())
+                return;
+            active.renderQueue->dispatch([this, identifier] {
+                if (m_anchorManager)
+                    m_anchorManager->deleteAnchor(identifier);
+            });
+        });
+}
+#endif
+
 void OpenXRCoordinator::createInstance()
 {
     ASSERT(RunLoop::isMain());
@@ -722,14 +783,23 @@ void OpenXRCoordinator::createInstance()
 #endif
 #endif
 #endif
+#if defined(XR_EXT_future)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_FUTURE_EXTENSION_NAME ""_span))
+        extensions.append(const_cast<char*>(XR_EXT_FUTURE_EXTENSION_NAME));
+#endif
+#if defined(XR_EXT_spatial_entity)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME ""_span))
+        extensions.append(const_cast<char*>(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME));
+#endif
+#if defined(XR_EXT_spatial_anchor)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_SPATIAL_ANCHOR_EXTENSION_NAME ""_span))
+        extensions.append(const_cast<char*>(XR_EXT_SPATIAL_ANCHOR_EXTENSION_NAME));
+#endif
 #if ENABLE(WEBXR_PLANE_DETECTION) && defined(XR_EXT_spatial_plane_tracking)
     if (OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_FUTURE_EXTENSION_NAME ""_span)
         && OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME ""_span)
-        && OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_SPATIAL_PLANE_TRACKING_EXTENSION_NAME ""_span)) {
-        extensions.append(const_cast<char*>(XR_EXT_FUTURE_EXTENSION_NAME));
-        extensions.append(const_cast<char*>(XR_EXT_SPATIAL_ENTITY_EXTENSION_NAME));
+        && OpenXRExtensions::singleton().isExtensionSupported(XR_EXT_SPATIAL_PLANE_TRACKING_EXTENSION_NAME ""_span))
         extensions.append(const_cast<char*>(XR_EXT_SPATIAL_PLANE_TRACKING_EXTENSION_NAME));
-    }
 #endif
 #if defined(XR_KHR_composition_layer_equirect2)
     if (OpenXRExtensions::singleton().isExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME ""_span))
@@ -918,6 +988,9 @@ void OpenXRCoordinator::cleanupSessionAndAssociatedResources()
 #endif
 #if ENABLE(WEBXR_PLANE_DETECTION)
     m_planeDetectionManager.reset();
+#endif
+#if ENABLE(WEBXR_ANCHORS)
+    m_anchorManager.reset();
 #endif
 
     if (m_session != XR_NULL_HANDLE) {
@@ -1117,6 +1190,11 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> rend
             frameData.layers.add(layer.key, WTF::move(layerDataRef));
         }
     }
+
+#if ENABLE(WEBXR_ANCHORS)
+    if (m_anchorManager)
+        frameData.trackedAnchors = m_anchorManager->computeTrackedAnchors(renderState->frameState.predictedDisplayTime);
+#endif
 
 #if ENABLE(WEBXR_HIT_TEST)
     for (auto& pair : renderState->hitTestSources)

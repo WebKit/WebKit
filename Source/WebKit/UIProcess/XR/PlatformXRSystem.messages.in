@@ -48,6 +48,10 @@ messages -> PlatformXRSystem {
 #if !USE(OPENXR)
     SubmitFrame()
 #endif
+#if ENABLE(WEBXR_ANCHORS)
+    CreateAnchor(PlatformXR::Pose pose) -> (std::expected<PlatformXR::AnchorIdentifier, WebCore::ExceptionData> exceptionOrIdentifier)
+    DeleteAnchor(PlatformXR::AnchorIdentifier identifier)
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     RequestHitTestSource(PlatformXR::HitTestOptions hitTestOptions) -> (std::expected<PlatformXR::HitTestSource, WebCore::ExceptionData> exceptionOrSource)
     DeleteHitTestSource(PlatformXR::HitTestSource source)

@@ -232,6 +232,23 @@ void PlatformXRSystemProxy::deleteTransientInputHitTestSource(PlatformXR::Transi
 }
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+void PlatformXRSystemProxy::createAnchor(const PlatformXR::FrameData::Pose& pose, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>)>&& completionHandler)
+{
+    protect(m_page)->sendWithAsyncReply(Messages::PlatformXRSystem::CreateAnchor(pose), [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](std::expected<PlatformXR::AnchorIdentifier, WebCore::ExceptionData> exceptionOrIdentifier) mutable {
+        if (exceptionOrIdentifier)
+            completionHandler(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>(WTF::move(exceptionOrIdentifier.value())));
+        else
+            completionHandler(WebCore::ExceptionOr<PlatformXR::AnchorIdentifier>(exceptionOrIdentifier.error().toException()));
+    });
+}
+
+void PlatformXRSystemProxy::deleteAnchor(PlatformXR::AnchorIdentifier identifier)
+{
+    protect(m_page)->send(Messages::PlatformXRSystem::DeleteAnchor(identifier));
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(WEBXR)

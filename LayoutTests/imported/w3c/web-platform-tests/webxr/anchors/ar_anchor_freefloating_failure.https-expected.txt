@@ -1,0 +1,4 @@
+
+PASS Ensures free-floating anchor creation failure is handled correctly - webgl
+PASS Ensures free-floating anchor creation failure is handled correctly - webgl2
+

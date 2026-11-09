@@ -87,6 +87,9 @@ template: enum class WebCore::TextManipulationItemIdentifierType
 template: enum class WebCore::TextManipulationTokenIdentifierType
 template: struct WebCore::WindowIdentifierType
 template: enum class WebCore::WorkletGlobalScopeIdentifierType
+#if ENABLE(WEBXR_ANCHORS)
+template: struct WebCore::XRAnchorIdentifierType
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
 template: struct WebCore::XRHitTestSourceIdentifierType
 #endif

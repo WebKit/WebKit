@@ -330,6 +330,39 @@ void PlatformXRSystem::deleteLayer(IPC::Connection&, PlatformXR::LayerHandle han
 }
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+void PlatformXRSystem::createAnchor(const PlatformXR::Pose& pose, CompletionHandler<void(std::expected<PlatformXR::AnchorIdentifier, WebCore::ExceptionData>)>&& passedCompletionHandler)
+{
+    auto completionHandler = [passedCompletionHandler = WTF::move(passedCompletionHandler)](WebCore::ExceptionOr<PlatformXR::AnchorIdentifier> exceptionOrValue) mutable {
+        if (exceptionOrValue.hasException()) {
+            auto exception = exceptionOrValue.releaseException();
+            passedCompletionHandler(makeUnexpected(WebCore::ExceptionData { exception.code(), exception.releaseMessage() }));
+        } else
+            passedCompletionHandler(exceptionOrValue.releaseReturnValue());
+    };
+    RefPtr page = m_page;
+    if (!page) {
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
+        return;
+    }
+    auto* xrCoordinator = PlatformXRSystem::xrCoordinator();
+    if (!xrCoordinator) {
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
+        return;
+    }
+    xrCoordinator->createAnchor(*page, pose, WTF::move(completionHandler));
+}
+
+void PlatformXRSystem::deleteAnchor(PlatformXR::AnchorIdentifier identifier)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+    if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
+        xrCoordinator->deleteAnchor(*page, identifier);
+}
+#endif
+
 #if ENABLE(WEBXR_HIT_TEST)
 void PlatformXRSystem::requestHitTestSource(const PlatformXR::HitTestOptions& hitTestOptions, CompletionHandler<void(std::expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&& passedCompletionHandler)
 {

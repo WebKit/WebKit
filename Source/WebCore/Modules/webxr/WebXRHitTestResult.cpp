@@ -34,6 +34,13 @@
 #include "WebXRPose.h"
 #include "WebXRRigidTransform.h"
 #include "WebXRSpace.h"
+#if ENABLE(WEBXR_ANCHORS)
+#include "JSDOMConvertInterface.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSWebXRAnchor.h"
+#include "WebXRAnchor.h"
+#include "WebXRFrame.h"
+#endif
 
 namespace WebCore {
 
@@ -70,6 +77,69 @@ ExceptionOr<RefPtr<WebXRPose>> WebXRHitTestResult::getPose(Document& document, c
     auto poseInDestinationSpace = populatedPose->transform.inverse().value() * poseInHitTestSourceSpaceTransform;
     return RefPtr<WebXRPose>(WebXRPose::create(WebXRRigidTransform::create(poseInDestinationSpace), populatedPose->emulatedPosition));
 }
+
+#if ENABLE(WEBXR_ANCHORS)
+
+// https://immersive-web.github.io/anchors/#dom-xrhittestresult-createanchor
+ExceptionOr<void> WebXRHitTestResult::createAnchor(Document& document, CreateAnchorPromise&& promise)
+{
+    if (!m_frame->session().supportsFeature(PlatformXR::SessionFeature::Anchors)) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "The anchors feature was not requested for this session"_s });
+        return { };
+    }
+
+    if (m_frame->session().ended()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "The session was already ended"_s });
+        return { };
+    }
+
+    RefPtr device = m_frame->session().device();
+    if (!device) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
+        return { };
+    }
+
+    // Hit test result pose is in hit test source space. Convert to local space (same as XRFrame.createAnchor).
+    auto spaceNativeOrigin = m_space->nativeOrigin();
+    if (!spaceNativeOrigin) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to determine hit test source space origin"_s });
+        return { };
+    }
+
+    auto poseTransform = WebXRFrame::matrixFromPose(m_result.pose);
+    auto anchorTransform = spaceNativeOrigin.value() * poseTransform;
+
+    TransformationMatrix::Decomposed4Type decomposed;
+    if (!anchorTransform.decompose4(decomposed)) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Unable to decompose anchor transform"_s });
+        return { };
+    }
+    PlatformXR::FrameData::Pose anchorPose;
+    anchorPose.position = FloatPoint3D(decomposed.translateX, decomposed.translateY, decomposed.translateZ);
+    anchorPose.orientation = {
+        static_cast<float>(decomposed.quaternion.x),
+        static_cast<float>(decomposed.quaternion.y),
+        static_cast<float>(decomposed.quaternion.z),
+        static_cast<float>(decomposed.quaternion.w)
+    };
+
+    Ref<WebXRFrame> frameRef = m_frame;
+    device->createAnchor(anchorPose, [frameRef = WTF::move(frameRef), promise = WTF::move(promise), protectedDocument = Ref { document }](ExceptionOr<PlatformXR::AnchorIdentifier> exceptionOrIdentifier) mutable {
+        if (exceptionOrIdentifier.hasException()) {
+            promise.reject(exceptionOrIdentifier.releaseException());
+            return;
+        }
+
+        auto identifier = exceptionOrIdentifier.releaseReturnValue();
+        Ref anchor = WebXRAnchor::create(protectedDocument.get(), frameRef->session(), identifier);
+        frameRef->session().addAnchor(anchor.copyRef());
+        promise.resolve(WTF::move(anchor));
+    });
+
+    return { };
+}
+
+#endif // ENABLE(WEBXR_ANCHORS)
 
 } // namespace WebCore
 

@@ -46,6 +46,7 @@
 #include <numbers>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -67,6 +68,9 @@ class XRCompositionLayer;
 struct XRCanvasConfiguration;
 struct XRRenderStateInit;
 
+#if ENABLE(WEBXR_ANCHORS)
+class WebXRAnchor;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
 struct XRHitTestOptionsInit;
 struct XRTransientInputHitTestOptionsInit;
@@ -136,6 +140,19 @@ public:
     bool isHandTrackingEnabled() const;
 #endif
 
+#if ENABLE(WEBXR_ANCHORS)
+    void addAnchor(Ref<WebXRAnchor>&&);
+    RefPtr<WebXRAnchor> anchor(PlatformXR::AnchorIdentifier) const;
+    void deleteAnchor(PlatformXR::AnchorIdentifier);
+    std::optional<String> persistentHandleForAnchor(const WebXRAnchor&) const;
+    void setPersistentHandleForAnchor(const WebXRAnchor&, const String&);
+    using RestorePersistentAnchorPromise = DOMPromiseDeferred<IDLInterface<WebXRAnchor>>;
+    void restorePersistentAnchor(const String&, RestorePersistentAnchorPromise&&);
+    using DeletePersistentAnchorPromise = DOMPromiseDeferred<void>;
+    void deletePersistentAnchor(const String&, DeletePersistentAnchorPromise&&);
+    Vector<String> persistentAnchors() const;
+    void addPendingCreateAnchorPromise(PlatformXR::AnchorIdentifier, RestorePersistentAnchorPromise&&);
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     using RequestHitTestSourcePromise = DOMPromiseDeferred<IDLInterface<WebXRHitTestSource>>;
     void requestHitTestSource(const XRHitTestOptionsInit&, RequestHitTestSourcePromise&&);
@@ -197,6 +214,9 @@ private:
     void applyPendingRenderState();
     void minimalUpdateRendering();
 
+#if ENABLE(WEBXR_ANCHORS)
+    void updateAnchors();
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     void cleanupInactiveHitTestSources();
 #endif
@@ -242,6 +262,13 @@ private:
     // https://immersive-web.github.io/webxr/#xrsession-promise-resolved
     bool m_inputInitialized { false };
 
+#if ENABLE(WEBXR_ANCHORS)
+    HashMap<PlatformXR::AnchorIdentifier, RefPtr<WebXRAnchor>> m_activeAnchors;
+    HashMap<String, PlatformXR::AnchorIdentifier> m_persistentAnchors;
+    HashMap<PlatformXR::AnchorIdentifier, String> m_anchorToPersistentHandle;
+    HashSet<PlatformXR::AnchorIdentifier> m_anchorsBeingRestored;
+    Vector<std::pair<PlatformXR::AnchorIdentifier, RestorePersistentAnchorPromise>> m_pendingCreateAnchorPromises;
+#endif
 #if ENABLE(WEBXR_HIT_TEST)
     HashMap<PlatformXR::HitTestSource, WeakPtr<WebXRHitTestSource>> m_activeHitTestSources;
     HashMap<PlatformXR::HitTestSource, WeakPtr<WebXRTransientInputHitTestSource>> m_activeTransientInputHitTestSources;

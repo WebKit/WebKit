@@ -1,0 +1,8 @@
+
+PASS Anchor creation succeeds if the feature was requested - webgl
+PASS Anchor creation succeeds if the feature was requested - webgl2
+PASS Anchor creation fails if the feature was not requested - webgl
+PASS Anchor creation fails if the feature was not requested - webgl2
+PASS Anchor creation fails if the feature was requested but the session already ended - webgl
+PASS Anchor creation fails if the feature was requested but the session already ended - webgl2
+
