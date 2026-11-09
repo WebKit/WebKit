@@ -1755,6 +1755,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _cachedHasCustomTintColor = std::nullopt;
     _cachedSelectedTextRange = nil;
     _cachedSelectionContainerView = nil;
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [center removeObserver:self name:UIMenuControllerWillHideMenuNotification object:nil];
+ALLOW_DEPRECATED_DECLARATIONS_END
+    [center removeObserver:self name:UIKeyboardPrivateDidRequestDismissalNotification object:nil];
 }
 
 - (void)cleanUpInteractionPreviewContainers
