@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: a placement with only a named span</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-errors">
+<meta name="assert" content="If the placement contains two spans, the end span is removed; if the placement contains only a span for a named line, it is replaced with a span of 1.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; width: 200px; height: 200px; grid-template-columns: repeat(4, 50px); grid-template-rows: repeat(4, 50px); grid-auto-columns: 50px; grid-auto-rows: 50px; background: lightgray; margin-bottom: 10px; }
+.grid > div { background: green; }
+</style>
+<!-- column span 3 foo / auto, auto-flow row: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-column-start: span 3 foo; grid-column-end: auto"></div>
+</div>
+<!-- column auto / span 2 foo, auto-flow row: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-column-start: auto; grid-column-end: span 2 foo"></div>
+</div>
+<!-- column span 2 foo / span 3, auto-flow row: the start span is named and becomes 1; the end span is removed -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-column-start: span 2 foo; grid-column-end: span 3"></div>
+</div>
+<!-- column span 2 / span 3 foo, auto-flow row: the end span is removed, leaving span 2 -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column-start: span 2; grid-column-end: span 3 foo"></div>
+</div>
+<!-- column span 3 / auto, auto-flow row: control: an integer span is kept -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="150" data-expected-height="50" style="grid-column-start: span 3; grid-column-end: auto"></div>
+</div>
+<!-- row span 3 foo / auto, auto-flow row: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-row-start: span 3 foo; grid-row-end: auto"></div>
+</div>
+<!-- row auto / span 2 foo, auto-flow row: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-row-start: auto; grid-row-end: span 2 foo"></div>
+</div>
+<!-- row span 2 foo / span 3, auto-flow row: the start span is named and becomes 1; the end span is removed -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="50" style="grid-row-start: span 2 foo; grid-row-end: span 3"></div>
+</div>
+<!-- row span 2 / span 3 foo, auto-flow row: the end span is removed, leaving span 2 -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row-start: span 2; grid-row-end: span 3 foo"></div>
+</div>
+<!-- row span 3 / auto, auto-flow row: control: an integer span is kept -->
+<div class="grid" style="grid-auto-flow: row">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="150" style="grid-row-start: span 3; grid-row-end: auto"></div>
+</div>
+<!-- column span 3 foo / auto, auto-flow column: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="50" style="grid-column-start: span 3 foo; grid-column-end: auto"></div>
+</div>
+<!-- column auto / span 2 foo, auto-flow column: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="50" style="grid-column-start: auto; grid-column-end: span 2 foo"></div>
+</div>
+<!-- column span 2 foo / span 3, auto-flow column: the start span is named and becomes 1; the end span is removed -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="50" style="grid-column-start: span 2 foo; grid-column-end: span 3"></div>
+</div>
+<!-- column span 2 / span 3 foo, auto-flow column: the end span is removed, leaving span 2 -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="100" data-expected-height="50" style="grid-column-start: span 2; grid-column-end: span 3 foo"></div>
+</div>
+<!-- column span 3 / auto, auto-flow column: control: an integer span is kept -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="50" style="grid-column: span 2"></div>
+  <div data-offset-x="0" data-offset-y="50" data-expected-width="150" data-expected-height="50" style="grid-column-start: span 3; grid-column-end: auto"></div>
+</div>
+<!-- row span 3 foo / auto, auto-flow column: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="0" data-offset-y="100" data-expected-width="50" data-expected-height="50" style="grid-row-start: span 3 foo; grid-row-end: auto"></div>
+</div>
+<!-- row auto / span 2 foo, auto-flow column: the named span is replaced with a span of 1 -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="0" data-offset-y="100" data-expected-width="50" data-expected-height="50" style="grid-row-start: auto; grid-row-end: span 2 foo"></div>
+</div>
+<!-- row span 2 foo / span 3, auto-flow column: the start span is named and becomes 1; the end span is removed -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="0" data-offset-y="100" data-expected-width="50" data-expected-height="50" style="grid-row-start: span 2 foo; grid-row-end: span 3"></div>
+</div>
+<!-- row span 2 / span 3 foo, auto-flow column: the end span is removed, leaving span 2 -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="0" data-offset-y="100" data-expected-width="50" data-expected-height="100" style="grid-row-start: span 2; grid-row-end: span 3 foo"></div>
+</div>
+<!-- row span 3 / auto, auto-flow column: control: an integer span is kept -->
+<div class="grid" style="grid-auto-flow: column">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="100" style="grid-row: span 2"></div>
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="150" style="grid-row-start: span 3; grid-row-end: auto"></div>
+</div>

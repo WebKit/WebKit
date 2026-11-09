@@ -83,12 +83,6 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemNeedsSecondColumnSizingPass,
     RelativeGridItemHasPercentageInset,
 
-    GridItemColumnStartHasLineName,
-    GridItemHasUnsupportedColumnEnd,
-
-    GridItemRowStartHasLineName,
-    GridItemHasUnsupportedRowEnd,
-
     GridItemHasUnsupportedWidthValue,
     GridItemHasUnsupportedAutomaticInlineSizing,
     GridItemHasUnsupportedHeightValue,
@@ -98,30 +92,6 @@ enum class GridAvoidanceReason : uint8_t {
     NotAGrid,
     GridFormattingContextIntegrationDisabled,
 };
-
-#if ASSERT_ENABLED
-static bool avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoidanceReason)
-{
-    switch (gridAvoidanceReason) {
-    case GridAvoidanceReason::GridItemColumnStartHasLineName:
-    case GridAvoidanceReason::GridItemHasUnsupportedColumnEnd:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidanceReason)
-{
-    switch (gridAvoidanceReason) {
-    case GridAvoidanceReason::GridItemRowStartHasLineName:
-    case GridAvoidanceReason::GridItemHasUnsupportedRowEnd:
-        return true;
-    default:
-        return false;
-    }
-}
-#endif
 
 #ifndef NDEBUG
 #undef ADD_REASON_AND_RETURN_IF_NEEDED
@@ -138,54 +108,6 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
         return reasons; \
     }
 #endif
-
-// GFC resolves numeric lines, numeric spans, lines given as an integer and a line name (e.g. foo 2), lines
-// given as a line name alone (e.g. foo) and named spans (e.g. span foo) next to a line. A named span is not
-// supported next to auto or another span.
-static bool hasValidEndForAutoStart(const Style::GridPosition& end)
-{
-    return WTF::switchOn(end,
-        [](const CSS::Keyword::Auto&) {
-            return true;
-        },
-        [](const Style::GridPositionExplicit&) {
-            // "auto / <integer>" places a single-track item ending at the end line.
-            return true;
-        },
-        [&](const Style::GridPositionSpan&) {
-            return end.namedGridLine().value.isEmpty();
-        },
-        [](const Style::CustomIdent&) {
-            return true;
-        }
-    );
-}
-
-static bool isLine(const Style::GridPosition& position)
-{
-    return position.isExplicit() || position.isNamedGridArea();
-}
-
-static bool hasValidEndForSpanStart(const Style::GridPosition& end)
-{
-    return WTF::switchOn(end,
-        [](const CSS::Keyword::Auto&) {
-            return true;
-        },
-        [](const Style::GridPositionExplicit&) {
-            return true;
-        },
-        [](const Style::GridPositionSpan&) {
-            // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
-            // "If the placement contains two spans, remove the one contributed by the end
-            // grid-placement property."
-            return true;
-        },
-        [](const Style::CustomIdent&) {
-            return true;
-        }
-    );
-}
 
 static bool gridItemHasValidWidth(const Style::PreferredSize& width)
 {
@@ -466,62 +388,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (gridItemStyle->boxSizing() == BoxSizing::BorderBox)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasBorderBoxSizing, reasons, reasonCollectionMode);
 
-        auto& columnStart = gridItemStyle->gridItemColumnStart();
-        auto columnPositioningAvoidanceReason = WTF::switchOn(columnStart,
-            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-                if (!hasValidEndForAutoStart(gridItemStyle->gridItemColumnEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
-                return { };
-            },
-            [](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                return { };
-            },
-            [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                // A named span needs a line on the other edge to count from.
-                if (!columnStart.namedGridLine().value.isEmpty() && !isLine(gridItemStyle->gridItemColumnEnd()))
-                    return GridAvoidanceReason::GridItemColumnStartHasLineName;
-                if (!hasValidEndForSpanStart(gridItemStyle->gridItemColumnEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
-                return { };
-            },
-            [](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
-                return { };
-            }
-        );
-
-        if (columnPositioningAvoidanceReason) {
-            ASSERT(avoidanceReasonIsColumnPlacementRelated(*columnPositioningAvoidanceReason));
-            ADD_REASON_AND_RETURN_IF_NEEDED(*columnPositioningAvoidanceReason, reasons, reasonCollectionMode);
-        }
-
-        auto& rowStart = gridItemStyle->gridItemRowStart();
-        auto rowPositioningAvoidanceReason = WTF::switchOn(rowStart,
-            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-                if (!hasValidEndForAutoStart(gridItemStyle->gridItemRowEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
-                return { };
-            },
-            [](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
-                return { };
-            },
-            [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                // A named span needs a line on the other edge to count from.
-                if (!rowStart.namedGridLine().value.isEmpty() && !isLine(gridItemStyle->gridItemRowEnd()))
-                    return GridAvoidanceReason::GridItemRowStartHasLineName;
-                if (!hasValidEndForSpanStart(gridItemStyle->gridItemRowEnd()))
-                    return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
-                return { };
-            },
-            [](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
-                return { };
-            }
-        );
-
-        if (rowPositioningAvoidanceReason) {
-            ASSERT(avoidanceReasonIsRowPlacementRelated(*rowPositioningAvoidanceReason));
-            ADD_REASON_AND_RETURN_IF_NEEDED(*rowPositioningAvoidanceReason, reasons, reasonCollectionMode);
-        }
-
         // Items inherit writing-mode and direction, so these are expressed relative to the grid container.
         auto gridItemWritingMode = gridItemStyle->writingMode();
         bool gridItemIsOrthogonal = gridItemWritingMode.isOrthogonal(gridContainerWritingMode);
@@ -728,18 +594,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::RelativeGridItemHasPercentageInset:
         stream << "relative grid item has percentage inset";
-        break;
-    case GridAvoidanceReason::GridItemColumnStartHasLineName:
-        stream << "grid item column start has line name";
-        break;
-    case GridAvoidanceReason::GridItemHasUnsupportedColumnEnd:
-        stream << "grid item has unsupported column end";
-        break;
-    case GridAvoidanceReason::GridItemRowStartHasLineName:
-        stream << "grid item row start has line name";
-        break;
-    case GridAvoidanceReason::GridItemHasUnsupportedRowEnd:
-        stream << "grid item has unsupported row end";
         break;
     case GridAvoidanceReason::GridItemHasUnsupportedMinWidth:
         stream << "grid item has unsupported min-width";
