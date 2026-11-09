@@ -217,10 +217,9 @@ class MacPort(DarwinPort):
         env = super(MacPort, self).setup_environ_for_server(server_name)
         if server_name == self.driver_name():
             if self.get_option('leaks'):
-                env['MallocStackLogging'] = '1'
-                env['__XPC_MallocStackLogging'] = '1'
-                env['MallocScribble'] = '1'
-                env['__XPC_MallocScribble'] = '1'
+                for name in ['MallocStackLogging', 'MallocScribble', 'SYSTEM_HEAP_USE_DEFAULT_ZONE']:
+                    env[name] = '1'
+                    env['__XPC_' + name] = '1'
             if self.get_option('guard_malloc'):
                 self._append_value_colon_separated(env, 'DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
                 self._append_value_colon_separated(env, '__XPC_DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')

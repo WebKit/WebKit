@@ -87,11 +87,10 @@ class MacTest(darwin_testcase.DarwinTest):
         self.assertRaises(AssertionError, self.assert_name, 'mac-tiger', 'leopard', 'mac-leopard-wk2')
 
     def test_setup_environ_for_server(self):
-        port = self.make_port(options=MockOptions(leaks=True, guard_malloc=True))
-        env = port.setup_environ_for_server(port.driver_name())
-        self.assertEqual(env['MallocStackLogging'], '1')
-        self.assertEqual(env['MallocScribble'], '1')
-        self.assertEqual(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib')
+        for leaks in [False, True]:
+            for guard_malloc in [False, True]:
+                with self.subTest(leaks=leaks, guard_malloc=guard_malloc):
+                    self.assert_leaks_and_guard_malloc_environment(self.make_port(options=MockOptions(leaks=leaks, guard_malloc=guard_malloc)))
 
     def test_show_results_html_file(self):
         port = self.make_port()

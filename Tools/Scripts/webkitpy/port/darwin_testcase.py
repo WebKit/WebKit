@@ -41,6 +41,20 @@ from webkitcorepy import OutputCapture
 
 class DarwinTest(port_testcase.PortTestCase):
 
+    def assert_leaks_and_guard_malloc_environment(self, port):
+        env = port.setup_environ_for_server(port.driver_name())
+        for name in ['MallocStackLogging', 'MallocScribble', 'SYSTEM_HEAP_USE_DEFAULT_ZONE']:
+            for variable in [name, '__XPC_' + name]:
+                if port.get_option('leaks'):
+                    self.assertEqual(env[variable], '1')
+                else:
+                    self.assertNotIn(variable, env)
+        for variable in ['DYLD_INSERT_LIBRARIES', '__XPC_DYLD_INSERT_LIBRARIES']:
+            if port.get_option('guard_malloc'):
+                self.assertEqual(env[variable], '/usr/lib/libgmalloc.dylib')
+            else:
+                self.assertNotIn(variable, env)
+
     def test_sharding_groups(self):
         port = self.make_port()
         self.assertEqual(sorted(port.sharding_groups().keys()), ['media'])
