@@ -37,4 +37,10 @@ String loadQuirkTableJSON()
     return { };
 }
 
+String loadQuirkScript(StringView)
+{
+    notImplemented();
+    return { };
+}
+
 } // namespace WebCore

@@ -488,6 +488,9 @@ list(APPEND WebKitResources "        <file alias='css/gtk-theme.css'>gtk-theme.c
   "        <file alias='images/textAreaResizeCorner@2x'>textAreaResizeCorner@2x.png</file>\n"
   "        <file alias='images/textAreaResizeCorner'>textAreaResizeCorner.png</file>\n"
   "        <file alias='quirks/QuirkTable.json'>QuirkTable.json</file>\n"
+  "        <file alias='quirks/QuirkScripts/ceac-beforeunload-fix.js'>QuirkScripts/ceac-beforeunload-fix.js</file>\n"
+  "        <file alias='quirks/QuirkScripts/nba-seek-fix.js'>QuirkScripts/nba-seek-fix.js</file>\n"
+  "        <file alias='quirks/QuirkScripts/x-google-sign-in-button-fix.js'>QuirkScripts/x-google-sign-in-button-fix.js</file>\n"
 )
 
 if (ENABLE_WEB_AUDIO)

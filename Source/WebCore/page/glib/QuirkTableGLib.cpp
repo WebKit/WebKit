@@ -29,22 +29,34 @@
 #include <gio/gio.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 #if PLATFORM(GTK)
-#define QUIRK_TABLE_GRESOURCE_PATH "/org/webkitgtk/resources/quirks/QuirkTable.json"
+#define QUIRKS_GRESOURCE_PATH "/org/webkitgtk/resources/quirks/"
 #else
-#define QUIRK_TABLE_GRESOURCE_PATH "/org/webkitwpe/resources/quirks/QuirkTable.json"
+#define QUIRKS_GRESOURCE_PATH "/org/webkitwpe/resources/quirks/"
 #endif
 
 namespace WebCore {
 
-String loadQuirkTableJSON()
+static String loadQuirksResource(const char* path)
 {
-    GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(QUIRK_TABLE_GRESOURCE_PATH, G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
+    GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path, G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     if (!data)
         return { };
 
     return String::fromUTF8(span(data));
+}
+
+String loadQuirkTableJSON()
+{
+    return loadQuirksResource(QUIRKS_GRESOURCE_PATH "QuirkTable.json");
+}
+
+String loadQuirkScript(StringView fileName)
+{
+    return loadQuirksResource(makeString(QUIRKS_GRESOURCE_PATH "QuirkScripts/"_s, fileName).utf8().legacyCStringPointer());
 }
 
 } // namespace WebCore

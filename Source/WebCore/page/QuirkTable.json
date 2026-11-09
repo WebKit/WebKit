@@ -204,7 +204,7 @@
                 { "id": "NeedsFormControlToBeMouseFocusableQuirk", "bugs": ["https://webkit.org/b/193478"] },
                 {
                     "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
-                    "script": "(function() {\n    if (window.__ceacBeforeUnloadFix) return;\n    window.__ceacBeforeUnloadFix = true;\n    var origAEL = window.addEventListener;\n    window.addEventListener = function(type, fn, opts) {\n        if (type === 'beforeunload') {\n            return origAEL.call(this, type, function(e) {\n                var ae = document.activeElement;\n                if (ae && ae.tagName === 'INPUT') {\n                    var t = (ae.type || '').toLowerCase();\n                    if (t === 'radio' || t === 'checkbox' || t === 'submit' || t === 'button')\n                        return;\n                }\n                if (typeof fn === 'function') fn.call(this, e);\n            }, opts);\n        }\n        return origAEL.apply(this, arguments);\n    };\n})();",
+                    "scriptFile": "ceac-beforeunload-fix.js",
                     "secondaryURL": [
                         "*://*/CheckBrowserClose.js",
                         "*://*/CheckBrowserClose.js?*",
@@ -955,7 +955,7 @@
             "behaviors": [
                 {
                     "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
-                    "script": "if (!window.__nbaSeekFix) {\n    window.__nbaSeekFix = true;\n    document.addEventListener('touchmove', function({ target, touches }) {\n        if (!target?.getAttribute\n            || target.getAttribute('data-id') !== 'video-player:scrub-bar:controls'\n            || !touches?.[0])\n            return;\n        const touch = touches[0];\n        const rect = target.getBoundingClientRect();\n        const event = new MouseEvent('mousemove', {\n            clientX: touch.clientX,\n            clientY: touch.clientY,\n            screenX: touch.screenX,\n            screenY: touch.screenY,\n            bubbles: true,\n            cancelable: true\n        });\n        Object.defineProperty(event, 'offsetX', { value: touch.clientX - rect.left, configurable: true });\n        Object.defineProperty(event, 'offsetY', { value: touch.clientY - rect.top, configurable: true });\n        target.dispatchEvent(event);\n    }, false);\n}"
+                    "scriptFile": "nba-seek-fix.js"
                 },
                 { "id": "NeedsPerDocumentAutoplayBehaviorQuirk" }
             ]
@@ -1385,7 +1385,7 @@
                 { "id": "RequiresUserGestureToPauseInPictureInPictureQuirk", "bugs": ["rdar://73369869"] },
                 {
                     "id": "NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk",
-                    "script": "(function() {\n    if (window.__xGoogleSignInButtonFix)\n        return;\n    window.__xGoogleSignInButtonFix = true;\n    var style = document.createElement('style');\n    style.textContent = '.jf-gsi-hit > div > div:first-child:empty:not([role]) { display: none !important }';\n    (document.head || document.documentElement).appendChild(style);\n})();\n",
+                    "scriptFile": "x-google-sign-in-button-fix.js",
                     "secondaryURL": ["*://accounts.google.com/gsi/client", "*://accounts.google.com/gsi/client?*"],
                     "bugs": ["https://webkit.org/b/323931", "rdar://183399060"]
                 }

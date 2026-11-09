@@ -51,4 +51,17 @@ String loadQuirkTableJSON()
     return json.get();
 }
 
+String loadQuirkScript(StringView fileName)
+{
+    RetainPtr url = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] URLForResource:fileName.createNSString().get() withExtension:nil subdirectory:@"QuirkScripts"];
+    if (!url)
+        return { };
+
+    RetainPtr data = [NSData dataWithContentsOfURL:url.get()];
+    if (!data)
+        return { };
+
+    return String::fromUTF8(span(data.get()));
+}
+
 } // namespace WebCore

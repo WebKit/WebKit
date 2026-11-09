@@ -73,7 +73,7 @@ void Quirk::apply(QuirksData& quirksData) const
 }
 
 static constexpr std::array rowFields { "bugs"_s, "comment"_s, "matches"_s, "embeddedMatches"_s, "excludeMatches"_s, "queryContains"_s, "fragmentContains"_s, "environment"_s, "available"_s, "behaviors"_s };
-static constexpr std::array behaviorFields { "id"_s, "script"_s, "userAgent"_s, "chromeCompatibilityVersion"_s, "cookieNames"_s, "styleSheet"_s, "elementSelector"_s, "documentSelector"_s, "secondaryURL"_s, "bugs"_s, "comment"_s };
+static constexpr std::array behaviorFields { "id"_s, "script"_s, "scriptFile"_s, "userAgent"_s, "chromeCompatibilityVersion"_s, "cookieNames"_s, "styleSheet"_s, "elementSelector"_s, "documentSelector"_s, "secondaryURL"_s, "bugs"_s, "comment"_s };
 
 NODELETE static String nonEmptyString(const JSON::Value& value)
 {
@@ -118,6 +118,21 @@ static bool isBugReference(StringView bug)
         return !number.isEmpty() && number.containsOnly<isASCIIDigit>();
     }
     return false;
+}
+
+template<typename CharacterType>
+NODELETE static bool isScriptFileNameCharacter(CharacterType character)
+{
+    return isASCIIAlphanumeric(character) || character == '_' || character == '-';
+}
+
+static bool isValidScriptFileName(StringView fileName)
+{
+    static constexpr auto extension = ".js"_s;
+    if (!fileName.endsWith(extension))
+        return false;
+    auto stem = fileName.left(fileName.length() - extension.length());
+    return !stem.isEmpty() && stem.containsOnly<isScriptFileNameCharacter>();
 }
 
 namespace {
@@ -248,6 +263,11 @@ static constexpr std::array conditionFields {
 
 class QuirkTableParser {
 public:
+    explicit QuirkTableParser(const QuirkScriptLoader& loadScript)
+        : m_loadScript(loadScript)
+    {
+    }
+
     QuirkTableParseResult parse(StringView);
 
 private:
@@ -258,6 +278,7 @@ private:
     std::optional<Quirk> parseRow(JSON::Value&, size_t index);
     Vector<QuirkBehavior> parseBehaviors(const JSON::Object& row, const ErrorLocation& rowLocation);
     std::optional<QuirkBehavior> parseBehavior(JSON::Value&, const ErrorLocation& rowLocation, size_t index);
+    String parseScript(Fields&, const ErrorLocation&, bool isDeclared);
 
     void reject(const ErrorLocation& location, QuirkTableParseErrorKind kind, String field = { }, String value = { })
     {
@@ -269,6 +290,7 @@ private:
         });
     }
 
+    const QuirkScriptLoader& m_loadScript;
     Vector<QuirkTableParseError> m_errors;
 };
 
@@ -507,9 +529,12 @@ std::optional<QuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value& value,
 
     auto& declaration = quirkBehaviorDeclaration(*id);
     for (auto [field, parameter] : parameterFields) {
+        if (parameter == QuirkParametersNeeded::NeedsScript)
+            continue;
         const bool isDeclared = declaration.quirkParametersNeeded.contains(parameter);
         fields.validatePresence(field, isDeclared, isDeclared);
     }
+    auto script = parseScript(fields, location, declaration.quirkParametersNeeded.contains(QuirkParametersNeeded::NeedsScript));
 
     for (auto [field, condition] : conditionFields) {
         const bool isSupported = declaration.quirkConditionsSupported.contains(condition);
@@ -519,7 +544,7 @@ std::optional<QuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value& value,
 
     QuirkBehavior behavior {
         .id = *id,
-        .script = fields.string("script"_s),
+        .script = WTF::move(script),
         .userAgent = fields.string("userAgent"_s),
         .chromeCompatibilityVersion = fields.string("chromeCompatibilityVersion"_s),
         .cookieNames = fields.strings("cookieNames"_s),
@@ -535,11 +560,41 @@ std::optional<QuirkBehavior> QuirkTableParser::parseBehavior(JSON::Value& value,
     return behavior;
 }
 
+String QuirkTableParser::parseScript(Fields& fields, const ErrorLocation& location, bool isDeclared)
+{
+    const bool hasScript = fields.contains("script"_s);
+    const bool hasScriptFile = fields.contains("scriptFile"_s);
+    if (isDeclared && hasScript && hasScriptFile) {
+        reject(location, Kind::ScriptAndScriptFile);
+        return { };
+    }
+
+    fields.validatePresence("script"_s, isDeclared, isDeclared && !hasScriptFile);
+    fields.validatePresence("scriptFile"_s, isDeclared, false);
+    if (!hasScriptFile)
+        return fields.string("script"_s);
+
+    auto fileName = fields.string("scriptFile"_s);
+    if (fileName.isNull())
+        return { };
+    if (!isValidScriptFileName(fileName)) {
+        reject(location, Kind::InvalidScriptFile, "scriptFile"_s, WTF::move(fileName));
+        return { };
+    }
+
+    auto script = m_loadScript ? m_loadScript(fileName) : String { };
+    if (script.isEmpty()) {
+        reject(location, Kind::UnloadableScriptFile, "scriptFile"_s, WTF::move(fileName));
+        return { };
+    }
+    return script;
+}
+
 } // namespace
 
-QuirkTableParseResult parseQuirkTable(StringView json)
+QuirkTableParseResult parseQuirkTable(StringView json, const QuirkScriptLoader& loadScript)
 {
-    return QuirkTableParser { }.parse(json);
+    return QuirkTableParser { loadScript }.parse(json);
 }
 
 static String message(const QuirkTableParseError& error)
@@ -581,6 +636,12 @@ static String message(const QuirkTableParseError& error)
         return "\"bugs\" must be a non-empty array of rdar://N or https://webkit.org/b/N references"_s;
     case DuplicateBug:
         return makeString("\"bugs\" lists "_s, error.value, " more than once"_s);
+    case ScriptAndScriptFile:
+        return "takes \"script\" or \"scriptFile\", not both"_s;
+    case InvalidScriptFile:
+        return makeString("\"scriptFile\" \""_s, error.value, "\" must name a .js file directly inside QuirkScripts/"_s);
+    case UnloadableScriptFile:
+        return makeString("QuirkScripts/"_s, error.value, " could not be loaded or is empty"_s);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -614,7 +675,7 @@ static QuirkTable loadQuirkTable()
         return { };
     }
 
-    auto result = parseQuirkTable(json);
+    auto result = parseQuirkTable(json, loadQuirkScript);
     for (auto& error : result.errors) {
         UNUSED_VARIABLE(error); // RELEASE_LOG_ERROR compiles away on ports without logging.
         RELEASE_LOG_ERROR(Loading, "QuirkTable.json: %" PUBLIC_LOG_STRING, error.description().utf8());

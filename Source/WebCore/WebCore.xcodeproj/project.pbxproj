@@ -4282,6 +4282,7 @@
 		A1A0B8792F35782E00550471 /* MediaDeviceRoute.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1AC9A362ED3028B0011617C /* MediaDeviceRoute.mm */; };
 		A1AA9AB91D23911500FEADB3 /* ContentFilterBlockedPage.html in Resources */ = {isa = PBXBuildFile; fileRef = A1AA9AB81D23911500FEADB3 /* ContentFilterBlockedPage.html */; };
 		7A1C4E2F2E8B9D0100A1B2C4 /* QuirkTable.json in Resources */ = {isa = PBXBuildFile; fileRef = 7A1C4E2F2E8B9D0100A1B2C3 /* QuirkTable.json */; };
+		7A1C4E2F2E8B9D0100A1B2E1 /* QuirkScripts in Resources */ = {isa = PBXBuildFile; fileRef = 7A1C4E2F2E8B9D0100A1B2E0 /* QuirkScripts */; };
 		A1AC9A382ED3028B0011617C /* MediaDeviceRoute.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AC9A352ED3028B0011617C /* MediaDeviceRoute.h */; };
 		A1ADAF7D2360FD3E009CB776 /* PreviewConverterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7B2360FD3D009CB776 /* PreviewConverterClient.h */; };
 		A1ADAF7E2360FD3E009CB776 /* PreviewConverterProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7C2360FD3E009CB776 /* PreviewConverterProvider.h */; };
@@ -7837,6 +7838,7 @@
 		054E3A35256C3BD90072C5BF /* GetHTMLOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetHTMLOptions.idl; sourceTree = "<group>"; };
 		0562F9601573F88F0031CA16 /* PlatformLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformLayer.h; sourceTree = "<group>"; };
 		7A1C4E2F2E8B9D0100A1B2C3 /* QuirkTable.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = QuirkTable.json; sourceTree = "<group>"; };
+		7A1C4E2F2E8B9D0100A1B2E0 /* QuirkScripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = QuirkScripts; sourceTree = "<group>"; };
 		7A1C4E2F2E8B9D0100A1B2C5 /* QuirkTableCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = QuirkTableCocoa.mm; sourceTree = "<group>"; };
 		7ABB0F632CE7C170009A837F /* QuirkBehaviors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuirkBehaviors.cpp; sourceTree = "<group>"; };
 		05D4770DFFB4C18C6BA6928D /* QuirkMatchPattern.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuirkMatchPattern.cpp; sourceTree = "<group>"; };
@@ -31105,6 +31107,7 @@
 				CE17AD141C58522F005F4799 /* csp */,
 				18A6CD6F0D8F2025001DC3CE /* ios */,
 				93C09A820B064F05005ABD4D /* mac */,
+				7A1C4E2F2E8B9D0100A1B2E0 /* QuirkScripts */,
 				1AF62EE114DA22A70041556C /* scrolling */,
 				F4C7E85A2B5F1D50001B8C9C /* text-extraction */,
 				07E2C0702C13962800BE6743 /* writing-tools */,
@@ -50855,6 +50858,7 @@
 				A11E8C071B1E28FE0003A7C7 /* northEastSouthWestResizeCursor.png in Resources */,
 				A11E8C081B1E29020003A7C7 /* northSouthResizeCursor.png in Resources */,
 				A11E8C091B1E29070003A7C7 /* northWestSouthEastResizeCursor.png in Resources */,
+				7A1C4E2F2E8B9D0100A1B2E1 /* QuirkScripts in Resources */,
 				7A1C4E2F2E8B9D0100A1B2C4 /* QuirkTable.json in Resources */,
 				93153BDC141959BC00FCF5BE /* textAreaResizeCorner.png in Resources */,
 				9370918D1416D86B00477333 /* textAreaResizeCorner@2x.png in Resources */,
