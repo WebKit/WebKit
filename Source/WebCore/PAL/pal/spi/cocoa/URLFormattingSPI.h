@@ -33,11 +33,7 @@ DECLARE_SYSTEM_HEADER
 // FIXME: (rdar://165507825) Remove the `__has_feature(modules)` condition when possible.
 #if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
-#if HAVE(URL_FORMATTING)
 #import <URLFormatting/LPNSURLExtras.h>
-#else
-#import <LinkPresentation/LPNSURLExtras.h>
-#endif
 
 #else
 

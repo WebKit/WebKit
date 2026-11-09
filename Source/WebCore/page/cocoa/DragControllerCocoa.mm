@@ -58,10 +58,6 @@
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
 #import <wtf/SoftLinking.h>
-
-#if !HAVE(URL_FORMATTING)
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
-#endif
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -205,13 +201,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     RetainPtr nsURL = url.createNSURL();
     NSString *absoluteURLString = [nsURL absoluteString];
 
-    RetainPtr domain = absoluteURLString;
-#if HAVE(URL_FORMATTING)
-    domain = [nsURL _lp_simplifiedDisplayString];
-#else
-    if (LinkPresentationLibrary())
-        domain = [nsURL _lp_simplifiedDisplayString];
-#endif
+    RetainPtr domain = [nsURL _lp_simplifiedDisplayString];
 
     if ([title isEqualToString:absoluteURLString])
         title = nil;

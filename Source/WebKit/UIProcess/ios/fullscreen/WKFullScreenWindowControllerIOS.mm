@@ -84,10 +84,6 @@
 
 #import "WebKitSwiftSoftLink.h"
 
-#if !HAVE(URL_FORMATTING)
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
-#endif
-
 static constexpr Seconds DefaultWatchdogTimerInterval = 1_s;
 
 namespace WebKit {
@@ -1915,16 +1911,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSString *EVOrganizationName = [self _EVOrganizationName];
     BOOL showsEVOrganizationName = [EVOrganizationName length] > 0;
 
-    NSString *domain = nil;
-
-#if HAVE(URL_FORMATTING)
-    domain = [url _lp_simplifiedDisplayString];
-#else
-    if (LinkPresentationLibrary())
-        domain = [url _lp_simplifiedDisplayString];
-    else
-        domain = WTF::userVisibleString(url);
-#endif
+    NSString *domain = [url _lp_simplifiedDisplayString];
 
     NSString *text = nil;
     if ([[url scheme] caseInsensitiveCompare:@"data"] == NSOrderedSame)
