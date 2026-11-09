@@ -1834,9 +1834,8 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
         a()->sendSyncReply(WTF::move(encoder));
         return true;
     });
-    Vector<uint64_t> replies;
     constexpr size_t counter = 50;
-    replies.reserveInitialCapacity(counter);
+    Vector<uint64_t> replies(ReserveCapacityTag { }, counter);
 
     auto runLoop = createRunLoop(RUN_LOOP_NAME);
     dispatchAndWait(runLoop, [&] {

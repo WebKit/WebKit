@@ -522,9 +522,8 @@ void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, const S
 // typed-IPC mirror, so the UIProcess rebuilds the protocol objects on its side (as with FrameResource).
 static Vector<Inspector::SearchMatch> convertSearchMatches(JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>& matches)
 {
-    Vector<Inspector::SearchMatch> result;
     auto length = matches.length();
-    result.reserveInitialCapacity(length);
+    Vector<Inspector::SearchMatch> result(ReserveCapacityTag { }, length);
     for (size_t i = 0; i < length; ++i) {
         RefPtr object = matches.get(i)->asObject();
         if (!object)

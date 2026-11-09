@@ -340,11 +340,8 @@ void EventRegionContext::shrinkWrapInteractionRegions()
         FloatRect layerBounds;
         Region coveredRegion;
         Vector<InteractionRegion> toAddAfterMerge;
-        Vector<FloatRect> discoveredRects;
-        Vector<Path> discoveredClipPaths;
-
-        discoveredRects.reserveInitialCapacity(discoveredRegions.size());
-        discoveredClipPaths.reserveInitialCapacity(discoveredRegions.size());
+        Vector<FloatRect> discoveredRects(ReserveCapacityTag { }, discoveredRegions.size());
+        Vector<Path> discoveredClipPaths(ReserveCapacityTag { }, discoveredRegions.size());
 
         // Small gaps don't prevent the regions from filling a single rect.
         constexpr float looseCoverageMargin = 3;

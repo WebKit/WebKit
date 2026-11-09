@@ -4785,9 +4785,8 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfBoxedCallee()), wasmScratchGPR);
     m_jit.storeWasmCalleeToCalleeCallFrame(wasmScratchGPR);
 
-    Vector<Value, 8> resolvedArguments;
     const unsigned calleeArgument = 1;
-    resolvedArguments.reserveInitialCapacity(arguments.size() + calleeArgument + isX86() * 2);
+    Vector<Value, 8> resolvedArguments(ReserveCapacityTag { }, arguments.size() + calleeArgument + isX86() * 2);
     Vector<Location, 8> parameterLocations(ReserveCapacityTag { }, arguments.size() + calleeArgument + isX86() * 2);
 
     // It's ok if we clobber our Wasm::Callee at this point since we can't hit a GC safepoint / throw an exception until we've tail called into the callee.

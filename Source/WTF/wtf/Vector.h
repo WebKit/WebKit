@@ -750,10 +750,8 @@ public:
     template<typename... Items>
     static Vector from(Items&&... items)
     {
-        Vector result;
         auto size = sizeof...(items);
-
-        result.reserveInitialCapacity(size);
+        Vector result(ReserveCapacityTag { }, size);
         result.asanSetInitialBufferSizeTo(size);
         result.m_size = size;
 

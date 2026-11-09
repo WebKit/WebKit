@@ -135,10 +135,8 @@ static Vector<std::pair<FourCC, Ref<SharedBuffer>>> parseExtensionAtomsDictionar
 
 static RetainPtr<CFDictionaryRef> createExtensionAtomsDictionary(const Vector<std::pair<FourCC, Ref<SharedBuffer>>>& configurations)
 {
-    Vector<FourCC> orderedKeys;
-    Vector<Vector<RetainPtr<CFDataRef>>> groupedDatas;
-    orderedKeys.reserveInitialCapacity(configurations.size());
-    groupedDatas.reserveInitialCapacity(configurations.size());
+    Vector<FourCC> orderedKeys(ReserveCapacityTag { }, configurations.size());
+    Vector<Vector<RetainPtr<CFDataRef>>> groupedDatas(ReserveCapacityTag { }, configurations.size());
     for (auto& [fourCC, buffer] : configurations) {
         size_t existingIndex = notFound;
         for (size_t i = 0; i < orderedKeys.size(); ++i) {

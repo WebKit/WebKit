@@ -85,9 +85,8 @@ TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysis *analysis)
     size_t nextLineIndex = 1;
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL VKWKLineInfo *line in allLines.get()) {
-        Vector<TextRecognitionWordData> children;
         RetainPtr<NSArray<VKWKTextInfo *>> vkChildren = line.children;
-        children.reserveInitialCapacity(vkChildren.get().count);
+        Vector<TextRecognitionWordData> children(ReserveCapacityTag { }, vkChildren.get().count);
 
         String lineText = line.string;
         unsigned searchLocation = 0;

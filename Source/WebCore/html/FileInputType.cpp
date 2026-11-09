@@ -87,9 +87,8 @@ FileInputType::~FileInputType()
 
 std::pair<Vector<FileChooserFileInfo>, String> FileInputType::filesFromFormControlState(const FormControlState& state)
 {
-    Vector<FileChooserFileInfo> files;
     size_t size = state.size() - 1;
-    files.reserveInitialCapacity(size / 2);
+    Vector<FileChooserFileInfo> files(ReserveCapacityTag { }, size / 2);
     for (size_t i = 0; i < size; i += 2)
         files.append({ state[i], { }, state[i + 1] });
 

@@ -562,11 +562,8 @@ void MediaPlayerPrivateGStreamerMSE::startSource(const Vector<RefPtr<MediaSource
 
 void MediaPlayerPrivateGStreamerMSE::emitStreams(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks)
 {
-    Vector<RefPtr<MediaSourceTrackGStreamer>> uniqueTracks;
-    Vector<RefPtr<MediaSourceTrackGStreamer>> playbackTracks;
-
-    uniqueTracks.reserveInitialCapacity(tracks.size());
-    playbackTracks.reserveInitialCapacity(tracks.size());
+    Vector<RefPtr<MediaSourceTrackGStreamer>> uniqueTracks(ReserveCapacityTag { }, tracks.size());
+    Vector<RefPtr<MediaSourceTrackGStreamer>> playbackTracks(ReserveCapacityTag { }, tracks.size());
 
     for (const auto& track : tracks) {
         if (!uniqueTracks.containsIf([&track](const auto& current) { return track->id() == current->id(); })) {

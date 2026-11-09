@@ -762,9 +762,8 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
 static Vector<WebCore::JSHandleIdentifier> extractHandleIdentifiersOfNodesToSkip(Ref<WebKit::WebFrameProxy>&& frame, _WKTextExtractionConfiguration *configuration)
 {
-    Vector<WebCore::JSHandleIdentifier> nodes;
     RetainPtr nodesToSkip = [configuration nodesToSkip];
-    nodes.reserveInitialCapacity([nodesToSkip count]);
+    Vector<WebCore::JSHandleIdentifier> nodes(ReserveCapacityTag { }, [nodesToSkip count]);
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL _WKJSHandle *handle in nodesToSkip.get()) {
         if (auto identifier = WebKit::jsHandleIdentifierInFrame(frame, handle))
