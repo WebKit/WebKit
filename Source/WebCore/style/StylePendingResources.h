@@ -34,7 +34,7 @@ namespace Style {
 
 class ComputedStyle;
 
-void loadPendingResources(ComputedStyle&, Document&, const Element*);
+void loadPendingResources(const ComputedStyle&, Document&, const Element*);
 
 } // namespace Style
 } // namespace WebCore

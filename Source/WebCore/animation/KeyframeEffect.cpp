@@ -1442,7 +1442,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const Style::ComputedS
 
         // Ensure resource loads for all the frames.
         for (auto& keyframe : blendingKeyframes) {
-            if (CheckedPtr style = const_cast<Style::ComputedStyle*>(keyframe.style()))
+            if (CheckedPtr style = keyframe.style())
                 Style::loadPendingResources(*style, protect(*document()), m_target.get());
         }
     }

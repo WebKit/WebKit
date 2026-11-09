@@ -605,7 +605,7 @@ bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Style
 
 void RenderElement::initializeStyle()
 {
-    Style::loadPendingResources(mutableStyle(), protect(document()), protect(element()).get());
+    Style::loadPendingResources(style(), protect(document()), protect(element()).get());
 
     styleWillChange(Style::DifferenceResult::NewStyle, style());
     m_hasInitializedStyle = true;

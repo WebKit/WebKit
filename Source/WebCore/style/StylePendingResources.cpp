@@ -144,7 +144,7 @@ static void loadPendingExternalSVGFilter(Document& document, const Element* elem
     );
 }
 
-void loadPendingResources(Style::ComputedStyle& style, Document& document, const Element* element)
+void loadPendingResources(const Style::ComputedStyle& style, Document& document, const Element* element)
 {
     for (auto& backgroundLayer : style.backgroundLayers().usedValues())
         loadPendingImage(document, backgroundLayer.image().tryStyleImage().get(), element);
