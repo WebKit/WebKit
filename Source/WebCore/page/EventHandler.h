@@ -197,6 +197,7 @@ public:
     WEBCORE_EXPORT ScrollableArea* focusedScrollableArea() const;
 
     WEBCORE_EXPORT void setCapturingMouseEventsElement(RefPtr<Element>&&);
+    Element* capturingMouseEventsElement() const { return m_capturingMouseEventsElement.get(); }
     void pointerCaptureElementDidChange(Element*);
 
 #if ENABLE(DRAG_SUPPORT)

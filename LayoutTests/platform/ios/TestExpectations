@@ -484,6 +484,7 @@ webkit.org/b/318843 http/wpt/identity/formats/ISO18013/mobiledocument.https.html
 fast/events/touch [ Skip ]
 fast/forms/range/sideways-lr-dragging.html [ Skip ]
 fast/forms/range/slider-repaint-vertical-rl.html [ Skip ]
+fast/events/range-input-drag-keeps-container-hovered.html [ Skip ]
 fast/shadow-dom/touch-event-ios.html [ Skip ]
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 http/tests/frame-throttling/timer-throttle-in-cross-origin-subframe.html [ Skip ]

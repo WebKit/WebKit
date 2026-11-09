@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#container {
+    margin-left: 50px;
+    width: 300px;
+    height: 60px;
+    background: lightblue;
+}
+
+#container:hover {
+    background: orange;
+}
+
+input[type=range] {
+    width: 200px;
+    margin: 10px;
+}
+
+#log {
+    margin-top: 100px;
+}
+</style>
+</head>
+<body>
+<p>Dragging a range input's thumb out of its container keeps the container :hover and does not dispatch leave events to it until the mouse is released.</p>
+<div id="container">
+    <input id="slider" type="range" min="0" max="100" value="50">
+</div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const log = s => document.getElementById('log').textContent += s + '\n';
+const container = document.getElementById('container');
+
+for (const type of ['pointerleave', 'mouseleave'])
+    container.addEventListener(type, () => log('container ' + type));
+
+function center(el)
+{
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+}
+
+const [x, y] = center(document.getElementById('slider'));
+
+eventSender.mouseMoveTo(x, y);
+log('before drag: container:hover=' + container.matches(':hover'));
+
+eventSender.mouseDown();
+eventSender.mouseMoveTo(x + 20, y);
+eventSender.mouseMoveTo(x + 400, y);
+log('dragging outside: container:hover=' + container.matches(':hover'));
+
+eventSender.mouseUp();
+log('after mouseup: container:hover=' + container.matches(':hover'));
+</script>
+</body>
+</html>

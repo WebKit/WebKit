@@ -3103,7 +3103,7 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     m_lastPlatformMouseEvent = mouseEvent;
     Ref frame = m_frame.get();
     ASSERT(frame->document());
-    return protect(frame->document())->prepareMouseEvent(request, documentPointForWindowPoint(frame, mouseEvent.position()), mouseEvent);
+    return protect(frame->document())->prepareMouseEvent(request, documentPointForWindowPoint(frame, mouseEvent.position()), mouseEvent, HoverFollowsMouseCapture::Yes);
 }
 
 NODELETE static bool hierarchyHasCapturingEventListeners(Element* element, const AtomString& pointerEventName, const AtomString& compatibilityMouseEventName)

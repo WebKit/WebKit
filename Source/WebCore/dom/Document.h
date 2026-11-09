@@ -396,6 +396,7 @@ enum class PageshowEventPersistence : bool { NotPersisted, Persisted };
 
 enum class EventHandlerRemoval : bool { One, All };
 enum class EventHandlerRemovalReason : bool { RendererDetached, Other };
+enum class HoverFollowsMouseCapture : bool { No, Yes };
 using EventTargetSet = WeakHashCountedSet<Node, WeakPtrImplWithEventTargetData>;
 
 struct CachedSetInnerHTML {
@@ -1032,7 +1033,7 @@ public:
     VisitedLinkState* visitedLinkStateIfExists() const { return m_visitedLinkState.get(); }
     inline VisitedLinkState& visitedLinkState() const;
 
-    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const DoublePoint&, const PlatformMouseEvent&);
+    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const DoublePoint&, const PlatformMouseEvent&, HoverFollowsMouseCapture = HoverFollowsMouseCapture::No);
     // Returns whether focus was blocked. A true value does not necessarily mean the element was focused.
     // The element could have already been focused or may not be focusable (e.g. <input disabled>).
     WEBCORE_EXPORT bool setFocusedElement(Element*, const FocusOptions& = { });
