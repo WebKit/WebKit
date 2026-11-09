@@ -74,6 +74,16 @@ static std::optional<LayoutUnit> percentageBasis(const RenderBox& box, const Con
     return 0_lu;
 }
 
+// The content box block size the percentage block sizes in the content of a box resolve against while its inline sizes are measured, but
+// not one a preferred aspect ratio would give it from the inline size being measured (RenderBlock::availableLogicalHeightForPercentageComputation).
+static std::optional<LayoutUnit> contentBoxBlockSizeWhileMeasured(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, std::optional<LayoutUnit> stretchFitBorderBoxBlockSize, WritingMode writingMode, BlockFormattingUtils::ContainingBlockIsTableCell containingBlockIsTableCell = BlockFormattingUtils::ContainingBlockIsTableCell::No)
+{
+    CheckedRef style = box.style();
+    if (style->aspectRatio().hasRatio() && style->logicalHeight(writingMode).isAuto())
+        return { };
+    return BlockFormattingUtils::definiteContentBoxBlockSize(box, geometry, containingBlockContentBoxBlockSize, stretchFitBorderBoxBlockSize, writingMode, containingBlockIsTableCell);
+}
+
 // What stretch block sizes resolve against. The children of a table cell stretch to the block size the cell has from its style when that is
 // fixed, not to the one the row gives it, which only percentages resolve against (RenderBox::isBlockSizeResolvableForStretch), and like those
 // without the intrinsic padding of its vertical alignment.
@@ -1232,7 +1242,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     // children (css-pseudo-4 §2.1.1). The render tree path gives it a start trim an ancestor has not used yet (TextBoxTrimmer).
     if (box->style().textBoxTrim() != TextBoxTrim::None)
         blockLayoutState.setTextBoxTrimState(contentFormattingContext.textBoxTrimStateFor(box, { }));
-    auto contentInlineSizes = outOfFlowGeometry.needsContentInlineSizes() ? std::optional { contentFormattingContext.computeIntrinsicInlineSizes(box) } : std::nullopt;
+    auto contentInlineSizes = outOfFlowGeometry.needsContentInlineSizes() ? std::optional { contentFormattingContext.computeIntrinsicInlineSizes(box, { }) } : std::nullopt;
     // Its scrollbars take part in the sizes of its content (RenderBlock::computeIntrinsicLogicalWidths).
     if (contentInlineSizes) {
         auto scrollbarInlineSize = LayoutUnit { box->intrinsicScrollbarLogicalWidthIncludingGutter() };
@@ -1425,7 +1435,8 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
                 return LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizes(box, horizontalBorderAndPadding);
             // The scrollbars that come or go in its content change these (RenderBlock::layout).
             integrationUtils().trackScrollbarChangesForContentSizes();
-            auto sizes = computeIntrinsicInlineSizes(*blockContainer);
+            auto contentBoxBlockSize = contentBoxBlockSizeWhileMeasured(box, geometry, percentageBasis(box, containingBlockState), stretchFitBorderBoxBlockSize(box, geometry, containingBlockState), writingMode, containingBlockIsTableCell(containingBlockState));
+            auto sizes = computeIntrinsicInlineSizes(*blockContainer, contentBoxBlockSize);
             // With its scrollbars (RenderBlockFlow::computeIntrinsicLogicalWidths).
             auto scrollbarInlineSize = LayoutUnit { box.intrinsicScrollbarLogicalWidthIncludingGutter() };
             return IntrinsicWidthConstraints { sizes.minimum + scrollbarInlineSize, sizes.maximum + scrollbarInlineSize };
@@ -1444,9 +1455,9 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     geometry.setHorizontalMargin({ marginStart, marginEnd });
 }
 
-IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const
+IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer, std::optional<LayoutUnit> contentBoxBlockSize) const
 {
-    auto sizes = computeContentIntrinsicInlineSizes(blockContainer);
+    auto sizes = computeContentIntrinsicInlineSizes(blockContainer, contentBoxBlockSize);
     if (BlockFormattingUtils::isScrollingHorizontalMarquee(blockContainer))
         sizes.minimum = { };
     return sizes;
@@ -1464,7 +1475,7 @@ static std::optional<IntrinsicWidthConstraints> containedIntrinsicInlineSizes(co
 
 // Goes through the block items of the block container's content the way layout does, collecting the outer min-content and max-content
 // contributions of the boxes in it (§5.2).
-IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const
+IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineSizes(const RenderBlockFlow& blockContainer, std::optional<LayoutUnit> contentBoxBlockSize) const
 {
     if (auto sizes = containedIntrinsicInlineSizes(blockContainer))
         return *sizes;
@@ -1482,7 +1493,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
         };
         return std::pair { margin(style->marginStart(writingMode)), margin(style->marginEnd(writingMode)) };
     };
-    auto outerInlineSizes = [&](const RenderBox& box, IntrinsicWidthConstraints contentSizes) -> IntrinsicWidthConstraints {
+    auto outerInlineSizes = [&](const RenderBox& box, IntrinsicWidthConstraints contentSizes, std::optional<LayoutUnit> containingBlockContentBoxBlockSize) -> IntrinsicWidthConstraints {
         CheckedRef style = box.style();
         // The scrollbars of a scroll container take part in the sizes of its content (RenderBlockFlow::computeIntrinsicLogicalWidths).
         auto scrollbarInlineSize = LayoutUnit { box.intrinsicScrollbarLogicalWidthIncludingGutter() };
@@ -1490,10 +1501,9 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
         auto zoom = style->usedZoomForLength();
         auto borderAndPadding = computeBorderAndPadding(box, 0_lu).horizontalBorderAndPadding();
         auto verticalBorderAndPadding = computeBorderAndPadding(box, 0_lu).verticalBorderAndPadding();
-        // A preferred aspect ratio gives the min-content and max-content sizes of the box from a fixed block size, floored by the min-content
-        // size of its content when its min inline size is auto (RenderBox::applyAutomaticContentBasedMinimumSize); coverage keeps out the other
-        // definite block sizes, which resolve against the containing block.
-        auto aspectRatioBorderBoxInlineSize = BlockFormattingUtils::aspectRatioBorderBoxInlineSize(box, borderAndPadding, verticalBorderAndPadding, { }, { }, writingMode);
+        // A preferred aspect ratio gives the min-content and max-content sizes of the box from a definite block size, floored by the min-content
+        // size of its content when its min inline size is auto (RenderBox::applyAutomaticContentBasedMinimumSize).
+        auto aspectRatioBorderBoxInlineSize = BlockFormattingUtils::aspectRatioBorderBoxInlineSize(box, borderAndPadding, verticalBorderAndPadding, containingBlockContentBoxBlockSize, { }, writingMode);
         auto boxSizes = [&] {
             if (!aspectRatioBorderBoxInlineSize)
                 return contentSizes;
@@ -1544,12 +1554,12 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
             auto sizes = calcSizeContentBoxSizes(inlineSize, boxSizes);
             std::tie(minimum, maximum) = std::pair { sizes.minimum, sizes.maximum };
         }
-        // A preferred aspect ratio that gives the auto block size transfers the fixed min and max block sizes (RenderBox::applyTransferredMinMaxSizesFromAspectRatio);
-        // coverage keeps out the others, which resolve against the containing block. The sizing keywords of the min and max inline sizes are the
-        // box's own sizes with them, which an indefinite maximum does not cap (css-sizing-4 §5.3, RenderBox::constrainIntrinsicLogicalWidthsByMinMax).
+        // A preferred aspect ratio that gives the auto block size transfers the definite min and max block sizes (RenderBox::applyTransferredMinMaxSizesFromAspectRatio).
+        // The sizing keywords of the min and max inline sizes are the box's own sizes with them, which an indefinite maximum does not cap
+        // (css-sizing-4 §5.3, RenderBox::constrainIntrinsicLogicalWidthsByMinMax).
         auto transferredBoxSizes = boxSizes;
         if (!isFixed(inlineSize) && style->logicalHeight(writingMode).isAuto()) {
-            if (auto limits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, borderAndPadding, verticalBorderAndPadding, { }, { }, writingMode)) {
+            if (auto limits = BlockFormattingUtils::aspectRatioInlineSizeLimits(box, borderAndPadding, verticalBorderAndPadding, containingBlockContentBoxBlockSize, { }, writingMode)) {
                 auto transferredMinimum = std::max(0_lu, limits->first - borderAndPadding);
                 auto transferredMaximum = limits->second == LayoutUnit::max() ? LayoutUnit::max() : std::max(0_lu, limits->second - borderAndPadding);
                 minimum = std::clamp(minimum, transferredMinimum, transferredMaximum);
@@ -1577,12 +1587,16 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
     // Each block container collects the contributions of its children between its start and end. In the max-content inline size, the floats
     // among them go side by side, and so does a box after them that avoids floats, with its content when it is inline, while another box
     // goes below them (RenderBlock::computeBlockIntrinsicLogicalWidths).
+    // The percentage block sizes in the content of a block container resolve against its content box block size, which comes down from the
+    // block container being measured.
     struct BlockContainerSizes {
         CheckedRef<const RenderBox> blockContainer;
+        std::optional<LayoutUnit> contentBoxBlockSize;
         IntrinsicWidthConstraints sizes { };
         LayoutUnit leftFloatsMaximum { };
         LayoutUnit rightFloatsMaximum { };
     };
+
     auto addContribution = [&](BlockContainerSizes& container, const RenderBox& box, IntrinsicWidthConstraints contribution) {
         auto avoidsFloats = box.avoidsFloats() || (box.isAnonymousBlock() && box.childrenInline());
         auto& sizes = container.sizes;
@@ -1632,12 +1646,15 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
         return { contributions.minimum + marginStart + marginEnd, contributions.maximum + marginStart + marginEnd };
     };
 
-    auto blockContainerSizes = Vector<BlockContainerSizes> { { blockContainer } };
+    auto blockContainerSizes = Vector<BlockContainerSizes> { { blockContainer, contentBoxBlockSize } };
+    auto contentBoxBlockSizeOf = [&](const RenderBox& box) {
+        return contentBoxBlockSizeWhileMeasured(box, computeBorderAndPadding(box, 0_lu), blockContainerSizes.last().contentBoxBlockSize, { }, writingMode);
+    };
     for (auto& blockItem : BlockItemsBuilder { blockContainer }.build()) {
         CheckedRef box = blockItem.renderer();
         switch (blockItem.type()) {
         case BlockItem::Type::BlockContainerStart:
-            blockContainerSizes.append({ box });
+            blockContainerSizes.append({ box, contentBoxBlockSizeOf(box) });
             break;
         case BlockItem::Type::InlineContent: {
             auto inlineContentSizes = LayoutIntegration::BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(downcast<RenderBlockFlow>(box));
@@ -1650,7 +1667,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
             auto sizes = contentSizes(blockContainerSizes.takeLast());
             if (auto containedSizes = containedIntrinsicInlineSizes(box))
                 sizes = *containedSizes;
-            addContribution(blockContainerSizes.last(), box, outerInlineSizes(box, sizes));
+            addContribution(blockContainerSizes.last(), box, outerInlineSizes(box, sizes, blockContainerSizes.last().contentBoxBlockSize));
             break;
         }
         case BlockItem::Type::IndependentFormattingContextRoot:
@@ -1660,7 +1677,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computeContentIntrinsicInlineS
                 addContribution(blockContainerSizes.last(), box, withMargins(box, LayoutIntegration::BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(box)));
                 break;
             }
-            addContribution(blockContainerSizes.last(), box, outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box))));
+            addContribution(blockContainerSizes.last(), box, outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box), contentBoxBlockSizeOf(box)), blockContainerSizes.last().contentBoxBlockSize));
             break;
         case BlockItem::Type::Float:
             // Its own formatting context lays it out, and measures it (handleFloat).

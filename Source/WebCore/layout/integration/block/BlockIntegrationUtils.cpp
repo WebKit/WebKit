@@ -306,6 +306,16 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingCo
 
 Layout::IntrinsicWidthConstraints BlockIntegrationUtils::independentFormattingContextIntrinsicInlineSizeContributions(const RenderBox& box)
 {
+    // An orthogonal box contributes the block size its formatting context lays it out at (RenderBlock::computeBlockIntrinsicLogicalWidths).
+    // The out-of-flow boxes in it do not change that size, so it does not lay it out for them, which would invalidate all of it
+    // (RenderBox::computeIntrinsicLogicalHeight).
+    if (CheckedPtr containingBlock = box.containingBlock(); containingBlock && containingBlock->writingMode().isOrthogonal(box.writingMode())) {
+        if (!box.selfNeedsLayout() && !box.normalChildNeedsLayout())
+            return { box.logicalHeight(), box.logicalHeight() };
+        SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBox = const_cast<RenderBox&>(box);
+        auto blockSize = mutableBox->computeIntrinsicLogicalHeight();
+        return { blockSize, blockSize };
+    }
     // Like RenderBlock::computeChildIntrinsicLogicalWidths: a min-content or max-content inline size of a block makes both contributions
     // that size (css-sizing-3 §5.2.1).
     auto contributions = Layout::IntrinsicWidthConstraints { box.minContentLogicalWidthContribution(), box.maxContentLogicalWidthContribution() };

@@ -248,7 +248,7 @@ std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const
     // A fieldset's legend, which sits in its border and not in its content, floors them (RenderBlock::computeBlockIntrinsicLogicalWidths). This
     // takes the legend out of the content too, like RenderBlock::layoutExcludedChildren.
     auto [legendMinimum, legendMaximum] = rootRenderer.computeIntrinsicLogicalWidthsForFieldsetLegend();
-    auto sizes = Layout::BlockFormattingContext { rootRenderer, integrationUtils, blockLayoutState }.computeIntrinsicInlineSizes(rootRenderer);
+    auto sizes = Layout::BlockFormattingContext { rootRenderer, integrationUtils, blockLayoutState }.computeIntrinsicInlineSizes(rootRenderer, contentBoxBlockSizeForPercentages(rootRenderer));
     sizes.minimum = std::max(sizes.minimum, legendMinimum);
     sizes.maximum = std::max(sizes.maximum, legendMaximum);
 
