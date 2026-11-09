@@ -892,7 +892,7 @@ public:
     std::optional<FrameIdentifier> frameID() const { return m_frameIdentifier; }
 
     // to get visually ordered hebrew and arabic pages right
-    NODELETE void setVisuallyOrdered();
+    void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }
 
     NODELETE WEBCORE_EXPORT DocumentLoader* loader() const;

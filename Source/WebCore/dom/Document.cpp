@@ -4026,8 +4026,7 @@ AXObjectCache* Document::axObjectCache() const
 void Document::setVisuallyOrdered()
 {
     m_visuallyOrdered = true;
-    if (auto* renderView = this->renderView())
-        renderView->mutableStyle().setRTLOrdering(Order::Visual);
+    scheduleFullStyleRebuild();
 }
 
 Ref<DocumentParser> Document::createParser()
