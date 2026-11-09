@@ -5785,7 +5785,7 @@ std::expected<bool, RemoteFrameGeometryTransformer> EventHandler::handleTouchEve
         // pagePoint should always be relative to the target elements containing frame.
         pagePoint = LayoutPoint(targetFrame->view()->windowToContents(flooredIntPoint(point.pos())));
 
-        float scaleFactor = targetFrame->pageZoomFactor() * targetFrame->frameScaleFactor();
+        float scaleFactor = targetFrame->effectiveZoomFactor() * targetFrame->frameScaleFactor();
 
         DoublePoint adjustedPagePoint = FloatPoint(pagePoint.x() / scaleFactor, pagePoint.y() / scaleFactor);
         DoubleSize adjustedRadius = point.radius().scaledBy(scaleFactor);

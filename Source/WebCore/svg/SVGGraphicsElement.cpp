@@ -127,7 +127,7 @@ AffineTransform SVGGraphicsElement::computeCTM(SVGElement* element, CTMScope mod
         if (!svgRoot)
             return ctm;
 
-        auto cssZoom = svgRoot->style().usedZoom() / svgRoot->view().pageZoomFactor();
+        auto cssZoom = svgRoot->style().usedZoom() / svgRoot->frame().pageZoomFactor();
         if (cssZoom == 1)
             return ctm;
         return AffineTransform::makeScale({ cssZoom, cssZoom }).multiply(ctm);

@@ -234,7 +234,7 @@ static double resolveViewportUnit(const auto& adaptor)
             return 0;
     }
 
-    return resolveViewportAxis<axis>(resolveViewportType<type>(*renderView), *renderView, adaptor) / 100.0 / renderView->pageZoomFactor();
+    return resolveViewportAxis<axis>(resolveViewportType<type>(*renderView), *renderView, adaptor) / 100.0 / renderView->frame().effectiveZoomFactor();
 }
 
 // MARK: - "container-percentage" resolution functions
@@ -263,7 +263,7 @@ static std::optional<double> resolveContainerUnit(CQ::Axis physicalAxis, const a
 
             // FIXME: Document why `font-size` is excluded or remove this special case.
             if (adaptor.property() != CSSPropertyID::FontSize)
-                adjustedWidthOrHeight = adjustedWidthOrHeight / adaptor.renderViewForViewportUnits()->pageZoomFactor();
+                adjustedWidthOrHeight = adjustedWidthOrHeight / adaptor.renderViewForViewportUnits()->frame().effectiveZoomFactor();
 
             return adjustedWidthOrHeight / 100;
         }

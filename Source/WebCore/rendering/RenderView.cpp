@@ -834,11 +834,6 @@ void RenderView::setPageLogicalSize(LayoutSize size)
     m_pageLogicalSize = size;
 }
 
-float RenderView::pageZoomFactor() const
-{
-    return frameView().frame().pageZoomFactor();
-}
-
 FloatSize RenderView::sizeForCSSSmallViewportUnits() const
 {
     return frameView().sizeForCSSSmallViewportUnits();

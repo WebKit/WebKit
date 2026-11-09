@@ -60,7 +60,7 @@ Style::ComputedStyle resolveForDocument(const Document& document)
 
     documentStyle.setDisplay(DisplayType::BlockFlow);
     documentStyle.setRTLOrdering(document.visuallyOrdered() ? WebCore::Order::Visual : WebCore::Order::Logical);
-    documentStyle.setZoom(!document.printing() ? renderView->frame().pageZoomFactor() : 1);
+    documentStyle.setZoom(!document.printing() ? renderView->frame().effectiveZoomFactor() : 1);
     if (auto frameScaleFactor = protect(renderView->frame())->frameScaleFactor(); frameScaleFactor != 1) {
         documentStyle.setTransform(Style::Transform { Style::TransformFunction { Style::ScaleTransformFunction::create(frameScaleFactor, frameScaleFactor, Style::TransformFunctionType::Scale) } });
         documentStyle.setTransformOrigin(Style::TransformOrigin { 0_css_px, 0_css_px, 0_css_px });
