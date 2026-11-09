@@ -2467,7 +2467,7 @@ void Page::enumerateLocalFrameGeometry(NOESCAPE const Function<void(LocalFrame&,
                 ownerIsFullyClipped,
                 frameView->childFrameOwnerToRootContentTransform(*child),
                 WTF::move(absoluteToChildFrameOwnerLocalTransform),
-                frame.frameScaleFactorForChild(*child),
+                frame.frameOwnerZoomFactorForChild(*child),
                 contentBoxLocation,
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));

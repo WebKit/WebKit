@@ -285,10 +285,10 @@ ColorSchemePreference RemoteFrame::colorSchemePreference() const
     return m_colorSchemePreference;
 }
 
-float RemoteFrame::frameScaleFactorForChild(const Frame& child) const
+float RemoteFrame::frameOwnerZoomFactorForChild(const Frame& child) const
 {
     if (RefPtr info = frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
-        return info->frameScaleFactor();
+        return info->frameOwnerZoomFactor();
 
     return 1.0;
 }

@@ -453,7 +453,7 @@ float Frame::frameScaleFactor() const
     // Check if this frame's owner element (iframe) has CSS zoom applied.
     if (!isMainFrame()) {
         if (RefPtr parentFrame = tree().parent())
-            return parentFrame->frameScaleFactorForChild(*this);
+            return parentFrame->frameOwnerZoomFactorForChild(*this);
 
         return 1.0;
     }

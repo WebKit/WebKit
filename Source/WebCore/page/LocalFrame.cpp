@@ -1156,9 +1156,9 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     }
 }
 
-float LocalFrame::frameScaleFactorForChild(const Frame& child) const
+float LocalFrame::frameOwnerZoomFactorForChild(const Frame& child) const
 {
-    // The frame scale factor for a child frame is the accumulated CSS zoom
+    // The frame owner zoom factor for a child frame is the accumulated CSS zoom
     // applied to the frame element. On the ComputedStyle, the used zoom also
     // includes the page zoom factor, so we must divide it out to get back to
     // the accumulated CSS zoom value.

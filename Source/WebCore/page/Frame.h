@@ -168,8 +168,8 @@ public:
     // values on the frame owner element and its ancestors.
     WEBCORE_EXPORT float frameScaleFactor() const;
 
-    // The scale factor of a child frame with respect to this frame.
-    virtual float frameScaleFactorForChild(const Frame&) const = 0;
+    // The frame owner zoom factor of a child frame.
+    virtual float frameOwnerZoomFactorForChild(const Frame&) const = 0;
 
     WEBCORE_EXPORT virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes);
 

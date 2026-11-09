@@ -234,7 +234,7 @@ public:
     float pageZoomFactor() const { return m_pageZoomFactor; }
     float textZoomFactor() const { return m_textZoomFactor; }
 
-    float frameScaleFactorForChild(const Frame&) const final;
+    float frameOwnerZoomFactorForChild(const Frame&) const final;
 
     void deviceOrPageScaleFactorChanged();
 
