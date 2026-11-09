@@ -164,17 +164,81 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         # standalone ARC sources via --print-arc-sources.
         set(_bundledSourcesFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}BundledSources.txt")
         set(_arcSourcesFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}ARCSources.txt")
-        execute_process(COMMAND ${Python_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.py
-            ${gusb_args}
-            --print-bundled-sources "${_bundledSourcesFile}"
-            --print-arc-sources "${_arcSourcesFile}"
-            ${_sourceListFileTruePaths}
-            RESULT_VARIABLE _resultTmp
-            OUTPUT_VARIABLE _outputTmp)
 
-        if (${_resultTmp})
-             message(FATAL_ERROR "generate-unified-source-bundles.py exited with non-zero status, exiting")
+        # The bundles only depend on the source lists, the arguments and the
+        # script, so a reconfigure reuses the previous run's results while those
+        # are unchanged and the bundles are still there, instead of starting
+        # Python for every framework.
+        file(SHA256 "${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.py" _gusbKey)
+        string(APPEND _gusbKey ";${gusb_args};${_sourceListFileTruePaths}")
+        foreach (_sourcesListTruePath IN LISTS _sourceListFileTruePaths)
+            file(SHA256 "${_sourcesListTruePath}" _sourcesListHash)
+            string(APPEND _gusbKey ";${_sourcesListHash}")
+        endforeach ()
+        string(SHA256 _gusbKey "${_gusbKey}")
+        set(_gusbKeyFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}UnifiedSources.key")
+        set(_gusbOutputFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}UnifiedSources.txt")
+        set(_gusbReused FALSE)
+        if (EXISTS "${_gusbKeyFile}" AND EXISTS "${_gusbOutputFile}" AND EXISTS "${_bundledSourcesFile}" AND EXISTS "${_arcSourcesFile}")
+            file(READ "${_gusbKeyFile}" _gusbPreviousKey)
+            if (_gusbPreviousKey STREQUAL _gusbKey)
+                file(READ "${_gusbOutputFile}" _outputTmp)
+                set(_gusbReused TRUE)
+                foreach (_file IN LISTS _outputTmp)
+                    if (IS_ABSOLUTE "${_file}")
+                        set(_gusbOutputPath "${_file}")
+                    elseif (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_file}")
+                        continue ()
+                    else ()
+                        set(_gusbOutputPath "${_derivedSourcesPath}/${_file}")
+                    endif ()
+                    if (NOT EXISTS "${_gusbOutputPath}")
+                        set(_gusbReused FALSE)
+                        break ()
+                    endif ()
+                endforeach ()
+                if (_gusbReused)
+                    # The bundled member list names a member by its DerivedSources path
+                    # when the source tree has no such file, which the key does not
+                    # capture, so check that each member is still where it was.
+                    file(STRINGS "${_bundledSourcesFile}" _cachedMembers)
+                    foreach (_member IN LISTS _cachedMembers)
+                        if (IS_ABSOLUTE "${_member}")
+                            file(RELATIVE_PATH _relative "${_derivedSourcesPath}" "${_member}")
+                            if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_relative}")
+                                set(_gusbReused FALSE)
+                                break ()
+                            endif ()
+                        elseif (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_member}")
+                            set(_gusbReused FALSE)
+                            break ()
+                        endif ()
+                    endforeach ()
+                endif ()
+            endif ()
         endif ()
+
+        if (NOT _gusbReused)
+            file(REMOVE "${_gusbKeyFile}")
+            execute_process(COMMAND ${Python_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.py
+                ${gusb_args}
+                --print-bundled-sources "${_bundledSourcesFile}"
+                --print-arc-sources "${_arcSourcesFile}"
+                ${_sourceListFileTruePaths}
+                RESULT_VARIABLE _resultTmp
+                OUTPUT_VARIABLE _outputTmp)
+
+            if (${_resultTmp})
+                 message(FATAL_ERROR "generate-unified-source-bundles.py exited with non-zero status, exiting")
+            endif ()
+            file(WRITE "${_gusbOutputFile}" "${_outputTmp}")
+            file(WRITE "${_gusbKeyFile}" "${_gusbKey}")
+        endif ()
+        unset(_gusbKey)
+        unset(_gusbPreviousKey)
+        unset(_gusbOutputPath)
+        unset(_gusbReused)
+        unset(_cachedMembers)
 
         # Member sources folded into bundles: compiled via the bundle, so mark header-only.
         file(STRINGS "${_bundledSourcesFile}" _bundledSources)
@@ -213,7 +277,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         unset(_resultTmp)
         unset(_outputTmp)
     else ()
-        set(_arcSourcesFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}ARCSources.txt")
+        set(_arcSourcesFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}NonUnifiedARCSources.txt")
         execute_process(COMMAND ${Python_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.py
             ${gusb_args}
             "--print-all-sources"
