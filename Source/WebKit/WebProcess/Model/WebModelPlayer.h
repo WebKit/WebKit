@@ -220,6 +220,7 @@ private:
     void updateScreenHeadroomFromPage();
     void dynamicRangeLimitDidChange();
 #endif
+    bool hasPromotedDOMContent() const;
 
     WeakPtr<WebCore::ModelPlayerClient> m_client;
 
