@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>CSS Highlight API Test: many overlapping highlights paint in registration order</title>
+<link rel="help" href="https://drafts.csswg.org/css-highlight-api-1/#priorities">
+<link rel="match" href="custom-highlight-painting-overlapping-highlights-003-ref.html">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<meta name="assert" value="Highlights with equal priority covering the same text must stack in the order they were registered, regardless of how many there are.">
+<style>
+  #target {
+    font: 20px/1 Ahem;
+  }
+</style>
+<style id="highlight-styles"></style>
+<span id="target">XXXXXXXXXXXXXXXX</span>
+<script>
+  // Every character is covered by several red highlights, then a green one, then a topmost
+  // highlight with a transparent background, so the green highlight must be visible everywhere.
+  const text = document.getElementById("target").firstChild;
+  const length = text.length;
+  let rules = "";
+  function addHighlight(name, startOffset, style) {
+    rules += `::highlight(${name}) { ${style} }\n`;
+    CSS.highlights.set(name, new Highlight(new StaticRange({ startContainer: text, startOffset, endContainer: text, endOffset: length })));
+  }
+  for (let i = 0; i < length - 2; ++i)
+    addHighlight("red" + i, i, `background-color: rgb(${255 - i}, 0, 0); color: rgb(${255 - i}, 0, 0);`);
+  addHighlight("green", 0, "background-color: green; color: green;");
+  addHighlight("transparent", 0, "background-color: transparent;");
+  document.getElementById("highlight-styles").textContent = rules;
+</script>
