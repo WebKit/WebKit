@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Grid: grid-column placement with a line name alone</title>
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#grid-placement-slot">
+<link rel="help" href="https://drafts.csswg.org/css-grid-1/#line-placement">
+<meta name="assert" content="An item whose grid-column-start or grid-column-end is a line name alone is placed at the first line named name-start (for the start) or name-end (for the end). Without such a line, the edge is treated as the integer 1 along with the name.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/check-layout-th.js"></script>
+<body onload="checkLayout('.grid')">
+<style>
+.grid { display: grid; position: relative; width: 400px; background: lightgray; margin-bottom: 10px; grid-auto-flow: row; grid-auto-rows: 10px; }
+.grid > div { background: green; }
+</style>
+<!-- lone name with foo-start and foo-end lines: the item spans from foo-start to foo-end -->
+<div class="grid" style="grid-template-columns: 50px [foo-start] 60px 70px [foo-end] 80px; grid-template-rows: 20px;">
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="130" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="60" data-expected-height="10" style="grid-column-start: foo"></div>
+  <div data-offset-x="110" data-offset-y="20" data-expected-width="70" data-expected-height="10" style="grid-column-end: foo"></div>
+  <div data-offset-x="50" data-offset-y="30" data-expected-width="60" data-expected-height="10" style="grid-column: foo / auto"></div>
+</div>
+<!-- the first foo-start and the first foo-end are used -->
+<div class="grid" style="grid-template-columns: [foo-start] 50px [foo-end] 60px [foo-start] 70px [foo-end] 80px; grid-template-rows: 20px;">
+  <div data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="10" style="grid-column-start: foo"></div>
+  <div data-offset-x="0" data-offset-y="30" data-expected-width="50" data-expected-height="10" style="grid-column-end: foo"></div>
+  <div data-offset-x="0" data-offset-y="40" data-expected-width="50" data-expected-height="10" style="grid-column: foo-start / foo"></div>
+</div>
+<!-- only [foo] lines: both edges are the first line named foo, so the item gets one track -->
+<div class="grid" style="grid-template-columns: 50px [foo] 60px 70px [foo] 80px; grid-template-rows: 20px;">
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="60" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="60" data-expected-height="10" style="grid-column-start: foo"></div>
+  <div data-offset-x="0" data-offset-y="30" data-expected-width="50" data-expected-height="10" style="grid-column-end: foo"></div>
+  <div data-offset-x="50" data-offset-y="30" data-expected-width="210" data-expected-height="10" style="grid-column: foo / 5"></div>
+</div>
+<!-- no line with the name: both edges are the first implicit line after the explicit grid -->
+<div class="grid" style="grid-template-columns: 50px 60px; grid-auto-columns: 30px 40px; grid-template-rows: 20px;">
+  <div data-offset-x="140" data-offset-y="0" data-expected-width="40" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="140" data-offset-y="20" data-expected-width="40" data-expected-height="10" style="grid-column-start: foo"></div>
+  <div data-offset-x="110" data-offset-y="30" data-expected-width="30" data-expected-height="10" style="grid-column-end: foo"></div>
+  <div data-offset-x="0" data-offset-y="40" data-expected-width="140" data-expected-height="10" style="grid-column: 1 / foo"></div>
+</div>
+<!-- only foo-start exists: the end is the first implicit line -->
+<div class="grid" style="grid-template-columns: 50px [foo-start] 60px 70px; grid-auto-columns: 30px 40px; grid-template-rows: 20px;">
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="160" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="50" data-offset-y="20" data-expected-width="60" data-expected-height="10" style="grid-column-start: foo"></div>
+  <div data-offset-x="180" data-offset-y="20" data-expected-width="30" data-expected-height="10" style="grid-column-end: foo"></div>
+</div>
+<!-- only foo-end exists: the start is the first implicit line, so the lines are swapped -->
+<div class="grid" style="grid-template-columns: 50px [foo-end] 60px 70px; grid-auto-columns: 30px 40px; grid-template-rows: 20px;">
+  <div data-offset-x="50" data-offset-y="0" data-expected-width="160" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="210" data-offset-y="0" data-expected-width="40" data-expected-height="20" style="grid-column-start: foo"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="50" data-expected-height="10" style="grid-column-end: foo"></div>
+</div>
+<!-- foo-end before foo-start: the lines are swapped -->
+<div class="grid" style="grid-template-columns: [foo-end] 50px 60px [foo-start] 70px 80px; grid-template-rows: 20px;">
+  <div data-offset-x="140" data-offset-y="0" data-expected-width="110" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="250" data-offset-y="0" data-expected-width="70" data-expected-height="20" style="grid-column-start: foo / span 2"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="140" data-expected-height="10" style="grid-column: span 2 / foo"></div>
+  <div data-offset-x="70" data-offset-y="30" data-expected-width="70" data-expected-height="10" style="grid-column-end: foo"></div>
+</div>
+<!-- a lone name next to span 2, auto, an integer and foo 2 -->
+<div class="grid" style="grid-template-columns: [foo-start] 50px [foo-end foo-start] 60px [foo-end] 70px 80px; grid-auto-columns: 30px; grid-template-rows: 20px;">
+  <div data-offset-x="30" data-offset-y="0" data-expected-width="110" data-expected-height="20" style="grid-column: foo / span 2"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="80" data-expected-height="10" style="grid-column: span 2 / foo"></div>
+  <div data-offset-x="30" data-offset-y="30" data-expected-width="50" data-expected-height="10" style="grid-column: auto / foo"></div>
+  <div data-offset-x="30" data-offset-y="40" data-expected-width="50" data-expected-height="10" style="grid-column: foo / auto"></div>
+  <div data-offset-x="30" data-offset-y="50" data-expected-width="180" data-expected-height="10" style="grid-column: foo / 4"></div>
+  <div data-offset-x="80" data-offset-y="60" data-expected-width="60" data-expected-height="10" style="grid-column: 3 / foo"></div>
+  <div data-offset-x="30" data-offset-y="70" data-expected-width="320" data-expected-height="10" style="grid-column: foo / foo 2"></div>
+  <div data-offset-x="80" data-offset-y="80" data-expected-width="270" data-expected-height="10" style="grid-column: foo 2 / foo"></div>
+  <div data-offset-x="30" data-offset-y="90" data-expected-width="260" data-expected-height="10" style="grid-column: foo / -1"></div>
+</div>
+<!-- a lone name that creates leading implicit tracks: span 2 / foo ends at line 1 -->
+<div class="grid" style="grid-template-columns: 50px [foo-end] 60px; grid-auto-columns: 30px 40px; grid-template-rows: 20px;">
+  <div data-offset-x="30" data-offset-y="0" data-expected-width="90" data-expected-height="20" style="grid-column: span 2 / foo"></div>
+  <div data-offset-x="0" data-offset-y="20" data-expected-width="120" data-expected-height="10" style="grid-column: span 3 / foo"></div>
+  <div data-offset-x="210" data-offset-y="20" data-expected-width="70" data-expected-height="10" style="grid-column: foo / span 2"></div>
+</div>
+<!-- names inside repeat(auto-fill, ...) -->
+<div class="grid" style="width: 300px; grid-template-columns: repeat(auto-fill, [foo-start] 40px 40px [foo-end]) 20px; grid-auto-columns: 15px; grid-template-rows: 20px;">
+  <div data-offset-x="15" data-offset-y="0" data-expected-width="80" data-expected-height="20" style="grid-column: foo"></div>
+  <div data-offset-x="15" data-offset-y="20" data-expected-width="80" data-expected-height="10" style="grid-column: foo / span 2"></div>
+  <div data-offset-x="0" data-offset-y="30" data-expected-width="95" data-expected-height="10" style="grid-column: span 3 / foo"></div>
+  <div data-offset-x="95" data-offset-y="30" data-expected-width="40" data-expected-height="10" style="grid-column: foo-start 2 / foo"></div>
+</div>

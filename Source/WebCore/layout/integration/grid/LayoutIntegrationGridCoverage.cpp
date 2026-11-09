@@ -139,8 +139,8 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
-// GFC resolves numeric lines, numeric spans and lines given as an integer and a line name
-// (e.g. foo 2) in either position. A line name alone and named spans (e.g. span foo) are not supported.
+// GFC resolves numeric lines, numeric spans, lines given as an integer and a line name (e.g. foo 2) and
+// lines given as a line name alone (e.g. foo) in either position. Named spans (e.g. span foo) are not supported.
 static bool hasValidEndForExplicitStart(const Style::GridPosition& end)
 {
     return WTF::switchOn(end,
@@ -155,7 +155,7 @@ static bool hasValidEndForExplicitStart(const Style::GridPosition& end)
             return end.namedGridLine().value.isEmpty();
         },
         [](const Style::CustomIdent&) {
-            return false;
+            return true;
         }
     );
 }
@@ -174,7 +174,7 @@ static bool hasValidEndForAutoStart(const Style::GridPosition& end)
             return end.namedGridLine().value.isEmpty();
         },
         [](const Style::CustomIdent&) {
-            return false;
+            return true;
         }
     );
 }
@@ -195,7 +195,7 @@ static bool hasValidEndForSpanStart(const Style::GridPosition& end)
             return true;
         },
         [](const Style::CustomIdent&) {
-            return false;
+            return true;
         }
     );
 }
@@ -499,7 +499,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 return { };
             },
             [&](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemColumnStartHasLineName;
+                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemColumnEnd()))
+                    return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
+                return { };
             }
         );
 
@@ -528,7 +530,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 return { };
             },
             [&](const Style::CustomIdent&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemRowStartHasLineName;
+                if (!hasValidEndForExplicitStart(gridItemStyle->gridItemRowEnd()))
+                    return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
+                return { };
             }
         );
 
