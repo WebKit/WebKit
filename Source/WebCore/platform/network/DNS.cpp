@@ -38,11 +38,8 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#if OS(UNIX)
+#if OS(UNIX) || OS(QNX)
 #include <arpa/inet.h>
-#endif
-
-#if OS(QNX)
 #include <sys/socket.h>
 #endif
 
