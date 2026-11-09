@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600 (composited [root], bounds=at (0,0) size 800x600, drawsContent=1, paints into ancestor=0)
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x366
+  RenderBlock {HTML} at (0,0) size 800x366
+    RenderBody {BODY} at (8,8) size 784x350
+layer at (8,8) size 300x300 (composited [spatial-portal], bounds=at (0,0) size 300x300, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,0) size 300x300
+    RenderBlock {DIV} at (0,50) size 100x50 [bgcolor=#008000]
+    RenderBlock {DIV} at (0,150) size 300x50
+layer at (8,8) size 100x50 (composited [spatial-portal-hosting], bounds=at (0,0) size 100x50, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,0) size 100x50 [bgcolor=#008000]
+layer at (8,108) size 100x50
+  RenderBlock {DIV} at (0,100) size 100x50 [bgcolor=#008000]
+layer at (8,158) size 100x50
+  RenderBlock {DIV} at (0,0) size 100x50 [bgcolor=#008000]
+layer at (8,208) size 100x50 (composited [stacking, spatial-portal-hosting], bounds=at (0,0) size 100x50, drawsContent=1, paints into ancestor=0)
+  RenderBlock {DIV} at (0,200) size 100x50 [bgcolor=#008000]
+layer at (8,258) size 100x50 (composited [stacking, spatial-portal-hosting], bounds=at (0,0) size 100x50, drawsContent=1, paints into ancestor=0)
+  RenderBlock (positioned) {DIV} at (8,258) size 100x50 [bgcolor=#008000]
+layer at (8,308) size 100x50
+  RenderBlock {DIV} at (0,300) size 100x50 [bgcolor=#008000]

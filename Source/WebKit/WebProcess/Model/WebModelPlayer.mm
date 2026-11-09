@@ -29,15 +29,19 @@
 
 #if ENABLE(GPU_PROCESS_MODEL)
 
+#import "GraphicsLayerCARemote.h"
 #import "Logging.h"
 #import "Mesh.h"
 #import "ModelInlineConverters.h"
 #import "ModelProcessModelPlayerTransformState.h"
 #import "ModelTypes.h"
+#import "PlatformCALayerRemote.h"
 #import "RemoteGPUProxy.h"
+#import "RemoteLayerBackingStore.h"
 #import "RemoteMeshProxy.h"
 #import "WKStageModeOrbitSimulator.h"
 #import <WebCore/Chrome.h>
+#import <WebCore/ContentsFormat.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentEventLoop.h>
 #import <WebCore/FloatPoint3D.h>
@@ -75,8 +79,16 @@
 namespace WebKit {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WebModelPlayer::HostedModel);
+#if ENABLE(SPATIAL_PORTAL)
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WebModelPlayer::PromotedChildAnchor);
+#endif
 
 WebModelPlayer::HostedModel::~HostedModel() = default;
+
+#if ENABLE(SPATIAL_PORTAL)
+// TODO:adjust
+static constexpr unsigned portalContentBufferFrameCount = 2;
+#endif
 
 class ModelDisplayBufferDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
 public:
@@ -287,8 +299,14 @@ bool WebModelPlayer::ensureModelBacking(WebCore::LayoutSize size)
     m_currentModel->setViewportSize(cssSize.width().toFloat(), cssSize.height().toFloat());
 
 #if ENABLE(SPATIAL_PORTAL)
-    if (m_portalTransform)
-        protect(m_currentModel)->setPortalTransform(*m_portalTransform);
+    if (m_portalTransform) {
+        Ref currentModel = *m_currentModel;
+        currentModel->setPortalTransform(*m_portalTransform);
+        if (auto contentSize = effectivePortalContentSize())
+            currentModel->setPortalContentSize(*contentSize);
+        if (!m_domLayerQuads.isEmpty())
+            currentModel->setDOMLayerQuads(Vector<DOMLayerQuad> { m_domLayerQuads });
+    }
 #endif
 
     m_environmentMapPushedToCurrentModel = false;
@@ -474,7 +492,7 @@ void WebModelPlayer::unload(WebCore::NodeIdentifier nodeID)
 
     removeHostedModelResources(nodeID, *hosted);
 
-    if (m_hostedModels.isEmpty()) {
+    if (m_hostedModels.isEmpty() && !hasPromotedDOMContent()) {
         releaseModelResources();
         return;
     }
@@ -510,6 +528,16 @@ void WebModelPlayer::notifyEntityTransformUpdated()
 
 void WebModelPlayer::sizeDidChange(WebCore::LayoutSize size)
 {
+#if ENABLE(SPATIAL_PORTAL)
+    if (isSpatialPortal()) {
+        m_portalLayoutSize = size;
+        if (!m_currentModel) {
+            ensurePortalContentBacking();
+            return;
+        }
+    }
+#endif
+
     RefPtr currentModel = m_currentModel;
     if (!currentModel)
         return;
@@ -768,7 +796,7 @@ void WebModelPlayer::setPlaybackRate(WebCore::NodeIdentifier nodeID, double newR
 
 void WebModelPlayer::startUpdateLoopIfNeeded()
 {
-    if (m_isUpdateLoopRunning)
+    if (m_isUpdateLoopRunning && m_isUpdateScheduled)
         return;
     m_isUpdateLoopRunning = true;
     scheduleUpdateIfNeeded();
@@ -796,7 +824,7 @@ void WebModelPlayer::scheduleUpdateIfNeeded()
 
 void WebModelPlayer::update()
 {
-    if (m_hostedModels.isEmpty())
+    if (m_hostedModels.isEmpty() && !hasPromotedDOMContent())
         return;
 
     if (!m_isUpdateLoopRunning || m_isUpdating)
@@ -850,11 +878,29 @@ void WebModelPlayer::update()
     if (didReachEnd)
         updateMeshPlayState();
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalPromotedChildrenNeedResolution)
+        resolvePortalPromotedChildren();
+
+    if (isSpatialPortal() && !m_portalPromotedChildren.isEmpty()) {
+        if (RefPtr client = m_client)
+            client->willRenderPortalFrame(*this);
+    }
+#endif
+
     if (!render())
         m_isUpdating = false;
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalContentBufferFrames)
+        --m_portalContentBufferFrames;
+
+    if (everyChildIsAtRest && !stageModeActive && !m_portalContentBufferFrames && !m_portalPromotedChildrenNeedResolution && !hasPortalVideoQuad())
+        m_isUpdateLoopRunning = false;
+#else
     if (everyChildIsAtRest && !stageModeActive)
         m_isUpdateLoopRunning = false;
+#endif
 
     if (m_needsEntityTransformNotification)
         notifyEntityTransformUpdated();
@@ -867,9 +913,27 @@ bool WebModelPlayer::hasAnyLoadedChild() const
     });
 }
 
+bool WebModelPlayer::hasPromotedDOMContent() const
+{
+#if ENABLE(SPATIAL_PORTAL)
+    return isSpatialPortal() && !m_portalPromotedChildren.isEmpty();
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(SPATIAL_PORTAL)
+bool WebModelPlayer::hasPortalVideoQuad() const
+{
+    return std::ranges::any_of(m_domLayerQuads, [](auto& quad) {
+        return !!quad.videoPlayer;
+    });
+}
+#endif
+
 bool WebModelPlayer::render()
 {
-    if (!hasAnyLoadedChild())
+    if (!hasAnyLoadedChild() && !hasPromotedDOMContent())
         return false;
 
     RefPtr currentModel = m_currentModel;
@@ -880,11 +944,13 @@ bool WebModelPlayer::render()
     if (++m_renderTextureIndex >= m_displayBuffers.size())
         m_renderTextureIndex = 0;
 
-    currentModel->render(textureIndex, [protectedThis = protect(*this), textureIndex] (bool result) mutable {
-        protectedThis->ensureOnMainThreadWithProtectedThis([result, textureIndex] (Ref<WebModelPlayer> protectedThis) {
+    currentModel->render(textureIndex, [protectedThis = protect(*this), textureIndex](bool result) mutable {
+        protectedThis->ensureOnMainThreadWithProtectedThis([result, textureIndex](Ref<WebModelPlayer> protectedThis) {
             protectedThis->m_isUpdating = false;
-            if (!result)
+            if (!result) {
+                protectedThis->scheduleUpdateIfNeeded();
                 return;
+            }
 
             protectedThis->m_displayTextureIndex = textureIndex;
             protectedThis->m_hasRenderedFrame = true;
@@ -1115,6 +1181,152 @@ void WebModelPlayer::setPortalTransform(const WebCore::UsedPortalTransform& port
     }
 }
 
+void WebModelPlayer::setPortalContentLayer(WebCore::GraphicsLayer* layer)
+{
+    if (m_portalContentLayer.get() == layer)
+        return;
+
+    m_portalContentLayer = layer;
+    m_portalContentSize = std::nullopt;
+    updatePortalContentSize();
+}
+
+void WebModelPlayer::portalContentDidPaint()
+{
+    m_portalContentBufferFrames = portalContentBufferFrameCount;
+    updatePortalContentSize();
+    startUpdateLoopIfNeeded();
+}
+
+std::optional<WebModelPlayer::PortalLayerBacking> WebModelPlayer::portalLayerBacking(WebCore::GraphicsLayer* layer)
+{
+    RefPtr graphicsLayer = dynamicDowncast<GraphicsLayerCARemote>(layer);
+    if (!graphicsLayer) {
+        RELEASE_LOG(ModelElement, "portalContent: no backing, layer is not a GraphicsLayerCARemote");
+        return std::nullopt;
+    }
+
+    RefPtr platformLayer = dynamicDowncast<PlatformCALayerRemote>(graphicsLayer->platformCALayerIgnoringStructuralLayer());
+    if (!platformLayer) {
+        RELEASE_LOG(ModelElement, "portalContent: no backing, platform layer is not a PlatformCALayerRemote");
+        return std::nullopt;
+    }
+
+    CheckedPtr backingStore = platformLayer->properties().backingStoreOrProperties.store.get();
+    if (!backingStore) {
+        RELEASE_LOG(ModelElement, "portalContent: no backing, layer has no backing store");
+        return std::nullopt;
+    }
+
+    if (backingStore->type() != RemoteLayerBackingStore::Type::IOSurface) {
+        RELEASE_LOG(ModelElement, "portalContent: no backing, backing store is Bitmap rather than IOSurface");
+        return std::nullopt;
+    }
+
+    if (platformLayer->contentsFormat() != WebCore::ContentsFormat::RGBA8) {
+        platformLayer->setContentsFormat(WebCore::ContentsFormat::RGBA8);
+        platformLayer->setNeedsDisplay();
+        return std::nullopt;
+    }
+
+    auto bufferSet = backingStore->bufferSetIdentifier();
+    if (!bufferSet) {
+        RELEASE_LOG(ModelElement, "portalContent: no backing, remote rendering has no buffer set yet");
+        return std::nullopt;
+    }
+
+    return PortalLayerBacking { bufferSet, graphicsLayer->size(), backingStore->isOpaque() };
+}
+
+void WebModelPlayer::setPortalPromotedChildren(const Vector<WebCore::PortalPromotedChild>& children)
+{
+    m_portalPromotedChildren = children;
+    resolvePortalPromotedChildren();
+}
+
+void WebModelPlayer::resolvePortalPromotedChildren()
+{
+    ensurePortalContentBacking();
+
+    Vector<DOMLayerQuad> quads;
+    quads.reserveInitialCapacity(m_portalPromotedChildren.size());
+    unsigned unresolved = 0;
+
+    for (auto& child : m_portalPromotedChildren) {
+        if (child.videoPlayer) {
+            RefPtr videoLayer = child.layer;
+            if (!videoLayer) {
+                ++unresolved;
+                continue;
+            }
+
+            quads.append(DOMLayerQuad {
+                .nodeID = child.nodeID,
+                .videoPlayer = child.videoPlayer,
+                .contentSizeInCSSPixels = videoLayer->size(),
+                .isOpaque = true,
+                .quadRectInChildSpace = child.quadRectInChildSpace,
+                .childOriginInPortal = child.childOriginInPortal,
+                .transform = child.transform,
+                .promotionRootNodeID = child.promotionRootNodeID,
+                .promotionRootCenterInPortal = child.promotionRootCenterInPortal,
+                .isAnchored = isPromotedChildAnchored(child.promotionRootNodeID),
+            });
+            continue;
+        }
+
+        auto backing = portalLayerBacking(child.layer.get());
+        if (!backing) {
+            ++unresolved;
+            continue;
+        }
+
+        quads.append(DOMLayerQuad {
+            .nodeID = child.nodeID,
+            .bufferSet = backing->bufferSet,
+            .contentSizeInCSSPixels = backing->size,
+            .isOpaque = backing->isOpaque,
+            .quadRectInChildSpace = child.quadRectInChildSpace,
+            .childOriginInPortal = child.childOriginInPortal,
+            .transform = child.transform,
+            .promotionRootNodeID = child.promotionRootNodeID,
+            .promotionRootCenterInPortal = child.promotionRootCenterInPortal,
+            .isAnchored = isPromotedChildAnchored(child.promotionRootNodeID),
+        });
+    }
+
+    m_portalPromotedChildrenNeedResolution = unresolved;
+
+    if (quads == m_domLayerQuads) {
+        if (unresolved)
+            startUpdateLoopIfNeeded();
+        return;
+    }
+
+    m_domLayerQuads = quads;
+    m_portalContentBufferFrames = portalContentBufferFrameCount;
+
+    if (RefPtr model = m_currentModel)
+        model->setDOMLayerQuads(WTF::move(quads));
+
+    startUpdateLoopIfNeeded();
+}
+
+void WebModelPlayer::updatePortalContentSize()
+{
+    RefPtr layer = m_portalContentLayer;
+    if (!layer)
+        return;
+
+    if (m_portalContentSize == layer->size())
+        return;
+
+    m_portalContentSize = layer->size();
+
+    if (RefPtr model = m_currentModel)
+        model->setPortalContentSize(*m_portalContentSize);
+}
+
 void WebModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
 {
     if (m_portalAction == kind)
@@ -1132,6 +1344,52 @@ void WebModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
         notifyPortalTransformUpdated();
         startUpdateLoopIfNeeded();
     }
+}
+
+Vector<WebCore::FloatQuad> WebModelPlayer::portalChildQuadsOnGlass(WebCore::NodeIdentifier nodeID) const
+{
+    CheckedPtr hosted = hostedModel(nodeID);
+    if (!hosted || !hosted->didFinishLoading)
+        return { };
+
+    RefPtr model = m_currentModel;
+    return model ? model->portalChildQuadsOnGlass(nodeID) : Vector<WebCore::FloatQuad> { };
+}
+
+std::optional<WebCore::TransformationMatrix> WebModelPlayer::anchoredPromotedChildToGlassTransform(WebCore::NodeIdentifier nodeID) const
+{
+    RefPtr model = m_currentModel;
+    return model ? model->anchoredPromotedChildToGlassTransform(nodeID) : std::nullopt;
+}
+
+std::optional<WebCore::FloatSize> WebModelPlayer::effectivePortalContentSize() const
+{
+    if (m_portalContentSize)
+        return m_portalContentSize;
+
+    if (m_portalLayoutSize)
+        return WebCore::FloatSize(*m_portalLayoutSize);
+
+    return std::nullopt;
+}
+
+bool WebModelPlayer::ensurePortalContentBacking()
+{
+    if (m_currentModel)
+        return true;
+
+    if (!isSpatialPortal() || m_portalPromotedChildren.isEmpty())
+        return false;
+
+    auto contentSize = effectivePortalContentSize();
+    if (!contentSize || contentSize->isEmpty())
+        return false;
+
+    if (!ensureModelBacking(WebCore::LayoutSize(*contentSize)))
+        return false;
+
+    startUpdateLoopIfNeeded();
+    return true;
 }
 
 void WebModelPlayer::notifyPortalTransformUpdated()
@@ -1163,9 +1421,8 @@ void WebModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<Web
     startUpdateLoopIfNeeded();
 }
 
-WebCore::TransformationMatrix WebModelPlayer::HostedModel::anchorPlacementTransform(const HostedModel& anchor)
+static WebCore::TransformationMatrix placementTransformInAnchor(WKBridgeModelLoader *anchorLoader, const String& anchorPlacementName, std::optional<WebCore::TransformationMatrix>& anchorCorrection)
 {
-    RetainPtr anchorLoader = anchor.loader;
     if (!anchorLoader || anchorPlacementName.isEmpty())
         return { };
 
@@ -1186,6 +1443,11 @@ WebCore::TransformationMatrix WebModelPlayer::HostedModel::anchorPlacementTransf
     return placement * (*anchorCorrection);
 }
 
+WebCore::TransformationMatrix WebModelPlayer::HostedModel::anchorPlacementTransform(const HostedModel& anchor)
+{
+    return placementTransformInAnchor(protect(anchor.loader).get(), anchorPlacementName, anchorCorrection);
+}
+
 static WebCore::TransformationMatrix childTransformInAnchorFrame(WebCore::TransformationMatrix childTransform, const WebCore::TransformationMatrix& anchorFrame)
 {
     WebCore::TransformationMatrix::Decomposed4Type decomposition;
@@ -1202,13 +1464,9 @@ static WebCore::TransformationMatrix childTransformInAnchorFrame(WebCore::Transf
     return childTransform;
 }
 
-void WebModelPlayer::pushPortalChildTransform(WebCore::NodeIdentifier nodeID)
+WebCore::TransformationMatrix WebModelPlayer::portalChildTransform(HostedModel& leafModel)
 {
-    RefPtr model = m_currentModel;
-    CheckedPtr hosted = hostedModel(nodeID);
-    if (!model || !hosted || !isSpatialPortal())
-        return;
-
+    CheckedPtr hosted = &leafModel;
     auto resolvedAnchor = [&](const HostedModel& model) -> CheckedPtr<HostedModel> {
         CheckedPtr anchor = model.anchorNode ? hostedModel(*model.anchorNode) : nullptr;
         return anchor && anchor->loader ? anchor : nullptr;
@@ -1217,7 +1475,7 @@ void WebModelPlayer::pushPortalChildTransform(WebCore::NodeIdentifier nodeID)
     Vector<CheckedPtr<HostedModel>> chain { hosted };
     for (CheckedPtr anchor = resolvedAnchor(*hosted); anchor; anchor = resolvedAnchor(*anchor)) {
         if (chain.size() >= m_hostedModels.size()) {
-            RELEASE_LOG_ERROR(ModelElement, "%p - WebModelPlayer::pushPortalChildTransform: refusing to anchor nodeID=%" PRIu64 " because its anchor chain leads back to it", this, nodeID.toUInt64());
+            RELEASE_LOG_ERROR(ModelElement, "%p - WebModelPlayer::portalChildTransform: refusing to anchor a model whose anchor chain leads back to it", this);
             chain = { hosted };
             break;
         }
@@ -1231,7 +1489,17 @@ void WebModelPlayer::pushPortalChildTransform(WebCore::NodeIdentifier nodeID)
             transform = transform * current->anchorPlacementTransform(*chain[index + 1]);
         transform = transform * childTransformInAnchorFrame(current->childTransform.value_or(WebCore::TransformationMatrix { }), transform);
     }
-    model->setPortalChildTransform(nodeID, static_cast<simd_float4x4>(transform));
+    return transform;
+}
+
+void WebModelPlayer::pushPortalChildTransform(WebCore::NodeIdentifier nodeID)
+{
+    RefPtr model = m_currentModel;
+    CheckedPtr hosted = hostedModel(nodeID);
+    if (!model || !hosted || !isSpatialPortal())
+        return;
+
+    model->setPortalChildTransform(nodeID, static_cast<simd_float4x4>(portalChildTransform(*hosted)));
 }
 
 bool WebModelPlayer::isAnchoredTo(const HostedModel& hosted, WebCore::NodeIdentifier ancestorNode) const
@@ -1252,6 +1520,68 @@ void WebModelPlayer::pushAnchoredPortalChildTransforms(WebCore::NodeIdentifier a
         if (isAnchoredTo(hosted.get(), anchorNode))
             pushPortalChildTransform(nodeID);
     }
+
+    bool anchoringChanged = false;
+    for (auto& [promotionRootNodeID, promotedAnchor] : m_promotedChildAnchors) {
+        CheckedPtr anchor = promotedAnchor->anchorNode ? hostedModel(*promotedAnchor->anchorNode) : nullptr;
+        if (promotedAnchor->anchorNode != anchorNode && !(anchor && isAnchoredTo(*anchor, anchorNode)))
+            continue;
+
+        pushPromotedChildAnchorTransform(promotionRootNodeID, promotedAnchor.get());
+
+        bool isAnchored = isPromotedChildAnchored(promotionRootNodeID);
+        anchoringChanged |= std::ranges::any_of(m_domLayerQuads, [&](auto& quad) {
+            return quad.promotionRootNodeID == promotionRootNodeID && quad.isAnchored != isAnchored;
+        });
+    }
+
+    if (anchoringChanged)
+        resolvePortalPromotedChildren();
+}
+
+WebModelPlayer::HostedModel* WebModelPlayer::resolvedAnchorForPromotedChild(const PromotedChildAnchor& promotedAnchor)
+{
+    auto* anchor = promotedAnchor.anchorNode ? hostedModel(*promotedAnchor.anchorNode) : nullptr;
+    return anchor && anchor->loader ? anchor : nullptr;
+}
+
+bool WebModelPlayer::isPromotedChildAnchored(WebCore::NodeIdentifier promotionRootNodeID)
+{
+    auto it = m_promotedChildAnchors.find(promotionRootNodeID);
+    return it != m_promotedChildAnchors.end() && resolvedAnchorForPromotedChild(it->value.get());
+}
+
+void WebModelPlayer::pushPromotedChildAnchorTransform(WebCore::NodeIdentifier promotionRootNodeID, PromotedChildAnchor& promotedAnchor)
+{
+    RefPtr model = m_currentModel;
+    CheckedPtr anchor = resolvedAnchorForPromotedChild(promotedAnchor);
+    if (!model || !anchor || !isSpatialPortal())
+        return;
+
+    auto transform = portalChildTransform(*anchor) * placementTransformInAnchor(protect(anchor->loader).get(), promotedAnchor.anchorPlacementName, promotedAnchor.anchorCorrection);
+    model->setPortalChildTransform(promotionRootNodeID, static_cast<simd_float4x4>(transform));
+}
+
+void WebModelPlayer::setPromotedChildAnchor(WebCore::NodeIdentifier promotionRootNodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    if (!anchorNode) {
+        if (!m_promotedChildAnchors.remove(promotionRootNodeID))
+            return;
+    } else {
+        auto& promotedAnchor = m_promotedChildAnchors.ensure(promotionRootNodeID, [] {
+            return makeUniqueRef<PromotedChildAnchor>();
+        }).iterator->value.get();
+        if (promotedAnchor.anchorNode == anchorNode && promotedAnchor.anchorPlacementName == placement)
+            return;
+
+        promotedAnchor.anchorNode = anchorNode;
+        promotedAnchor.anchorPlacementName = placement;
+        promotedAnchor.anchorCorrection = std::nullopt;
+        pushPromotedChildAnchorTransform(promotionRootNodeID, promotedAnchor);
+    }
+
+    resolvePortalPromotedChildren();
+    startUpdateLoopIfNeeded();
 }
 #endif
 

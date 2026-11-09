@@ -1,0 +1,71 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<head>
+<style>
+    .portal {
+        spatial: portal;
+    }
+    .container {
+        width: 300px;
+        height: 100px;
+    }
+    .stacking-context {
+        position: relative;
+        z-index: 0;
+    }
+    .box {
+        width: 100px;
+        height: 50px;
+        background-color: green;
+    }
+    .preserve-3d {
+        transform-style: preserve-3d;
+    }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.setRenderTreeDumpOptions(testRunner.RENDER_TREE_SHOW_COMPOSITED_LAYERS);
+        testRunner.waitUntilDone();
+    }
+
+    function renderingUpdate()
+    {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    window.onload = async () => {
+        await renderingUpdate();
+
+        document.getElementById("gains-preserve-3d").classList.add("preserve-3d");
+        document.getElementById("loses-preserve-3d").classList.remove("preserve-3d");
+        document.getElementById("forced-flat").style.overflow = "hidden";
+        document.getElementById("loses-portal").classList.remove("portal");
+        await renderingUpdate();
+
+        document.getElementById("gains-portal").classList.add("portal");
+        document.getElementById("loses-portal-keeps-layer").classList.remove("portal");
+        await renderingUpdate();
+
+        window.testRunner?.notifyDone();
+    };
+</script>
+</head>
+<body>
+<div class="portal container">
+    <div id="gains-preserve-3d" class="box"></div>
+    <div id="loses-preserve-3d" class="box preserve-3d"></div>
+</div>
+<div class="portal container">
+    <div id="forced-flat" class="box preserve-3d"></div>
+</div>
+<div id="loses-portal" class="portal container">
+    <div class="box preserve-3d"></div>
+</div>
+<div id="gains-portal" class="stacking-context container">
+    <div class="box preserve-3d"></div>
+</div>
+<div id="loses-portal-keeps-layer" class="portal stacking-context container">
+    <div class="box preserve-3d"></div>
+</div>
+</body>
+</html>

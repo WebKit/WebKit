@@ -436,8 +436,10 @@ static void updateSpatialPortalController(Element& element)
         notifyEnvironmentMapStyleDidChange(element);
 #endif
 
-        if (CheckedPtr layer = box->layer())
+        if (CheckedPtr layer = box->layer()) {
             layer->setNeedsCompositingConfigurationUpdate();
+            layer->setDescendantsNeedCompositingRequirementsTraversal();
+        }
     }
 }
 

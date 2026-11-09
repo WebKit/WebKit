@@ -61,7 +61,7 @@ enum class CompositingUpdateType {
     OnCompositedScroll
 };
 
-enum class CompositingReason {
+enum class CompositingReason : uint32_t {
     Transform3D                            = 1 << 0,
     Video                                  = 1 << 1,
     Canvas                                 = 1 << 2,
@@ -93,6 +93,7 @@ enum class CompositingReason {
     BackdropRoot                           = 1 << 28,
     AnchorPositioning                      = 1 << 29,
     SpatialPortal                          = 1 << 30,
+    SpatialPortalHosting                   = 1u << 31,
 };
 
 enum class ScrollCoordinationRole {
@@ -563,6 +564,7 @@ private:
     bool requiresCompositingForWillChange(RenderLayerModelObject&) const;
     NODELETE bool requiresCompositingForModel(RenderLayerModelObject&) const;
     NODELETE bool requiresCompositingForSpatialPortal(RenderLayerModelObject&) const;
+    bool requiresCompositingForSpatialPortalHosting(const RenderLayer&) const;
 
     // Layout-dependent
     bool requiresCompositingForPlugin(RenderLayerModelObject&, RequiresCompositingData&) const;
