@@ -322,8 +322,10 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
             return minContentSize;
         if (size.isMaxContent())
             return maxContentSize;
-        // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size.
-        return std::min(std::max(minContentSize, stretchFitInlineSize), maxContentSize);
+        // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size. The keyword fits
+        // the content into the containing block, not into the space beside floats (RenderBox::computeSizingKeywordLogicalWidthUsing).
+        auto containingBlockStretchFitInlineSize = std::max(borderAndPaddingInlineSize, containingBlockInlineSize - marginStart - marginEnd);
+        return std::min(std::max(minContentSize, containingBlockStretchFitInlineSize), maxContentSize);
     };
     // A calc-size() with a keyword basis resolves its calculation with the size of the keyword (css-values-5 §11.1).
     auto calcSizeBorderBoxInlineSizeFor = [&](auto& size, LayoutUnit basisInlineSize) {
