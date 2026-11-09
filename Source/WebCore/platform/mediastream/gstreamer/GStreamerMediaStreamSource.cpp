@@ -163,22 +163,6 @@ public:
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
-    void replaceTrack(RefPtr<MediaStreamTrackPrivate>&& newTrack)
-    {
-        ASSERT(m_track);
-        if (newTrack)
-            GST_DEBUG_OBJECT(m_src.get(), "Replacing track %s with track %s", m_track->id().utf8(), newTrack->id().utf8());
-        else
-            GST_DEBUG_OBJECT(m_src.get(), "Replacing track %s with nothing", m_track->id().utf8());
-        stopObserving();
-        if (!newTrack)
-            return;
-
-        ASSERT(m_track->type() == newTrack->type());
-        m_track = WTF::move(newTrack);
-        startObserving();
-    }
-
     virtual ~InternalSource()
     {
         GST_DEBUG_OBJECT(m_src.get(), "Disposing internal source");
@@ -383,7 +367,7 @@ public:
         if (!m_track)
             return;
 
-        auto settings = m_track->settings();
+        const auto& settings = m_track->settings();
         m_configuredSize.setWidth(settings.width());
         m_configuredSize.setHeight(settings.height());
 
@@ -468,10 +452,11 @@ public:
 private:
     InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName, bool consumerIsVideoPlayer)
         : m_parent(parent)
-        , m_track(&track)
         , m_padName(padName)
         , m_consumerIsVideoPlayer(consumerIsVideoPlayer)
     {
+        lazyInitialize(m_track, Ref { track });
+
         auto& trackSource = m_track->source();
         m_isIncomingVideoSource = trackSource.isIncomingVideoSource();
         m_isVideoTrack = m_track->isVideo();
@@ -661,7 +646,7 @@ private:
     }
 
     GThreadSafeWeakPtr<GstElement> m_parent { nullptr };
-    RefPtr<MediaStreamTrackPrivate> m_track;
+    const RefPtr<MediaStreamTrackPrivate> m_track;
     const RefPtr<RealtimeMediaSource> m_trackSource;
     GRefPtr<GstElement> m_src;
     bool m_hasPushedInitialTags { false };
@@ -1253,14 +1238,6 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     }));
 
     gst_element_sync_state_with_parent(element);
-}
-
-void webkitMediaStreamSrcReplaceTrack(WebKitMediaStreamSrc* self, RefPtr<MediaStreamTrackPrivate>&& newTrack)
-{
-    ASSERT(!self->priv->sources.isEmpty());
-    auto sourceId = self->priv->sources.keys().begin();
-    const auto& source = self->priv->sources.get(*sourceId);
-    source->replaceTrack(WTF::move(newTrack));
 }
 
 bool webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc* self)
