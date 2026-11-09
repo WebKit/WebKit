@@ -305,17 +305,45 @@ TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
 
     auto runTest = [&] (const DisplayList& displayList) {
         EXPECT_FALSE(displayList.items().empty());
-        bool sawClipToImageBuffer = false;
+        bool sawClipToNativeImage = false;
 
         for (auto& item : displayList.items()) {
-            if (std::holds_alternative<ClipToImageBuffer>(item))
-                sawClipToImageBuffer = true;
+            if (std::holds_alternative<ClipToNativeImage>(item))
+                sawClipToNativeImage = true;
         }
 
-        EXPECT_TRUE(sawClipToImageBuffer);
+        EXPECT_TRUE(sawClipToNativeImage);
     };
 
-    // Ensure that both contexts have clip-to-image-buffer commands.
+    // Ensure that both contexts have clip-to-native-image commands.
+    runTest(primaryContext->takeDisplayList());
+    runTest(secondaryContext->takeDisplayList());
+}
+
+TEST(BifurcatedGraphicsContextTests, ClipToNativeImage)
+{
+    Ref primaryContext = RecorderImpl::create({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    Ref secondaryContext = RecorderImpl::create({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
+
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr nativeImage = imageBuffer->copyNativeImage();
+    ASSERT_TRUE(nativeImage);
+    ctx.clipToNativeImage(*nativeImage, { 0, 0, 100, 100 });
+
+    auto runTest = [&](const DisplayList& displayList) {
+        unsigned clipCount = 0;
+        for (auto& item : displayList.items()) {
+            if (auto* clip = std::get_if<ClipToNativeImage>(&item)) {
+                EXPECT_EQ(&clip->nativeImage(), nativeImage.get());
+                ++clipCount;
+            }
+        }
+        EXPECT_EQ(clipCount, 1u);
+    };
+
+    // Ensure that both contexts have clip-to-native-image commands with the same image.
     runTest(primaryContext->takeDisplayList());
     runTest(secondaryContext->takeDisplayList());
 }

@@ -738,25 +738,31 @@ IntRect GraphicsContextSkia::clipBounds() const
 
 void GraphicsContextSkia::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
 {
-    if (auto nativeImage = nativeImageForDrawing(buffer)) {
-        auto image = nativeImage->platformImage();
-        if (m_threadSafeGrContext)
-            image = SkiaUtilities::createPromiseImageIfNeeded(image, m_threadSafeGrContext);
+    if (auto nativeImage = nativeImageForDrawing(buffer))
+        clipToNativeImage(*nativeImage, destRect);
+}
 
-        auto shader = image->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y())));
+void GraphicsContextSkia::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
+{
+    auto image = nativeImage.platformImage();
+    if (!image)
+        return;
+    if (m_threadSafeGrContext)
+        image = SkiaUtilities::createPromiseImageIfNeeded(image, m_threadSafeGrContext);
 
-        recordClipIfNeeded({
-            .type = ClipRecord::Type::Shader,
-            .matrix = m_canvas.getTotalMatrix(),
-            .op = SkClipOp::kIntersect,
-            .antialias = false,
-            .rect = { },
-            .path = { },
-            .shader = shader,
-        });
+    auto shader = image->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y())));
 
-        m_canvas.clipShader(WTF::move(shader));
-    }
+    recordClipIfNeeded({
+        .type = ClipRecord::Type::Shader,
+        .matrix = m_canvas.getTotalMatrix(),
+        .op = SkClipOp::kIntersect,
+        .antialias = false,
+        .rect = { },
+        .path = { },
+        .shader = shader,
+    });
+
+    m_canvas.clipShader(WTF::move(shader));
 }
 
 void GraphicsContextSkia::drawFocusRing(const Path& path, float, const Color& color, float)

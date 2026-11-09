@@ -328,6 +328,13 @@ void RemoteGraphicsContext::clipToImageBuffer(RenderingResourceIdentifier imageB
     context().clipToImageBuffer(*clipImage, destinationRect);
 }
 
+void RemoteGraphicsContext::clipToNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destinationRect)
+{
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    MESSAGE_CHECK(image);
+    context().clipToNativeImage(*image, destinationRect);
+}
+
 void RemoteGraphicsContext::clipOutToPath(const Path& path)
 {
     context().clipOut(path);

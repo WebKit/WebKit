@@ -51,7 +51,7 @@ class ClipOutRoundedRect;
 class ClipOutToPath;
 class ClipPath;
 class ClipTransformedPath;
-class ClipToImageBuffer;
+class ClipToNativeImage;
 class ConcatenateCTM;
 class DrawControlPart;
 class DrawDotsForDocumentMarker;
@@ -122,7 +122,7 @@ using Item = Variant
     , ClipOutToPath
     , ClipPath
     , ClipTransformedPath
-    , ClipToImageBuffer
+    , ClipToNativeImage
     , ConcatenateCTM
     , DrawControlPart
     , DrawDotsForDocumentMarker

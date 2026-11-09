@@ -385,24 +385,24 @@ private:
     FloatRoundedRect m_rect;
 };
 
-class ClipToImageBuffer {
+class ClipToNativeImage {
 public:
-    static constexpr ASCIILiteral name = "clip-to-image-buffer"_s;
+    static constexpr ASCIILiteral name = "clip-to-native-image"_s;
 
-    ClipToImageBuffer(Ref<ImageBuffer>&& imageBuffer, const FloatRect& destinationRect)
-        : m_imageBuffer(WTF::move(imageBuffer))
+    ClipToNativeImage(const NativeImage& image, const FloatRect& destinationRect)
+        : m_image(image)
         , m_destinationRect(destinationRect)
     {
     }
 
-    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
-    FloatRect destinationRect() const { return m_destinationRect; }
+    const NativeImage& nativeImage() const { return m_image; }
+    const FloatRect& destinationRect() const LIFETIME_BOUND { return m_destinationRect; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    const Ref<ImageBuffer> m_imageBuffer;
+    const Ref<const NativeImage> m_image;
     FloatRect m_destinationRect;
 };
 

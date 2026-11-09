@@ -340,6 +340,14 @@ void BifurcatedGraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, cons
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
+{
+    m_primaryContext.clipToNativeImage(nativeImage, destRect);
+    m_secondaryContext.clipToNativeImage(nativeImage, destRect);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 IntRect BifurcatedGraphicsContext::clipBounds() const
 {
     return m_primaryContext.clipBounds();
