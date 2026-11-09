@@ -9,6 +9,12 @@ http/tests/security/referrer-policy-header-no-referrer.html [ Crash ]
 http/tests/security/referrer-policy-header-origin.html [ Crash ]
 http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
 
+# Debug ASSERT: about:blank loads in its initiator's process, but the UI process gives it its parent's or opener's origin.
+imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-iframe-navigated-by-ancestor.window.html?cross-site&5-last [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-iframe-navigated-by-itself.window.html?cross-site&5-last [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-popup-navigated-by-non-opener.window.html?cross-site&1-4 [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-popup-navigated-by-non-opener.window.html?cross-site&5-last [ Skip ]
+
 #######################
 # Tests that time out #
 #######################

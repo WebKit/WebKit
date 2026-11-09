@@ -14,7 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-history-state-after-traversal.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-history-state-after-traversal.window.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-iframe-navigated-by-ancestor.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-iframe-navigated-by-ancestor.window.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-iframe-navigated-by-itself.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-iframe-navigated-by-itself.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-popup-navigated-by-non-opener.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-popup-navigated-by-non-opener.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-blank-window.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/about-srcdoc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/document-write.https.window.js

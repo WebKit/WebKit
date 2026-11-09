@@ -1,0 +1,6 @@
+
+FAIL about:blank gets the initiator's origin again after traversal assert_equals: The initiator can script the document expected (undefined) undefined but got (string) "SecurityError"
+FAIL about:blank gets the initiator's origin again after reload assert_equals: The initiator can reload the document expected (undefined) undefined but got (string) "SecurityError"
+PASS about:blank in a sandboxed iframe gets an opaque origin
+FAIL about:blank in an iframe sandboxed with allow-same-origin gets the initiator's origin assert_equals: The initiator can script the document expected (undefined) undefined but got (string) "SecurityError"
+

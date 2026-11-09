@@ -175,6 +175,16 @@ bool SecurityPolicy::shouldInheritSecurityOriginFromOwner(const URL& url)
     return url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc() || equalIgnoringASCIICase(url.string(), aboutBlankURL().string());
 }
 
+// https://html.spec.whatwg.org/#determining-the-origin
+Ref<SecurityOrigin> SecurityPolicy::determineOrigin(const URL& url, SandboxFlags sandboxFlags, SecurityOrigin* sourceOrigin)
+{
+    if (sandboxFlags.contains(SandboxFlag::Origin))
+        return SecurityOrigin::createOpaque();
+    if (sourceOrigin && shouldInheritSecurityOriginFromOwner(url))
+        return *sourceOrigin;
+    return SecurityOrigin::create(url);
+}
+
 bool SecurityPolicy::isBaseURLSchemeAllowed(const URL& url)
 {
     // See <https://github.com/whatwg/html/issues/2249>.

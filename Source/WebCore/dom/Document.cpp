@@ -8783,11 +8783,10 @@ void Document::initSecurityContext()
         applyContentDispositionAttachmentSandbox();
 
     RefPtr documentLoader = m_frame->loader().documentLoader();
-    bool isSecurityOriginUnique = isSandboxed(SandboxFlag::Origin);
-    if (!isSecurityOriginUnique)
-        isSecurityOriginUnique = documentLoader && documentLoader->response().tainting() == ResourceResponse::Tainting::Opaque;
+    bool isOpaqueResponse = documentLoader && documentLoader->response().tainting() == ResourceResponse::Tainting::Opaque;
 
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSecurityOriginUnique ? SecurityOrigin::createOpaque() : SecurityOrigin::create(m_url)));
+    // FIXME: Only ContentFilter's blocked page has an opaque response. Give it an opaque origin some other way, so that determineOrigin() alone decides.
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(isOpaqueResponse ? SecurityOrigin::createOpaque() : SecurityPolicy::determineOrigin(m_url, sandboxFlags(), nullptr)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
 
     String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
@@ -8886,7 +8885,7 @@ void Document::initSecurityContext()
     setCookieURL(ownerDocument->cookieURL());
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
-    setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityPolicy::determineOrigin(m_url, sandboxFlags(), &ownerDocument->securityOrigin())));
 }
 
 void Document::initContentSecurityPolicy()

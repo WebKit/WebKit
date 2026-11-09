@@ -14,7 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/resources/about-blank-navigation.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/resources/document-write.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/resources/document-write.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/resources/iframe-with-about-blank-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/resources/iframe-with-about-blank-iframe.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/resources/navigate-on-message.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/inheritance/resources/navigate-on-message.html.headers

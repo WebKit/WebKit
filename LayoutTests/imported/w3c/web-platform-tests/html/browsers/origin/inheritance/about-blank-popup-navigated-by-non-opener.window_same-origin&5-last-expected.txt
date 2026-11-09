@@ -1,0 +1,5 @@
+
+PASS about:blank gets the initiator's origin again after traversal
+PASS about:blank gets the initiator's origin again after reload
+FAIL about:blank in a popup that escaped the sandbox gets the initiator's origin, not its opener's opaque one assert_equals: The sandboxed opener can't script the document expected "SecurityError" but got "about:blank"
+

@@ -170,14 +170,18 @@ static bool checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch
 
 static std::pair<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOriginAndCOOP(const ResourceResponse& response, const std::optional<NavigationRequester>& requester, ContentSecurityPolicy* responseCSP)
 {
+    // FIXME: The flags should include the frame's, and only the sandboxed origin flag should make the origin opaque.
+    SandboxFlags sandboxFlags;
+    if (responseCSP && !responseCSP->sandboxFlags().isEmpty())
+        sandboxFlags.add(SandboxFlag::Origin);
+    Ref responseOrigin = SecurityPolicy::determineOrigin(response.url(), sandboxFlags, requester ? requester->securityOrigin.ptr() : nullptr);
+
     // Non-initial empty documents (about:blank) should inherit their cross-origin-opener-policy from the navigation's initiator top level document,
     // if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
     // https://github.com/whatwg/html/issues/6913
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(response.url()) && requester)
-        return { requester->securityOrigin, Ref { requester->securityOrigin }->isSameOriginAs(requester->topOrigin) ? requester->policyContainer.crossOriginOpenerPolicy : CrossOriginOpenerPolicy { } };
+        return { WTF::move(responseOrigin), Ref { requester->securityOrigin }->isSameOriginAs(requester->topOrigin) ? requester->policyContainer.crossOriginOpenerPolicy : CrossOriginOpenerPolicy { } };
 
-    // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become opaque.
-    auto responseOrigin = responseCSP && !responseCSP->sandboxFlags().isEmpty() ? SecurityOrigin::createOpaque() : SecurityOrigin::create(response.url());
     return { WTF::move(responseOrigin), obtainCrossOriginOpenerPolicy(response) };
 }
 

@@ -1,0 +1,6 @@
+
+FAIL about:blank gets the initiator's origin assert_equals: A document with the initiator's origin can script the document expected (undefined) undefined but got (string) "SecurityError"
+FAIL about:blank doesn't share its origin with the parent, so document.domain only affects the parent assert_equals: The parent, after setting document.domain, can't script the document expected (string) "SecurityError" but got (undefined) undefined
+FAIL about:blank gets the initiator's CSP assert_equals: expected "loaded blocked" but got "SecurityError"
+FAIL about:blank gets the initiator's base URL assert_equals: A document with the initiator's origin can script the document expected (undefined) undefined but got (string) "SecurityError"
+
