@@ -3224,8 +3224,8 @@ sub generateBuildSystemFromCMakeProject
         }
     }
 
-    # Do not show progress of generating bindings in interactive Ninja build not to leave noisy lines on tty
-    push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);
+    # Ninja buffers the output of each job, so bindings progress can only be shown by other generators.
+    push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless $willUseNinja;
 
     # Some ports have production mode, but build-webkit should always use developer mode.
     push @args, "-DDEVELOPER_MODE=ON" if isCMakeBuild();

@@ -28,7 +28,7 @@ macro(MAKE_JS_FILE_ARRAYS _output_cpp _output_h _namespace _scripts _scripts_dep
 endmacro()
 
 
-option(SHOW_BINDINGS_GENERATION_PROGRESS "Show progress of generating bindings" OFF)
+option(SHOW_BINDINGS_GENERATION_PROGRESS "Show progress of generating bindings (not with Ninja, which buffers the output)" OFF)
 
 # Helper macro which wraps generate-bindings-all.pl script.
 #   target is a new target name to be added
@@ -184,7 +184,7 @@ function(GENERATE_BINDINGS target)
     endforeach ()
 
     set(${arg_OUTPUT_SOURCE} ${${arg_OUTPUT_SOURCE}} ${gen_sources} PARENT_SCOPE)
-    if (SHOW_BINDINGS_GENERATION_PROGRESS)
+    if (SHOW_BINDINGS_GENERATION_PROGRESS AND NOT CMAKE_GENERATOR MATCHES "Ninja")
         list(APPEND args --showProgress)
     endif ()
 
@@ -204,11 +204,6 @@ function(GENERATE_BINDINGS target)
         list(APPEND _byproducts ${arg_SUPPLEMENTAL_DEPFILE})
     endif ()
 
-    set(_uses_terminal)
-    if (SHOW_BINDINGS_GENERATION_PROGRESS)
-        set(_uses_terminal USES_TERMINAL)
-    endif ()
-
     add_custom_command(
         OUTPUT ${_stamp_file}
         COMMAND ${PERL_EXECUTABLE} ${binding_generator} ${args}
@@ -223,8 +218,7 @@ function(GENERATE_BINDINGS target)
         WORKING_DIRECTORY ${arg_BASE_DIR}
         COMMENT "Generate bindings (${target})"
         VERBATIM
-        BYPRODUCTS ${_byproducts}
-        ${_uses_terminal})
+        BYPRODUCTS ${_byproducts})
     add_custom_target(${target} DEPENDS ${_stamp_file})
 
     if (arg_INSPECTOR_NATIVE_FUNCTION_PARAMETERS_FILE)
