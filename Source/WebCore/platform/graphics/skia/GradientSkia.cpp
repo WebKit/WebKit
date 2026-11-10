@@ -88,6 +88,7 @@ static SkGradient::Interpolation toSkiaInterpolation(const ColorInterpolationMet
             interpolation.fColorSpace = SkGradient::Interpolation::ColorSpace::kProphotoRGB;
         },
         [&] (const ColorInterpolationMethod::Rec2020&) {
+            // FIXME: Skia's kRec2020 uses the BT.2020 inverse OETF transfer function, not the 2.4 gamma transfer function CSS requires.
             interpolation.fColorSpace = SkGradient::Interpolation::ColorSpace::kRec2020;
         },
         [&] (const ColorInterpolationMethod::XYZD50&) {

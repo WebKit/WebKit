@@ -29,6 +29,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/ColorConversion.h>
 #include <WebCore/ColorSerialization.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/ColorTypes.h>
 #include <WebCore/ColorUtilities.h>
 #include <wtf/Hasher.h>
@@ -768,5 +769,52 @@ TEST(Color, TransferFunctionsKeepTheSignOfExtendedComponents)
     expectRoundTrip.template operator()<ExtendedRec2020<float>>();
     expectRoundTrip.template operator()<ExtendedSRGBA<float>>();
 }
+
+TEST(Color, Rec2020TransferFunctionIsGamma24)
+{
+    for (float component : { 0.05f, 0.35f, 0.65f, 0.95f, 1.25f, -0.5f }) {
+        EXPECT_NEAR(ExtendedRec2020<float>::TransferFunction::toLinear(component), std::copysign(std::pow(std::abs(component), 2.4f), component), 0.000001f);
+        EXPECT_NEAR(ExtendedRec2020<float>::TransferFunction::toGammaEncoded(std::copysign(std::pow(std::abs(component), 2.4f), component)), component, 0.00001f);
+    }
+
+    // The BT.2020 inverse OETF would give 0.011111 here.
+    EXPECT_NEAR(ExtendedRec2020<float>::TransferFunction::toLinear(0.05f), 0.000754f, 0.000001f);
+
+    EXPECT_NEAR(Rec2020<float>::TransferFunction::toLinear(1.25f), 1.0f, 0.000001f);
+    EXPECT_NEAR(Rec2020<float>::TransferFunction::toLinear(-0.5f), 0.0f, 0.000001f);
+}
+
+TEST(Color, Rec2020Conversions)
+{
+    auto expectComponentsNear = [](ColorComponents<float, 4> components, ColorComponents<float, 4> expected) {
+        for (size_t i = 0; i < 4; ++i)
+            EXPECT_NEAR(components[i], expected[i], 0.00001f);
+    };
+
+    expectComponentsNear(asColorComponents(convertColor<Rec2020<float>>(SRGBA<float> { 0.0f, 128.0f / 255.0f, 0.0f, 1.0f }).resolved()), { 0.332322f, 0.509792f, 0.191779f, 1.0f });
+    expectComponentsNear(asColorComponents(convertColor<ExtendedRec2020<float>>(DisplayP3<float> { 0.0f, 1.0f, 0.0f, 1.0f }).resolved()), { 0.509905f, 0.975315f, 0.185772f, 1.0f });
+    expectComponentsNear(asColorComponents(convertColor<ExtendedSRGBA<float>>(Rec2020<float> { 0.25f, 0.5f, 0.75f, 1.0f }).resolved()), { -0.328686f, 0.491201f, 0.761852f, 1.0f });
+    expectComponentsNear(asColorComponents(convertColor<Rec2020<float>>(SRGBA<float> { 0.25f, 0.5f, 0.75f, 1.0f }).resolved()), { 0.420493f, 0.518024f, 0.741381f, 1.0f });
+}
+
+#if USE(CG)
+TEST(Color, Rec2020ConversionsMatchCoreGraphics)
+{
+    auto expectComponentsNear = [](ColorComponents<float, 4> components, ColorComponents<float, 4> expected) {
+        for (size_t i = 0; i < 4; ++i)
+            EXPECT_NEAR(components[i], expected[i], 0.0001f);
+    };
+
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
+    for (auto green : { DisplayP3<float> { 0.0f, 1.0f, 0.0f, 1.0f }, DisplayP3<float> { 0.0f, 0.5f, 0.0f, 1.0f } })
+        expectComponentsNear(platformConvertColorComponents(ColorSpaceName::DisplayP3, asColorComponents(green.resolved()), ColorSpace::ExtendedRec2020()), asColorComponents(convertColor<ExtendedRec2020<float>>(green).resolved()));
+#endif
+
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    for (auto rec2020 : { Rec2020<float> { 0.25f, 0.5f, 0.75f, 1.0f }, Rec2020<float> { 0.05f, 0.1f, 0.02f, 1.0f } })
+        expectComponentsNear(platformConvertColorComponents(ColorSpaceName::Rec2020, asColorComponents(rec2020.resolved()), ColorSpace::ExtendedSRGB()), asColorComponents(convertColor<ExtendedSRGBA<float>>(rec2020).resolved()));
+#endif
+}
+#endif
 
 } // namespace TestWebKitAPI

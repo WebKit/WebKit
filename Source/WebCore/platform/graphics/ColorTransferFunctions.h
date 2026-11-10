@@ -64,6 +64,7 @@ struct PiecewiseTransferFunction {
     static T toLinear(T);
 };
 
+// https://drafts.csswg.org/css-color-4/#predefined-a98-rgb
 template<typename T, TransferFunctionMode mode>
 struct A98RGBTransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
     .threshold = 0,
@@ -74,6 +75,7 @@ struct A98RGBTransferFunction : PiecewiseTransferFunction<T, mode, ParametricTra
     .exponent = 563.0 / 256.0,
 }> { };
 
+// https://drafts.csswg.org/css-color-4/#predefined-prophoto-rgb
 template<typename T, TransferFunctionMode mode>
 struct ProPhotoRGBTransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
     .threshold = 16.0 / 512.0,
@@ -84,16 +86,18 @@ struct ProPhotoRGBTransferFunction : PiecewiseTransferFunction<T, mode, Parametr
     .exponent = 1.8,
 }> { };
 
+// https://drafts.csswg.org/css-color-4/#predefined-rec2020
 template<typename T, TransferFunctionMode mode>
 struct Rec2020TransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
-    .threshold = 0.018053968510807 * 4.5,
-    .linearThreshold = 0.018053968510807,
-    .slope = 4.5,
-    .scale = 1.09929682680944,
-    .offset = 0.09929682680944,
-    .exponent = 1.0 / 0.45,
+    .threshold = 0,
+    .linearThreshold = 0,
+    .slope = 1,
+    .scale = 1,
+    .offset = 0,
+    .exponent = 2.4,
 }> { };
 
+// https://drafts.csswg.org/css-color-4/#predefined-sRGB
 template<typename T, TransferFunctionMode mode>
 struct SRGBTransferFunction : PiecewiseTransferFunction<T, mode, ParametricTransferFunction<T> {
     .threshold = 0.04045,

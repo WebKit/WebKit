@@ -1247,14 +1247,8 @@ PASS Property color value 'color(from color(a98-rgb 0.25 0.5 0.75) srgb r g b)'
 PASS Property color value 'color(from color(srgb 0.25 0.5 0.75) a98-rgb r g b)'
 PASS Property color value 'color(from color(prophoto-rgb 0.25 0.5 0.75) srgb r g b)'
 PASS Property color value 'color(from color(srgb 0.25 0.5 0.75) prophoto-rgb r g b)'
-FAIL Property color value 'color(from color(rec2020 0.25 0.5 0.75) srgb r g b)' Colors do not match.
-Actual:   color(srgb -0.280036 0.565528 0.79951)
-Expected: color(srgb -0.328686 0.491201 0.76185).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -0.328686 +/- 0.001, expected -0.328686 but got -0.280036
-FAIL Property color value 'color(from color(srgb 0.25 0.5 0.75) rec2020 r g b)' Colors do not match.
-Actual:   color(rec2020 0.331998 0.440976 0.696422)
-Expected: color(rec2020 0.420493 0.518024 0.741381).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 0.420493 +/- 0.001, expected 0.420493 but got 0.331998
+PASS Property color value 'color(from color(rec2020 0.25 0.5 0.75) srgb r g b)'
+PASS Property color value 'color(from color(srgb 0.25 0.5 0.75) rec2020 r g b)'
 PASS Property color value 'color(from color(xyz-d50 0.25 0.5 0.75) srgb r g b)'
 PASS Property color value 'color(from color(srgb 0.25 0.5 0.75) xyz-d50 x y z)'
 PASS Property color value 'color(from color(xyz-d65 0.25 0.5 0.75) srgb r g b)'
