@@ -521,11 +521,17 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxesInLeafAvoidanceReason(c
         if (auto reason = outOfFlowBoxAvoidanceReason(descendant))
             return reason;
         // Its static position comes from its block container, or from a grid container, which puts it at the start of its content box
-        // (RenderGrid::prepareGridItemForPositionedLayout), or a flex container, which aligns it in its content box.
+        // (RenderGrid::prepareGridItemForPositionedLayout), or a flex container, which aligns it in its content box, or a -webkit-box, which
+        // puts it where its next child would go, from the inline start of a vertical one and from the left of a horizontal one
+        // (RenderDeprecatedFlexibleBox::layoutVerticalBox, layoutHorizontalBox).
         CheckedPtr staticPositionBlock = descendant->parent();
         while (staticPositionBlock->isInlineBox())
             staticPositionBlock = staticPositionBlock->parent();
-        auto hasSupportedStaticPosition = is<RenderBlockFlow>(*staticPositionBlock) || staticPositionBlock->isRenderGrid() || staticPositionBlock->isRenderFlexibleBox();
+        auto isSupportedDeprecatedFlexibleBox = [&] {
+            auto writingMode = staticPositionBlock->writingMode();
+            return staticPositionBlock->isRenderDeprecatedFlexibleBox() && writingMode.isHorizontal() && (staticPositionBlock->style().boxOrient() == BoxOrient::Vertical || writingMode.isLogicalLeftInlineStart());
+        };
+        auto hasSupportedStaticPosition = is<RenderBlockFlow>(*staticPositionBlock) || staticPositionBlock->isRenderGrid() || staticPositionBlock->isRenderFlexibleBox() || isSupportedDeprecatedFlexibleBox();
         if (!hasSupportedStaticPosition)
             return BlockAvoidanceReason::ContentHasOutOfFlowBox;
         for (CheckedPtr box = staticPositionBlock; box != containingBlock; box = box->parent()) {
