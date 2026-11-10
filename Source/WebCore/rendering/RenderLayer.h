@@ -840,6 +840,10 @@ public:
     void setStaticInlinePosition(LayoutUnit position) { m_offsetForPosition.setWidth(position); }
     void setStaticBlockPosition(LayoutUnit position) { m_offsetForPosition.setHeight(position); }
 
+    // currentOpacity computes the opacity which takes accelerated animations into account.
+    float currentOpacity() const;
+    inline float opacityForPainting(OptionSet<PaintBehavior>) const;
+
     inline bool isTransformed() const;
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const LIFETIME_BOUND { return m_transform.get(); }

@@ -65,9 +65,14 @@ inline bool RenderLayer::canUseOffsetFromAncestor() const
     return !isTransformed() && !renderer().isRenderOrLegacyRenderSVGRoot();
 }
 
+inline float RenderLayer::opacityForPainting(OptionSet<PaintBehavior> paintBehavior) const
+{
+    return paintBehavior.containsAll({ PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }) ? currentOpacity() : renderer().opacity();
+}
+
 inline bool RenderLayer::paintsWithTransparency(OptionSet<PaintBehavior> paintBehavior) const
 {
-    if (!renderer().isTransparent() && !hasNonOpacityTransparency())
+    if (opacityForPainting(paintBehavior) >= 1 && !hasNonOpacityTransparency())
         return false;
     return (paintBehavior & PaintBehavior::FlattenCompositingLayers) || !isComposited();
 }

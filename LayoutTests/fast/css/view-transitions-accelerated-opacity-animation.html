@@ -1,0 +1,33 @@
+<html class="reftest-wait">
+<script>
+    function finishTest() {
+        document.documentElement.classList.remove("reftest-wait");
+    }
+    async function startTest() {
+        await document.getElementById("target").getAnimations()[0].ready;
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const transition = document.startViewTransition();
+        await transition.ready;
+
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(finishTest)));
+    }
+    onload = () => requestAnimationFrame(() => requestAnimationFrame(startTest));
+</script>
+<style>
+    #target {
+        width: 100px;
+        height: 100px;
+        background: green;
+        animation: fade-in 1000s linear forwards;
+    }
+    @keyframes fade-in {
+        from { opacity: 0; }
+        0.01% { opacity: 1; }
+        to { opacity: 1; }
+    }
+    html::view-transition-group(root) { animation-duration: 300s; }
+    html::view-transition-old(root) { animation: unset; opacity: 0; }
+    html::view-transition-new(root) { animation: unset; opacity: 1; }
+</style>
+<div id="target"></div>
+</html>
