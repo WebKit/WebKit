@@ -2209,6 +2209,25 @@ void WebPage::updateRemotePageOffsetInMainFrame(WebCore::FrameIdentifier, WebCor
 
 #endif
 
+void WebPage::rebindRemoteAccessibilityFrames(WebCore::FrameIdentifier frameID)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr remoteSubframe = webFrame ? webFrame->coreRemoteFrame() : nullptr;
+    RefPtr parentFrame = remoteSubframe ? dynamicDowncast<WebCore::LocalFrame>(remoteSubframe->tree().parent()) : nullptr;
+    RefPtr parentDocument = parentFrame ? parentFrame->document() : nullptr;
+    if (CheckedPtr cache = parentDocument ? parentDocument->axObjectCache() : nullptr)
+        cache->remoteFrameDidChangeProcess(*remoteSubframe);
+}
+
+void WebPage::repostAccessibilityFocusInFrame(WebCore::FrameIdentifier frameID)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr subframe = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    RefPtr subframeDocument = subframe ? subframe->document() : nullptr;
+    if (CheckedPtr cache = subframeDocument ? subframeDocument->axObjectCache() : nullptr)
+        cache->repostFocusedUIElementChanged();
+}
+
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 void WebPage::updateRemotePageAccessibilityInheritedState(WebCore::FrameIdentifier frameID, const WebCore::InheritedFrameState& state)
 {

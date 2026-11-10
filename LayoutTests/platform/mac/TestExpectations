@@ -137,6 +137,9 @@ webkit.org/b/306558 accessibility/mac/style-range.html [ Failure ]
 http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-001.html [ Pass ]
 http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-002.html [ Pass ]
 
+# FIXME: The same-site iframe's heading is sometimes missing from its initial accessibility tree.
+http/tests/site-isolation/accessibility/client/follow-link-to-cross-site-in-same-site-iframe.html [ Skip ]
+
 # Shared-process site isolation accessibility tests using the accessibility client API:
 # Skip by default, enable tests that are stable.
 http/wpt/site-isolation/accessibility [ Skip ]

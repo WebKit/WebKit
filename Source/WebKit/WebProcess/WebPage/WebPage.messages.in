@@ -584,6 +584,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     CopyLinkWithHighlight()
 
     BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, struct WebCore::AccessibilityRemoteToken dataToken) -> (struct WebCore::AccessibilityRemoteToken token, int processIdentifier) Synchronous
+    RebindRemoteAccessibilityFrames(WebCore::FrameIdentifier frameID)
+    RepostAccessibilityFocusInFrame(WebCore::FrameIdentifier frameID)
     UpdateRemotePageOffsetInMainFrame(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset);
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     UpdateRemotePageAccessibilityInheritedState(WebCore::FrameIdentifier frameID, struct WebCore::InheritedFrameState state);

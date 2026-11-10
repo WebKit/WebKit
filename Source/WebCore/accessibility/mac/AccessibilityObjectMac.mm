@@ -526,7 +526,8 @@ void AXRemoteFrame::initializePlatformElementWithRemoteToken(AccessibilityRemote
     RetainPtr wrapper = this->wrapper();
     if ([wrapper respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)wrapper.get() accessibilitySetPresenterProcessIdentifier:processIdentifier];
-    m_remoteFramePlatformElement = adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:WTF::toNSData(token.bytes.span()).get()]);
+    // A failed bind yields an empty token. Drop the element rather than keep one bound to a process that may no longer host the frame.
+    m_remoteFramePlatformElement = token.bytes.isEmpty() ? nullptr : adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:WTF::toNSData(token.bytes.span()).get()]);
 
     if (CheckedPtr cache = axObjectCache())
         cache->onRemoteFrameInitialized(*this);

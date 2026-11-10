@@ -432,6 +432,14 @@ void AccessibilityUIElementClientMac::showMenu()
     axPerformAction(m_elementToken, "AXShowMenu");
 }
 
+void AccessibilityUIElementClientMac::press()
+{
+    if (!isValid())
+        return;
+
+    axPerformAction(m_elementToken, "AXPress");
+}
+
 JSValueRef AccessibilityUIElementClientMac::uiElementsForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly, bool immediateDescendantsOnly, unsigned resultsLimit)
 {
     if (!isValid())
