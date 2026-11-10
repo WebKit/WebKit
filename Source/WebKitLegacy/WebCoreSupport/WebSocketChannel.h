@@ -31,6 +31,7 @@
 #pragma once
 
 #include "SocketStreamHandleClient.h"
+#include <WebCore/EventTarget.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/FileReaderLoaderClient.h>
 #include <WebCore/ThreadableWebSocketChannel.h>

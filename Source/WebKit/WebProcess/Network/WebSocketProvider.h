@@ -40,11 +40,13 @@ public:
     static Ref<WebSocketProvider> create(WebPageProxyIdentifier webPageProxyID) { return adoptRef(*new WebSocketProvider(webPageProxyID)); }
     ~WebSocketProvider();
 private:
-    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker) final;
+    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::ScriptExecutionContext&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker) final;
     Ref<WebCore::WebTransportSession> createWebTransportSession(WebCore::ScriptExecutionContext&, WebCore::WebTransportSessionClient&) final;
     void countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&&) final;
 
     explicit WebSocketProvider(WebPageProxyIdentifier);
+
+    Ref<IPC::Connection> networkProcessConnectionFromWorker();
 
     WebPageProxyIdentifier m_webPageProxyID;
     Lock m_networkProcessConnectionLock;

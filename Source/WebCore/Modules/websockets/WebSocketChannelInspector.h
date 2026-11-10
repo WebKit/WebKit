@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/EventTarget.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/WebSocketFrame.h>
 #include <wtf/Forward.h>
 #include <wtf/ObjectIdentifier.h>
@@ -33,9 +33,9 @@
 namespace WebCore {
 
 class Document;
-class WeakPtrImplWithEventTargetData;
 class ResourceRequest;
 class ResourceResponse;
+class ScriptExecutionContext;
 class WebSocketChannel;
 class WebSocketChannelInspector;
 
@@ -43,25 +43,27 @@ using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
 class WEBCORE_EXPORT WebSocketChannelInspector {
 public:
-    explicit WebSocketChannelInspector(Document&);
+    explicit WebSocketChannelInspector(ScriptExecutionContext&);
     ~WebSocketChannelInspector();
 
-    void didCreateWebSocket(const URL&) const;
-    void willSendWebSocketHandshakeRequest(ResourceRequest&) const;
+    // Connect-time instrumentation. Static because it has to run on the document's thread.
+    static void didCreateWebSocket(Document&, WebSocketChannelIdentifier, const URL&);
+    static void willSendWebSocketHandshakeRequest(Document&, WebSocketChannelIdentifier, ResourceRequest&);
+
     void didSendWebSocketHandshakeRequest(const ResourceRequest&) const;
     void didReceiveWebSocketHandshakeResponse(const ResourceResponse&) const;
     void didCloseWebSocket() const;
     void didReceiveWebSocketFrame(const WebSocketFrame&) const;
     void didSendWebSocketFrame(const WebSocketFrame&) const;
     void didReceiveWebSocketFrameError(const String& errorMessage) const;
-    
+
     WebSocketChannelIdentifier progressIdentifier() const { return m_progressIdentifier; }
 
     static WebSocketFrame createFrame(std::span<const uint8_t> data, WebSocketFrame::OpCode);
 
 private:
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    WebSocketChannelIdentifier m_progressIdentifier;
+    const std::optional<ScriptExecutionContextIdentifier> m_documentIdentifier;
+    const WebSocketChannelIdentifier m_progressIdentifier;
 };
 
 } // namespace WebCore

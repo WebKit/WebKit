@@ -117,7 +117,7 @@ public:
     WorkerSWClientConnection& swClientConnection();
     void updateServiceWorkerClientData() final;
 
-    Ref<WorkerThread> thread() const;
+    WEBCORE_EXPORT Ref<WorkerThread> thread() const;
 
     using ScriptExecutionContext::hasPendingActivity;
 
