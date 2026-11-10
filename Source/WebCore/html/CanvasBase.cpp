@@ -139,6 +139,7 @@ void CanvasBase::setMaxCanvasAreaForTesting(std::optional<size_t> size)
 void CanvasBase::addObserver(CanvasObserver& observer)
 {
     m_observers.add(observer);
+    clearPendingEntireContentsUpdate();
 
     if (is<Style::CanvasImage>(observer))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
@@ -147,6 +148,7 @@ void CanvasBase::addObserver(CanvasObserver& observer)
 void CanvasBase::removeObserver(CanvasObserver& observer)
 {
     m_observers.remove(observer);
+    clearPendingEntireContentsUpdate();
 
     if (is<Style::CanvasImage>(observer))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
@@ -178,6 +180,16 @@ void CanvasBase::willUpdateContents(const std::optional<FloatRect>& rect, Should
         } else if (!rect)
             m_canvasNoiseInjection.clearDirtyRect();
     }
+}
+
+void CanvasBase::setPendingEntireContentsUpdate(ShouldApplyPostProcessingToDirtyRect option)
+{
+    // Canvas noise injection keeps its per-notification dirty rect accounting, so the notification is never skipped then.
+    if (shouldInjectNoiseBeforeReadback()) {
+        clearPendingEntireContentsUpdate();
+        return;
+    }
+    m_pendingEntireContentsUpdate = option;
 }
 
 void CanvasBase::notifyObserversCanvasResized()

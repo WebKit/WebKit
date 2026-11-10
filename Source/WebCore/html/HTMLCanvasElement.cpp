@@ -661,6 +661,12 @@ void HTMLCanvasElement::willUpdateContents(const std::optional<FloatRect>& rect,
             renderer->repaintRectangle(enclosingIntRect(*dirtyRect));
     }
     CanvasBase::willUpdateContents(rect, shouldApplyPostProcessingToDirtyRect);
+
+    // Repeating a whole-canvas notification is a no-op until the pending update is cleared.
+    if (!rect)
+        setPendingEntireContentsUpdate(shouldApplyPostProcessingToDirtyRect);
+    else
+        clearPendingEntireContentsUpdate();
 }
 
 void HTMLCanvasElement::didUpdateSizeProperties()
@@ -676,6 +682,7 @@ void HTMLCanvasElement::didUpdateSizeProperties()
     bool sizeChanged = oldSize != newSize;
     CanvasBase::setSize(newSize);
     m_copiedImage = nullptr;
+    clearPendingEntireContentsUpdate();
     if (m_context)
         protect(m_context.get())->didUpdateCanvasSizeProperties(sizeChanged);
     if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {
@@ -707,6 +714,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
     if (!renderingContext)
         return;
     renderingContext->clearAccumulatedDirtyRect();
+    clearPendingEntireContentsUpdate();
 
     if (!context.paintingDisabled()) {
         if (!usesContentsAsLayerContents() || protect(document())->printing() || m_isSnapshotting) {
@@ -924,8 +932,11 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 
 NativeImage* HTMLCanvasElement::copiedImage() const
 {
-    if (!m_copiedImage)
+    if (!m_copiedImage) {
         m_copiedImage = copyNativeImage();
+        // The next contents update has to drop m_copiedImage again.
+        clearPendingEntireContentsUpdate();
+    }
     return m_copiedImage.get();
 }
 

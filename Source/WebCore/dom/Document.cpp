@@ -12388,6 +12388,7 @@ void Document::prepareCanvasesForDisplayOrFlushIfNeeded()
             continue;
 
         context->setIsInPreparationForDisplayOrFlush(false);
+        context->canvasBase().clearPendingEntireContentsUpdate();
 
         // Some canvas contexts hold memory that should be periodically freed.
         if (context->hasDeferredOperations())
@@ -12416,6 +12417,7 @@ void Document::removeCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingCo
 {
     m_canvasContextsToPrepare.remove(context);
     context.setIsInPreparationForDisplayOrFlush(false);
+    context.canvasBase().clearPendingEntireContentsUpdate();
 }
 
 void Document::serviceCanvasPaintEvents()

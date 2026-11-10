@@ -1456,10 +1456,10 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
     } else {
 #if !USE(COORDINATED_GRAPHICS)
         if (isEntireBackingStoreDirty())
-            willUpdateContents(std::nullopt);
+            willUpdateContents(*c, std::nullopt);
         else
 #endif
-            willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : path.fastBoundingRect());
+            willUpdateContents(*c, targetSwitcher ? targetSwitcher->expandedBounds() : path.fastBoundingRect());
         c->fillPath(path);
     }
 
@@ -1497,10 +1497,10 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
     } else {
 #if !USE(COORDINATED_GRAPHICS)
         if (isEntireBackingStoreDirty())
-            willUpdateContents(std::nullopt);
+            willUpdateContents(*c, std::nullopt);
         else
 #endif
-            willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : inflatedStrokeRect(path.fastBoundingRect()));
+            willUpdateContents(*c, targetSwitcher ? targetSwitcher->expandedBounds() : inflatedStrokeRect(path.fastBoundingRect()));
         c->strokePath(path);
     }
 }
@@ -2903,20 +2903,40 @@ void CanvasRenderingContext2DBase::willUpdateEntireContents(OptionSet<WillUpdate
 
 void CanvasRenderingContext2DBase::willUpdateContents(std::optional<FloatRect> rect, OptionSet<WillUpdateContentsOption> options)
 {
+    auto* context = effectiveDrawingContext();
+    if (!context) {
+        invalidateCachedContents(options);
+        return;
+    }
+    willUpdateContents(*context, rect, options);
+}
+
+void CanvasRenderingContext2DBase::invalidateCachedContents(OptionSet<WillUpdateContentsOption> options)
+{
     m_bufferNativeImage = nullptr;
     if (!options.contains(WillUpdateContentsOption::PreserveCachedContents))
         m_cachedContents.emplace<CachedContentsUnknown>();
+}
 
-    auto* context = effectiveDrawingContext();
-    if (!context)
+void CanvasRenderingContext2DBase::notifyCanvasEntireContentsWillChange(ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessing)
+{
+    // Skip repeats until the canvas is next prepared for display.
+    if (isInPreparationForDisplayOrFlush() && canvasBase().hasPendingEntireContentsUpdate(shouldApplyPostProcessing))
         return;
+    protect(canvasBase())->willUpdateContents(std::nullopt, shouldApplyPostProcessing);
+}
+
+void CanvasRenderingContext2DBase::willUpdateContents(GraphicsContext& context, std::optional<FloatRect> rect, OptionSet<WillUpdateContentsOption> options)
+{
+    ASSERT(&context == effectiveDrawingContext());
+    invalidateCachedContents(options);
 
     m_hasDeferredOperations = true;
 
     auto shouldApplyPostProcessing = options.contains(WillUpdateContentsOption::ApplyPostProcessing) ? ShouldApplyPostProcessingToDirtyRect::Yes : ShouldApplyPostProcessingToDirtyRect::No;
 
     if (!rect) {
-        protect(canvasBase())->willUpdateContents(std::nullopt, shouldApplyPostProcessing);
+        notifyCanvasEntireContentsWillChange(shouldApplyPostProcessing);
         return;
     }
 
@@ -2941,12 +2961,12 @@ void CanvasRenderingContext2DBase::willUpdateContents(std::optional<FloatRect> r
 #if !USE(COORDINATED_GRAPHICS)
     // FIXME: This does not apply the clip because we have no way of reading the clip out of the GraphicsContext.
     if (m_dirtyRect.contains(dirtyRect))
-        protect(canvasBase())->willUpdateContents(std::nullopt, shouldApplyPostProcessing);
+        notifyCanvasEntireContentsWillChange(shouldApplyPostProcessing);
     else
 #endif
     {
         // Inflate dirty rect to cover antialiasing on image buffers.
-        if (context->shouldAntialias())
+        if (context.shouldAntialias())
             dirtyRect.inflate(1);
 #if USE(COORDINATED_GRAPHICS)
         // In COORDINATED_GRAPHICS graphics layer is tiled and tiling logic handles dirty rects

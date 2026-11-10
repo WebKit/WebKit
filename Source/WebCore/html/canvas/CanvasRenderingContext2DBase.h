@@ -425,6 +425,7 @@ protected:
         };
     }
     void willUpdateContents(std::optional<FloatRect>, OptionSet<WillUpdateContentsOption> = defaultWillUpdateContentsOptions());
+    void willUpdateContents(GraphicsContext& effectiveContext, std::optional<FloatRect>, OptionSet<WillUpdateContentsOption> = defaultWillUpdateContentsOptions());
     void willUpdateEntireContents(OptionSet<WillUpdateContentsOption> options = defaultWillUpdateContentsOptions());
 
     virtual std::optional<Style::Filter> setFilterStringWithoutUpdatingStyle(const String&) { return std::nullopt; }
@@ -464,6 +465,8 @@ private:
     };
 
     void applyLineDash() const;
+    void invalidateCachedContents(OptionSet<WillUpdateContentsOption>);
+    void notifyCanvasEntireContentsWillChange(ShouldApplyPostProcessingToDirtyRect);
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
     NODELETE bool shouldDrawShadows() const;
