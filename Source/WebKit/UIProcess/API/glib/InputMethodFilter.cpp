@@ -107,6 +107,7 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
     if (!isEnabled() || !m_context)
         return { };
 
+    m_ignoreNonKeyInputUntil = { };
     SetForScope filteringContextIsAcive(m_filteringContext.isActive, true);
     m_filteringContext.preeditChanged = false;
     m_compositionResult = { };
@@ -127,6 +128,11 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
         return { };
 
     return { true, { } };
+}
+
+bool InputMethodFilter::isIgnoringNonKeyInput() const
+{
+    return MonotonicTime::now() < m_ignoreNonKeyInputUntil;
 }
 
 bool InputMethodFilter::isViewFocused() const
@@ -298,7 +304,7 @@ void InputMethodFilter::preeditStarted()
 
 void InputMethodFilter::preeditChanged()
 {
-    if (!isEnabled())
+    if (!isEnabled() || isIgnoringNonKeyInput())
         return;
 
     if (m_filteringContext.isActive)
@@ -353,7 +359,7 @@ void InputMethodFilter::preeditFinished()
 
 void InputMethodFilter::committed(const char* compositionString)
 {
-    if (!isEnabled())
+    if (!isEnabled() || isIgnoringNonKeyInput())
         return;
 
     m_compositionResult = String::fromUTF8(compositionString);
@@ -391,6 +397,24 @@ void InputMethodFilter::cancelComposition()
     m_preedit = { };
     m_compositionResult = { };
     webkit_input_method_context_reset(m_context.get());
+}
+
+void InputMethodFilter::discardComposition()
+{
+    if (m_preedit.text.isNull())
+        return;
+
+    m_preedit = { };
+    m_compositionResult = { };
+    // The input method may still send the text of the composition that ended, for example when focus goes
+    // out below. It belongs to the previous field, so ignore it until the next key event or for a short time.
+    m_ignoreNonKeyInputUntil = MonotonicTime::now() + 100_ms;
+    webkit_input_method_context_reset(m_context.get());
+
+    // Not every input method drops its preedit on reset, and GTK on Wayland does not pass the reset
+    // on to the input method at all. A focus change ends the composition with all of them.
+    notifyFocusedOut();
+    notifyFocusedIn();
 }
 
 } // namespace WebKit

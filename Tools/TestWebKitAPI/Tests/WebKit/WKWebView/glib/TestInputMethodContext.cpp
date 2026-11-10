@@ -53,6 +53,8 @@ typedef struct _WebKitInputMethodContextMock {
     bool enabled;
     GString* preedit;
     bool commitNextCharacter;
+    // Text committed when focus goes out, as GNOME Shell does with an open preedit.
+    const char* textToCommitOnFocusOut;
     // Offset of the input method caret inside the preedit, or -1 for the end of the preedit.
     // Counted in bytes, like GString::len, which matches the ASCII preedits used here.
     int preeditCursorOffset;
@@ -248,6 +250,8 @@ static void webkitInputMethodContextMockNotifyFocusOut(WebKitInputMethodContext*
     auto* mock = reinterpret_cast<WebKitInputMethodContextMock*>(context);
     mock->enabled = false;
     mock->focusOutCount++;
+    if (auto* text = std::exchange(mock->textToCommitOnFocusOut, nullptr))
+        g_signal_emit_by_name(context, "committed", text, nullptr);
 }
 
 static void webkitInputMethodContextMockNotifyCursorArea(WebKitInputMethodContext* context, int x, int y, int width, int height)
@@ -1827,6 +1831,52 @@ static void testWebKitInputMethodContextFocusChange(InputMethodTest* test, gcons
     // This is a gap, not intentional behaviour.
 }
 
+// Two fields where the input event handler of the first one moves focus to the second one,
+// as one-time code forms do.
+static const char* inputEventMovesFocusHTML = "<html><body>"
+    "<input id='editable' type='text' spellcheck='false'>"
+    "<input id='second' type='text' spellcheck='false'>"
+    "<script>"
+    "var log = [];"
+    "for (let type of ['compositionstart', 'compositionupdate', 'compositionend', 'keyup'])"
+    "    document.addEventListener(type, event => log.push(`${event.type}:${event.target.id}:${event.data ?? ''}`), true);"
+    "editable.addEventListener('input', () => second.focus());"
+    "</script></body></html>";
+
+static void testWebKitInputMethodContextInputEventMovesFocus(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml(inputEventMovesFocusHTML, nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->clearInputMethodCounters();
+    test->m_context->textToCommitOnFocusOut = "w";
+    test->keyStroke(KEY(w), { WebViewTest::Modifiers::Control, WebViewTest::Modifiers::Shift });
+    test->assertJavaScriptBecomesTrue("log.includes('keyup:second:')");
+    {
+        auto editableValue = test->editableValue();
+        g_assert_cmpstr(editableValue.get(), ==, "w");
+        // The text the input method commits when focus goes out belongs to the first field.
+        auto* jsResult = test->runJavaScriptAndWaitUntilFinished("second.value", nullptr);
+        GUniquePtr<char> secondValue(WebViewTest::javascriptResultToCString(jsResult));
+        g_assert_cmpstr(secondValue.get(), ==, "");
+    }
+
+    // Reset alone does not end the composition with every input method, so focus goes out and back in.
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+
+    // The input method must have dropped its preedit, so the next composition starts afresh in the second field.
+    test->runJavaScriptAndWaitUntilFinished("log = []", nullptr);
+    test->keyStroke(KEY(w), { WebViewTest::Modifiers::Control, WebViewTest::Modifiers::Shift });
+    test->assertJavaScriptBecomesTrue("log.includes('keyup:second:')");
+    {
+        auto* jsResult = test->runJavaScriptAndWaitUntilFinished("log.join(' ')", nullptr);
+        GUniquePtr<char> log(WebViewTest::javascriptResultToCString(jsResult));
+        g_assert_cmpstr(log.get(), ==, "compositionstart:second: compositionupdate:second:w keyup:second:");
+    }
+}
+
 static void testWebKitInputMethodContextFocusBlurRefocus(InputMethodTest* test, gconstpointer)
 {
     test->loadHtml(twoFieldsHTML, nullptr);
@@ -2792,6 +2842,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "preedit-underlines", testWebKitInputMethodContextPreeditUnderlines);
 #endif
     InputMethodTest::add("WebKitInputMethodContext", "focus-change", testWebKitInputMethodContextFocusChange);
+    InputMethodTest::add("WebKitInputMethodContext", "input-event-moves-focus", testWebKitInputMethodContextInputEventMovesFocus);
     InputMethodTest::add("WebKitInputMethodContext", "focus-blur-refocus", testWebKitInputMethodContextFocusBlurRefocus);
     InputMethodTest::add("WebKitInputMethodContext", "remove-focused-element", testWebKitInputMethodContextRemoveFocusedElement);
     InputMethodTest::add("WebKitInputMethodContext", "blur-refocus-interaction", testWebKitInputMethodContextBlurRefocusInteraction);

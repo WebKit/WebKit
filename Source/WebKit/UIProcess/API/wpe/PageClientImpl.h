@@ -194,6 +194,7 @@ private:
     void didChangeWebPageID() const override;
 
     void selectionDidChange() override;
+    void notifyInputContextAboutDiscardedComposition() override;
 
     WebKitWebResourceLoadManager* webResourceLoadManager() override;
 

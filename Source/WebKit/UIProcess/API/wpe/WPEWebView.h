@@ -85,6 +85,7 @@ public:
 #endif
 
     void selectionDidChange();
+    void discardComposition();
     void close();
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }

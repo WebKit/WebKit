@@ -54,6 +54,10 @@ void WebEditorClient::didDispatchInputMethodKeydown(KeyboardEvent& event)
         auto rangeStart = platformEvent->preeditSelectionRangeStart().value_or(0);
         auto rangeLength = platformEvent->preeditSelectionRangeLength().value_or(0);
         frame->editor().setComposition(platformEvent->text(), underlines.value(), { }, { }, rangeStart, rangeStart + rangeLength);
+        // The text was inserted, but there is no composition left, for example because an input event handler moved
+        // focus. Tell the input method, otherwise it keeps the preedit and adds the next key to it.
+        if (!platformEvent->text().isEmpty() && !frame->editor().hasComposition())
+            canceledComposition();
     } else if (frame->editor().hasComposition())
         frame->editor().confirmComposition(platformEvent->text());
     else if (!platformEvent->text().isEmpty() && frame->editor().canEdit()) {
