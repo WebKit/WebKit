@@ -498,7 +498,7 @@ struct SwiftCxxInteropTests {
             // See readingACopyableValueCopiesItExactlyOnce(): sampled before the last use of `holder`, so
             // its reference is certainly still held here.
             let countWhileHeld = Cxx.sharedProbeRefCount()
-            withExtendedLifetime(holder) {}
+            extendLifetime(holder)
 
             #expect(countWhileHeld == 2, "Swift's copy of the value should hold a reference of its own")
         }
@@ -697,8 +697,8 @@ struct SwiftCxxInteropTests {
             let holder = try Cxx.makeSharedProbeHolderExpected().value
             let expected: Cxx.SharedProbeHolderExpected = WTF.makeExpected(holder)
 
-            withExtendedLifetime(holder) {}
-            withExtendedLifetime(expected) {}
+            extendLifetime(holder)
+            extendLifetime(expected)
         }
 
         // SharedProbeHolder is trivially copyable, so C++ never retains the probe it points to. Passing it
