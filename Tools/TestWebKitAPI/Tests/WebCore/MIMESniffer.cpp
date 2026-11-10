@@ -103,4 +103,22 @@ TEST(MIMESniffer, WebMSnifferDoesNotReadPastEnd)
     MIMESniffer::getMIMETypeFromContent(std::span { truncatedWebMAtMagicByte });
 }
 
+TEST(MIMESniffer, ModelMIMETypes)
+{
+    auto modelMIMEType = [](ASCIILiteral content) {
+        return MIMESniffer::getModelMIMETypeFromContent(byteCast<uint8_t>(content.span()));
+    };
+
+    ASSERT_EQ(modelMIMEType("PXR-USDC"_s), String("model/vnd.pixar.usd"_s));
+    ASSERT_EQ(modelMIMEType("#usda 1.0"_s), String("model/vnd.pixar.usd"_s));
+    ASSERT_EQ(modelMIMEType("PK\x03\x04"_s), String("model/vnd.usdz+zip"_s));
+    ASSERT_EQ(modelMIMEType("glTF"_s), String("model/gltf-binary"_s));
+    ASSERT_EQ(modelMIMEType("{\"asset\":{}}"_s), String("model/gltf+json"_s));
+
+    ASSERT_TRUE(modelMIMEType("solid cube"_s).isNull());
+    ASSERT_TRUE(modelMIMEType("#usda1.0"_s).isNull());
+    ASSERT_TRUE(modelMIMEType("PK"_s).isNull());
+    ASSERT_TRUE(modelMIMEType(""_s).isNull());
+}
+
 } // namespace TestWebKitAPI

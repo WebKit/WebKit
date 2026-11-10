@@ -69,6 +69,7 @@
 #include "LazyLoadElementObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "Logging.h"
+#include "MIMESniffer.h"
 #include "MIMETypeRegistry.h"
 #include "MediaQueryEvaluator.h"
 #include "Model.h"
@@ -1827,6 +1828,12 @@ bool HTMLModelElement::shouldDeferLoading() const
     return !isVisible() && isModelDeferred() && !document().page()->shouldDisableModelLoadDelaysForTesting();
 }
 
+static String modelMIMEType(const SharedBuffer& data, const String& contentType)
+{
+    auto mimeType = MIMESniffer::getModelMIMETypeFromContent(data.span());
+    return mimeType.isNull() ? contentType : mimeType;
+}
+
 void HTMLModelElement::modelResourceFinished()
 {
     auto invalidateResourceHandleAndUpdateRenderer = [&] {
@@ -1855,7 +1862,9 @@ void HTMLModelElement::modelResourceFinished()
     m_dataComplete = true;
     m_dataMemoryCost.store(m_data.size(), std::memory_order_relaxed);
     m_originalMIMEType = resource->mimeType();
-    m_model = Model::create(m_data.takeBufferAsContiguous().get(), resource->mimeType(), resource->url());
+    Ref data = m_data.takeBufferAsContiguous();
+    auto mimeType = modelMIMEType(data, resource->mimeType());
+    m_model = Model::create(WTF::move(data), WTF::move(mimeType), resource->url());
 
     ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 

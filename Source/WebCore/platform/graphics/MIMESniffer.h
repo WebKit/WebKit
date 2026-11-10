@@ -35,6 +35,8 @@ namespace MIMESniffer {
 // from https://mimesniff.spec.whatwg.org/#matching-an-audio-or-video-type-pattern
 WEBCORE_EXPORT String getMIMETypeFromContent(std::span<const uint8_t>);
 
+WEBCORE_EXPORT String getModelMIMETypeFromContent(std::span<const uint8_t>);
+
 } // namespace MIMESniffer
 
 } // namespace WebCore

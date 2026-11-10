@@ -361,6 +361,29 @@ String getMIMETypeFromContent(std::span<const uint8_t> sequence)
     return emptyString();
 }
 
+String getModelMIMETypeFromContent(std::span<const uint8_t> sequence)
+{
+    struct ModelSignature {
+        const std::span<const uint8_t> signature;
+        const ASCIILiteral mimeType;
+    };
+
+    // The signatures and order of USDLib's UsdStage::Open(buffer).
+    static const auto signatures = WTF::toArray<ModelSignature>({
+        { span8("PXR-USDC"), "model/vnd.pixar.usd"_s },
+        { span8("#usda "), "model/vnd.pixar.usd"_s },
+        { span8("PK\x03\x04"), "model/vnd.usdz+zip"_s },
+        { span8("glTF"), "model/gltf-binary"_s },
+        { span8("{"), "model/gltf+json"_s },
+    });
+
+    for (auto& [signature, mimeType] : signatures) {
+        if (spanHasPrefix(sequence, signature))
+            return mimeType;
+    }
+    return nullString();
+}
+
 } // namespace MIMESniffer
 
 } // namespace WebCore
