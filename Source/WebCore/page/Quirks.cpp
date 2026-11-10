@@ -172,8 +172,8 @@ NODELETE static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAg
 #else
 NODELETE static inline bool shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
 NODELETE static inline bool shouldDisableBlobFileAccessEnforcementInternal() { return false; }
-NODELETE static inline bool needsConsistentQueryParameterFilteringInternal(const URL&) { return false; }
 NODELETE static inline bool shouldExemptCookieFromITPDataRemovalInternal(const String&) { return false; }
+NODELETE static inline ConsistentQueryParameterFilteringLevel needsConsistentQueryParameterFilteringInternal(const URL&, const URL&) { return ConsistentQueryParameterFilteringLevel::Disabled; }
 #if PLATFORM(COCOA)
 NODELETE static inline String standardUserAgentWithApplicationNameIncludingCompatOverridesInternal(const String&, const String&, UserAgentType) { return { }; }
 #endif
@@ -912,32 +912,62 @@ bool Quirks::needsPopupFromMicrosoftOfficeToOneDrive(const String& targetURLStri
     return m_quirksData.behaviorAppliesToURL(id, protect(m_document)->encodingParseURL(targetURLString));
 }
 
-bool Quirks::needsConsistentQueryParameterFilteringQuirk(const URL& url) const
+static ConsistentQueryParameterFilteringLevel consistentQueryParameterFilteringLevelForTesting(const URL& sourceURL, const URL& destinationURL)
 {
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+    auto levelForDomain = [](const RegistrableDomain& domain) {
+        if (equalLettersIgnoringASCIICase(domain.string(), "consistentqueryparameterfiltering.internal"_s) || equalLettersIgnoringASCIICase(domain.string(), "bundle-file"_s))
+            return ConsistentQueryParameterFilteringLevel::High;
+        if (equalLettersIgnoringASCIICase(domain.string(), "consistentqueryparameterfiltering-medium.internal"_s))
+            return ConsistentQueryParameterFilteringLevel::Medium;
+        if (equalLettersIgnoringASCIICase(domain.string(), "consistentqueryparameterfiltering-low.internal"_s))
+            return ConsistentQueryParameterFilteringLevel::Low;
+        return ConsistentQueryParameterFilteringLevel::Disabled;
+    };
 
-    if (!m_document->settings().consistentQueryParameterFilteringQuirkEnabled())
-        return false;
+    RegistrableDomain sourceDomain { sourceURL };
+    RegistrableDomain destinationDomain { destinationURL };
+    auto level = std::max(levelForDomain(sourceDomain), levelForDomain(destinationDomain));
+
+    if (equalLettersIgnoringASCIICase(sourceDomain.string(), "consistentqueryparameterfiltering-pair-source.internal"_s)
+        && equalLettersIgnoringASCIICase(destinationDomain.string(), "consistentqueryparameterfiltering-pair-destination.internal"_s))
+        level = std::max(level, ConsistentQueryParameterFilteringLevel::Medium);
+
+    return level;
+}
+
+ConsistentQueryParameterFilteringLevel Quirks::consistentQueryParameterFilteringLevel(const URL& sourceURL, const URL& destinationURL) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(ConsistentQueryParameterFilteringLevel::Disabled);
 
     static bool wasLoggedOnce { false };
+    if (!m_document->settings().consistentQueryParameterFilteringQuirkEnabled())
+        return ConsistentQueryParameterFilteringLevel::Disabled;
 
-    if (equalLettersIgnoringASCIICase(url.host(), "bundle-file"_s)
-        || equalLettersIgnoringASCIICase(RegistrableDomain { url }.string(), "consistentqueryparameterfiltering.internal"_s))
-        return true;
+    if (auto level = consistentQueryParameterFilteringLevelForTesting(sourceURL, destinationURL); level != ConsistentQueryParameterFilteringLevel::Disabled)
+        return level;
 
-    bool enableQuirk = m_document->settings().consistentQueryParameterFilteringInternalQuirkEnabled()
-        && needsConsistentQueryParameterFilteringInternal(URL { url.string().foldCase() });
+    auto level = ConsistentQueryParameterFilteringLevel::Disabled;
+    if (m_document->settings().consistentQueryParameterFilteringInternalQuirkEnabled())
+        level = needsConsistentQueryParameterFilteringInternal(URL { sourceURL.string().foldCase() }, URL { destinationURL.string().foldCase() });
 
-    if (RefPtr page = m_document->page())
-        enableQuirk |= page->requiresConsistentPrivacyQuirkForDomain(url);
+    if (RefPtr page = m_document->page()) {
+        if (page->requiresConsistentPrivacyQuirkForDomain(sourceURL) || (!destinationURL.isEmpty() && page->requiresConsistentPrivacyQuirkForDomain(destinationURL)))
+            level = std::max(level, ConsistentQueryParameterFilteringLevel::Medium);
+    }
 
-    if (enableQuirk && !wasLoggedOnce) {
-        RELEASE_LOG(Loading, "Quirks::needsConsistentQueryParameterFilteringQuirk: Enabling consistent privacy protections");
-        protect(m_document)->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("Enabling consistent privacy protections on \""_s, url.string(), "\""_s));
+    if (level != ConsistentQueryParameterFilteringLevel::Disabled && !wasLoggedOnce) {
+        RELEASE_LOG(Loading, "Quirks::consistentQueryParameterFilteringLevel: Enabling consistent privacy protections");
+        protect(m_document)->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Enabling consistent privacy protections"_s);
         wasLoggedOnce = true;
     }
 
-    return enableQuirk;
+    return level;
+}
+
+bool Quirks::needsConsistentQueryParameterFilteringQuirk(const URL& url) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+    return consistentQueryParameterFilteringLevel(url, m_document->url()) != ConsistentQueryParameterFilteringLevel::Disabled;
 }
 
 bool Quirks::mayBenefitFromFingerprintingProtectionQuirk(const URL& url) const
