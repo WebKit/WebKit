@@ -236,9 +236,9 @@ wasm/WasmSectionParser.cpp
 wasm/WasmStreamingParser.cpp
 wasm/WasmTypeDefinition.cpp
 wasm/WasmWorklist.cpp
-wasm/debugger/WasmExecutionHandler.cpp
-wasm/debugger/WasmModuleManager.cpp
-wasm/debugger/WasmQueryHandler.cpp
+[ macOS ] wasm/debugger/WasmExecutionHandler.cpp
+[ macOS ] wasm/debugger/WasmModuleManager.cpp
+[ macOS ] wasm/debugger/WasmQueryHandler.cpp
 wasm/js/JSWebAssemblyInstance.cpp
 wasm/js/JSWebAssemblyModule.cpp
 wasm/js/WebAssemblyBuiltin.cpp

@@ -135,18 +135,18 @@ wasm/WasmEntryPlan.cpp
 wasm/WasmFunctionParser.h
 wasm/WasmIPIntGenerator.cpp
 wasm/WasmIPIntPlan.cpp
-wasm/WasmIPIntSlowPaths.cpp
+[ macOS ] wasm/WasmIPIntSlowPaths.cpp
 wasm/WasmIndexOrName.cpp
 wasm/WasmMergedProfile.h
-wasm/WasmModuleInformation.cpp
+[ macOS ] wasm/WasmModuleInformation.cpp
 wasm/WasmNameSectionParser.cpp
 wasm/WasmOMGIRGenerator.cpp
 wasm/WasmOMGPlan.cpp
 wasm/WasmOperationsInlines.h
 wasm/WasmSectionParser.cpp
 wasm/WasmTypeDefinition.cpp
-wasm/debugger/WasmExecutionHandler.cpp
-wasm/debugger/WasmModuleManager.cpp
+[ macOS ] wasm/debugger/WasmExecutionHandler.cpp
+[ macOS ] wasm/debugger/WasmModuleManager.cpp
 wasm/js/WebAssemblyBuiltin.cpp
 wasm/js/WebAssemblyModuleConstructor.cpp
 yarr/YarrInterpreter.cpp

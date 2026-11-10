@@ -2,7 +2,7 @@ Modules/WebGPU/GPUAdapterInfo.h
 Modules/WebGPU/GPUQueue.cpp
 Modules/WebGPU/GPURenderPassEncoder.cpp
 Modules/WebGPU/Implementation/WebGPUCompositorIntegrationImpl.cpp
-Modules/airplay/WebMediaSessionManager.mm
+[ macOS ] Modules/airplay/WebMediaSessionManager.mm
 Modules/applepay/cocoa/PaymentContactCocoa.mm
 Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
 Modules/async-clipboard/Clipboard.cpp
@@ -78,10 +78,10 @@ accessibility/AccessibilityMenuList.cpp
 accessibility/AccessibilityNodeObject.cpp
 accessibility/AccessibilityObject.cpp
 accessibility/AccessibilityScrollView.cpp
-accessibility/isolatedtree/AXIsolatedObject.cpp
-accessibility/mac/AXObjectCacheMac.mm
-accessibility/mac/AccessibilityObjectMac.mm
-accessibility/mac/WebAccessibilityObjectWrapperMac.mm
+[ macOS ] accessibility/isolatedtree/AXIsolatedObject.cpp
+[ macOS ] accessibility/mac/AXObjectCacheMac.mm
+[ macOS ] accessibility/mac/AccessibilityObjectMac.mm
+[ macOS ] accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 animation/BlendingKeyframes.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeInterpolation.cpp
@@ -157,12 +157,12 @@ dom/FragmentDirectiveGenerator.cpp
 dom/ImageOverlay.cpp
 dom/Node.cpp
 dom/TextEncoderStreamEncoder.cpp
-editing/AlternativeTextController.cpp
+[ macOS ] editing/AlternativeTextController.cpp
 editing/BreakBlockquoteCommand.cpp
 editing/CachedMatchFinder.cpp
 editing/CompositeEditCommand.cpp
 editing/EditingStyle.cpp
-editing/Editor.cpp
+[ macOS ] editing/Editor.cpp
 editing/InsertParagraphSeparatorCommand.cpp
 editing/MarkupAccumulator.cpp
 editing/ReplaceSelectionCommand.cpp
@@ -170,6 +170,7 @@ editing/TextCheckingHelper.cpp
 editing/TextIterator.cpp
 editing/TextManipulationController.cpp
 editing/VisibleUnits.cpp
+[ iOS ] editing/ios/EditorIOS.mm
 history/CachedFrame.cpp
 history/HistoryItem.cpp
 html/DOMFormData.cpp
@@ -210,6 +211,7 @@ inspector/InspectorStyleSheet.cpp
 inspector/WebInjectedScriptHost.cpp
 inspector/agents/InspectorDOMAgent.cpp
 inspector/agents/frame/FrameDOMAgent.cpp
+inspector/agents/frame/FrameTimelineAgent.cpp
 inspector/agents/page/PageTimelineAgent.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp
 layout/formattingContexts/grid/ExplicitGridResolver.cpp
@@ -254,12 +256,13 @@ page/PageSerializer.cpp
 page/PerformanceUserTiming.cpp
 page/QuirkBehaviors.h
 page/QuirkTable.cpp
-page/cocoa/DragControllerCocoa.mm
+[ macOS ] page/cocoa/DragControllerCocoa.mm
 page/csp/ContentSecurityPolicy.cpp
 page/csp/ContentSecurityPolicySource.cpp
-page/mac/ServicesOverlayController.mm
+[ iOS ] page/ios/FrameIOS.mm
+[ macOS ] page/mac/ServicesOverlayController.mm
 page/scrolling/ScrollSnapOffsetsInfo.cpp
-page/scrolling/mac/ScrollingTreeMac.mm
+[ macOS ] page/scrolling/mac/ScrollingTreeMac.mm
 page/text-extraction/TextExtraction.cpp
 page/writing-tools/WritingToolsController.mm
 platform/MediaSamplesDecoder.cpp
@@ -281,13 +284,13 @@ platform/audio/cocoa/AudioSampleBufferConverter.mm
 platform/audio/cocoa/AudioUtilitiesCocoa.cpp
 platform/audio/cocoa/WebAudioBufferList.cpp
 platform/cocoa/PasteboardCocoa.mm
-platform/cocoa/PlatformPasteboardCocoa.mm
+[ macOS ] platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/encryptedmedia/CDMProxy.h
-platform/gamepad/mac/Dualshock3HIDGamepad.cpp
-platform/gamepad/mac/GenericHIDGamepad.cpp
-platform/gamepad/mac/LogitechGamepad.cpp
-platform/gamepad/mac/StadiaHIDGamepad.cpp
+[ macOS ] platform/gamepad/mac/Dualshock3HIDGamepad.cpp
+[ macOS ] platform/gamepad/mac/GenericHIDGamepad.cpp
+[ macOS ] platform/gamepad/mac/LogitechGamepad.cpp
+[ macOS ] platform/gamepad/mac/StadiaHIDGamepad.cpp
 platform/graphics/BezierUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/FloatPointGraph.cpp
@@ -334,18 +337,21 @@ platform/graphics/cv/VideoFrameCV.mm
 platform/graphics/displaylists/DisplayListItems.cpp
 platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
 platform/graphics/iso/ISOVTTCue.cpp
-platform/graphics/mac/IconMac.mm
+[ macOS ] platform/graphics/mac/IconMac.mm
 platform/graphics/transforms/TransformOperations.cpp
+[ iOS ] platform/ios/LegacyTileCache.mm
+[ iOS ] platform/ios/LegacyTileGrid.mm
+[ iOS ] platform/ios/wak/WKGraphics.mm
 platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
-platform/mac/PasteboardMac.mm
-platform/mac/PlatformPasteboardMac.mm
+[ macOS ] platform/mac/PasteboardMac.mm
+[ macOS ] platform/mac/PlatformPasteboardMac.mm
 platform/mediacapabilities/PlatformMediaEngineConfigurationFactory.cpp
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterWebM.cpp
 platform/mediastream/WebRTCProvider.cpp
 platform/mediastream/cocoa/BaseAudioCaptureUnit.cpp
-platform/mediastream/cocoa/CoreAudioCaptureDevice.cpp
-platform/mediastream/cocoa/CoreAudioCaptureDeviceManager.cpp
+[ macOS ] platform/mediastream/cocoa/CoreAudioCaptureDevice.cpp
+[ macOS ] platform/mediastream/cocoa/CoreAudioCaptureDeviceManager.cpp
 platform/mediastream/cocoa/MockAudioCaptureUnit.mm
 platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
 platform/mock/MockRealtimeMediaSourceCenter.cpp
@@ -401,6 +407,7 @@ style/StyleScope.cpp
 style/StyleSubstitutionResolver.cpp
 style/StyleTreeResolver.cpp
 style/values/grid/StyleGridTemplateList.cpp
+style/values/images/StyleMeshGradient.cpp
 style/values/images/kinds/StyleCrossfadeImage.cpp
 style/values/primitives/StyleCoordinatedValueList.h
 svg/SVGAnimationElement.cpp

@@ -14,7 +14,7 @@ Modules/WebGPU/GPUShaderModuleDescriptor.cpp
 Modules/WebGPU/GPUVertexBufferLayout.cpp
 Modules/WebGPU/GPUVertexState.cpp
 Modules/WebGPU/Implementation/WebGPUCompositorIntegrationImpl.cpp
-Modules/airplay/WebMediaSessionManager.mm
+[ macOS ] Modules/airplay/WebMediaSessionManager.mm
 Modules/applepay/ApplePayContactField.cpp
 Modules/applepay/ApplePaySession.cpp
 Modules/applepay/PaymentRequestValidator.mm
@@ -59,7 +59,7 @@ Modules/indexeddb/shared/IndexKey.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediarecorder/MediaRecorder.cpp
 Modules/mediasession/MediaMetadata.cpp
-Modules/mediasession/MediaSession.cpp
+[ macOS ] Modules/mediasession/MediaSession.cpp
 Modules/mediasource/SourceBuffer.cpp
 Modules/mediasource/SourceBufferList.cpp
 Modules/mediastream/MediaDevices.cpp
@@ -116,24 +116,25 @@ accessibility/AXCoreObject.cpp
 accessibility/AXCoreObject.h
 accessibility/AXCrossProcessSearch.cpp
 accessibility/AXFormActivityMonitor.cpp
-accessibility/AXGeometryManager.cpp
+[ macOS ] accessibility/AXGeometryManager.cpp
 accessibility/AXLiveRegionManager.cpp
-accessibility/AXLogger.cpp
+[ macOS ] accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
 accessibility/AXObjectCache.h
 accessibility/AXSearchManager.cpp
-accessibility/AXTreeStore.cpp
+[ macOS ] accessibility/AXTreeStore.cpp
 accessibility/AccessibilityNodeObject.cpp
 accessibility/AccessibilityObject.cpp
 accessibility/AccessibilityTableColumn.cpp
 accessibility/AccessibilityTableHeaderContainer.cpp
-accessibility/cocoa/AXCoreObjectCocoa.mm
-accessibility/isolatedtree/AXIsolatedObject.cpp
-accessibility/isolatedtree/AXIsolatedTree.cpp
-accessibility/isolatedtree/AXIsolatedTree.h
-accessibility/mac/AXObjectCacheMac.mm
-accessibility/mac/AccessibilityObjectMac.mm
-accessibility/mac/WebAccessibilityObjectWrapperMac.mm
+[ macOS ] accessibility/cocoa/AXCoreObjectCocoa.mm
+[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+[ macOS ] accessibility/isolatedtree/AXIsolatedObject.cpp
+[ macOS ] accessibility/isolatedtree/AXIsolatedTree.cpp
+[ macOS ] accessibility/isolatedtree/AXIsolatedTree.h
+[ macOS ] accessibility/mac/AXObjectCacheMac.mm
+[ macOS ] accessibility/mac/AccessibilityObjectMac.mm
+[ macOS ] accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 animation/AnimationTimelinesController.cpp
 animation/BlendingKeyframes.cpp
 animation/DocumentTimeline.cpp
@@ -287,6 +288,8 @@ editing/cocoa/DataDetection.mm
 editing/cocoa/EditingHTMLConverter.mm
 editing/cocoa/EditorCocoa.mm
 editing/cocoa/WebContentReaderCocoa.mm
+[ iOS ] editing/ios/DictationCommandIOS.cpp
+[ iOS ] editing/ios/EditorIOS.mm
 editing/markup.cpp
 fileapi/Blob.cpp
 fileapi/ThreadableBlobRegistry.cpp
@@ -345,7 +348,7 @@ inspector/InspectorCanvasArguments.cpp
 inspector/InspectorCanvasArguments.h
 inspector/InspectorFontData.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp
-inspector/InspectorFrontendHost.cpp
+[ macOS ] inspector/InspectorFrontendHost.cpp
 inspector/InspectorHistory.cpp
 inspector/InspectorOverlay.cpp
 inspector/InspectorOverlayLabel.cpp
@@ -430,7 +433,7 @@ loader/cache/MemoryCache.cpp
 loader/images/bitmap/BitmapImageSource.cpp
 loader/images/svg/SVGImageInstanceCache.h
 page/Chrome.cpp
-page/ContextMenuController.cpp
+[ macOS ] page/ContextMenuController.cpp
 page/DebugPageOverlays.cpp
 page/DeviceController.cpp
 page/DragController.cpp
@@ -473,17 +476,18 @@ page/TextIndicator.cpp
 page/UserAgentStringParser.cpp
 page/UserContentURLPattern.cpp
 page/Viewport.cpp
-page/cocoa/DragControllerCocoa.mm
+[ macOS ] page/cocoa/DragControllerCocoa.mm
 page/cocoa/ResourceUsageThreadCocoa.mm
 page/cocoa/WebTextIndicatorLayer.mm
 page/csp/ContentSecurityPolicy.cpp
 page/csp/ContentSecurityPolicyDirectiveList.cpp
 page/csp/ContentSecurityPolicyResponseHeaders.cpp
 page/csp/ContentSecurityPolicySourceList.cpp
-page/mac/ImageOverlayControllerMac.mm
-page/mac/ServicesOverlayController.mm
+[ iOS ] page/ios/FrameIOS.mm
+[ macOS ] page/mac/ImageOverlayControllerMac.mm
+[ macOS ] page/mac/ServicesOverlayController.mm
 page/scrolling/AsyncScrollingCoordinator.cpp
-page/scrolling/ScrollLatchingController.cpp
+[ macOS ] page/scrolling/ScrollLatchingController.cpp
 page/scrolling/ScrollSnapOffsetsInfo.cpp
 page/scrolling/ScrollingStateFrameScrollingNode.cpp
 page/scrolling/ScrollingStateNode.cpp
@@ -499,6 +503,7 @@ platform/KeyedCoding.h
 platform/MIMETypeRegistry.cpp
 platform/PacedMediaSamplesDecoder.cpp
 platform/PasteboardCustomData.cpp
+[ iOS ] platform/PreviewConverter.cpp
 platform/ScrollSnapAnimatorState.cpp
 platform/SharedBuffer.cpp
 platform/Timer.cpp
@@ -509,7 +514,8 @@ platform/audio/cocoa/AudioDecoderCocoa.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.mm
 platform/audio/cocoa/CARingBuffer.cpp
 platform/audio/cocoa/FFTFrameCocoa.cpp
-platform/audio/mac/SharedRoutingArbitrator.mm
+[ iOS ] platform/audio/ios/AudioSessionIOS.mm
+[ macOS ] platform/audio/mac/SharedRoutingArbitrator.mm
 platform/cf/SharedBufferCF.cpp
 platform/cocoa/PasteboardCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
@@ -517,11 +523,11 @@ platform/cocoa/SharedBufferCocoa.mm
 platform/encryptedmedia/CDMPrivate.cpp
 platform/encryptedmedia/CDMProxy.cpp
 platform/encryptedmedia/CDMProxy.h
-platform/gamepad/cocoa/GameControllerHapticEffect.mm
-platform/gamepad/mac/Dualshock3HIDGamepad.cpp
-platform/gamepad/mac/GenericHIDGamepad.cpp
-platform/gamepad/mac/LogitechGamepad.cpp
-platform/gamepad/mac/StadiaHIDGamepad.cpp
+[ macOS ] platform/gamepad/cocoa/GameControllerHapticEffect.mm
+[ macOS ] platform/gamepad/mac/Dualshock3HIDGamepad.cpp
+[ macOS ] platform/gamepad/mac/GenericHIDGamepad.cpp
+[ macOS ] platform/gamepad/mac/LogitechGamepad.cpp
+[ macOS ] platform/gamepad/mac/StadiaHIDGamepad.cpp
 platform/graphics/BezierUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/CornerShapeUtilities.cpp
@@ -593,7 +599,12 @@ platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/displaylists/DisplayList.cpp
 platform/graphics/filters/FilterOperations.cpp
 platform/graphics/iso/ISOBox.cpp
-platform/mac/PasteboardMac.mm
+[ iOS ] platform/ios/PasteboardIOS.mm
+[ iOS ] platform/ios/PlatformPasteboardIOS.mm
+[ iOS ] platform/ios/WebCoreMotionManager.mm
+[ iOS ] platform/ios/WebItemProviderPasteboard.mm
+[ iOS ] platform/ios/wak/WebCoreThreadRun.cpp
+[ macOS ] platform/mac/PasteboardMac.mm
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediastream/CaptureDevice.h
 platform/mediastream/CaptureDeviceManager.cpp
@@ -604,8 +615,9 @@ platform/mediastream/RealtimeMediaSourceCenter.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/cocoa/BaseAudioCaptureUnit.cpp
-platform/mediastream/cocoa/CoreAudioCaptureDeviceManager.cpp
+[ macOS ] platform/mediastream/cocoa/CoreAudioCaptureDeviceManager.cpp
 platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
+[ iOS ] platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm
 platform/mock/MockRealtimeMediaSourceCenter.cpp
 platform/network/BlobData.cpp
 platform/network/BlobRegistryImpl.cpp
@@ -622,9 +634,10 @@ platform/sql/SQLiteDatabase.cpp
 platform/text/TextFlags.cpp
 platform/video-codecs/cocoa/GPUVideoEncoderVTBH264.mm
 plugins/PluginData.cpp
-rendering/AttachmentLayout.mm
+[ macOS ] rendering/AttachmentLayout.mm
 rendering/AutoTableLayout.cpp
 rendering/CSSFilterRenderer.cpp
+[ iOS ] rendering/EventRegion.cpp
 rendering/GridBaselineAlignment.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/LayerAncestorClippingStack.cpp
@@ -661,6 +674,7 @@ rendering/StyledMarkedText.cpp
 rendering/SubtreeScrollbarChangesState.cpp
 rendering/TextBoxPainter.cpp
 rendering/cocoa/RenderThemeCocoa.mm
+[ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathOperator.cpp
 rendering/shapes/PathLayoutShape.cpp
 rendering/svg/RenderSVGInlineText.cpp
@@ -736,6 +750,7 @@ testing/Internals.mm
 testing/MockCDMFactory.cpp
 testing/MockLibWebRTCPeerConnection.cpp
 testing/MockParentalControlsURLFilter.mm
+[ iOS ] testing/cocoa/WebArchiveDumpSupport.mm
 workers/WorkerAnimationController.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerMessagingProxy.cpp

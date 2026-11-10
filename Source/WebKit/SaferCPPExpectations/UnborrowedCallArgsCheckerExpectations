@@ -3,6 +3,7 @@ GPUProcess/graphics/WebGPU/RemoteQueue.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp
 IPC/GeneratedSerializersShared.mm
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
+NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 Platform/IPC/ArgumentCoders.h
 Platform/IPC/DaemonCoders.h
 Platform/IPC/StreamServerConnection.cpp
@@ -11,5 +12,10 @@ Shared/Extensions/WebExtensionUtilities.h
 Shared/TextExtractionToStringConversion.cpp
 Shared/WebGPU/WebGPUVertexState.cpp
 Shared/graphics/DisplayListData.cpp
+[ iOS ] UIProcess/API/Cocoa/_WKTouchEventGenerator.mm
+[ iOS ] UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
+[ iOS ] UIProcess/Inspector/ios/WKInspectorHighlightView.mm
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/UserMediaPermissionRequestProxy.cpp
+[ iOS ] UIProcess/ios/WKCapturePreviewViewController.mm
+[ iOS ] UIProcess/ios/WKContentViewInteraction.mm
