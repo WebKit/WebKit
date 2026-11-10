@@ -94,7 +94,7 @@ class FileLock(object):
                 elif self.USE_EXLOCK:
                     self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXLOCK | os.O_NONBLOCK)
                 elif self.USE_FCNTL_FLOCK:
-                    descriptor = os.open(self.path, os.O_CREAT | os.O_RDONLY, 0o666)
+                    descriptor = os.open(self.path, os.O_CREAT | os.O_RDWR, 0o666)
                     try:
                         fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
                     except (IOError, OSError):
