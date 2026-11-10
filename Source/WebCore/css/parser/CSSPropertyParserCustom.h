@@ -1352,7 +1352,7 @@ inline bool PropertyParserCustom::consumeBackgroundShorthand(CSSParserTokenRange
                     if (property == CSSPropertyID::BackgroundOrigin || property == CSSPropertyID::MaskOrigin)
                         originValue = value;
                     else if (property == CSSPropertyID::BackgroundClip)
-                        clipIsBorderArea = isValueID(value, CSSValueID::BorderArea);
+                        clipIsBorderArea = isValueID(value, CSSValueID::BorderArea) || (value && value->isPair());
                     parsedLonghand[i] = true;
                     foundProperty = true;
                     longhands[i].append(value.releaseNonNull());

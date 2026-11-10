@@ -24,7 +24,10 @@
 
 #pragma once
 
+#include "CSSKeywordValue.h"
+#include "CSSValuePair.h"
 #include "CSSValuePool.h"
+#include "RenderStyleConstants.h"
 #include "StyleKeyword+Mappings.h"
 #include "StyleKeyword+ValueRepresentationNeeded.h"
 #include "StyleValueTypes.h"
@@ -35,6 +38,18 @@ namespace Style {
 template<EnumWithoutValueRepresentation T> struct CSSValueCreation<T> {
     Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, T value)
     {
+        return CSSKeywordValue::create(toCSSValueID(value));
+    }
+};
+
+template<> struct CSSValueCreation<FillBox> {
+    Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, FillBox value)
+    {
+        if (value == FillBox::BorderAreaText) {
+            return CSSValuePair::createNoncoalescing(
+                CSSKeywordValue::create(CSSValueID::BorderArea),
+                CSSKeywordValue::create(CSSValueID::Text));
+        }
         return CSSKeywordValue::create(toCSSValueID(value));
     }
 };

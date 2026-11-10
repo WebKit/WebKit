@@ -15673,7 +15673,7 @@
             }
         },
         "<single-background-clip>": {
-            "grammar": "<box> | border-area | text | -webkit-text",
+            "grammar": "<visual-box> | [ border-area || text ]@(type=CSSValuePair) | -webkit-text",
             "exported": true,
             "specification": {
                 "category": "css-backgrounds",

@@ -111,7 +111,7 @@ template<FillLayer T>
 bool hasAnyBackgroundClipText(const CoordinatedValueList<T>& list)
 {
     return std::ranges::any_of(list.usedValues(), [](auto& layer) {
-        return layer.clip() == FillBox::Text;
+        return layer.clip() == FillBox::Text || layer.clip() == FillBox::BorderAreaText;
     });
 }
 

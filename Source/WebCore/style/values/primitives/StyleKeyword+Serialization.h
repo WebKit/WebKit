@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "RenderStyleConstants.h"
 #include "StyleKeyword+Mappings.h"
 #include "StyleKeyword+ValueRepresentationNeeded.h"
 #include "StyleValueTypes.h"
@@ -34,6 +35,17 @@ namespace Style {
 template<EnumWithoutValueRepresentation T> struct Serialize<T> {
     void operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, T value)
     {
+        builder.append(nameLiteralForSerialization(toCSSValueID(value)));
+    }
+};
+
+template<> struct Serialize<FillBox> {
+    void operator()(StringBuilder& builder, const CSS::SerializationContext&, const Style::ComputedStyle&, FillBox value)
+    {
+        if (value == FillBox::BorderAreaText) {
+            builder.append("border-area text"_s);
+            return;
+        }
         builder.append(nameLiteralForSerialization(toCSSValueID(value)));
     }
 };

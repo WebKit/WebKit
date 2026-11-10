@@ -467,6 +467,8 @@ constexpr CSSValueID toCSSValueID(FillBox e)
         return CSSValueID::BorderArea;
     case FillBox::Text:
         return CSSValueID::Text;
+    case FillBox::BorderAreaText:
+        return CSSValueID::Invalid;
     case FillBox::NoClip:
         return CSSValueID::NoClip;
     }

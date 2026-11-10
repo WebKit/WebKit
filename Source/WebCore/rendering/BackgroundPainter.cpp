@@ -295,7 +295,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             shouldPaintBackgroundImage = false;
         }
 
-        if (layerClip == FillBox::Text)
+        if (layerClip == FillBox::Text || layerClip == FillBox::BorderAreaText)
             layerClip = FillBox::BorderBox;
     }
 
@@ -366,6 +366,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         switch (*clipForBorder) {
         case FillBox::BorderBox:
         case FillBox::BorderArea:
+        case FillBox::BorderAreaText:
         case FillBox::Text:
         case FillBox::NoClip: {
             auto borderShape = borderShapeRespectingBleedAvoidance(closedEdges, isBorderFill);
@@ -487,6 +488,15 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             auto borderPaintInfo = PaintInfo { context, LayoutRect { paintRect }, PaintPhase::BlockBackground, PaintBehavior::ForceBlackBorder };
             auto borderPainter = BorderPainter { m_renderer, borderPaintInfo };
             borderPainter.paintBorder(borderRect, m_renderer.usedStyle());
+        });
+        break;
+    }
+    case FillBox::BorderAreaText: {
+        setupMaskingBackgroundClip(rect, [&](GraphicsContext& context, const LayoutRect& borderRect, const FloatRect& paintRect) {
+            auto borderPaintInfo = PaintInfo { context, LayoutRect { paintRect }, PaintPhase::BlockBackground, PaintBehavior::ForceBlackBorder };
+            auto borderPainter = BorderPainter { m_renderer, borderPaintInfo };
+            borderPainter.paintBorder(borderRect, m_renderer.usedStyle());
+            m_renderer.paintMaskForTextFillBox(context, paintRect, inlineBoxIterator, scrolledPaintRect);
         });
         break;
     }
