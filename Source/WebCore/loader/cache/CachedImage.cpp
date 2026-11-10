@@ -348,11 +348,6 @@ void CachedImage::CachedImageObserver::scheduleRenderingUpdate(const Image& imag
 
 bool CachedImage::CachedImageObserver::allowsAnimation(const Image& image) const
 {
-    // *::allowsAnimation can only return false when systemAllowsAnimationControls == true,
-    // so this prevents unnecessary work by exiting early.
-    if (!Image::systemAllowsAnimationControls())
-        return true;
-
     for (RefPtr cachedImage : m_cachedImages) {
         if (cachedImage->allowsAnimation(image))
             return true;
@@ -624,9 +619,6 @@ bool CachedImage::allowsAnimation(const Image& image) const
 {
     if (&image != m_image)
         return false;
-
-    if (!Image::systemAllowsAnimationControls())
-        return true;
 
     CachedResourceClientWalker<CachedImageClient> walker(*this);
     while (RefPtr client = walker.next()) {

@@ -1195,7 +1195,7 @@ void ContextMenuController::populate()
         if (!frame->page())
             return false;
 
-        return Image::systemAllowsAnimationControls() || frame->page()->settings().allowAnimationControlsOverride();
+        return !frame->page()->systemImageAnimationEnabled() || frame->page()->settings().allowAnimationControlsOverride();
     };
 
     bool shouldAddPlayAllPauseAllAnimationsItem = canAddAnimationControls();

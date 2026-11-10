@@ -436,13 +436,6 @@ bool Image::animationPending() const
     return m_animationStartTimer && m_animationStartTimer->isActive();
 }
 
-bool Image::gSystemAllowsAnimationControls = false;
-
-void Image::setSystemAllowsAnimationControls(bool allowsControls)
-{
-    gSystemAllowsAnimationControls = allowsControls;
-}
-
 std::optional<Color> Image::singlePixelSolidColor() const
 {
     return std::nullopt;

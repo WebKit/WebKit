@@ -675,6 +675,11 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(SERVICE_CONTROLS)
     page.servicesOverlayController().setHasRelevantSelectionServicesForTesting(std::nullopt);
 #endif
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    page.setSystemImageAnimationEnabled(true);
+    if (!page.imageAnimationEnabled())
+        page.setImageAnimationEnabled(true);
+#endif
 
     RefPtr localMainFrame = page.localMainFrame();
     if (!localMainFrame)
@@ -1305,7 +1310,7 @@ void Internals::setImageAnimationEnabled(bool enabled)
 {
     if (RefPtr page = contextDocument() ? contextDocument()->page() : nullptr) {
         // We need to set this here to mimic the behavior of the AX preference changing
-        Image::setSystemAllowsAnimationControls(!enabled);
+        page->setSystemImageAnimationEnabled(enabled);
         page->setImageAnimationEnabled(enabled);
     }
 }
