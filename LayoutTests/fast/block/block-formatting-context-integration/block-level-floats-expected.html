@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+p { margin: 6px 0; background: rgba(255, 255, 0, 0.3); }
+</style>
+<div class="roots">
+<div class="root"><div class="l"></div><div class="r"></div><p>text beside two block-level floats and wrapping below them</p><p>next</p></div>
+<div class="root"><p>before</p><div class="l" style="margin: 4px"></div><p style="margin-top: 20px">a margin after the float</p></div>
+<div class="root"><div><div class="l"></div></div><p style="margin-top: 15px">the float in an empty block goes down with the margin</p></div>
+<div class="root"><div class="l"></div><div class="l" style="height: 20px"></div><div class="l" style="width: 150px; height: 10px"></div><p>three floats</p></div>
+<div class="root" dir="rtl"><div class="l"></div><div class="r"></div><p>right to left text beside the floats</p></div>
+<div class="root"><div class="l" style="width: auto; height: auto; padding: 2px">shrink to fit</div><p>next to a float that fits its content</p></div>
+<div class="root"><div style="margin: 0 20px"><div class="r"></div><p>in a block with margins</p></div><p>after it</p></div>
+<div class="root"><div class="l" style="width: 25%; margin-right: 5%"></div><p>a float with percentages</p></div>
+<div class="root"><div class="l" style="width: 50px; height: 50px; border-radius: 50%; shape-outside: circle(40%); shape-margin: 2%"></div><p>lines along a block-level float's shape, and some more text</p></div>
+<div class="root"><div style="height: 10px"><div class="l" id="hit" style="background: red"></div></div><p style="margin-left: 50px">a float that hangs out of its block</p></div>
+<div class="root"><div class="l" style="height: 20.5px; margin-bottom: 0.3px"></div><br style="clear: both">after a fractional float</div>
+<div class="root"><div id="caret-block"><div class="l" style="height: 40px"></div>caret</div><div style="margin-top: 50px">after</div></div>
+<div class="root" id="caret-result"></div>
+<div class="root" style="writing-mode: vertical-lr; height: 160px; width: auto"><div class="l"></div><p>vertical text beside a float</p></div>
+</div>
+<script>
+const hit = document.getElementById("hit");
+const rect = hit.getBoundingClientRect();
+if (document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height - 5) == hit)
+    hit.style.background = "green";
+const caretBlock = document.getElementById("caret-block").getBoundingClientRect();
+const caretRange = document.caretRangeFromPoint(caretBlock.left + 100, caretBlock.top + 25);
+document.getElementById("caret-result").textContent = caretRange.startContainer.textContent;
+</script>

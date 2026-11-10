@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 90px; margin: 2px; background: lightgray; }
+.c { background: lightyellow; outline: 1px solid orange; border: 1px solid; }
+.b { height: 10px; background: lightblue; margin: 6px 0; }
+</style>
+<div class="root"><div class="c" id="trim"><div class="b"></div><div class="b"></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block"><div class="b" id="margin"></div><div class="b"></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block"><div class="b"></div><div class="b" id="removed"></div></div></div>
+<div class="root"><div class="c" style="margin-trim: block"><div class="b" id="inserted"></div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("trim").style.marginTrim = "block";
+document.getElementById("margin").style.marginTop = "20px";
+document.getElementById("removed").remove();
+document.getElementById("inserted").before(document.createElement("div"));
+</script>

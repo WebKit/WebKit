@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; position: relative; width: 200px; height: 110px; background: lightgray; font: 10px/12px monospace; }
+.s { width: 120px; height: 60px; border: 2px solid black; padding: 3px; background: lightblue; }
+.i { height: 20px; background: rgba(0, 128, 0, 0.6); }
+.w { width: 160px; height: 10px; background: rgba(0, 0, 255, 0.5); }
+.a { position: absolute; top: 5px; left: 60px; }
+</style>
+<div class="roots">
+<div class="root"><div class="s" style="overflow: scroll"><div class="i">scroll</div></div></div>
+<div class="root"><div class="s" style="overflow: auto"><div class="i">auto that fits</div></div></div>
+<div class="root"><div class="s" style="overflow: auto"><div class="i">vertical</div><div class="i"></div><div class="i"></div></div></div>
+<div class="root"><div class="s" style="overflow: auto"><div class="w"></div>horizontal</div></div>
+<div class="root"><div class="s" style="overflow: auto; height: auto"><div class="w"></div><div class="i">auto block size</div></div></div>
+<div class="root" dir="rtl"><div class="s" style="overflow: scroll"><div class="i">right to left</div></div></div>
+<div class="root"><div class="s" style="overflow: hidden; scrollbar-gutter: stable"><div class="i">gutter</div></div></div>
+<div class="root"><div class="s" style="overflow: auto; scrollbar-gutter: stable both-edges"><div class="i">both edges</div></div></div>
+<div class="root"><div class="s" dir="rtl" style="overflow: auto; scrollbar-gutter: stable both-edges">right to left text</div></div>
+<div class="root"><div class="s" style="overflow: scroll"><div class="i" style="height: 50%">50%</div></div></div>
+<div class="root"><div class="s a" style="overflow: auto; width: auto; height: auto">shrink to fit<div class="i"></div><div class="i"></div><div class="i"></div><div class="i"></div></div></div>
+<div class="root"><div class="s a" style="overflow: scroll">out of flow</div></div>
+<div class="root"><div class="s" style="overflow: auto; width: auto"><div class="i">stretch</div><div class="i"></div><div class="i"></div></div></div>
+<div class="root"><div style="float: left; background: orange"><div class="s" style="overflow: auto; width: auto; height: 40px"><div style="width: 30px; height: 50px"></div></div></div>a float that fits it</div>
+<div class="root"><div class="s" style="overflow: scroll; width: 2px; height: 2px; padding: 0">x</div></div>
+<div class="root"><div class="s a" style="overflow: scroll; width: auto; height: auto">shrink to fit with scrollbars</div></div>
+<div class="root"><div class="s" style="overflow: scroll; width: fit-content; height: auto">fit-content</div></div>
+<div class="root"><div style="float: left; background: orange"><div class="s" style="overflow: scroll; width: auto; height: auto">in a float</div></div></div>
+</div>
+<pre id="float-width"></pre>
+<script>
+document.getElementById("float-width").textContent = Array.from(document.querySelectorAll(".root > div[style*=float]"), float => float.offsetWidth).join(" ");
+</script>

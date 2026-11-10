@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<html style="margin: 3px; padding: 2px; border: 1px solid">
+<body id="body" style="margin: 7px 0 9px 0; padding: 3px; border: 2px solid blue">
+<style>
+img { background: green; width: 10px; vertical-align: top; }
+.box { background: lightblue; }
+</style>
+<img style="height: 5%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+<div class="box" id="ancestor" style="height: 60px"><img style="display: block; height: 50%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div>
+<div class="box" id="clamped" style="max-height: 40px"><div><img style="height: 50%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></div>
+<div class="box"><div id="wrapper"><img style="height: 4%" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></div>
+<div class="box" id="container" style="height: 30px"></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("body").style.paddingTop = "20px";
+document.getElementById("ancestor").style.height = "40px";
+document.getElementById("clamped").style.maxHeight = "20px";
+document.getElementById("wrapper").style.height = "50px";
+const image = document.createElement("img");
+image.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+image.style.height = "50%";
+document.getElementById("container").appendChild(image);
+</script>
+</body>
+</html>
