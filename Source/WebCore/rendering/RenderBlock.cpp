@@ -75,6 +75,7 @@
 #include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
+#include "RenderReplaced.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
 #include "RenderTextFragment.h"
@@ -3000,6 +3001,10 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
 
         if (auto overridingLogicalHeightForGrid = (isGridItem() ? overridingBorderBoxLogicalHeight() : std::nullopt))
             return contentBoxLogicalHeight(*overridingLogicalHeightForGrid);
+
+        // Shadow content of a replaced element, sized by RenderReplaced::layoutShadowContent().
+        if (auto overridingLogicalHeight = (is<RenderReplaced>(parent()) ? overridingBorderBoxLogicalHeight() : std::nullopt))
+            return contentBoxLogicalHeight(*overridingLogicalHeight);
 
         auto& style = this->style();
         if (auto fixedLogicalHeight = style.logicalHeight().tryFixed()) {

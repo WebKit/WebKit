@@ -3457,6 +3457,12 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             return { };
         }
 
+        // Shadow content of a replaced element, sized by RenderReplaced::layoutShadowContent().
+        if (is<RenderReplaced>(parent)) {
+            if (auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight())
+                return *overridingLogicalHeight;
+        }
+
         if (CheckedPtr replaced = dynamicDowncast<RenderReplaced>(*this))
             return replaced->computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight();
 
@@ -3940,6 +3946,8 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
         if (containingBlock.isFlexibleBoxIncludingDeprecated())
             return false;
         if (is<RenderView>(containingBlock))
+            return false;
+        if (is<RenderReplaced>(containingBlock.parent()) && containingBlock.overridingBorderBoxLogicalHeight())
             return false;
         if (!containingBlock.style().logicalHeight().isAuto())
             return false;
