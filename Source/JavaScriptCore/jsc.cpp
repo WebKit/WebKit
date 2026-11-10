@@ -423,6 +423,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionEdenGC);
 static JSC_DECLARE_HOST_FUNCTION(functionHeapSize);
 static JSC_DECLARE_HOST_FUNCTION(functionMemoryUsageStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateMemoryFootprint);
+static JSC_DECLARE_HOST_FUNCTION(functionCreateWeakHolder);
+static JSC_DECLARE_HOST_FUNCTION(functionSetWeakHolderValue);
 static JSC_DECLARE_HOST_FUNCTION(functionResetMemoryPeak);
 static JSC_DECLARE_HOST_FUNCTION(functionAddressOf);
 static JSC_DECLARE_HOST_FUNCTION(functionVersion);
@@ -772,6 +774,8 @@ private:
         addFunction(vm, "gcHeapSize"_s, functionHeapSize, 0);
         addFunction(vm, "memoryUsageStatistics"_s, functionMemoryUsageStatistics, 0);
         addFunction(vm, "MemoryFootprint"_s, functionCreateMemoryFootprint, 0);
+        addFunction(vm, "createWeakHolder"_s, functionCreateWeakHolder, 1);
+        addFunction(vm, "setWeakHolderValue"_s, functionSetWeakHolderValue, 2);
         addFunction(vm, "resetMemoryPeak"_s, functionResetMemoryPeak, 0);
         addFunction(vm, "addressOf"_s, functionAddressOf, 1);
         addFunction(vm, "version"_s, functionVersion, 1);
@@ -2044,6 +2048,91 @@ private:
 };
 
 const ClassInfo JSCMemoryFootprint::s_info = { "MemoryFootprint"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCMemoryFootprint) };
+
+// Holds its value in a Weak<> but keeps it alive by visiting it, as WebCore's JSValueInWrappedObject
+// does. Concurrent markers read the Weak<> while the mutator may replace it.
+class JSCWeakHolder final : public JSDestructibleObject {
+    using Base = JSDestructibleObject;
+public:
+    template<typename CellType, SubspaceAccess>
+    NODELETE static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.destructibleObjectSpace();
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static JSCWeakHolder* create(VM& vm, JSGlobalObject* globalObject)
+    {
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        JSCWeakHolder* holder = new (NotNull, allocateCell<JSCWeakHolder>(vm)) JSCWeakHolder(vm, structure);
+        holder->finishCreation(vm);
+        return holder;
+    }
+
+    static void destroy(JSCell* cell)
+    {
+        static_cast<JSCWeakHolder*>(cell)->JSCWeakHolder::~JSCWeakHolder();
+    }
+
+    void setValue(VM& vm, JSValue value)
+    {
+        if (!value.isCell()) {
+            m_value.clear();
+            return;
+        }
+        Weak<JSCell> weak { value.asCell() };
+        WTF::storeStoreFence();
+        m_value = WTF::move(weak);
+        vm.writeBarrier(this, value);
+    }
+
+    DECLARE_INFO;
+    DECLARE_VISIT_CHILDREN;
+
+private:
+    JSCWeakHolder(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    { }
+
+    Weak<JSCell> m_value;
+};
+
+const ClassInfo JSCWeakHolder::s_info = { "WeakHolder"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCWeakHolder) };
+
+template<typename Visitor>
+void JSCWeakHolder::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    auto* thisObject = uncheckedDowncast<JSCWeakHolder>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_value);
+}
+
+DEFINE_VISIT_CHILDREN(JSCWeakHolder);
+
+JSC_DEFINE_HOST_FUNCTION(functionCreateWeakHolder, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    JSCWeakHolder* holder = JSCWeakHolder::create(vm, globalObject);
+    holder->setValue(vm, callFrame->argument(0));
+    return JSValue::encode(holder);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionSetWeakHolderValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* holder = dynamicDowncast<JSCWeakHolder>(callFrame->argument(0));
+    if (!holder)
+        return throwVMTypeError(globalObject, scope, "Expected a WeakHolder"_s);
+    holder->setValue(vm, callFrame->argument(1));
+    return JSValue::encode(jsUndefined());
+}
 
 JSC_DEFINE_HOST_FUNCTION(functionMemoryUsageStatistics, (JSGlobalObject* globalObject, CallFrame*))
 {

@@ -96,6 +96,7 @@ template<typename T> inline T& Weak<T>::operator*() const
     return *static_cast<T*>(pointer->jsValue().asCell());
 }
 
+// Note: This can be called from marker threads in addition to the mutator.
 template<typename T> inline T* Weak<T>::get() const
 {
     auto* pointer = impl();

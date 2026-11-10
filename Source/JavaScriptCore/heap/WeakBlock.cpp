@@ -54,6 +54,7 @@ void WeakBlock::destroy(JSC::Heap& heap, WeakBlock* block)
 {
     RELEASE_ASSERT(!block->next() && !block->prev());
     ASSERT(!block->isIterationTarget());
+    RELEASE_ASSERT(!heap.m_objectSpace.isMarking());
     block->~WeakBlock();
     WeakBlockMalloc::free(block);
     --heap.m_weakBlockCount;

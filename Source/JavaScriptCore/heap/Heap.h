@@ -775,6 +775,8 @@ private:
     void returnWeakBlockToPool(Locker<Lock>&, WeakBlock*, IsConcurrent) WTF_REQUIRES_LOCK(m_weakBlockLock);
     void addWeakBlockToPool(Locker<Lock>&, WeakBlock*) WTF_REQUIRES_LOCK(m_weakBlockLock);
     WeakBlock* takeWeakBlockFromPool() WTF_REQUIRES_LOCK(m_weakBlockLock);
+    void trimWeakBlockPool() WTF_REQUIRES_LOCK(m_weakBlockLock);
+    void trimPooledWeakBlocksAfterMarking() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
     void destroyAllPooledWeakBlocks() WTF_REQUIRES_LOCK(m_weakBlockLock);
     unsigned maxPooledWeakBlocks();
 
