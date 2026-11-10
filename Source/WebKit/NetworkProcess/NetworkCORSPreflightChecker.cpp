@@ -46,9 +46,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkCORSPreflightChecker);
 
-NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
+NetworkCORSPreflightChecker::NetworkCORSPreflightChecker(NetworkResourceLoader* networkResourceLoader, Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
     : m_parameters(WTF::move(parameters))
-    , m_networkProcess(networkProcess)
     , m_completionCallback(WTF::move(completionCallback))
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
     , m_networkResourceLoader(networkResourceLoader)
@@ -82,7 +81,7 @@ void NetworkCORSPreflightChecker::startPreflight()
     loadParameters.webPageProxyID = m_parameters.webPageProxyID;
     loadParameters.allowPrivacyProxy = m_parameters.allowPrivacyProxy;
 
-    if (CheckedPtr networkSession = m_networkProcess->networkSession(m_parameters.sessionID)) {
+    if (CheckedPtr networkSession = NetworkProcess::singleton().networkSession(m_parameters.sessionID)) {
         Ref task = NetworkDataTask::create(*networkSession, *this, WTF::move(loadParameters));
         m_task = task.copyRef();
         task->resume();
@@ -119,7 +118,7 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
         return;
     }
 
-    protect(m_networkProcess->authenticationManager())->didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageProxyID, &m_parameters.topOrigin->data(), challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
+    protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageProxyID, &m_parameters.topOrigin->data(), challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler)

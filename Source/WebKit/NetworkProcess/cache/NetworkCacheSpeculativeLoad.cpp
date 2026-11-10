@@ -58,7 +58,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
 {
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
-    CheckedPtr networkSession = m_cache->networkProcess().networkSession(m_cache->sessionID());
+    CheckedPtr networkSession = NetworkProcess::singleton().networkSession(m_cache->sessionID());
     if (!networkSession) {
         RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(m_completionHandler)]() mutable {
             completionHandler(nullptr);
@@ -100,7 +100,7 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
     LOG_WITH_STREAM(NetworkCacheSpeculativePreloading, stream << "Speculative redirect "_s << request.url().string() << " -> "_s << redirectRequest.url().string());
 
     std::optional<Seconds> maxAgeCap;
-    if (CheckedPtr networkStorageSession = m_cache->networkProcess().storageSession(m_cache->sessionID()))
+    if (CheckedPtr networkStorageSession = NetworkProcess::singleton().storageSession(m_cache->sessionID()))
         maxAgeCap = networkStorageSession->maxAgeCacheCap(request, NetworkSession::isRequestToKnownCrossSiteTracker(request));
     m_cacheEntry = m_cache->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);
     // Create a synthetic cache entry if we can't store.

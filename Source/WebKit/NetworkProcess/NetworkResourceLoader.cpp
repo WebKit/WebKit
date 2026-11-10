@@ -193,7 +193,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
         m_cache = session->cache();
 
     NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-    lazyInitialize(m_networkLoadChecker, NetworkLoadChecker::create(Ref { NetworkProcess::singleton() }.get(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
+    lazyInitialize(m_networkLoadChecker, NetworkLoadChecker::create(this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
         sessionID(), webPageProxyID(), HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
         URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
         m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,

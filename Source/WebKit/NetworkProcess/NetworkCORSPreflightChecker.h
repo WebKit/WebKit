@@ -68,9 +68,9 @@ public:
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;
 
-    static Ref<NetworkCORSPreflightChecker> create(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
+    static Ref<NetworkCORSPreflightChecker> create(NetworkResourceLoader* networkResourceLoader, Parameters&& parameters, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&& completionCallback)
     {
-        return adoptRef(*new NetworkCORSPreflightChecker(networkProcess, networkResourceLoader, WTF::move(parameters), shouldCaptureExtraNetworkLoadMetrics, WTF::move(completionCallback)));
+        return adoptRef(*new NetworkCORSPreflightChecker(networkResourceLoader, WTF::move(parameters), shouldCaptureExtraNetworkLoadMetrics, WTF::move(completionCallback)));
     }
     ~NetworkCORSPreflightChecker();
     const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_parameters.originalRequest; }
@@ -80,7 +80,7 @@ public:
     WebCore::NetworkTransactionInformation takeInformation();
 
 private:
-    NetworkCORSPreflightChecker(NetworkProcess&, NetworkResourceLoader*, Parameters&&, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&&);
+    NetworkCORSPreflightChecker(NetworkResourceLoader*, Parameters&&, bool shouldCaptureExtraNetworkLoadMetrics, CompletionCallback&&);
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final;
@@ -96,7 +96,6 @@ private:
     void completePreflight(WebCore::ResourceError&&);
 
     Parameters m_parameters;
-    const Ref<NetworkProcess> m_networkProcess;
     WebCore::ResourceResponse m_response;
     CompletionCallback m_completionCallback;
     RefPtr<NetworkDataTask> m_task;

@@ -290,7 +290,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
             if (parameters.shouldUseTestingNetworkSession)
                 cacheOptions.add(NetworkCache::CacheOption::TestingMode);
 
-            m_cache = NetworkCache::Cache::open(networkProcess, networkCacheDirectory, cacheOptions, m_sessionID);
+            m_cache = NetworkCache::Cache::open(networkCacheDirectory, cacheOptions, m_sessionID);
 
             if (!m_cache)
                 RELEASE_LOG_ERROR(NetworkCache, "Failed to initialize the WebKit network disk cache");
