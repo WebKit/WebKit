@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<iframe id="frame" frameborder="0" style="width: 300px; height: 150px"></iframe>
+<script>
+const frameWidth = 300;
+const reportPath = "/site-isolation/resources/report-inner-width-and-window-clip-width.html";
+
+async function navigate(frame, url)
+{
+    const loaded = UIHelper.waitForEvent(frame, "load");
+    frame.src = url;
+    await loaded;
+}
+
+async function reportedInnerWidth(frame)
+{
+    const reply = UIHelper.waitForEvent(window, "message");
+    frame.contentWindow.postMessage("report", "*");
+    return (await reply).data.innerWidth;
+}
+
+async function innerWidthAfterSettling(frame)
+{
+    let innerWidth;
+    await UIHelper.waitForConditionAsync(async () => (innerWidth = await reportedInnerWidth(frame)) === frameWidth, 10);
+    return innerWidth;
+}
+
+promise_test(async () => {
+    const frame = document.getElementById("frame");
+
+    await navigate(frame, `http://localhost:8000${reportPath}`);
+    assert_equals(await innerWidthAfterSettling(frame), frameWidth, "innerWidth after the first cross-site navigation");
+
+    await navigate(frame, `https://localhost:8443${reportPath}`);
+    assert_equals(await innerWidthAfterSettling(frame), frameWidth, "innerWidth after navigating to another cross-site process");
+}, "A cross-site iframe keeps its size after navigating to another cross-site process");
+</script>
+</body>

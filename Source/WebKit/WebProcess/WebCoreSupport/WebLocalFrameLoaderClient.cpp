@@ -1770,7 +1770,8 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
     bool horizontalLock = shouldHideScrollbars || webPage->alwaysShowsHorizontalScroller();
     bool verticalLock = shouldHideScrollbars || webPage->alwaysShowsVerticalScroller();
 
-    auto size = m_frame->isRootFrame() && !isMainFrame && oldView ? oldView->size() : webPage->size();
+    // m_frame->coreFrame() is still the RemoteFrame being replaced until commitProvisionalFrame(), so ask the frame being committed.
+    auto size = localFrame->isRootFrame() && !isMainFrame && oldView ? oldView->size() : webPage->size();
     localFrame->createView(size, webPage->backgroundColor(), webPage->fixedLayoutSize(), shouldUseFixedLayout,
         horizontalScrollbarMode, horizontalLock, verticalScrollbarMode, verticalLock);
 
