@@ -36,13 +36,13 @@ namespace WebCore {
 class StyleAttributeMutationScope {
     WTF_MAKE_NONCOPYABLE(StyleAttributeMutationScope);
 public:
-    StyleAttributeMutationScope(Element* element)
-        : m_element(element)
+    StyleAttributeMutationScope(RefPtr<Element>&& element)
+        : m_element(WTF::move(element))
     {
         ++s_scopeCount;
 
         if (s_scopeCount != 1) {
-            ASSERT(s_currentScope->m_element == element);
+            ASSERT(s_currentScope->m_element == m_element);
             return;
         }
 
