@@ -44,6 +44,21 @@ RemoteInspectorHTTPServer& RemoteInspectorHTTPServer::singleton()
     return server;
 }
 
+static bool isTrustedRequest(SoupServerMessage* message)
+{
+    // Requiring an IP or localhost Host prevents DNS rebinding.
+    auto* requestURI = soup_server_message_get_uri(message);
+    const char* host = g_uri_get_host(requestURI);
+    if (!host || (!URL::hostIsIPAddress(StringView::fromLatin1(host)) && !equalLettersIgnoringASCIICase(StringView::fromLatin1(host), "localhost"_s)))
+        return false;
+
+    const char* origin = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "Origin");
+    if (!origin)
+        return true;
+
+    return protocolHostAndPortAreEqual(URL { String::fromLatin1(origin) }, URL { requestURI });
+}
+
 bool RemoteInspectorHTTPServer::start(GRefPtr<GSocketAddress>&& socketAddress, unsigned inspectorPort)
 {
     m_server = adoptGRef(soup_server_new("server-header", "WebKitInspectorHTTPServer ", nullptr));
@@ -54,6 +69,11 @@ bool RemoteInspectorHTTPServer::start(GRefPtr<GSocketAddress>&& socketAddress, u
         g_warning("Failed to start remote inspector HTTP server on %s: %s", address.get(), error->message);
         return false;
     }
+
+    g_signal_connect(m_server.get(), "request-read", G_CALLBACK(+[](SoupServer*, SoupServerMessage* message, gpointer) {
+        if (!isTrustedRequest(message))
+            soup_server_message_set_status(message, SOUP_STATUS_FORBIDDEN, nullptr);
+    }), nullptr);
 
     soup_server_add_handler(m_server.get(), nullptr,
         [](SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData) {
@@ -138,7 +158,7 @@ void RemoteInspectorHTTPServer::handleWebSocket(const char* path, SoupWebsocketC
 void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const String& message) const
 {
     auto* webSocketConnection = m_webSocketConnectionMap.get(std::make_pair(connectionID, targetID));
-    if (!webSocketConnection)
+    if (!webSocketConnection || soup_websocket_connection_get_state(webSocketConnection) != SOUP_WEBSOCKET_STATE_OPEN)
         return;
 
     auto utf8 = message.utf8();
@@ -150,7 +170,7 @@ void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uin
 void RemoteInspectorHTTPServer::targetDidClose(uint64_t connectionID, uint64_t targetID)
 {
     auto* webSocketConnection = m_webSocketConnectionMap.get(std::make_pair(connectionID, targetID));
-    if (!webSocketConnection)
+    if (!webSocketConnection || soup_websocket_connection_get_state(webSocketConnection) != SOUP_WEBSOCKET_STATE_OPEN)
         return;
 
     soup_websocket_connection_close(webSocketConnection, SOUP_WEBSOCKET_CLOSE_GOING_AWAY, "Target closed");

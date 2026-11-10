@@ -147,6 +147,8 @@ ADD_WK2_TEST(TestBackForwardList ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebVi
 ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestConsoleMessage.cpp)
 ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestCookieManager.cpp)
 ADD_WK2_TEST(TestDownloads ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestDownloads.cpp)
+ADD_WK2_TEST(InspectorTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/InspectorTestServer.cpp)
+ADD_WK2_TEST(TestInspectorServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestInspectorServer.cpp)
 ADD_WK2_TEST(TestWebKitFindController ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestWebKitFindController.cpp)
 ADD_WK2_TEST(TestLoaderClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestLoaderClient.cpp)
 ADD_WK2_TEST(TestMultiprocess ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestMultiprocess.cpp)
