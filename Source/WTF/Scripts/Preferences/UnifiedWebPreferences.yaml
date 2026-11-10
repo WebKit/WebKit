@@ -173,6 +173,16 @@ AcceleratedFiltersEnabled:
   condition: USE(CORE_IMAGE)
   defaultValue: false
 
+AcceleratedImageBufferLimit:
+  type: uint32_t
+  status: embedder
+  humanReadableName: "Accelerated Image Buffer Limit"
+  humanReadableDescription: "Number of accelerated image buffers the GPU process holds before it allocates unaccelerated ones instead"
+  condition: ENABLE(GPU_PROCESS)
+  excludeFrom: [ WebKitLegacy ]
+  defaultValue: 10000
+  sharedPreferenceForWebProcess: true
+
 AccentColorEnabled:
   type: bool
   status: stable

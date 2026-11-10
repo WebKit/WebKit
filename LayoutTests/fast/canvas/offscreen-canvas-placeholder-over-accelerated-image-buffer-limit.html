@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AcceleratedImageBufferLimit=0 ] -->
+<script src=../../resources/js-test-pre.js></script>
+<canvas id="placeholder" width="100" height="100"></canvas>
+<script>
+var jsTestIsAsync = true;
+
+description("Check that an OffscreenCanvas placeholder can be updated when the GPU process gives accelerated image buffers unaccelerated backing stores.");
+
+async function run() {
+    if (!window.internals) {
+        debug("Test requires internals");
+        return;
+    }
+
+    let canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    window.renderingMode = canvas.getContext("2d").getEffectiveRenderingModeForTesting();
+    if (renderingMode === null) {
+        debug("Platform does not render canvas in the GPU process");
+        return;
+    }
+    shouldBeEqualToString("renderingMode", "Unaccelerated");
+
+    let offscreen = document.getElementById("placeholder").transferControlToOffscreen();
+    let context = offscreen.getContext("2d");
+    // The placeholder only gets a layer to push frames to after the first rendering update.
+    for (let frame = 0; frame < 3; ++frame) {
+        context.fillStyle = frame % 2 ? "green" : "blue";
+        context.fillRect(0, 0, 100, 100);
+        await new Promise(requestAnimationFrame);
+    }
+    testPassed("Placeholder was updated without crashing.");
+}
+
+onload = async function() {
+    await run();
+    finishJSTest();
+};
+</script>
+<script src=../../resources/js-test-post.js></script>

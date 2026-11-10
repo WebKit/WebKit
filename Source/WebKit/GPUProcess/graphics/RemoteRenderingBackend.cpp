@@ -329,9 +329,9 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
     return imageBuffer;
 }
 
-NODELETE static void adjustImageBufferRenderingMode(const RemoteSharedResourceCache& sharedResourceCache, RenderingPurpose purpose, RenderingMode& renderingMode)
+NODELETE static void adjustImageBufferRenderingMode(const RemoteSharedResourceCache& sharedResourceCache, const SharedPreferencesForWebProcess& preferences, RenderingPurpose purpose, RenderingMode& renderingMode)
 {
-    if (renderingMode == RenderingMode::Accelerated && sharedResourceCache.reachedAcceleratedImageBufferLimit(purpose))
+    if (renderingMode == RenderingMode::Accelerated && sharedResourceCache.reachedAcceleratedImageBufferLimit(purpose, preferences.acceleratedImageBufferLimit))
         renderingMode = RenderingMode::Unaccelerated;
 }
 
@@ -379,7 +379,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
         return nullptr;
     }
 
-    adjustImageBufferRenderingMode(m_sharedResourceCache, purpose, renderingMode);
+    adjustImageBufferRenderingMode(m_sharedResourceCache, m_sharedPreferencesForWebProcess, purpose, renderingMode);
 
     RefPtr<ImageBuffer> imageBuffer;
 
@@ -858,7 +858,7 @@ bool RemoteRenderingBackend::shouldUseLockdownFontParser() const
 
 void RemoteRenderingBackend::getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&& callback)
 {
-    callback(m_sharedResourceCache->getResourceLimitsForTesting());
+    callback(m_sharedResourceCache->getResourceLimitsForTesting(m_sharedPreferencesForWebProcess.acceleratedImageBufferLimit));
 }
 
 } // namespace WebKit

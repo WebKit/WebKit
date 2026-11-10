@@ -80,9 +80,9 @@ public:
 
     NODELETE void didCreateImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
     NODELETE void didReleaseImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);
-    NODELETE bool reachedAcceleratedImageBufferLimit(WebCore::RenderingPurpose) const;
+    NODELETE bool reachedAcceleratedImageBufferLimit(WebCore::RenderingPurpose, size_t globalAcceleratedImageBufferLimit) const;
     NODELETE bool reachedImageBufferForCanvasLimit() const;
-    NODELETE WebCore::ImageBufferResourceLimits getResourceLimitsForTesting() const;
+    NODELETE WebCore::ImageBufferResourceLimits getResourceLimitsForTesting(size_t globalAcceleratedImageBufferLimit) const;
 
     void lowMemoryHandler();
 

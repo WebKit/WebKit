@@ -38,9 +38,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-// Per GPU process limit of accelerated image buffers. These consume limited global OS resources.
-constexpr size_t globalAcceleratedImageBufferLimit = 10000;
-
 // Per GPU process limit of image buffers for canvas. These consume limited process-wide resources.
 constexpr size_t globalImageBufferForCanvasLimit = 200000;
 
@@ -141,7 +138,7 @@ void RemoteSharedResourceCache::didReleaseImageBuffer(RenderingPurpose purpose, 
         --globalAcceleratedImageBufferCount;
 }
 
-bool RemoteSharedResourceCache::reachedAcceleratedImageBufferLimit(RenderingPurpose purpose) const
+bool RemoteSharedResourceCache::reachedAcceleratedImageBufferLimit(RenderingPurpose purpose, size_t globalAcceleratedImageBufferLimit) const
 {
     return (purpose == RenderingPurpose::Canvas && m_acceleratedImageBufferForCanvasCount >= acceleratedImageBufferForCanvasLimit) || globalAcceleratedImageBufferCount >= globalAcceleratedImageBufferLimit;
 }
@@ -151,7 +148,7 @@ bool RemoteSharedResourceCache::reachedImageBufferForCanvasLimit() const
     return m_imageBufferForCanvasCount >= imageBufferForCanvasLimit || globalImageBufferForCanvasCount >= globalImageBufferForCanvasLimit;
 }
 
-ImageBufferResourceLimits RemoteSharedResourceCache::getResourceLimitsForTesting() const
+ImageBufferResourceLimits RemoteSharedResourceCache::getResourceLimitsForTesting(size_t globalAcceleratedImageBufferLimit) const
 {
     return {
         .acceleratedImageBufferForCanvasCount = m_acceleratedImageBufferForCanvasCount,

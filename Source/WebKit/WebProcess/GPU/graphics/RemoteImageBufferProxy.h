@@ -143,7 +143,7 @@ private:
 
     // Fetches the backing store handle from the GPU process, for a backend that
     // stands in for a backing store this process cannot map.
-    void ensureBackendHandle() const;
+    void ensureBackendHandle();
 
     mutable RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
 #if PLATFORM(COCOA)
