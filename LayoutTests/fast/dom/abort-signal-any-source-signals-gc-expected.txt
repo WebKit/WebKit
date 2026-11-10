@@ -1,0 +1,10 @@
+Dependent signals created by AbortSignal.any() must survive the GC's parallel weak-sets pass once all of their source signals have been collected. JSAbortSignalOwner::isReachableFromOpaqueRoots() inspects AbortSignal::m_sourceSignals on every GC marker thread, so inspecting it must not free it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS No crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
