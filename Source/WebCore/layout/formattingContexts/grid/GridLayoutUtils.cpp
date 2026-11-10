@@ -306,20 +306,6 @@ NODELETE static bool spansFlexMaxTrackSizingFunction(WTF::Range<size_t> spannedT
     return false;
 }
 
-// https://drafts.csswg.org/css-sizing-3/#box-sizing
-// "The box-sizing property defines whether fixed sizes (such as <length>s and <percentage>s) are
-// assigned to the content box or to the border box."
-BorderBoxSize borderBoxSizeForSpecifiedSize(BoxSizing boxSizing, LayoutUnit specifiedSize, LayoutUnit borderAndPadding)
-{
-    if (boxSizing == BoxSizing::BorderBox) {
-        // "The content width and height are calculated by subtracting the border and padding widths
-        // of the respective sides from the specified <length-percentage>. As the content width and
-        // height cannot be negative, this computation is floored at zero."
-        return BorderBoxSize { ContentBoxSize { std::max(0_lu, specifiedSize - borderAndPadding) }, borderAndPadding };
-    }
-    return BorderBoxSize { ContentBoxSize { specifiedSize }, borderAndPadding };
-}
-
 // https://www.w3.org/TR/css-sizing-3/#stretch-fit-size
 // The size a box would take if its outer size filled the available space in the given axis:
 // the available space (the grid area size) less the box's margins, border, and padding.
@@ -336,14 +322,14 @@ static std::optional<BorderBoxSize> inlineSpecifiedSizeSuggestion(const PlacedGr
 {
     auto& preferredSize = gridItem.inlineAxisSizes().preferredSize;
     if (auto fixedSize = preferredSize.tryFixed())
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(*fixedSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(*fixedSize, gridItem.usedZoom()) }, borderAndPadding };
     // A percentage or calc() preferred size depends on the containing block size. When it is not
     // known (e.g. during track sizing, before the available space is resolved) the size is not
     // definite and there is no specified size suggestion.
     if (preferredSize.isPercent() || preferredSize.isCalculated()) {
         if (!containingBlockSize)
             return { };
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(preferredSize, *containingBlockSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(preferredSize, *containingBlockSize, gridItem.usedZoom()) }, borderAndPadding };
     }
     if (preferredSize.isAuto())
         return { };
@@ -371,18 +357,18 @@ static std::optional<BorderBoxSize> inlineSpecifiedSizeSuggestion(const PlacedGr
 static std::optional<BorderBoxSize> definiteMinimumSize(const PlacedGridItem& gridItem, const Style::MinimumSize& minimumSize, LayoutUnit borderAndPadding, std::optional<LayoutUnit> gridAreaSize)
 {
     if (auto fixedMinimumSize = minimumSize.tryFixed())
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(*fixedMinimumSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(*fixedMinimumSize, gridItem.usedZoom()) }, borderAndPadding };
     if (minimumSize.isPercentOrCalculated() && gridAreaSize)
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(minimumSize, *gridAreaSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(minimumSize, *gridAreaSize, gridItem.usedZoom()) }, borderAndPadding };
     return { };
 }
 
 static std::optional<BorderBoxSize> definiteMaximumSize(const PlacedGridItem& gridItem, const Style::MaximumSize& maximumSize, LayoutUnit borderAndPadding, std::optional<LayoutUnit> gridAreaSize)
 {
     if (auto fixedMaximumSize = maximumSize.tryFixed())
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(*fixedMaximumSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(*fixedMaximumSize, gridItem.usedZoom()) }, borderAndPadding };
     if (maximumSize.isPercentOrCalculated() && gridAreaSize)
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(maximumSize, *gridAreaSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(maximumSize, *gridAreaSize, gridItem.usedZoom()) }, borderAndPadding };
     return { };
 }
 
@@ -413,14 +399,14 @@ static std::optional<BorderBoxSize> blockSpecifiedSizeSuggestion(const PlacedGri
 {
     auto& preferredSize = gridItem.blockAxisSizes().preferredSize;
     if (auto fixedSize = preferredSize.tryFixed())
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(*fixedSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(*fixedSize, gridItem.usedZoom()) }, borderAndPadding };
     // A percentage or calc() preferred size depends on the containing block size. When it is not
     // known (e.g. during track sizing, before the available space is resolved) the size is not
     // definite and there is no specified size suggestion.
     if (preferredSize.isPercent() || preferredSize.isCalculated()) {
         if (!containingBlockSize)
             return { };
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(preferredSize, *containingBlockSize, gridItem.usedZoom()), borderAndPadding);
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(preferredSize, *containingBlockSize, gridItem.usedZoom()) }, borderAndPadding };
     }
     if (preferredSize.isAuto())
         return { };
@@ -531,12 +517,12 @@ static BorderBoxSize blockContentSizeSuggestion(const PlacedGridItem& gridItem, 
     auto& inlineAxisSizes = gridItem.inlineAxisSizes();
     auto& inlineMaximumSize = inlineAxisSizes.maximumSize;
     if (inlineMaximumSize.isFixed() || inlineMaximumSize.isPercentOrCalculated()) {
-        auto borderBoxInlineMaximumSize = borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(inlineMaximumSize, gridAreaInlineSize, gridItem.usedZoom()), inlineBorderAndPadding);
+        auto borderBoxInlineMaximumSize = BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(inlineMaximumSize, gridAreaInlineSize, gridItem.usedZoom()) }, inlineBorderAndPadding };
         contentSizeSuggestion = std::min(contentSizeSuggestion, blockSizeFromAspectRatio(gridItem, *aspectRatio, borderBoxInlineMaximumSize.value, inlineBorderAndPadding, blockBorderAndPadding));
     }
     auto& inlineMinimumSize = inlineAxisSizes.minimumSize;
     if (inlineMinimumSize.isFixed() || inlineMinimumSize.isPercentOrCalculated()) {
-        auto borderBoxInlineMinimumSize = borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(inlineMinimumSize, gridAreaInlineSize, gridItem.usedZoom()), inlineBorderAndPadding);
+        auto borderBoxInlineMinimumSize = BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(inlineMinimumSize, gridAreaInlineSize, gridItem.usedZoom()) }, inlineBorderAndPadding };
         contentSizeSuggestion = std::max(contentSizeSuggestion, blockSizeFromAspectRatio(gridItem, *aspectRatio, borderBoxInlineMinimumSize.value, inlineBorderAndPadding, blockBorderAndPadding));
     }
     return contentSizeSuggestion;
@@ -616,7 +602,7 @@ LayoutUnit inlinePreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit 
     }
 
     if (preferredSize.isFixed() || preferredSize.isPercent() || preferredSize.isCalculated())
-        return borderBoxSizeForSpecifiedSize(placedGridItem.boxSizing(), Style::evaluate<LayoutUnit>(preferredSize, columnsSize, placedGridItem.usedZoom()), borderAndPadding).value;
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(preferredSize, columnsSize, placedGridItem.usedZoom()) }, borderAndPadding }.value;
 
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };
@@ -683,7 +669,7 @@ BorderBoxSize automaticMinimumInlineSize(const PlacedGridItem& gridItem, LayoutU
     // the affected axis, if it’s definite
     auto& maximumSize = inlineAxisSizes.maximumSize;
     if (auto fixedMaximumSize = maximumSize.tryFixed())
-        sizeSuggestion = std::min(sizeSuggestion, borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(*fixedMaximumSize, gridItem.usedZoom()), borderAndPadding));
+        sizeSuggestion = std::min(sizeSuggestion, BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(*fixedMaximumSize, gridItem.usedZoom()) }, borderAndPadding });
 
     return sizeSuggestion;
 }
@@ -749,7 +735,7 @@ BorderBoxSize automaticMinimumBlockSize(const PlacedGridItem& gridItem, LayoutUn
     // the affected axis, if it’s definite
     auto& maximumSize = blockAxisSizes.maximumSize;
     if (auto fixedMaximumSize = maximumSize.tryFixed())
-        sizeSuggestion = std::min(sizeSuggestion, borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(*fixedMaximumSize, gridItem.usedZoom()), borderAndPadding));
+        sizeSuggestion = std::min(sizeSuggestion, BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(*fixedMaximumSize, gridItem.usedZoom()) }, borderAndPadding });
 
     return sizeSuggestion;
 }
@@ -797,7 +783,7 @@ LayoutUnit blockPreferredSize(const PlacedGridItem& placedGridItem, LayoutUnit b
     }
 
     if (preferredSize.isFixed() || preferredSize.isPercent() || preferredSize.isCalculated())
-        return borderBoxSizeForSpecifiedSize(placedGridItem.boxSizing(), Style::evaluate<LayoutUnit>(preferredSize, rowsSize, placedGridItem.usedZoom()), borderAndPadding).value;
+        return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(preferredSize, rowsSize, placedGridItem.usedZoom()) }, borderAndPadding }.value;
 
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };
@@ -809,13 +795,13 @@ LayoutUnit inlineMinimumSize(const PlacedGridItem& gridItem, const TrackSizingFu
     auto& minimumSize = gridItem.inlineAxisSizes().minimumSize;
     return WTF::switchOn(minimumSize,
         [&](const Style::MinimumSize::Fixed& fixed) {
-            return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()), borderAndPadding).value;
+            return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding }.value;
         },
         [&](const Style::MinimumSize::Percentage& percentage) {
-            return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(percentage, columnsSize), borderAndPadding).value;
+            return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, columnsSize) }, borderAndPadding }.value;
         },
         [&](const Style::MinimumSize::Calc& calculated) {
-            return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(calculated, columnsSize, gridItem.usedZoom()), borderAndPadding).value;
+            return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, columnsSize, gridItem.usedZoom()) }, borderAndPadding }.value;
         },
         [&](const CSS::Keyword::Auto&) -> LayoutUnit {
             // The grid area is resolved by now, so it is what the automatic minimum size is clamped
@@ -834,13 +820,13 @@ LayoutUnit blockMinimumSize(const PlacedGridItem& gridItem, const TrackSizingFun
     auto& minimumSize = gridItem.blockAxisSizes().minimumSize;
     return WTF::switchOn(minimumSize,
         [&](const Style::MinimumSize::Fixed& fixed) {
-            return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()), borderAndPadding).value;
+            return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding }.value;
         },
         [&](const Style::MinimumSize::Percentage& percentage) {
-            return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(percentage, rowsSize), borderAndPadding).value;
+            return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, rowsSize) }, borderAndPadding }.value;
         },
         [&](const Style::MinimumSize::Calc& calculated) {
-            return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), Style::evaluate<LayoutUnit>(calculated, rowsSize, gridItem.usedZoom()), borderAndPadding).value;
+            return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, rowsSize, gridItem.usedZoom()) }, borderAndPadding }.value;
         },
         [&](const CSS::Keyword::Auto&) -> LayoutUnit {
             // The grid area is resolved by now, so it is what the automatic minimum size is clamped
@@ -859,7 +845,7 @@ LayoutUnit inlineMaximumSize(const PlacedGridItem& gridItem, LayoutUnit borderAn
     if (maximumSize.isNone())
         return BorderBoxSize::maxSized().value;
     if (auto fixedMaximumSize = maximumSize.tryFixed())
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), LayoutUnit { fixedMaximumSize->resolveZoom(gridItem.usedZoom()) }, borderAndPadding).value;
+        return BorderBoxSize { ContentBoxSize { LayoutUnit { fixedMaximumSize->resolveZoom(gridItem.usedZoom()) } }, borderAndPadding }.value;
     // FIXME: Resolve percentage and calculated maximum sizes against the grid area.
     ASSERT_NOT_IMPLEMENTED_YET();
     return BorderBoxSize::maxSized().value;
@@ -871,7 +857,7 @@ LayoutUnit blockMaximumSize(const PlacedGridItem& gridItem, LayoutUnit borderAnd
     if (maximumSize.isNone())
         return BorderBoxSize::maxSized().value;
     if (auto fixedMaximumSize = maximumSize.tryFixed())
-        return borderBoxSizeForSpecifiedSize(gridItem.boxSizing(), LayoutUnit { fixedMaximumSize->resolveZoom(gridItem.usedZoom()) }, borderAndPadding).value;
+        return BorderBoxSize { ContentBoxSize { LayoutUnit { fixedMaximumSize->resolveZoom(gridItem.usedZoom()) } }, borderAndPadding }.value;
     // FIXME: Resolve percentage and calculated maximum sizes against the grid area.
     ASSERT_NOT_IMPLEMENTED_YET();
     return BorderBoxSize::maxSized().value;
