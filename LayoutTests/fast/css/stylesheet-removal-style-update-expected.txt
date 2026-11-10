@@ -1,0 +1,15 @@
+target
+sibling
+child
+
+PASS Removing a sheet in the middle drops its rules
+PASS Removing sheets in turn keeps the cascade order of the others
+PASS Moving a sheet after another one changes which rule wins
+PASS Changing a sheet's text replaces its rules
+PASS Removing a sheet updates elements its combinators matched
+PASS Removing a sheet with :has() updates the elements it matched
+PASS Removing a sheet drops the rules of its media queries
+PASS Removing a sheet drops its keyframes
+PASS Removing a sheet that orders layers reorders the layers of the others
+PASS Inserting a sheet that orders layers before others reorders their layers
+
