@@ -1,0 +1,10 @@
+
+compositionstart target=first data=""
+compositionupdate target=first data="1"
+compositionend target=first data="1"
+activeElement=second
+first.value="1"
+second.value=""
+
+PASS A composition ends in its own field when the input event handler moves focus to another field
+
