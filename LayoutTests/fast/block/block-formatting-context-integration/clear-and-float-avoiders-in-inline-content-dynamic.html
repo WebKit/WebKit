@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 240px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.right { float: right; width: 40px; height: 45px; background: tan; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><span>text <span class="left"></span>more <div id="clear" style="background: lightgreen">gets clear</div>after</span></div>
+<div class="root"><span class="left" id="float"></span><span>inline <div class="avoider">avoider beside a float that grows</div>after</span></div>
+<div class="root"><span class="left"></span><span>inline <div class="avoider" style="width: 100px" id="width">gets wider</div>after</span></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("clear").style.clear = "left";
+document.getElementById("float").style.width = "200px";
+document.getElementById("width").style.width = "220px";
+</script>

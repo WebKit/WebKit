@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+.root div { background: rgba(0, 128, 0, 0.3); }
+</style>
+<div class="root">
+  <div style="height: 10px; margin-bottom: 10px"></div>
+  <div style="margin-top: 20px; margin-bottom: 30px"></div>
+  <div style="height: 10px; margin-top: 5px"></div>
+</div>
+<div class="root">
+  <div style="margin-top: 10px">
+    <div style="margin-top: 25px; margin-bottom: 5px"></div>
+    <div style="height: 10px; margin-top: 15px"></div>
+  </div>
+</div>
+<div class="root">
+  <div style="margin-top: 10px; margin-bottom: 12px">
+    <div style="margin-top: 25px; margin-bottom: 5px">
+      <div style="margin-top: 40px; margin-bottom: 50px"></div>
+    </div>
+  </div>
+  <div style="height: 10px"></div>
+</div>
+<div class="root" style="padding-top: 1px">
+  <div style="height: 10px"></div>
+  <div style="margin-top: 7px; border-top: 1px solid">
+    <div style="margin-top: 25px; margin-bottom: 5px"></div>
+    <div style="margin-top: -10px; margin-bottom: 35px"></div>
+  </div>
+  <div style="height: 10px; margin-top: 3px"></div>
+</div>
+<div class="root">
+  <div style="height: 10px"></div>
+  <div style="margin-bottom: 10px">
+    <div style="height: 10px"></div>
+    <div style="margin-top: 20px; margin-bottom: 30px"></div>
+  </div>
+  <div style="height: 10px"></div>
+</div>
+<div class="root">
+  <div style="margin-top: 20px; margin-bottom: -30px"></div>
+  <div style="margin-top: -5px; margin-bottom: 15px"></div>
+</div>
+<div class="root">
+  <div style="height: 0; margin-top: 10px; margin-bottom: 20px"><div style="margin-top: 30px"></div></div>
+  <div style="height: 0; margin-top: 10px; margin-bottom: 20px"><div style="height: 5px; margin-top: 30px"></div></div>
+  <div style="height: 10px"></div>
+  <div style="height: 0%; margin-top: 10px; margin-bottom: 20px"></div>
+  <div style="height: 50%; margin-top: 10px; margin-bottom: 20px"></div>
+  <div style="height: 10px"></div>
+</div>

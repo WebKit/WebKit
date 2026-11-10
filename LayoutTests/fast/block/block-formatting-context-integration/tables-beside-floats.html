@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.roots { display: flex; flex-wrap: wrap; gap: 10px; align-items: start; }
+.root { display: flow-root; width: 200px; background: lightgray; font: 10px/12px monospace; }
+.l { float: left; width: 40px; height: 30px; background: rgba(0, 128, 0, 0.6); }
+.r { float: right; width: 30px; height: 50px; background: rgba(0, 0, 255, 0.5); }
+.cf::before, .cf::after { content: ""; display: table; }
+.cf::after { clear: both; }
+table { border-spacing: 0; background: rgba(255, 0, 255, 0.3); }
+td { padding: 0; }
+</style>
+<div class="roots">
+<div class="root"><div class="l"></div><div class="cf"><p style="margin: 4px 0">a clearfix with table pseudo-elements</p></div></div>
+<div class="root"><div class="l"></div><table><tr><td>short</td></tr></table></div>
+<div class="root"><div class="l"></div><div class="r"></div><table><tr><td>a long text that wraps in the space between the floats</td></tr></table></div>
+<div class="root"><div class="l"></div><table style="width: 170px"><tr><td>fixed width that does not fit</td></tr></table></div>
+<div class="root"><div class="l"></div><table style="width: 100%"><tr><td>full width</td></tr></table></div>
+<div class="root"><div class="l"></div><table><tr><td>a_long_unbreakable_word_wider_than_the_space</td></tr></table></div>
+<div class="root"><div class="l"></div><table style="margin-left: 20px"><tr><td>a margin under the float, with text that wraps</td></tr></table></div>
+<div class="root"><div class="l"></div><table style="margin-left: 60px"><tr><td>a margin past the float, with text that wraps</td></tr></table></div>
+<div class="root"><div class="r"></div><table style="margin: 0 auto"><tr><td>centered</td></tr></table></div>
+<div class="root" dir="rtl"><div class="l"></div><div class="r"></div><table><tr><td>right to left text that wraps in the space</td></tr></table></div>
+<div class="root"><div class="l"></div><table border="3" cellpadding="2"><tr><td>a table with border and padding, text that wraps</td></tr></table></div>
+<div class="root"><div class="l"></div><div style="display: table; border: 2px solid; padding: 2px">a display: table box with text that wraps</div></div>
+<div class="root"><div class="l"></div><table><caption>a caption that wraps</caption><tr><td>and a cell</td></tr></table></div>
+<div class="root"><div class="l" style="height: 10px"></div><div class="l" style="clear: left; width: 100px; height: 20px"></div><table><tr><td>a table beside a wider float further down</td></tr></table></div>
+</div>

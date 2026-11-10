@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-family: monospace; font-size: 10px; }
+.contained { contain: size; background: rgba(0, 128, 0, 0.5); margin: 6px 0; }
+.wrapper { background: yellow; margin: 4px 0; }
+.child { height: 30px; width: 40px; background: blue; }
+</style>
+<div class="root">
+  <div class="contained" style="contain-intrinsic-size: 80px 40px"><div class="child"></div><div class="child"></div></div>
+  <div class="contained"><div class="child"></div></div>
+  <div class="contained" style="contain-intrinsic-block-size: 25px; padding: 3px; border: 2px solid black">text inside</div>
+  <div class="contained" style="contain-intrinsic-size: 50px 20px; min-height: 30px; max-height: 10px"></div>
+  <div style="margin: 10px 0"><div class="contained" style="contain-intrinsic-block-size: 15px; margin: 8px 0"></div></div>
+</div>
+<div class="root">
+  <div class="wrapper" style="width: max-content"><div class="contained" style="contain-intrinsic-size: 111px 22px"></div></div>
+  <div class="wrapper" style="width: max-content"><div class="contained">wide content that is ignored</div></div>
+  <div class="wrapper" style="width: min-content"><div style="contain: inline-size; contain-intrinsic-inline-size: 60px; background: green">some words</div></div>
+  <div class="wrapper" style="width: fit-content"><div style="contain: inline-size; background: green">words</div><div class="child"></div></div>
+</div>

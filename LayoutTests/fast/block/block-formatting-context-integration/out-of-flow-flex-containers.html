@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; position: relative; width: 300px; height: 100px; padding: 5px; background: lightgray; margin-bottom: 5px; font-size: 20px; line-height: 20px; }
+.flex { position: absolute; display: flex; background: lightblue; }
+.flex > div { background: green; margin: 2px; }
+</style>
+<div class="root">
+  <div class="flex" style="top: 10px; right: -5px; bottom: 70px; left: 20px; padding: 3px"><div style="flex: 1">stretched</div><div>both</div></div>
+  <div class="flex" style="top: 60px; left: 10px"><div>fit</div><div>content</div></div>
+  <div class="flex" style="bottom: 0; right: 10px; width: 80px; height: 30px; border: 2px solid blue"><div>fixed</div></div>
+</div>
+<div class="root">
+  <div class="flex" style="top: 0; bottom: 0; left: 10px; width: 60px; flex-direction: column"><div style="flex: 1">column</div><div>end</div></div>
+  <div class="flex" style="top: 10px; bottom: 10px; left: 90px; align-items: stretch"><div>stretched</div><div style="align-self: center">center</div></div>
+  <div class="flex" style="left: 0; right: 0; top: 20px; width: 50px; margin: 0 auto; min-height: 50px"><div>auto</div></div>
+  <div class="flex" style="right: 0; top: 0; max-height: 25px; flex-wrap: wrap; width: 40px"><div>max</div><div>height</div></div>
+</div>
+<div class="root"><div style="height: 30px"></div>text <span class="flex" style="display: inline-flex"><div>inline</div></span> after<div><div class="flex" style="width: 50%; height: 40%"><div>percent</div></div></div></div>
+<div class="root" dir="rtl"><div class="flex" style="top: 10px"><div>right</div><div>to left</div></div><div class="flex" style="top: 50px; left: 10px; right: 30px; margin-right: 5px"><div>stretched</div></div></div>
+<div class="root"><div class="flex" style="left: 0; right: 0; top: 10px; width: calc-size(auto, size / 2)"><div>half</div></div><div class="flex" style="left: 10px; top: 40px; height: calc-size(auto, size + 20px)"><div>taller</div></div></div>
+<div class="root" id="resized"><div class="flex" style="left: 10px; right: 10px; top: 0; bottom: 50%"><div style="flex: 1">resized</div></div><div class="flex" style="left: 0; bottom: 0"><div id="text">x</div></div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("resized").style.width = "200px";
+document.getElementById("resized").style.height = "80px";
+document.getElementById("text").firstChild.data = "wider text";
+</script>

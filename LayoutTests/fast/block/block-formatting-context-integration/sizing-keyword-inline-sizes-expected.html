@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=false ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; font-size: 20px; line-height: 20px; color: green; }
+.box { background: lightblue; padding: 2px 5px; border: 3px solid blue; margin: 5px 0; }
+.fixed { width: 120px; height: 10px; background: orange; }
+</style>
+<div class="root">
+  <div class="box" style="width: min-content">xx xxxx x</div>
+  <div class="box" style="width: max-content">xx xxxx x</div>
+  <div class="box" style="width: fit-content">xx xxxx x</div>
+  <div class="box" style="width: fit-content">xx xxxx xx xx xxxx xxx xx x xxxxx</div>
+  <div class="box" style="width: fit-content; margin-left: auto; margin-right: auto">xx xx</div>
+  <div class="box" style="width: fit-content; box-sizing: border-box; margin-left: auto">xxx</div>
+  <div class="box" style="width: max-content"><div class="fixed"></div><div style="margin: 0 10px">xx xx</div><div style="width: min-content">xxx xxxxx</div></div>
+  <div class="box" style="width: min-content"><div class="fixed" style="width: 50%"></div>xx xxx</div>
+  <div class="box" style="max-width: min-content">xx xxxx x</div>
+  <div class="box" style="width: 40px; min-width: max-content">xx xx</div>
+  <div class="box" style="width: fit-content"><div class="box" style="width: max-content">xx xx xx</div></div>
+  <div class="box" style="width: min-content" id="dynamic">x</div>
+</div>
+<script>
+document.body.offsetHeight;
+document.getElementById("dynamic").firstChild.data = "xx xxxxx xxx";
+</script>

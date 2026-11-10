@@ -253,7 +253,8 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     auto borderBoxLogicalWidth = isHorizontalWritingMode ? renderer.borderBoxWidth() : renderer.borderBoxHeight();
 
     auto logicalMargin = [&] {
-        auto shapeMargin = Style::evaluate<LayoutUnit>(style.shapeMargin(), containingBlock.contentBoxLogicalWidth(), zoom).toFloat();
+        // The block formatting context hands the float the inline size of its containing block before it writes the containing block's geometry.
+        auto shapeMargin = Style::evaluate<LayoutUnit>(style.shapeMargin(), renderer.containingBlockLogicalWidthForContent(), zoom).toFloat();
         return isnan(shapeMargin) ? 0.0f : shapeMargin;
     }();
 

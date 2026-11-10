@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+body { font: 10px/12px monospace; }
+.root { display: inline-block; vertical-align: top; width: 240px; border: 1px solid; margin: 0 2px 4px 0; }
+.left { float: left; width: 60px; height: 30px; background: orange; }
+.avoider { overflow: hidden; background: lightblue; }
+</style>
+<div class="root"><div class="left"></div><div class="avoider" id="margin">margin becomes negative</div></div>
+<div class="root"><div class="left" id="float"></div><div class="avoider" style="margin-left: -20px">beside a float that grows</div></div>
+<div class="root"><div class="left"></div><div class="avoider" style="width: 150px; margin-left: -30px" id="width">gets wider</div></div>
+<script>
+document.body.offsetHeight;
+document.getElementById("margin").style.marginLeft = "-25px";
+document.getElementById("float").style.width = "120px";
+document.getElementById("width").style.width = "200px";
+</script>
