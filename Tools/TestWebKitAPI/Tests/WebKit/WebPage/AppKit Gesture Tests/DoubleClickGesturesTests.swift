@@ -98,9 +98,9 @@ extension AppKitGesturesTests.DoubleClick {
         let crazyBounds = try await screenBoundsOfText("crazy")
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -141,9 +141,9 @@ extension AppKitGesturesTests.DoubleClick {
         await page.waitForNextPresentationUpdate()
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -244,7 +244,7 @@ extension AppKitGesturesTests.DoubleClick {
     @Test
     func doubleClickOnCanvasThatPreventsMousedownDeliversBothClicksWithoutSelecting() async throws {
         let html = """
-            <body style="margin: 0; \(nonManipulableSurfaceStyle)">
+            <body style="margin: 0; touch-action: none;">
                 <div id="map" tabindex="0" role="application" style="position: absolute; inset: 0;">
                     <canvas id="canvas" width="400" height="300"></canvas>
                     <img id="logo" width="100" height="20" style="position: absolute; left: 150px; top: 250px;" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
@@ -262,9 +262,9 @@ extension AppKitGesturesTests.DoubleClick {
         let canvasBounds = try await screenBounds(ofElementWithID: "canvas")
 
         await recap.play { composer in
-            composer._wk_click(at: canvasBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: canvasBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: canvasBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: canvasBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -336,7 +336,7 @@ extension AppKitGesturesTests.DoubleClick {
         let buttonBounds = try await screenBounds(ofElementWithID: "button")
 
         await recap.play { composer in
-            composer._wk_click(at: buttonBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: buttonBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -370,9 +370,9 @@ extension AppKitGesturesTests.DoubleClick {
         let crazyBounds = try await screenBoundsOfText("crazy")
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
@@ -395,9 +395,9 @@ extension AppKitGesturesTests.DoubleClick {
         let bounds = try await screenBounds(ofElementWithID: "div")
 
         await recap.play { composer in
-            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
         }
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
@@ -427,9 +427,9 @@ extension AppKitGesturesTests.DoubleClick {
         let bounds = try await screenBounds(ofElementWithID: "div")
 
         await recap.play { composer in
-            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
         }
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
@@ -448,24 +448,32 @@ extension AppKitGesturesTests.DoubleClick {
     @Test
     func doubleClickWithAncestorListenerOnStyleAdjustedContentFiresOneClickPerPress() async throws {
         try await loadUnselectableHTML()
+
         try await page.callJavaScript(
             arguments: ["elementID": "div", "interactive": true],
-            script: styleAdjustmentForCustomWidgetScript
-        )
+        ) {
+            """
+            const touchActionValue = interactive ? "manipulation" : "none";
+            const element = document.getElementById(elementID);
+            element.style.touchAction = touchActionValue;
+            """
+        }
+
         try await page.callJavaScript {
             """
             document.body.addEventListener("dblclick", () => { }, { capture: true });
             """
         }
+
         await page.waitForNextPresentationUpdate()
         try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.mousedown, .mouseup, .click, .dblclick]))
 
         let bounds = try await screenBounds(ofElementWithID: "div")
 
         await recap.play { composer in
-            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
         }
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
@@ -506,9 +514,9 @@ extension AppKitGesturesTests.DoubleClick {
         let besideTarget = CGPoint(x: bounds.maxX + 3, y: bounds.midY)
 
         await recap.play { composer in
-            composer._wk_click(at: besideTarget, for: .seconds(0.1))
+            composer.humanTap(at: besideTarget, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: besideTarget, for: .seconds(0.1))
+            composer.humanTap(at: besideTarget, for: .seconds(0.1))
         }
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
@@ -532,7 +540,7 @@ extension AppKitGesturesTests.DoubleClick {
         let toBounds = try await screenBoundsOfText("to")
 
         await recap.play { composer in
-            composer._wk_click(at: toBounds.center, for: .seconds(0.05))
+            composer.humanTap(at: toBounds.center, for: .seconds(0.05))
         }
 
         await page.waitForPendingMouseEvents()
@@ -556,9 +564,9 @@ extension AppKitGesturesTests.DoubleClick {
         let onesBounds = try await screenBoundsOfText("ones")
 
         await recap.play { composer in
-            composer._wk_click(at: toBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: toBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: onesBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: onesBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -580,7 +588,7 @@ extension AppKitGesturesTests.DoubleClick {
         if afterSameProcessNavigation {
             let toBounds = try await screenBoundsOfText("to")
             await recap.play { composer in
-                composer._wk_click(at: toBounds.center, for: .seconds(0.05))
+                composer.humanTap(at: toBounds.center, for: .seconds(0.05))
             }
             await page.waitForPendingMouseEvents()
             await page.waitForNextPresentationUpdate()
@@ -598,9 +606,9 @@ extension AppKitGesturesTests.DoubleClick {
         await page.waitForNextPresentationUpdate()
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -633,9 +641,9 @@ extension AppKitGesturesTests.DoubleClick {
         await page.waitForNextPresentationUpdate()
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
         await page.waitForNextPresentationUpdate()
 
@@ -647,8 +655,13 @@ extension AppKitGesturesTests.DoubleClick {
         try await loadZoomableHTML()
         try await page.callJavaScript(
             arguments: ["elementID": "div", "interactive": interactive],
-            script: styleAdjustmentForCustomWidgetScript
-        )
+        ) {
+            """
+            const touchActionValue = interactive ? "manipulation" : "none";
+            const element = document.getElementById(elementID);
+            element.style.touchAction = touchActionValue;
+            """
+        }
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
         let crazySelection = JavaScriptSelection.range(
@@ -661,9 +674,9 @@ extension AppKitGesturesTests.DoubleClick {
         await page.waitForNextPresentationUpdate()
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
         await page.waitForNextPresentationUpdate()
 
@@ -688,9 +701,9 @@ extension AppKitGesturesTests.DoubleClick {
         await page.waitForNextPresentationUpdate()
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
         await page.waitForNextPresentationUpdate()
 
@@ -705,9 +718,9 @@ extension AppKitGesturesTests.DoubleClick {
         let bounds = try await screenBoundsOfText(text)
 
         await recap.play { composer in
-            composer._wk_click(at: bounds.center, for: .seconds(0.1))
+            composer.humanTap(at: bounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: bounds.center, for: secondPressDuration)
+            composer.humanTap(at: bounds.center, for: secondPressDuration)
         }
 
         await page.waitForPendingMouseEvents()

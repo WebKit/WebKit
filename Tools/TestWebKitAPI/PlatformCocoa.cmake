@@ -747,7 +747,6 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/WTFExpected+Extras.swift
 
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/AppKit+Extras.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/AppKitGesturesTestUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Bundle+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/CocoaTypes.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Foundation+Extras.swift
@@ -763,6 +762,7 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/JavaScriptTypes.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/PDFTestHelpers.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/ProcessSwapTestUtilities.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Recap+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/SafeBrowsingTestUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/SiteIsolationTestUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/StdLibExtras.swift

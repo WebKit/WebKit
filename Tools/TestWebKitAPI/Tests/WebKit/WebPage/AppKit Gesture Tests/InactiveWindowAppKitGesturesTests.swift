@@ -83,7 +83,7 @@ extension AppKitGesturesTests.InactiveWindow {
         let targetBounds = try await screenBounds(ofElementWithID: "target")
 
         await recap.play { composer in
-            composer._wk_click(at: targetBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: targetBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -108,7 +108,7 @@ extension AppKitGesturesTests.InactiveWindow {
         let targetBounds = try await screenBounds(ofElementWithID: "target")
 
         await recap.play { composer in
-            composer._wk_click(at: targetBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: targetBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForPendingMouseEvents()

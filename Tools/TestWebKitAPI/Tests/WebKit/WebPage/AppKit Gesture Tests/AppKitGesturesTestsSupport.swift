@@ -43,7 +43,10 @@ actor Recap {
             guard let composer else {
                 preconditionFailure()
             }
-            composer.senderProperties = ._wk_trackpadSender()
+            let displayUUID = unsafe CGDisplayCreateUUIDFromDisplayID(CGMainDisplayID())?.takeRetainedValue()
+            composer.senderProperties = .touchScreenDigitizerSender(
+                forDisplayUUID: displayUUID.map { CFUUIDCreateString(nil, $0) as String }
+            )
             events(composer)
         }
 

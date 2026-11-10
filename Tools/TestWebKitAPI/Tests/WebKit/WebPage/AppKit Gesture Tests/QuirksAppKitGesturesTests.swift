@@ -67,7 +67,13 @@ extension AppKitGesturesTests {
 }
 
 extension AppKitGesturesTests.Quirks {
-    @Test(arguments: verticalDragOverManipulationSurfaceArguments)
+    @Test(arguments: [
+        ("none", true),
+        ("pan-x pan-y", true),
+        ("auto", false),
+        ("pan-y", false),
+        ("pan-x pan-y pinch-zoom", false),
+    ])
     func verticalDragOverManipulationSurface(styleValue: String, reachesContent: Bool) async throws {
         let surface = try await loadManipulationSurface(styleValue: styleValue)
 
@@ -75,7 +81,7 @@ extension AppKitGesturesTests.Quirks {
         let end = CGPoint(x: surface.bounds.midX, y: surface.bounds.minY + manipulationSurfaceDragInset)
 
         await recap.play { composer in
-            composer._wk_drag(withStart: start, end: end, duration: .seconds(1))
+            composer.drag(withStart: start, end: end, duration: .seconds(1))
         }
 
         await page.waitForNextPresentationUpdate()
@@ -91,7 +97,7 @@ extension AppKitGesturesTests.Quirks {
         let end = CGPoint(x: surface.bounds.maxX - manipulationSurfaceDragInset, y: surface.bounds.midY)
 
         await recap.play { composer in
-            composer._wk_drag(withStart: start, end: end, duration: .seconds(1))
+            composer.drag(withStart: start, end: end, duration: .seconds(1))
         }
 
         await page.waitForNextPresentationUpdate()
@@ -121,7 +127,7 @@ extension AppKitGesturesTests.Quirks {
         let rowBounds = try await screenBounds(ofElementWithID: rowID)
 
         await recap.play { composer in
-            composer._wk_click(at: rowBounds.center, for: .seconds(1))
+            composer.humanTap(at: rowBounds.center, for: .seconds(1))
         }
 
         await page.waitForPendingMouseEvents()
@@ -152,10 +158,12 @@ extension AppKitGesturesTests.Quirks {
             "internals.setSubframeURLForQuirks(url);"
         }
 
-        try await page.callJavaScript(
-            arguments: ["styleValue": styleValue],
-            script: loadManipulationSurfaceScript
-        )
+        try await page.callJavaScript(arguments: ["styleValue": styleValue]) {
+            """
+            return window.loadSurface(`touch-action: ${styleValue}`);
+            """
+        }
+
         await page.waitForNextPresentationUpdate()
 
         let manipulationSurfaceFrameID = "surfaceFrame"
@@ -299,14 +307,14 @@ extension AppKitGesturesTests.Quirks {
         let center = CGPoint(x: surface.bounds.midX, y: surface.bounds.midY)
 
         await recap.play { composer in
-            composer._wk_magnify(
+            composer.magnify(
                 withStart: CGPoint(x: center.x - 30, y: center.y),
                 end: CGPoint(x: center.x + 30, y: center.y),
                 spreadBy: 100,
                 duration: .seconds(0.5),
                 precededByDragOf: CGSize(width: 0, height: 40)
             )
-            composer._wk_mouseUp()
+            composer.liftUpAtAllActivePoints()
         }
     }
 

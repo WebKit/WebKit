@@ -83,7 +83,7 @@ extension AppKitGesturesTests.RefreshControl {
         let (scrollStart, scrollEnd) = try verticalDrag()
 
         await recap.play { composer in
-            composer._wk_scroll(withStart: scrollStart, end: scrollEnd, duration: .seconds(0.1))
+            composer.flick(withStart: scrollStart, end: scrollEnd, duration: .seconds(0.1))
         }
 
         try await waitForRefresh()
@@ -104,9 +104,9 @@ extension AppKitGesturesTests.RefreshControl {
         try await page.callJavaScript { "window.scrollTo(0, 200);" }
         await page.waitForNextPresentationUpdate()
         await recap.play { composer in
-            composer._wk_scroll(withStart: nearTop, end: nearBottom, duration: .seconds(0.1))
+            composer.flick(withStart: nearTop, end: nearBottom, duration: .seconds(0.1))
             composer.advanceTime(0.15)
-            composer._wk_scroll(withStart: nearTop, end: nearBottom, duration: .seconds(0.1))
+            composer.flick(withStart: nearTop, end: nearBottom, duration: .seconds(0.1))
         }
 
         try await waitForRefresh()
@@ -126,7 +126,7 @@ extension AppKitGesturesTests.RefreshControl {
         let (scrollStart, scrollEnd) = try verticalDrag()
 
         await recap.play { composer in
-            composer._wk_scroll(withStart: scrollStart, end: scrollEnd, duration: .seconds(0.1), multiFinger: true)
+            composer.flick(withStart: scrollStart, end: scrollEnd, duration: .seconds(0.1), multiFinger: true)
         }
 
         await page.waitForNextPresentationUpdate()

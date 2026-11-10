@@ -25,11 +25,13 @@
 
 public import Recap
 
-private import AppKit_Private.NSScrollView_Private
-private import CoreGraphics
-
 extension RCPEventStreamComposer {
-    public func _wk_click(at point: CGPoint, for duration: Duration) {
+    /// Taps at `point`, keeping the touch down for `duration` the way a real finger would.
+    ///
+    /// - Parameters:
+    ///   - point: Where the finger goes down.
+    ///   - duration: How long the finger stays down before lifting.
+    public func humanTap(at point: CGPoint, for duration: Duration) {
         // This intentionally uses `drag` instead of `tap` so that the overall event lasts for `duration`
         // instead of being instantaneous, matching real-world behavior.
         //
@@ -42,7 +44,20 @@ extension RCPEventStreamComposer {
         )
     }
 
-    public func _wk_magnify(
+    /// Pinches two fingers apart, pushing each one `spread` points outward along the line between them.
+    ///
+    /// The touches stay down when this returns.
+    ///
+    /// - Parameters:
+    ///   - start: Where the first finger goes down.
+    ///   - end: Where the second finger goes down.
+    ///   - spread: How far each finger moves outward, in points.
+    ///   - duration: How long the spread takes. The optional translation takes the same amount of time,
+    ///     and the optional preceding drag takes a third of it.
+    ///   - dragOffset: If set, the first finger goes down alone and drags by this offset before
+    ///     the second finger lands, at `end` shifted by the same offset.
+    ///   - translation: If set, both fingers then move together by this offset.
+    public func magnify(
         withStart start: CGPoint,
         end: CGPoint,
         spreadBy spread: CGFloat,
@@ -97,33 +112,44 @@ extension RCPEventStreamComposer {
         unsafe move(toPoints: &translated, touchCount: 2, duration: duration / .seconds(1))
     }
 
-    public func _wk_mouseUp() {
-        liftUpAtAllActivePoints()
-    }
-
-    public func _wk_drag(
+    /// Drags one finger from `start` to `end` over `duration`.
+    ///
+    /// - Parameters:
+    ///   - start: Where the finger goes down.
+    ///   - end: Where the finger stops moving.
+    ///   - duration: How long the move from `start` to `end` takes.
+    ///   - tapAndWait: How long the finger stays at `start` before it starts moving.
+    ///   - lift: Whether the finger lifts at `end`.
+    public func drag(
         withStart start: CGPoint,
         end: CGPoint,
         duration: Duration,
-        pressAndWait: Duration = .zero,
-        release: Bool = true
+        tapAndWait: Duration = .zero,
+        lift: Bool = true
     ) {
         drag(
             withStart: start,
             end: end,
             duration: duration / .seconds(1),
-            tapAndWait: pressAndWait / .seconds(1),
-            lift: release
+            tapAndWait: tapAndWait / .seconds(1),
+            lift: lift
         )
     }
 
-    /// Like `_wk_drag(withStart:end:duration:pressAndWait:)`, but first moves to `early` right after the
-    /// click begins, so that the click moves before it settles.
-    public func _wk_drag(
+    /// Like ``drag(withStart:end:duration:tapAndWait:lift:)``, but first moves to `early` right after the
+    /// tap begins, so that the tap moves before it settles.
+    ///
+    /// - Parameters:
+    ///   - start: Where the finger goes down.
+    ///   - end: Where the finger lifts.
+    ///   - duration: How long the move from `early` to `end` takes.
+    ///   - tapAndWait: How long the finger stays at `early` before moving on to `end`.
+    ///   - early: Where the finger moves right after going down.
+    public func drag(
         withStart start: CGPoint,
         end: CGPoint,
         duration: Duration,
-        pressAndWait: Duration,
+        tapAndWait: Duration,
         movingFirstTo early: CGPoint
     ) {
         var startPoints = [start]
@@ -132,7 +158,7 @@ extension RCPEventStreamComposer {
         var earlyPoints = [early]
         unsafe move(toPoints: &earlyPoints, touchCount: 1, duration: 0.03)
 
-        advanceTime(pressAndWait / .seconds(1))
+        advanceTime(tapAndWait / .seconds(1))
 
         var endPoints = [end]
         unsafe move(toPoints: &endPoints, touchCount: 1, duration: duration / .seconds(1))
@@ -140,12 +166,14 @@ extension RCPEventStreamComposer {
         liftUpAtAllActivePoints()
     }
 
-    public var _wk_eventFrequency: Int {
-        get { touchFrequency }
-        set { touchFrequency = newValue }
-    }
-
-    public func _wk_scroll(
+    /// Flicks from `startLocation` to `endLocation` over `duration`.
+    ///
+    /// - Parameters:
+    ///   - startLocation: Where the flick begins.
+    ///   - endLocation: Where the flick ends.
+    ///   - duration: How long the flick takes.
+    ///   - multiFinger: If `true`, uses a two-finger drag instead of a one-finger flick.
+    public func flick(
         withStart startLocation: CGPoint,
         end endLocation: CGPoint,
         duration: Duration,
@@ -156,8 +184,6 @@ extension RCPEventStreamComposer {
         } else {
             var pointArray = [startLocation, endLocation]
 
-            // Safety: This is safe because Recap accesses pointArray[0, numPoints), and
-            // we always call multifingerDrag in a way that numPoints == pointArray.count.
             unsafe multifingerDrag(
                 withPointArray: &pointArray,
                 numPoints: UInt(pointArray.count),
@@ -167,53 +193,5 @@ extension RCPEventStreamComposer {
         }
     }
 }
-
-extension RCPEventSenderProperties {
-    public static func _wk_trackpadSender() -> RCPEventSenderProperties {
-        let displayUUID = unsafe CGDisplayCreateUUIDFromDisplayID(CGMainDisplayID())?.takeRetainedValue()
-        return .touchScreenDigitizerSender(forDisplayUUID: displayUUID.map { CFUUIDCreateString(nil, $0) as String })
-    }
-}
-
-public func styleAdjustmentForCustomWidgetScript() -> Swift.String {
-    """
-    const touchActionValue = interactive ? "manipulation" : "none";
-    const element = document.getElementById(elementID);
-    element.style.touchAction = touchActionValue;
-    """
-}
-
-public func styleAdjustmentForManipulationSurfaceScript() -> Swift.String {
-    """
-    document.getElementById(elementID).style.touchAction = styleValue;
-    """
-}
-
-public func loadManipulationSurfaceScript() -> Swift.String {
-    """
-    return window.loadSurface(`touch-action: ${styleValue}`);
-    """
-}
-
-public let trackpadRubberbandHyperbolicCoefficient: CGFloat = NSScrollingBehaviorHyperbolicCoefficientTrackpad
-
-public let automationHyperbolicCoefficient: CGFloat = NSScrollingBehaviorHyperbolicCoefficientTouch
-
-public let verticalDragOverManipulationSurfaceArguments = [
-    ("none", true),
-    ("pan-x pan-y", true),
-    ("auto", false),
-    ("pan-y", false),
-    ("pan-x pan-y pinch-zoom", false),
-]
-
-public let pressDragOverStyledRangeInputStyleValues = [
-    "pan-y",
-    "pan-y pinch-zoom",
-]
-
-public let nonManipulableSurfaceStyle = "touch-action: none;"
-
-public let transparentClickHighlightStyle = "-webkit-tap-highlight-color: transparent;"
 
 #endif // HAVE_APPKIT_GESTURES_SUPPORT

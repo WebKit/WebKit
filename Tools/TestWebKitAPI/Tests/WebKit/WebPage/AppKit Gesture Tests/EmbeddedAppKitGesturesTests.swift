@@ -114,7 +114,7 @@ extension AppKitGesturesTests.Embedded {
         await recap.play { composer in
             composer.drag(withStart: startPoint, end: endPoint, duration: 0.5)
             composer.advanceTime(0.1)
-            composer._wk_mouseUp()
+            composer.liftUpAtAllActivePoints()
         }
 
         await page.waitForNextPresentationUpdate()
@@ -142,11 +142,11 @@ extension AppKitGesturesTests.Embedded {
         await page.waitForNextPresentationUpdate()
 
         await recap.play { composer in
-            composer._wk_drag(
+            composer.drag(
                 withStart: toBounds.center,
                 end: crazyBounds.center,
                 duration: .seconds(1.5),
-                pressAndWait: .seconds(1.0)
+                tapAndWait: .seconds(1.0)
             )
         }
 
@@ -185,7 +185,7 @@ extension AppKitGesturesTests.Embedded {
         await recap.play { composer in
             composer.drag(withStart: startPoint, end: endPoint, duration: 0.5)
             composer.advanceTime(0.1)
-            composer._wk_mouseUp()
+            composer.liftUpAtAllActivePoints()
         }
 
         await page.waitForNextPresentationUpdate()
@@ -215,9 +215,9 @@ extension AppKitGesturesTests.Embedded {
         await page.waitForNextPresentationUpdate()
 
         await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
         }
 
         await page.waitForNextPresentationUpdate()
@@ -251,9 +251,9 @@ extension AppKitGesturesTests.Embedded {
         let flickEnd = CGPoint(x: center.x, y: center.y - 50)
 
         await recap.play { composer in
-            composer._wk_scroll(withStart: flickStart, end: flickEnd, duration: .seconds(0.1))
+            composer.flick(withStart: flickStart, end: flickEnd, duration: .seconds(0.1))
             composer.advanceTime(0.05)
-            composer._wk_click(at: center, for: .seconds(0.05))
+            composer.humanTap(at: center, for: .seconds(0.05))
         }
 
         await page.waitForPendingMouseEvents()

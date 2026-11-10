@@ -117,7 +117,7 @@ extension AppKitGesturesTests.SiteIsolation {
             let crazyBounds = try await screenBoundsOfTextInIframe("crazy", in: iframe)
 
             await recap.play { composer in
-                composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+                composer.humanTap(at: crazyBounds.center, for: .seconds(0.1))
             }
 
             await page.waitForPendingMouseEvents()
@@ -174,7 +174,7 @@ extension AppKitGesturesTests.SiteIsolation {
             let targetScreenBounds = targetRectInIframe.offsetBy(dx: iframeScreenBounds.minX, dy: iframeScreenBounds.minY)
 
             await recap.play { composer in
-                composer._wk_click(at: targetScreenBounds.center, for: .seconds(0.05))
+                composer.humanTap(at: targetScreenBounds.center, for: .seconds(0.05))
             }
 
             await page.waitForPendingMouseEvents()
@@ -213,7 +213,12 @@ extension AppKitGesturesTests.SiteIsolation {
             </body>
             """
 
-        try await clickElementInIframeAndExpectHoverActivatedByClickBounds(iframeHTML: iframeHTML, elementID: "source", crossSite: crossSite, expectsClick: false)
+        try await clickElementInIframeAndExpectHoverActivatedByClickBounds(
+            iframeHTML: iframeHTML,
+            elementID: "source",
+            crossSite: crossSite,
+            expectsClick: false
+        )
     }
 
     @Test(arguments: [false, true])
@@ -234,12 +239,22 @@ extension AppKitGesturesTests.SiteIsolation {
             </body>
             """
 
-        try await clickElementInIframeAndExpectHoverActivatedByClickBounds(iframeHTML: iframeHTML, elementID: "photo", crossSite: crossSite, expectsClick: true)
+        try await clickElementInIframeAndExpectHoverActivatedByClickBounds(
+            iframeHTML: iframeHTML,
+            elementID: "photo",
+            crossSite: crossSite,
+            expectsClick: true
+        )
     }
 
     // Clicks the center of the element in the iframe, then expects the bounds of the element whose click was
     // handled as hover to be the element's bounds in view coordinates, which include the position of the iframe.
-    private func clickElementInIframeAndExpectHoverActivatedByClickBounds(iframeHTML: String, elementID: String, crossSite: Bool, expectsClick: Bool) async throws {
+    private func clickElementInIframeAndExpectHoverActivatedByClickBounds(
+        iframeHTML: String,
+        elementID: String,
+        crossSite: Bool,
+        expectsClick: Bool
+    ) async throws {
         let imageURL = try #require(Bundle.testResources.url(forResource: "400x400-green", withExtension: "png"))
         let imageData = try Data(contentsOf: imageURL)
 
@@ -278,7 +293,7 @@ extension AppKitGesturesTests.SiteIsolation {
             let elementScreenBounds = elementRectInIframe.offsetBy(dx: iframeScreenBounds.minX, dy: iframeScreenBounds.minY)
 
             await recap.play { composer in
-                composer._wk_click(at: elementScreenBounds.center, for: .seconds(0.05))
+                composer.humanTap(at: elementScreenBounds.center, for: .seconds(0.05))
             }
             await page.waitForPendingMouseEvents()
             await page.waitForNextPresentationUpdate()
@@ -363,11 +378,11 @@ extension AppKitGesturesTests.SiteIsolation {
 
             await recap.play { composer in
                 // Click-and-hold to begin a range selection, then drag to extend it.
-                composer._wk_click(at: pressPoint, for: .seconds(0.5))
+                composer.humanTap(at: pressPoint, for: .seconds(0.5))
                 composer.advanceTime(0.1)
-                composer._wk_drag(withStart: pressPoint, end: dragEndPoint, duration: .seconds(0.5), release: false)
+                composer.drag(withStart: pressPoint, end: dragEndPoint, duration: .seconds(0.5), lift: false)
                 composer.advanceTime(0.1)
-                composer._wk_mouseUp()
+                composer.liftUpAtAllActivePoints()
             }
 
             await page.waitForPendingMouseEvents()
