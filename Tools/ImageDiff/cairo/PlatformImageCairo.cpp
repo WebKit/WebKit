@@ -25,6 +25,7 @@
 
 #include "PlatformImage.h"
 
+#include <algorithm>
 #include <cairo.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,10 +61,14 @@ std::unique_ptr<PlatformImage> PlatformImage::createFromStdin(size_t)
 
 std::unique_ptr<PlatformImage> PlatformImage::createFromDiffData(void* data, size_t width, size_t height)
 {
-    cairo_surface_t* surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(data), CAIRO_FORMAT_A8,
-        width, height, cairo_format_stride_for_width(CAIRO_FORMAT_A8, width));
-    static cairo_user_data_key_t imageDataKey;
-    cairo_surface_set_user_data(surface, &imageDataKey, data, [](void* data) { free(data); });
+    cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_A8, width, height);
+    auto* source = static_cast<unsigned char*>(data);
+    auto* destination = cairo_image_surface_get_data(surface);
+    int stride = cairo_image_surface_get_stride(surface);
+    for (size_t row = 0; row < height; ++row)
+        std::copy_n(source + row * width, width, destination + row * stride);
+    cairo_surface_mark_dirty(surface);
+    free(data);
     return std::make_unique<PlatformImage>(surface);
 }
 
