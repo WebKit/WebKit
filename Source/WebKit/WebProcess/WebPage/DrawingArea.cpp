@@ -42,6 +42,7 @@
 
 // Subclasses
 #if PLATFORM(COCOA)
+#include "RemoteLayerTreeCommitBundle.h"
 #include "RemoteLayerTreeDrawingAreaMac.h"
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -138,6 +139,13 @@ bool DrawingArea::supportsGPUProcessRendering()
     return false;
 #endif
 }
+
+#if PLATFORM(COCOA)
+void DrawingArea::buildCaptureMirrorLayerTreeSeed(CompletionHandler<void(std::optional<RemoteLayerTreeMirrorSeed>&&)>&& completionHandler)
+{
+    completionHandler(std::nullopt);
+}
+#endif
 
 WebCore::TiledBacking* DrawingArea::mainFrameTiledBacking() const
 {

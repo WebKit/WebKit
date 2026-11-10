@@ -265,6 +265,18 @@ void RemoteLayerTreeDrawingArea::updateRenderingWithForcedRepaintAsync(WebPage& 
     completionHandler();
 }
 
+void RemoteLayerTreeDrawingArea::buildCaptureMirrorLayerTreeSeed(CompletionHandler<void(std::optional<RemoteLayerTreeMirrorSeed>&&)>&& completionHandler)
+{
+    Vector<RemoteLayerTreeContext::MirrorSeedRoot> roots;
+    for (auto& rootLayer : borrow(m_rootLayers)) {
+        if (RefPtr layer = downcast<GraphicsLayerCARemote>(rootLayer.layer.get()).platformCALayer())
+            roots.append({ downcast<PlatformCALayerRemote>(*layer), rootLayer.frameID });
+    }
+
+    bool hasMainFrame = !!protect(m_webPage)->localMainFrame();
+    protect(m_remoteLayerTreeContext)->buildMirrorSeed(roots, m_currentTransactionID, hasMainFrame, WTF::move(completionHandler));
+}
+
 void RemoteLayerTreeDrawingArea::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
     m_remoteLayerTreeContext->animationDidStart(layerID, key, startTime);

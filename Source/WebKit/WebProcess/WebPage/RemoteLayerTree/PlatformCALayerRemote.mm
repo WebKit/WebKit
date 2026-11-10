@@ -270,6 +270,18 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         maskLayer->recursiveBuildTransaction(context, transaction);
 }
 
+OptionSet<LayerChange> PlatformCALayerRemote::beginMirrorSeedEncoding(OptionSet<LayerChange> propertiesNotSeeded)
+{
+    // The children list is otherwise only refreshed while building a transaction.
+    if (m_properties.changedProperties & LayerChange::ChildrenChanged) {
+        m_properties.children = WTF::map(m_children, [](auto& child) {
+            return child->layerID();
+        });
+    }
+
+    return std::exchange(m_properties.changedProperties, m_properties.everChangedProperties - propertiesNotSeeded);
+}
+
 void PlatformCALayerRemote::didCommit()
 {
     m_properties.animationChanges.addedAnimations.clear();

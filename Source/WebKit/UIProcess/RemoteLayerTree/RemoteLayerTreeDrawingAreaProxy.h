@@ -47,6 +47,8 @@ class RemoteScrollingCoordinatorTransaction;
 struct MainFrameData;
 struct PageData;
 struct RemoteLayerTreeCommitBundle;
+struct RemoteLayerTreeMirrorSeed;
+class RemoteLayerTreeCaptureMirror;
 
 #if ENABLE(THREADED_ANIMATIONS)
 class RemoteAnimationStack;
@@ -154,14 +156,22 @@ public:
 
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
+    // Copy of the layer tree for tab capture. The completion handler gets its container layer, or nil on failure.
+    // The invalidation handler is called if the mirror goes away without being disabled, like on process swap.
+    void enableCaptureMirrorLayerTree(CompletionHandler<void(RetainPtr<CALayer>)>&&, Function<void()>&& invalidationHandler = { });
+    void disableCaptureMirrorLayerTree();
+    bool hasCaptureMirrorLayerTree() const { return !!m_captureMirror; }
+    RetainPtr<CALayer> captureMirrorLayer() const;
+    void captureMirrorDidEnterLayerTree();
+
     RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
     void viewWillStartLiveResize() final;
     void viewWillEndLiveResize() final;
 
 #if ENABLE(THREADED_ANIMATIONS)
-    void animationsWereAddedToNode(RemoteLayerTreeNode&);
-    void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
+    void animationsWereAddedToNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&);
+    void animationsWereRemovedFromNode(const RemoteLayerTreeHost&, RemoteLayerTreeNode&);
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime);
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const;
     RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
@@ -210,6 +220,12 @@ private:
     float indicatorScale(WebCore::IntSize contentsSize) const;
     void updateDebugIndicator() final;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
+
+    void didReceiveCaptureMirrorSeed(IPC::Connection&, WebCore::ProcessIdentifier, std::optional<RemoteLayerTreeMirrorSeed>&&);
+    void completeCaptureMirrorAttachIfReady();
+    void destroyCaptureMirrorLayerTree();
+    void updateCaptureMirrorGeometry();
+
     void initializeDebugIndicator();
 
     void initializeSlowFrameIndicator();
@@ -264,6 +280,11 @@ private:
     WebCore::IntSize m_lastSentSizeToContentAutoSizeMaximumSize;
 
     const std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
+    std::unique_ptr<RemoteLayerTreeCaptureMirror> m_captureMirror;
+    Vector<CompletionHandler<void(RetainPtr<CALayer>)>> m_captureMirrorAttachCompletionHandlers;
+    Function<void()> m_captureMirrorInvalidationHandler;
+    // Seeds requested for an earlier mirror are ignored.
+    uint64_t m_captureMirrorGeneration { 0 };
     const RetainPtr<CALayer> m_tileMapHostLayer;
     const RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 

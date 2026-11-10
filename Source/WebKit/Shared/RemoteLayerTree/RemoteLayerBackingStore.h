@@ -236,6 +236,7 @@ public:
     void setBackendHandle(BufferSetBackendHandle&);
 
     std::optional<WebCore::PlaceholderFrameIdentifier> contentsFrameIdentifier() const { return m_contentsFrameIdentifier; };
+    bool isOpaque() const { return m_isOpaque; }
 
 private:
     friend struct IPC::ArgumentCoder<RemoteLayerBackingStoreProperties>;

@@ -28,6 +28,7 @@
 #include "LayerTreeContext.h"
 #include "RemoteLayerBackingStoreCollection.h"
 #include "RemoteLayerTreeTransaction.h"
+#include "TransactionID.h"
 #include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/GraphicsLayerFactory.h>
@@ -49,6 +50,7 @@ namespace WebKit {
 class GraphicsLayerCARemote;
 class PlatformCALayerRemote;
 class RemoteRenderingBackendProxy;
+struct RemoteLayerTreeMirrorSeed;
 class WebFrame;
 class WebPage;
 
@@ -85,6 +87,14 @@ public:
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::FrameIdentifier);
 
     void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote&);
+
+    struct MirrorSeedRoot {
+        Ref<PlatformCALayerRemote> layer;
+        WebCore::FrameIdentifier frameID;
+    };
+    // Replies with a snapshot of every live layer, used to seed a capture mirror RemoteLayerTreeHost
+    // in the UI process. Unlike a regular transaction, this has no effect on the next commit.
+    void buildMirrorSeed(const Vector<MirrorSeedRoot>&, TransactionID lastBuiltTransactionID, bool hasMainFrame, CompletionHandler<void(std::optional<RemoteLayerTreeMirrorSeed>&&)>&&);
 
     // From the UI process
     void animationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);

@@ -30,6 +30,8 @@
 #import "GraphicsLayerCARemote.h"
 #import "MediaPlayerPrivateRemote.h"
 #import "PlatformCALayerRemote.h"
+#import "PlatformCALayerRemoteCustom.h"
+#import "RemoteLayerTreeCommitBundle.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteMediaPlayerManager.h"
@@ -219,6 +221,59 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 
     transaction.setCreatedLayers(moveToVector(std::exchange(m_createdLayers, { }).values()));
     transaction.setDestroyedLayerIDs(WTF::move(m_destroyedLayers));
+}
+
+void RemoteLayerTreeContext::buildMirrorSeed(const Vector<MirrorSeedRoot>& roots, TransactionID lastBuiltTransactionID, bool hasMainFrame, CompletionHandler<void(std::optional<RemoteLayerTreeMirrorSeed>&&)>&& completionHandler)
+{
+    if (roots.isEmpty()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    // A backing store handle can only be consumed once, so the UI process copies contents from the
+    // primary layer tree instead.
+    constexpr OptionSet<LayerChange> propertiesNotSeeded { LayerChange::BackingStoreChanged };
+
+    RemoteLayerTreeTransaction layersTransaction;
+    Vector<RemoteLayerTreeTransaction::LayerCreationProperties> createdLayers;
+    Vector<std::pair<Ref<PlatformCALayerRemote>, OptionSet<LayerChange>>> pendingChanges;
+    createdLayers.reserveInitialCapacity(m_livePlatformLayers.size());
+    pendingChanges.reserveInitialCapacity(m_livePlatformLayers.size());
+
+    for (auto& weakLayer : m_livePlatformLayers.values()) {
+        RefPtr layer = weakLayer.get();
+        if (!layer)
+            continue;
+
+        RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
+        layer->populateCreationProperties(creationProperties, *this, layer->layerType());
+        createdLayers.append(WTF::move(creationProperties));
+
+        // Mirrors recursiveBuildTransaction(), which never sends these properties.
+        if (RefPtr customLayer = dynamicDowncast<PlatformCALayerRemoteCustom>(*layer); customLayer && !customLayer->hasVideo())
+            continue;
+
+        auto changes = layer->beginMirrorSeedEncoding(propertiesNotSeeded);
+        layersTransaction.layerPropertiesChanged(*layer);
+        pendingChanges.append({ layer.releaseNonNull(), changes });
+    }
+    layersTransaction.setCreatedLayers(WTF::move(createdLayers));
+
+    Vector<RemoteLayerTreeTransaction> transactions;
+    transactions.reserveInitialCapacity(roots.size());
+    for (auto& root : roots) {
+        auto transaction = transactions.isEmpty() ? WTF::move(layersTransaction) : RemoteLayerTreeTransaction { };
+        transaction.setRootLayerID(root.layer->layerID());
+        if (RefPtr rootFrame = WebProcess::singleton().webFrame(root.frameID))
+            transaction.setRemoteContextHostedIdentifier(rootFrame->layerHostingContextIdentifier());
+        transactions.append(WTF::move(transaction));
+    }
+
+    // Replying encodes the layers' live properties, so restore the pending changes afterwards for the next commit.
+    completionHandler(RemoteLayerTreeMirrorSeed { WTF::move(transactions), lastBuiltTransactionID, hasMainFrame });
+
+    for (auto& [layer, changes] : pendingChanges)
+        layer->endMirrorSeedEncoding(changes);
 }
 
 void RemoteLayerTreeContext::layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote& layer)

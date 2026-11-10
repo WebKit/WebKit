@@ -100,11 +100,11 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
 
     case PlatformCALayer::LayerType::LayerTypeCustom:
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer: {
-        if (m_isDebugLayerTreeHost)
+        if (m_role == Role::DebugIndicator)
             return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
 #if HAVE(AVKIT)
-        if (properties.videoElementData) {
+        if (properties.videoElementData && isPrimary()) {
             if (RefPtr page = protect(m_drawingArea)->page()) {
                 if (RefPtr videoManager = page->videoPresentationManager()) {
                     auto playerIdentifier = PlaybackSessionContextIdentifier { properties.videoElementData->playerIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };
@@ -125,7 +125,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
             return nullptr;
 
 #if ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
-        if (auto modelContext = properties.modelContext()) {
+        if (auto modelContext = properties.modelContext(); modelContext && isPrimary()) {
             if (auto portalPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->portalPresentationManagerProxy() : nullptr) {
                 if (auto view = portalPresentationManager->setUpModelView(*modelContext)) {
                     m_modelLayers.add(modelContext->modelLayerIdentifier());
@@ -142,9 +142,10 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
         return makeWithView(adoptNS([[WKShapeView alloc] init]));
 
     case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
-        if (!m_isDebugLayerTreeHost)
+        // Only the primary tree has a scrolling tree. Secondary trees parent views under layers,
+        // which can cause crashes with UIScrollView.
+        if (isPrimary())
             return makeWithView(adoptNS([[WKChildScrollView alloc] init]));
-        // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
         return makeWithView(adoptNS([[UIView alloc] init]));
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)

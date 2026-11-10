@@ -122,4 +122,15 @@ struct RemoteLayerTreeCommitBundle {
 #endif
 };
 
+// Snapshot of every live layer of one web process, used to seed a capture mirror RemoteLayerTreeHost
+// in the UI process. Only the mirror applies it; the primary host keeps consuming the regular commits.
+struct RemoteLayerTreeMirrorSeed {
+    // One transaction per root frame. The first one carries the creation entries and the full
+    // property state of every live layer, the others only identify their root.
+    Vector<RemoteLayerTreeTransaction> transactions;
+    // The seed reflects the state after this commit, so the mirror skips this commit and earlier ones.
+    TransactionID lastBuiltTransactionID;
+    bool hasMainFrame { false };
+};
+
 } // namespace WebKit

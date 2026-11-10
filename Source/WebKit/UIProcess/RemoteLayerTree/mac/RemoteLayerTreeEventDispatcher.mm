@@ -730,20 +730,20 @@ void RemoteLayerTreeEventDispatcher::unlockForAnimationChanges()
     startOrStopDisplayLink();
 }
 
-void RemoteLayerTreeEventDispatcher::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+void RemoteLayerTreeEventDispatcher::animationsWereAddedToNode(const RemoteLayerTreeHost& host, RemoteLayerTreeNode& node)
 {
     ASSERT(isMainRunLoop());
     assertIsHeld(m_animationLock);
     auto animationStack = node.takeAnimationStack();
     ASSERT(animationStack);
-    m_animationStacks.set(node.layerID(), animationStack.releaseNonNull());
+    m_animationStacks.set(std::make_pair(node.layerID(), &host), animationStack.releaseNonNull());
 }
 
-void RemoteLayerTreeEventDispatcher::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+void RemoteLayerTreeEventDispatcher::animationsWereRemovedFromNode(const RemoteLayerTreeHost& host, RemoteLayerTreeNode& node)
 {
     ASSERT(isMainRunLoop());
     assertIsHeld(m_animationLock);
-    if (auto animationStack = m_animationStacks.take(node.layerID()))
+    if (auto animationStack = m_animationStacks.take(std::make_pair(node.layerID(), &host)))
         animationStack->clear(protect(node.layer()).get());
 }
 
@@ -802,7 +802,7 @@ bool RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
 
     bool appliedEffects = false;
     auto animationStacks = std::exchange(m_animationStacks, { });
-    for (auto [layerID, currentAnimationStack] : animationStacks) {
+    for (auto& [key, currentAnimationStack] : animationStacks) {
         Ref animationStack = currentAnimationStack;
         if (animationStacksToUpdate == AnimationStacksToUpdate::All || animationStack->hasProgressBasedAnimations()) {
             animationStack->applyEffects();
@@ -813,7 +813,7 @@ bool RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
         // call to applyEffects() is important so that the base values
         // were re-applied.
         if (!animationStack->isEmpty())
-            m_animationStacks.set(layerID, WTF::move(animationStack));
+            m_animationStacks.set(key, WTF::move(animationStack));
     }
 
     return appliedEffects;
@@ -822,7 +822,11 @@ bool RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
 RefPtr<const RemoteAnimationStack> RemoteLayerTreeEventDispatcher::animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
     assertIsHeld(m_animationLock);
-    return m_animationStacks.get(layerID);
+    for (auto& [key, stack] : m_animationStacks) {
+        if (key.first == layerID && key.second->isPrimary())
+            return stack.ptr();
+    }
+    return nullptr;
 }
 
 HashSet<Ref<RemoteProgressBasedTimeline>> RemoteLayerTreeEventDispatcher::timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID scrollingNodeID)
