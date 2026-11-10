@@ -88,7 +88,7 @@ void DebuggerSuspensionController::frameDebuggerDidPause(LocalFrame& frame)
     auto previous = std::exchange(pausedFrame(), std::nullopt);
 
     RefPtr page = frame.page();
-    if (page && page->settings().siteIsolationEnabled()) {
+    if (page && page->settings().siteIsolationEnabled() && page->settings().webInspectorGlobalDebuggerPauseEnabled()) {
         pausedFrame() = PausedFrame { page.get(), frame.frameID() };
         if (auto* client = page->inspectorController().inspectorBackendClient())
             client->frameDebuggerDidPause(frame.frameID());

@@ -3554,7 +3554,8 @@ void WebPageProxy::sendMessageToInspectorFrontend(const String& targetId, const 
 
 void WebPageProxy::frameDidPauseForDebugger(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
 {
-    if (m_isClosed || !protect(preferences())->siteIsolationEnabled() || !m_inspectorController->hasFrontends())
+    Ref preferences = this->preferences();
+    if (m_isClosed || !preferences->siteIsolationEnabled() || !preferences->webInspectorGlobalDebuggerPauseEnabled() || !m_inspectorController->hasFrontends())
         return;
 
     // A report can arrive after the frame is removed or leaves the sender's process, or before the commit that

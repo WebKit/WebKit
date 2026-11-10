@@ -7439,6 +7439,15 @@ WebInspectorEngineeringSettingsAllowed:
   humanReadableName: "WebInspector engineering settings allowed"
   defaultValue: false
 
+WebInspectorGlobalDebuggerPauseEnabled:
+  type: bool
+  status: internal
+  category: javascript
+  defaultsOverridable: true
+  humanReadableName: "Web Inspector: hold frames in other processes while debugging"
+  humanReadableDescription: "While Web Inspector is paused in a frame, hold the frames of the same page that run in other processes (requires Site Isolation)"
+  defaultValue: false
+
 WebLocksAPIEnabled:
   type: bool
   status: stable
