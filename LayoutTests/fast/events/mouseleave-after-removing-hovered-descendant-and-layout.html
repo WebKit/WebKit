@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<style>
+body, html { margin: 0; width: 100%; height: 100%; }
+#stage { position: relative; width: 400px; height: 300px; background: #111; }
+#stage.expanded { width: 700px; height: 500px; }
+#host { position: absolute; right: 16px; top: 16px; width: 48px; height: 48px; }
+#subframe { position: absolute; left: 20px; top: 180px; width: 120px; height: 80px; border: 0; }
+#subframe.relocated { left: 500px; top: 360px; }
+</style>
+</head>
+<body>
+<div id="stage">
+    <div id="host"></div>
+    <iframe id="subframe" srcdoc="<style>html, body { margin: 0; width: 100%; height: 100%; } #innerBtn { width: 80px; height: 50px; } #innerBtn:hover { background: rgb(255, 0, 0); }</style><button id='innerBtn'>Sub</button>"></iframe>
+</div>
+<div id="console"></div>
+<script>
+description("Verifies that post-layout mouse target updates dispatch leave events across Shadow DOM ancestors after a hovered child is removed, and clear hover/boundary state inside subframes when moved out from under the stationary cursor.");
+window.jsTestIsAsync = true;
+
+const stage = document.getElementById("stage");
+const host = document.getElementById("host");
+const shadow = host.attachShadow({ mode: "open" });
+shadow.innerHTML = `<button id="fsBtn" style="width:48px;height:48px;padding:0;"><span id="iconShape"><div id="iconDiv" style="width:48px;height:48px;"></div></span></button>`;
+const fsBtn = shadow.getElementById("fsBtn");
+const iconShape = shadow.getElementById("iconShape");
+
+let logEvents = [];
+for (const [label, node] of [["host", host], ["fsBtn", fsBtn]]) {
+    for (const type of ["pointerenter", "pointerleave", "pointerout", "mouseenter", "mouseleave", "mouseout", "mousemove", "pointermove"]) {
+        node.addEventListener(type, e => {
+            if (e.target === node)
+                logEvents.push(`${type}@${label}`);
+        });
+    }
+}
+
+function waitMs(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+window.addEventListener("load", async () => {
+    if (!window.eventSender) {
+        testFailed("This test requires eventSender.");
+        finishJSTest();
+        return;
+    }
+
+    // Part 1: Hover inner iconDiv, remove it (mirroring YouTube TV icon swap), and relocate #host via layout.
+    const btnRect = fsBtn.getBoundingClientRect();
+    eventSender.mouseMoveTo(btnRect.left + 20, btnRect.top + 20);
+    shouldBeEqualToString("logEvents.join(', ')", "pointerenter@host, mouseenter@host, pointerenter@fsBtn, mouseenter@fsBtn, pointermove@host, mousemove@host");
+    logEvents = [];
+
+    while (iconShape.firstChild)
+        iconShape.removeChild(iconShape.firstChild);
+    const replacementIcon = document.createElement("div");
+    replacementIcon.style.cssText = "width:48px;height:48px;";
+    iconShape.appendChild(replacementIcon);
+
+    stage.classList.add("expanded");
+    document.body.offsetWidth;
+    await waitMs(260);
+
+    shouldBeEqualToString("logEvents.join(', ')", "pointerleave@fsBtn, mouseleave@fsBtn, pointerleave@host, mouseleave@host");
+    shouldBeFalse("fsBtn.matches(':hover')");
+    shouldBeFalse("host.matches(':hover')");
+
+    // Part 2: Hover #innerBtn inside local iframe, then relocate the iframe away from the stationary cursor so the iframe's hit-test returns nullptr.
+    const subframe = document.getElementById("subframe");
+    const subDoc = subframe.contentDocument;
+    const innerBtn = subDoc.getElementById("innerBtn");
+    window.subEvents = [];
+    for (const type of ["pointerout", "mouseout", "pointerleave", "mouseleave", "mousemove"]) {
+        innerBtn.addEventListener(type, e => window.subEvents.push(e.type));
+    }
+
+    const subRect = subframe.getBoundingClientRect();
+    eventSender.mouseMoveTo(subRect.left + 25, subRect.top + 25);
+    window.innerBtn = innerBtn;
+    shouldBeTrue("window.innerBtn.matches(':hover')");
+    window.subEvents = [];
+
+    subframe.classList.add("relocated");
+    document.body.offsetWidth;
+    await waitMs(260);
+
+    shouldBeEqualToString("window.subEvents.join(', ')", "pointerout, mouseout, pointerleave, mouseleave");
+    shouldBeFalse("window.innerBtn.matches(':hover')");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
