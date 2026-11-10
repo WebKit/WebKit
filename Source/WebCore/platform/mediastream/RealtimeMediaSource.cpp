@@ -46,6 +46,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 
@@ -62,7 +63,8 @@
 namespace WebCore {
 
 struct VideoFrameAdaptor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VideoFrameAdaptor);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(VideoFrameAdaptor);
+public:
 
     VideoFrameAdaptor(IntSize size, double frameRate)
         : size(size)

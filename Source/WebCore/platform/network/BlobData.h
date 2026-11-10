@@ -34,6 +34,7 @@
 #include <WebCore/PolicyContainer.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
@@ -96,6 +97,7 @@ private:
 typedef Vector<BlobDataItem> BlobDataItemList;
 
 class BlobData : public ThreadSafeRefCounted<BlobData, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED(BlobData);
 public:
     static Ref<BlobData> create(const String& contentType)
     {

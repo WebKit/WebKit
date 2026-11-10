@@ -47,6 +47,7 @@ ALLOW_UNUSED_PARAMETERS_END
 
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace webrtc {
@@ -65,6 +66,7 @@ class RealtimeOutgoingAudioSource
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(RealtimeOutgoingAudioSource);
 public:
     static Ref<RealtimeOutgoingAudioSource> create(Ref<MediaStreamTrackPrivate>&& audioSource);
 

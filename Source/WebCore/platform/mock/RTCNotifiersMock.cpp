@@ -34,8 +34,21 @@
 #include "RTCSessionDescriptionDescriptor.h"
 #include "RTCSessionDescriptionRequest.h"
 #include "RTCVoidRequest.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SessionRequestNotifier);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VoidRequestNotifier);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IceConnectionNotifier);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SignalingStateNotifier);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDataChannelNotifier);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DataChannelStateNotifier);
 
 SessionRequestNotifier::SessionRequestNotifier(RefPtr<RTCSessionDescriptionRequest>&& request, RefPtr<RTCSessionDescriptionDescriptor>&& descriptor, const String& errorName)
     : m_request(WTF::move(request))

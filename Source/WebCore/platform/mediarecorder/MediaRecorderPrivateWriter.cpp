@@ -37,8 +37,11 @@
 #include "PlatformStrategies.h"
 #include <wtf/MediaTime.h>
 #include <wtf/NativePromise.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateWriter);
 
 MediaRecorderPrivateWriter::MediaRecorderPrivateWriter() = default;
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter() = default;

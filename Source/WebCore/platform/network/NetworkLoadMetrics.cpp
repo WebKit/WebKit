@@ -28,8 +28,13 @@
 
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoadMetrics);
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(AdditionalNetworkLoadMetricsForWebInspector);
 
 NetworkLoadMetrics::NetworkLoadMetrics() = default;
 

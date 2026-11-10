@@ -40,6 +40,7 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitUtilities.h>
+#include <wtf/TZoneMallocInlines.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 
@@ -47,6 +48,8 @@ ALLOW_UNUSED_PARAMETERS_END
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RealtimeOutgoingVideoSourceCocoa);
 
 Ref<RealtimeOutgoingVideoSource> RealtimeOutgoingVideoSource::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {

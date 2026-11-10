@@ -41,8 +41,11 @@
 #include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobResourceHandle);
 
 static const unsigned bufferSize = 512 * 1024;
 

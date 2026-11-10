@@ -49,6 +49,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "AVAudioSessionCaptureDevice.h"
@@ -60,6 +61,8 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreAudioCaptureSource);
 
 #if PLATFORM(MAC)
 CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()

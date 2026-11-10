@@ -36,8 +36,11 @@
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsControllerInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarsControllerGeneric);
 
 static const Seconds overflowScrollbarsAnimationDuration { 1_s };
 static const Seconds overflowScrollbarsAnimationHideDelay { 2_s };

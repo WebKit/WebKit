@@ -30,6 +30,7 @@
 #include "MediaChannelLayout.h"
 #include <CoreMedia/CoreMedia.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
@@ -63,6 +64,7 @@ private:
 };
 
 class AudioSampleBufferConverter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferConverter> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSampleBufferConverter);
 public:
 
 #if ENABLE(WEB_CODECS)

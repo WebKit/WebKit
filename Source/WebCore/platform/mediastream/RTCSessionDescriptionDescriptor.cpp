@@ -34,7 +34,11 @@
 
 #include "RTCSessionDescriptionDescriptor.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCSessionDescriptionDescriptor);
 
 Ref<RTCSessionDescriptionDescriptor> RTCSessionDescriptionDescriptor::create(const String& type, const String& sdp)
 {

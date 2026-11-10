@@ -29,6 +29,7 @@
 
 #include "RealtimeOutgoingVideoSource.h"
 #include <webrtc/api/video/video_rotation.h>
+#include <wtf/TZoneMalloc.h>
 
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
@@ -38,6 +39,7 @@ namespace WebCore {
 class ImageRotationSessionVT;
 
 class RealtimeOutgoingVideoSourceCocoa final : public RealtimeOutgoingVideoSource {
+    WTF_MAKE_TZONE_ALLOCATED(RealtimeOutgoingVideoSourceCocoa);
 public:
     NODELETE static Ref<RealtimeOutgoingVideoSourceCocoa> create(Ref<MediaStreamTrackPrivate>&&);
 

@@ -36,6 +36,7 @@
 #include <WebCore/LibWebRTCRefWrappers.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -48,6 +49,7 @@ class RealtimeIncomingVideoSource
     , private webrtc::ObserverInterface
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingVideoSource, WTF::DestructionThread::MainRunLoop>
 {
+    WTF_MAKE_TZONE_ALLOCATED(RealtimeIncomingVideoSource);
 public:
     static Ref<RealtimeIncomingVideoSource> create(Ref<webrtc::VideoTrackInterface>&&, String&&);
     ~RealtimeIncomingVideoSource();

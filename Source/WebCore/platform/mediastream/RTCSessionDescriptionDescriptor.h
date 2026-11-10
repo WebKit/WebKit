@@ -35,11 +35,13 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class RTCSessionDescriptionDescriptor : public RefCounted<RTCSessionDescriptionDescriptor> {
+    WTF_MAKE_TZONE_ALLOCATED(RTCSessionDescriptionDescriptor);
 public:
     NODELETE static Ref<RTCSessionDescriptionDescriptor> create(const String& type, const String& sdp);
     virtual ~RTCSessionDescriptionDescriptor();

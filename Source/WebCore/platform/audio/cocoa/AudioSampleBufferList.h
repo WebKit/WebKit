@@ -32,6 +32,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef struct AudioStreamBasicDescription AudioStreamBasicDescription;
 typedef struct OpaqueAudioConverter* AudioConverterRef;
@@ -39,6 +40,7 @@ typedef struct OpaqueAudioConverter* AudioConverterRef;
 namespace WebCore {
 
 class AudioSampleBufferList : public RefCounted<AudioSampleBufferList> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSampleBufferList);
 public:
     NODELETE static Ref<AudioSampleBufferList> create(const CAAudioStreamDescription&, size_t);
 

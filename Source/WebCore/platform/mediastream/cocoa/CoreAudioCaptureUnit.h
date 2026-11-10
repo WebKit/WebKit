@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
 #if ENABLE(MEDIA_STREAM)
 
 #include <WebCore/AudioSampleDataSource.h>
@@ -62,6 +63,7 @@ class MediaCaptureStatusBarManager;
 class CoreAudioSpeakerSamplesProducer;
 
 class CoreAudioCaptureUnit final : public BaseAudioCaptureUnit {
+    WTF_MAKE_TZONE_ALLOCATED(CoreAudioCaptureUnit);
 public:
     class InternalUnit {
     public:

@@ -45,10 +45,13 @@
 #include <mutex>
 #include <wtf/Locker.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateEncoder);
 
 class MediaRecorderPrivateEncoder::Listener : public MediaRecorderPrivateWriterListener {
 public:
