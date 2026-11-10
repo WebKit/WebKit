@@ -43,6 +43,7 @@ struct WebKit::RemoteMediaPlayerProxyConfiguration {
     WebCore::FloatSize videoLayerSize;
     uint64_t logIdentifier;
     bool shouldUsePersistentCache;
+    bool allowsAutomaticMediaDataLoading;
     bool isVideo;
     bool renderingCanBeAccelerated;
     bool shouldDisableHDR;

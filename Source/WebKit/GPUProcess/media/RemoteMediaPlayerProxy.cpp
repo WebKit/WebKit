@@ -571,6 +571,11 @@ bool RemoteMediaPlayerProxy::mediaPlayerShouldUsePersistentCache() const
     return m_configuration.shouldUsePersistentCache;
 }
 
+bool RemoteMediaPlayerProxy::mediaPlayerAllowsAutomaticMediaDataLoading() const
+{
+    return m_configuration.allowsAutomaticMediaDataLoading;
+}
+
 bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
 {
     return m_configuration.isVideo;

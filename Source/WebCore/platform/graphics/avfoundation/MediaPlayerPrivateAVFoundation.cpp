@@ -546,6 +546,12 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                         // or we are supposed to prepare for playback immediately, so create the player item now.
                         newNetworkState = MediaPlayer::NetworkState::Loading;
                         prepareToPlay();
+                    } else if (RefPtr player = this->player(); m_preload == MediaPlayer::Preload::MetaData && m_cachedHasVideo && player && player->allowsAutomaticMediaDataLoading()) {
+                        // AVFoundation only reports a first video frame through an AVPlayerLayer, which needs a player and
+                        // player item. Create them directly, because prepareToPlay() would change the preload to Auto.
+                        newNetworkState = MediaPlayer::NetworkState::Loading;
+                        createAVPlayerItem();
+                        createAVPlayer();
                     } else
                         newNetworkState = MediaPlayer::NetworkState::Idle;
                 }

@@ -1,0 +1,3 @@
+
+PASS video with preload="metadata" reaches HAVE_CURRENT_DATA (first frame) without play()
+

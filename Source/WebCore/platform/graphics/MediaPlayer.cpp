@@ -261,6 +261,11 @@ Ref<PlatformMediaResourceLoader> MediaPlayerClient::mediaPlayerCreateResourceLoa
     return *new NullMediaResourceLoader;
 }
 
+bool MediaPlayerClient::mediaPlayerAllowsAutomaticMediaDataLoading() const
+{
+    return false;
+}
+
 class NullMediaPlayerClient final
     : public MediaPlayerClient
     , public RefCounted<NullMediaPlayerClient>
@@ -1003,6 +1008,11 @@ bool MediaPlayer::isVideoFullscreenStandby() const
 FloatSize MediaPlayer::videoLayerSize() const
 {
     return protect(client())->mediaPlayerVideoLayerSize();
+}
+
+bool MediaPlayer::allowsAutomaticMediaDataLoading() const
+{
+    return protect(client())->mediaPlayerAllowsAutomaticMediaDataLoading();
 }
 
 #if PLATFORM(IOS_FAMILY)

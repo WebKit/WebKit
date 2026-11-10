@@ -282,6 +282,7 @@ public:
     virtual Ref<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader();
     virtual bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const { return false; }
     virtual bool mediaPlayerShouldUsePersistentCache() const { return true; }
+    virtual bool mediaPlayerAllowsAutomaticMediaDataLoading() const;
     virtual String mediaPlayerMediaCacheDirectory() const { return emptyString(); }
 
     virtual void mediaPlayerDidAddAudioTrack(AudioTrackPrivate&) { }
@@ -744,6 +745,7 @@ public:
     LayoutRect playerContentBoxRect() const { return protect(client())->mediaPlayerContentBoxRect(); }
     float playerContentsScale() const { return protect(client())->mediaPlayerContentsScale(); }
     bool shouldUsePersistentCache() const { return protect(client())->mediaPlayerShouldUsePersistentCache(); }
+    bool allowsAutomaticMediaDataLoading() const;
     String mediaCacheDirectory() const { return protect(client())->mediaPlayerMediaCacheDirectory(); }
     bool isVideoPlayer() const { return protect(client())->mediaPlayerIsVideo(); }
     void mediaEngineUpdated() { protect(client())->mediaPlayerEngineUpdated(); }

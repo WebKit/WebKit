@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>video preload="metadata" reaches HAVE_CURRENT_DATA without play()</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/media.html#attr-media-preload">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id=log></div>
+<video id="v" preload="metadata" muted playsinline></video>
+<script>
+promise_test(async t => {
+  const v = document.getElementById("v");
+  v.addEventListener("error", t.unreached_func("media error"));
+  const metadata = new Promise(resolve => v.addEventListener("loadedmetadata", resolve, { once: true }));
+  v.src = "/media/movie_5.mp4";
+  await metadata;
+  assert_greater_than_equal(v.readyState, v.HAVE_METADATA, "readyState after loadedmetadata");
+
+  if (v.readyState < v.HAVE_CURRENT_DATA) {
+    await new Promise(resolve => {
+      v.addEventListener("loadeddata", resolve, { once: true });
+      t.step_timeout(resolve, 5000);
+    });
+  }
+  assert_greater_than_equal(v.readyState, v.HAVE_CURRENT_DATA,
+    "readyState should reach HAVE_CURRENT_DATA under preload=metadata without play()");
+}, 'video with preload="metadata" reaches HAVE_CURRENT_DATA (first frame) without play()');
+</script>
