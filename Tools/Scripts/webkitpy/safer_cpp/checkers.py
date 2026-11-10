@@ -116,4 +116,7 @@ CHECKERS = [
     Checker('UnretainedCallArgsChecker', 'Unretained call argument for a raw pointer/reference parameter'),
     Checker('UnretainedLambdaCapturesChecker', 'Lambda capture of unretained variables'),
     Checker('UnretainedLocalVarsChecker', 'Unretained raw pointer or reference not provably backed by a RetainPtr'),
+    Checker('UnborrowedCallArgsChecker', 'Unborrowed call argument for a raw pointer/reference parameter'),
+    Checker('UnborrowedLocalVarsChecker', 'Unborrowed raw pointer or reference not provably backed by a Borrow'),
+    Checker('UnborrowedLambdaCapturesChecker', 'Lambda capture of a loan on a CanBorrow object'),
 ]
