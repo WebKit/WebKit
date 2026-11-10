@@ -78,12 +78,12 @@ public:
     template<typename CallableType>
         requires (!(std::is_pointer_v<CallableType> && std::is_function_v<typename std::remove_pointer_t<CallableType>>) && std::is_rvalue_reference_v<CallableType&&>)
     Function(CallableType&& callable)
-        : m_callableWrapper(makeUnique<Detail::CallableWrapper<CallableType, Out, In...>>(std::forward<CallableType>(callable))) { }
+        : m_callableWrapper(makeCallableWrapper(std::forward<CallableType>(callable))) { }
 
     template<typename FunctionType>
         requires (std::is_pointer_v<FunctionType> && std::is_function_v<typename std::remove_pointer_t<FunctionType>>)
     Function(FunctionType f)
-        : m_callableWrapper(makeUnique<Detail::CallableWrapper<FunctionType, Out, In...>>(std::forward<FunctionType>(f))) { }
+        : m_callableWrapper(makeCallableWrapper(std::forward<FunctionType>(f))) { }
 
 #if defined(__APPLE__)
     // Always use C++ lambdas to create a WTF::Function in Objective-C++.
@@ -92,7 +92,7 @@ public:
     Function(Out (^block)(In... args)) = delete;
 #else
     Function(Out (^block)(In... args))
-        : m_callableWrapper(makeUnique<Detail::CallableWrapper<Out (^)(In...), Out, In...>>(std::forward<Out (^)(In...)>(block)))
+        : m_callableWrapper(makeCallableWrapper(std::forward<Out (^)(In...)>(block)))
     {
     }
 #endif
@@ -111,7 +111,7 @@ public:
         requires (!(std::is_pointer_v<CallableType> && std::is_function_v<typename std::remove_pointer_t<CallableType>>) && std::is_rvalue_reference_v<CallableType&&>)
     Function& operator=(CallableType&& callable)
     {
-        m_callableWrapper = makeUnique<Detail::CallableWrapper<CallableType, Out, In...>>(std::forward<CallableType>(callable));
+        m_callableWrapper = makeCallableWrapper(std::forward<CallableType>(callable));
         return *this;
     }
 
@@ -119,7 +119,7 @@ public:
         requires (std::is_pointer_v<FunctionType> && std::is_function_v<typename std::remove_pointer_t<FunctionType>>)
     Function& operator=(FunctionType f)
     {
-        m_callableWrapper = makeUnique<Detail::CallableWrapper<FunctionType, Out, In...>>(std::forward<FunctionType>(f));
+        m_callableWrapper = makeCallableWrapper(std::forward<FunctionType>(f));
         return *this;
     }
 
@@ -135,6 +135,15 @@ public:
     }
 
 private:
+    template<typename CallableType>
+    static std::unique_ptr<Impl> makeCallableWrapper(CallableType&& callable)
+    {
+        using Wrapper = Detail::CallableWrapper<CallableType, Out, In...>;
+        static_assert(std::is_same_v<typename Wrapper::WTFIsFastMallocAllocated, int>);
+        // Construct the base unique_ptr directly so each callable type doesn't instantiate its own std::unique_ptr.
+        return std::unique_ptr<Impl>(new Wrapper(std::forward<CallableType>(callable)));
+    }
+
     enum AdoptTag { Adopt };
     Function(Impl* impl, AdoptTag)
         : m_callableWrapper(impl)
