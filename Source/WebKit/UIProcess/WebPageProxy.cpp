@@ -11128,6 +11128,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
         return;
 
     Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, frame->page() == this);
     if (process->coreProcessIdentifier() != frame->process().coreProcessIdentifier()) {
         ASSERT(preferences().siteIsolationEnabled());
         return;
@@ -11189,6 +11190,7 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJS(IPC::Connection& conne
         return;
 
     Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, frame->page() == this);
     if (process->coreProcessIdentifier() != frame->process().coreProcessIdentifier()) {
         ASSERT(preferences().siteIsolationEnabled());
         return;

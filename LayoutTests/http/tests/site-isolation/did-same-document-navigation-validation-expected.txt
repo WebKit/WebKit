@@ -1,0 +1,6 @@
+
+PASS didSameDocumentNavigationForFrame accepts the main frame of its own page (allowed)
+PASS didSameDocumentNavigationForFrame rejects a frame of another page (disallowed)
+PASS didSameDocumentNavigationForFrameViaJS accepts the main frame of its own page (allowed)
+PASS didSameDocumentNavigationForFrameViaJS rejects a frame of another page (disallowed)
+
