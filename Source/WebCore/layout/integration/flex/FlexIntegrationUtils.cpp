@@ -288,9 +288,10 @@ void FlexIntegrationUtils::invalidateFlexItemContentLogicalWidthsIfNeeded(const 
         flexItem->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
 }
 
-LayoutUnit FlexIntegrationUtils::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const
+LayoutUnit FlexIntegrationUtils::adjustBorderBoxLogicalWidthForBoxSizing(const FlexLayoutItem& flexLayoutItem, LayoutUnit computedLogicalWidth) const
 {
-    return flexBox().adjustBorderBoxLogicalWidthForBoxSizing(computedLogicalWidth);
+    CheckedRef flexItem = flexLayoutItem.renderer;
+    return flexItem->adjustBorderBoxLogicalWidthForBoxSizing(computedLogicalWidth);
 }
 
 void FlexIntegrationUtils::dirtyPercentHeightDescendantsWithinFlexItem(RenderBox& flexItem)

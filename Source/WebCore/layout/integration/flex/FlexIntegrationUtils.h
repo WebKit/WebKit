@@ -66,7 +66,7 @@ public:
     NODELETE bool updateAutoMarginsInCrossAxis(FlexLayoutItem&, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace);
     void setFlexItemOverridingBorderBoxLogicalHeight(const FlexLayoutItem&, LayoutUnit);
 
-    LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const;
+    LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const FlexLayoutItem&, LayoutUnit computedLogicalWidth) const;
 
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
     bool flexItemHasPercentHeightDescendants(const FlexLayoutItem&) const;
