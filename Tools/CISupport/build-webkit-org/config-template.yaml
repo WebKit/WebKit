@@ -6,7 +6,7 @@
     },
     "mac_tahoe_aws": {
       "first": 10002,
-      "worker": { "platform": "mac-tahoe", "os": "macOS Golden Gate 27.2-26B123", "device": "Mac16,11", "xcode": "Xcode 27.0-27A266a", "fleet": "aws" }
+      "worker": { "platform": "mac-tahoe", "os": "macOS Golden Gate 27.0-26A428", "device": "Mac16,11", "xcode": "Xcode 27.0-27A266a", "fleet": "aws" }
     },
     "mac_sequoia_aircloud": {
       "first": 10100,
