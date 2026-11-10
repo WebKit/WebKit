@@ -146,10 +146,13 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
         ASSERT(lhsStyleable);
         ASSERT(rhsStyleable);
 
+        // https://drafts.csswg.org/scroll-animations-1/#timeline-scoping
+        // An element may only define one timeline per name: In case of a name conflict, names
+        // declared later in the naming property (scroll-timeline-name, view-timeline-name) take
+        // precedence, and scroll progress timelines take precedence over view progress timelines.
         if (lhsStyleable == rhsStyleable) {
             ASSERT(is<ViewTimeline>(lhs) != is<ViewTimeline>(rhs));
-            if (!is<ViewTimeline>(lhs))
-                return false;
+            return !is<ViewTimeline>(lhs);
         }
 
         return compareStyleablePositionsInDocumentTreeOrder(*lhsStyleable, *rhsStyleable);

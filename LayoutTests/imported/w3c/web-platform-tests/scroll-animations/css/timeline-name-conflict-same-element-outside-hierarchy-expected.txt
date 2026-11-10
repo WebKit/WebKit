@@ -1,0 +1,4 @@
+
+PASS scroll-timeline wins when declared along with view-timeline
+PASS scroll-timeline wins when declared after view-timeline
+
