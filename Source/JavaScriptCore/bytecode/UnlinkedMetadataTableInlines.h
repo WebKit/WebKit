@@ -124,8 +124,10 @@ ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
     unsigned offsetTableSize = this->offsetTableSize();
     unsigned valueProfileSize = m_numValueProfiles * sizeof(ValueProfile);
     uint8_t* buffer;
+    bool hadBeenLinked = m_hasBeenLinked;
     if (!m_isLinked) {
         m_isLinked = true;
+        m_hasBeenLinked = true;
         buffer = m_rawBuffer;
     } else {
 #if ENABLE(METADATA_STATISTICS)
@@ -135,9 +137,11 @@ ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
         buffer = static_cast<uint8_t*>(MetadataTableMalloc::malloc(sizeof(LinkingData) + totalSize));
         memcpy(buffer + valueProfileSize + sizeof(LinkingData), m_rawBuffer + valueProfileSize + sizeof(LinkingData), offsetTableSize);
     }
-    // FIXME: Is this needed since we'll clear the data in the CodeBlock Constructor... Plus I could see caching value profiles being profitable.
-    memset(buffer, 0, valueProfileSize);
-    memset(buffer + valueProfileSize + sizeof(LinkingData) + offsetTableSize, 0, totalSize - offsetTableSize - valueProfileSize);
+    if (hadBeenLinked) {
+        // FIXME: Is this needed since we'll clear the data in the CodeBlock Constructor... Plus I could see caching value profiles being profitable.
+        memset(buffer, 0, valueProfileSize);
+        memset(buffer + valueProfileSize + sizeof(LinkingData) + offsetTableSize, 0, totalSize - offsetTableSize - valueProfileSize);
+    }
     return adoptRef(*new (buffer + valueProfileSize + sizeof(LinkingData)) MetadataTable(*this));
 }
 
