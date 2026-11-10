@@ -58,6 +58,13 @@ constexpr bool containsCurrentColor(const ResolvedColor&)
     return false;
 }
 
+constexpr bool containsCurrentAccentColor(const ResolvedColor&)
+{
+    return false;
+}
+
+Color replaceCurrentAccentColor(const ResolvedColor&, const Color&);
+
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ResolvedColor&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ResolvedColor&);
 

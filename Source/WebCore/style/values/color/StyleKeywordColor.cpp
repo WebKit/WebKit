@@ -102,6 +102,11 @@ WebCore::Color resolveColor(const KeywordColor& color, const ResolvedColors& con
     return color.computedStyleColor;
 }
 
+Color replaceCurrentAccentColor(const KeywordColor& color, const Color&)
+{
+    return KeywordColor { color };
+}
+
 void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext&, const KeywordColor& keywordColor)
 {
     builder.append(WebCore::serializationForCSS(keywordColor.computedStyleColor));

@@ -105,6 +105,19 @@ template<typename D> bool containsCurrentColor(const RelativeColor<D>& relative)
     return WebCore::Style::containsCurrentColor(relative.origin);
 }
 
+template<typename D> bool containsCurrentAccentColor(const RelativeColor<D>& relative)
+{
+    return WebCore::Style::containsCurrentAccentColor(relative.origin);
+}
+
+template<typename D> Color replaceCurrentAccentColor(const RelativeColor<D>& relativeColor, const Color& replaced)
+{
+    return RelativeColor<D> {
+        .origin = replaceCurrentAccentColor(relativeColor.origin, replaced),
+        .components = relativeColor.components
+    };
+}
+
 template<typename D> void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const RelativeColor<D>& relative)
 {
     using ColorType = typename D::ColorType;

@@ -41,6 +41,13 @@ Color toStyleColor(const CSS::ResolvedColor& unresolved, ColorResolutionState&)
     return Color { ResolvedColor { unresolved.value } };
 }
 
+// MARK: - replaceCurrentAccentColor
+
+Color replaceCurrentAccentColor(const ResolvedColor& color, const Color&)
+{
+    return ResolvedColor { color };
+}
+
 // MARK: - Serialization
 
 void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext&, const ResolvedColor& absoluteColor)

@@ -81,6 +81,9 @@
         context.getImageData(0, 0, 1, 1).data, [12, 34, 56, 255]);
 
     canvas.style.accentColor = "rgb(78, 90, 123)";
+    // Force style resolution so accent-color of `canvas` is updated.
+    document.documentElement.offsetTop;
+
     context.fillStyle = "AccentColor";
     context.fillRect(1, 0, 1, 1);
     assert_array_equals(
@@ -91,6 +94,10 @@
     const canvas = document.getElementById("canvas");
     const context = canvas.getContext("2d");
     canvas.style.accentColor = "rgb(45, 67, 89)";
+
+    // Force style resolution so accent-color of `canvas` is updated.
+    document.documentElement.offsetTop;
+
     context.fillStyle =
         "color-mix(in srgb, AccentColor 100%, transparent)";
     context.fillRect(2, 0, 1, 1);
